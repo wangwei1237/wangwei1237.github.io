@@ -110,61 +110,9 @@
       <h2 id="SSIM基本概念"><a href="#SSIM基本概念" class="headerlink" title="SSIM基本概念"></a>SSIM基本概念</h2><p>关于$SSIM$的具体解释，此处不再介绍，具体可以参见：<a href="https://wangwei1237.gitbook.io/digital_video_concepts/shi-pin-zhi-liang-du-liang/4_2_0_videoqualityevaluationmethodsandmetrics/4_2_2_0_objectivevideoqualityevaluationmethodsandmetrics/4_2_2_3_structuralsimilaritybasedapproaches" target="_blank" rel="noopener">SSIM算法</a>。</p>
 <p>直接给出$SSIM$的计算方法：<br>$$<br>SSIM(x,y)=\frac{(2\mu_x\mu_y+C_1)(2\sigma_{xy}+C_2)}{(\mu_x^2+\mu_y^2+C_1)(\sigma_x^2+\sigma_y^2+C_2)}<br>$$</p>
 <p>$C_1=(K_1L)^2, C_2=(K_2L)^2$。$K_1\ll1$，$K_2\ll1$均为常数，计算时，一般$K_1=0.01$，$K_2=0.03$。$L$是灰度的动态范围，由图像的数据类型决定，如果数据为<em>uint8</em>，则$L=255$。</p>
-<h2 id="SSIM计算中的图像分割"><a href="#SSIM计算中的图像分割" class="headerlink" title="SSIM计算中的图像分割"></a>SSIM计算中的图像分割</h2><p>在整幅图片的跨度上，图像亮度的均值和方差变化较为剧烈；并且图像上不同区块的失真程度也有可能不同；再者人眼睛每次只能聚焦于一处，更关注局部数据而非全局数据。因此如上的$SSIM$算法不能直接作用于一整副图像。</p>
-<p>在论文<strong>Image quality assessment: From error visibility to structural similarity</strong>中，作者采用$11 \times 11$的滑动窗口将整副图像分割为$N$个patch，然后计算每一个patch的$SSIM$，最后计算所有patch的$SSIM$值的平均数（$Mean \ \ SSIM:MSSIM$）作为整副图像的$SSIM$。为了避免滑动窗口带来的块效应，在计算每个patch的均值$\mu$和方差$\sigma^2$时，作者采用了$\sigma=1.5$的高斯卷积核作加权平均。</p>
-<p>如果整副图像有$N$个patch，则$MSSIM$的计算方式为：</p>
-<p>$$<br>MSSIM(X,Y) = \frac{1}{N}\sum_{i=1}^{N}{SSIM(x_i, y_i)}<br>$$</p>
-<p>其中，$SSIM(x_i, y_i)$为第$i$个patch的$SSIM$。</p>
-<h2 id="FFMpeg中计算SSIM的算法"><a href="#FFMpeg中计算SSIM的算法" class="headerlink" title="FFMpeg中计算SSIM的算法"></a>FFMpeg中计算SSIM的算法</h2><p>在FFMpeg中，也提供了计算$SSIM$的实现：<a href="https://github.com/FFmpeg/FFmpeg/blob/master/tests/tiny_ssim.c" target="_blank" rel="noopener">tiny_ssim</a>。从代码的注释中可以看到：为了提升算法的性能，没有采用论文中的高斯加权方式计算每个patch的$SSIM$，而是采用了一个$8 \times 8$的块来计算每个patch的$SSIM$。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> * tiny_ssim.c</span><br><span class="line"> * Computes the Structural Similarity Metric between two rawYV12 video files.</span><br><span class="line"> * original algorithm:</span><br><span class="line"> * Z. Wang, A. C. Bovik, H. R. Sheikh and E. P. Simoncelli,</span><br><span class="line"> *   &quot;Image quality assessment: From error visibility to structural similarity,&quot;</span><br><span class="line"> *   IEEE Transactions on Image Processing, vol. 13, no. 4, pp. 600-612, Apr. 2004.</span><br><span class="line"> *</span><br><span class="line"> * To improve speed, this implementation uses the standard approximation of</span><br><span class="line"> * overlapped 8x8 block sums, rather than the original gaussian weights.</span><br><span class="line"> *&#x2F;</span><br></pre></td></tr></table></figure>
-
-<h3 id="standard-approximation-of-overlapped-8x8-block-sums"><a href="#standard-approximation-of-overlapped-8x8-block-sums" class="headerlink" title="standard approximation of overlapped 8x8 block sums"></a>standard approximation of overlapped 8x8 block sums</h3><p>接下来就解释一下注释中的<em>standard approximation of overlapped 8x8 block sums</em>究竟是什么含义。在解释的过程中会分解成两个部分来解释：<em>overlapped 8x8 block</em>和<em>sums</em>。</p>
-<h3 id="overlapped-8x8-block的含义"><a href="#overlapped-8x8-block的含义" class="headerlink" title="overlapped 8x8 block的含义"></a>overlapped 8x8 block的含义</h3><p>FFMpeg在计算图像$SSIM$时，首先以$4 \times 4$的块大小把<strong>图1</strong>所示的分辨率为$W \times H$的图像：<br><img src="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/1.jpg" alt="图1"><br>图1：原始图像</p>
-<p>分割为<strong>图2</strong>的样式。<br><img src="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/2.jpg" alt="图2"></p>
-<p>图2：分割后的图像</p>
-<p>对于<strong>图2</strong>中的每一块用$block(i,j)$来表示（<em>图2中的红色块</em>），FFMpeg使用$block(i,j)$及其<strong>上、右、右上块</strong>（<em>图2中的绿色块</em>）来计算其$SSIM:SSIM(x_{ij},y_{ij})$。</p>
-<p>$block(i,j)$及其<strong>上、右、右上块</strong>构成一个$8\times8$的像素块，并且该$8\times8$的块和计算$block(i,j+1)$的$SSIM$用到的$8\times8$的块存在重合像素，这就是注释中的<strong>overlapped 8x8 block</strong>的真正含义。</p>
-<p>因此，根据如上规则：$i \in [1,\frac{H}{4}],j \in [0,\frac{W}{4}-1]$。也就是说：第0行和最后一列的块不会计算$SSIM$。</p>
-<p>最后得到FFMpeg中的$SSIM$计算方式为：</p>
-<p>$$<br>SSIM = MSSIM(X,Y) = \frac{1}{N}\sum_{i=1}^{\frac{H}{4}}\sum_{j=0}^{\frac{W}{4}-1}{SSIM(x_{ij}, y_{ij})}<br>$$</p>
-<p>$$<br>N=(\frac{H}{4}-1)(\frac{W}{4}-1)<br>$$</p>
-<h3 id="sums的含义"><a href="#sums的含义" class="headerlink" title="sums的含义"></a>sums的含义</h3><p>如前所述，我们分析了FFMpeg计算图像的$SSIM$的整体思路，接下来我们继续分析FFMpeg是如何计算$block(i,j)$的$SSIM(x_{ij},y_{ij})$的。</p>
-<p>首先利用函数<code>ssim_4x4x2_core()</code>来计算$block(i,j)$块的结构相似性指标，主要是如下的4个指标：</p>
-<ul>
-<li><em>s1</em>：参考图像在$block(i,j)$块的像素之和</li>
-<li><em>s2</em>：受损图像在$block(i,j)$块的像素之和</li>
-<li><em>ss</em>：参考图像和受损图像在$block(i,j)$块的像素平方之和</li>
-<li><em>s12</em>：参考图像和受损图像在$block(i,j)$块的对应像素乘积之和</li>
-</ul>
-<p>$s1=\sum_{i=0}^{3}\sum_{j=0}^{3}{x(i,j)}$<br>$s2=\sum_{i=0}^{3}\sum_{j=0}^{3}{y(i,j)}$<br>$ss=\sum_{i=0}^{3}\sum_{j=0}^{3}{\Big(\big(x(i,j)\big)^2+\big(y(i,j)\big)^2\Big)}$<br>$s12=\sum_{i=0}^{3}\sum_{j=0}^{3}{\big(x(i,j) \cdot y(i,j)\big)}$</p>
-<p>如上的4个指标就是我们后续会用到的sums，该sums也就是<em>overlapped 8x8 block sums</em>中的<em>sums</em>的概念。</p>
-<h3 id="利用sums计算各块的SSIM"><a href="#利用sums计算各块的SSIM" class="headerlink" title="利用sums计算各块的SSIM"></a>利用sums计算各块的SSIM</h3><p>接下来利用该sums值计算$SSIM$。</p>
-<p>为了提升效率，FFMpeg会按照行来计算每一行的各个块的sums数据，并将每个行块的sums数据存储在长度为$\frac{W}{4}$的数组指针sum（<code>(int(*)[4])</code>）中。</p>
-<p>其中sum指针有两种：</p>
-<ul>
-<li>sum0：存储当前行的各块的sums结果</li>
-<li>sum1：存储当前行的上一行的sums结果</li>
-</ul>
-<p>先计算第$i-1$行块和第$i$行块的sums结果，并分别存入<code>sum1</code>和<code>sum0</code>中。然后遍历第$i$行块的每一个块，并利用<code>sum1</code>和<code>sum0</code>中计算的结果来计算每一块的$SSIM$。</p>
-<p>函数<code>ssim_end4()</code>展示了如何利用$block(i-1,j)$，$block(i-1,j+1)$，$block(i,j)$，$block(i,j+1)$的sums信息来计算$SSIM(x_{ij},y_{ij})$：</p>
-<ul>
-<li>先对4个块的sums结果进行加和处理，得到$8\times8$块的sums结果</li>
-<li>然后利用该$8\times8$块的sums来计算$block(i,j)$的$SSIM$</li>
-</ul>
-<p>函数<code>ssim_end1()</code>就展示了如何利用$8\times8$块的sums信息来计算$SSIM$。具体的计算方法如下：</p>
-<p><strong>待补充。。。</strong></p>
-<h3 id="利用各块的SSIM计算图像的SSIM"><a href="#利用各块的SSIM计算图像的SSIM" class="headerlink" title="利用各块的SSIM计算图像的SSIM"></a>利用各块的SSIM计算图像的SSIM</h3><p>计算完所有块的$SSIM$之后，就可以计算所有块的平均$SSIM$并作为该图像的$SSIM$：</p>
-<p>$$<br>SSIM(X,Y)= \frac{1}{N}\sum_{i=1}^{\frac{H}{4}}\sum_{j=0}^{\frac{W}{4}-1}{SSIM(x_{ij}, y_{ij})}<br>$$</p>
-<p>$$<br>N=(\frac{H}{4}-1)(\frac{W}{4}-1)<br>$$</p>
-<h3 id="编码过程中的技巧"><a href="#编码过程中的技巧" class="headerlink" title="编码过程中的技巧"></a>编码过程中的技巧</h3><p>在FFMpeg计算$SSIM$的算法实现中，为了提升效率和抽象代码逻辑，也利用了很多的编程技巧，例如：</p>
-<ul>
-<li>计算YUV各分量图像宽高时用<code>w &gt;&gt; !!i</code></li>
-<li>为了避免对第0行的特殊处理，采用两层循环来处理</li>
-<li>计算每一行的各块的sums信息时，为了降低循环次数，每次循环计算2个块的sums结果，<code>ssim_4x4x2_core</code>的函数名可能就是这么来的。</li>
-<li>计算每一行的各块的$SSIM$时，为了降低循环次数，每次循环计算4个块的$SSIM$，<code>ssim_end4</code>的函数名可能就是这么来的。</li>
-</ul>
-<h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p>分析过程离不开和贤杰(github: <a href="https://github.com/bodhisatan" target="_blank" rel="noopener">@bodhisatan</a>)的不断讨论和交流，感谢@贤杰在繁忙的工作之余抽出时间来一起分析FFMpeg中SSIM算法的实现原理。</p>
-
+      
+      <a class="article-more-link" href="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/">阅读更多...</a>
+      
       
       <!-- 打赏 -->
       

@@ -6,6 +6,8 @@
     <content><![CDATA[<h2 id="SSIM基本概念"><a href="#SSIM基本概念" class="headerlink" title="SSIM基本概念"></a>SSIM基本概念</h2><p>关于$SSIM$的具体解释，此处不再介绍，具体可以参见：<a href="https://wangwei1237.gitbook.io/digital_video_concepts/shi-pin-zhi-liang-du-liang/4_2_0_videoqualityevaluationmethodsandmetrics/4_2_2_0_objectivevideoqualityevaluationmethodsandmetrics/4_2_2_3_structuralsimilaritybasedapproaches" target="_blank" rel="noopener">SSIM算法</a>。</p>
 <p>直接给出$SSIM$的计算方法：<br>$$<br>SSIM(x,y)=\frac{(2\mu_x\mu_y+C_1)(2\sigma_{xy}+C_2)}{(\mu_x^2+\mu_y^2+C_1)(\sigma_x^2+\sigma_y^2+C_2)}<br>$$</p>
 <p>$C_1=(K_1L)^2, C_2=(K_2L)^2$。$K_1\ll1$，$K_2\ll1$均为常数，计算时，一般$K_1=0.01$，$K_2=0.03$。$L$是灰度的动态范围，由图像的数据类型决定，如果数据为<em>uint8</em>，则$L=255$。</p>
+<a id="more"></a>
+
 <h2 id="SSIM计算中的图像分割"><a href="#SSIM计算中的图像分割" class="headerlink" title="SSIM计算中的图像分割"></a>SSIM计算中的图像分割</h2><p>在整幅图片的跨度上，图像亮度的均值和方差变化较为剧烈；并且图像上不同区块的失真程度也有可能不同；再者人眼睛每次只能聚焦于一处，更关注局部数据而非全局数据。因此如上的$SSIM$算法不能直接作用于一整副图像。</p>
 <p>在论文<strong>Image quality assessment: From error visibility to structural similarity</strong>中，作者采用$11 \times 11$的滑动窗口将整副图像分割为$N$个patch，然后计算每一个patch的$SSIM$，最后计算所有patch的$SSIM$值的平均数（$Mean \ \ SSIM:MSSIM$）作为整副图像的$SSIM$。为了避免滑动窗口带来的块效应，在计算每个patch的均值$\mu$和方差$\sigma^2$时，作者采用了$\sigma=1.5$的高斯卷积核作加权平均。</p>
 <p>如果整副图像有$N$个patch，则$MSSIM$的计算方式为：</p>
