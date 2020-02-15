@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>FFMpeg如何计算图像的SSIM</title>
+    <url>/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/</url>
+    <content><![CDATA[<h2 id="SSIM基本概念"><a href="#SSIM基本概念" class="headerlink" title="SSIM基本概念"></a>SSIM基本概念</h2><p>关于$SSIM$的具体解释，此处不再介绍，具体可以参见：<a href="https://wangwei1237.gitbook.io/digital_video_concepts/shi-pin-zhi-liang-du-liang/4_2_0_videoqualityevaluationmethodsandmetrics/4_2_2_0_objectivevideoqualityevaluationmethodsandmetrics/4_2_2_3_structuralsimilaritybasedapproaches" target="_blank" rel="noopener">SSIM算法</a>。</p>
+<p>直接给出$SSIM$的计算方法：<br>$$<br>SSIM(x,y)=\frac{(2\mu_x\mu_y+C_1)(2\sigma_{xy}+C_2)}{(\mu_x^2+\mu_y^2+C_1)(\sigma_x^2+\sigma_y^2+C_2)}<br>$$</p>
+<p>$C_1=(K_1L)^2, C_2=(K_2L)^2$。$K_1\ll1$，$K_2\ll1$均为常数，计算时，一般$K_1=0.01$，$K_2=0.03$。$L$是灰度的动态范围，由图像的数据类型决定，如果数据为<em>uint8</em>，则$L=255$。</p>
+<h2 id="SSIM计算中的图像分割"><a href="#SSIM计算中的图像分割" class="headerlink" title="SSIM计算中的图像分割"></a>SSIM计算中的图像分割</h2><p>在整幅图片的跨度上，图像亮度的均值和方差变化较为剧烈；并且图像上不同区块的失真程度也有可能不同；再者人眼睛每次只能聚焦于一处，更关注局部数据而非全局数据。因此如上的$SSIM$算法不能直接作用于一整副图像。</p>
+<p>在论文<strong>Image quality assessment: From error visibility to structural similarity</strong>中，作者采用$11 \times 11$的滑动窗口将整副图像分割为$N$个patch，然后计算每一个patch的$SSIM$，最后计算所有patch的$SSIM$值的平均数（$Mean \ \ SSIM:MSSIM$）作为整副图像的$SSIM$。为了避免滑动窗口带来的块效应，在计算每个patch的均值$\mu$和方差$\sigma^2$时，作者采用了$\sigma=1.5$的高斯卷积核作加权平均。</p>
+<p>如果整副图像有$N$个patch，则$MSSIM$的计算方式为：</p>
+<p>$$<br>MSSIM(X,Y) = \frac{1}{N}\sum_{i=1}^{N}{SSIM(x_i, y_i)}<br>$$</p>
+<p>其中，$SSIM(x_i, y_i)$为第$i$个patch的$SSIM$。</p>
+<h2 id="FFMpeg中计算SSIM的算法"><a href="#FFMpeg中计算SSIM的算法" class="headerlink" title="FFMpeg中计算SSIM的算法"></a>FFMpeg中计算SSIM的算法</h2><p>在FFMpeg中，也提供了计算$SSIM$的实现：<a href="https://github.com/FFmpeg/FFmpeg/blob/master/tests/tiny_ssim.c" target="_blank" rel="noopener">tiny_ssim</a>。从代码的注释中可以看到：为了提升算法的性能，没有采用论文中的高斯加权方式计算每个patch的$SSIM$，而是采用了一个$8 \times 8$的块来计算每个patch的$SSIM$。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> * tiny_ssim.c</span><br><span class="line"> * Computes the Structural Similarity Metric between two rawYV12 video files.</span><br><span class="line"> * original algorithm:</span><br><span class="line"> * Z. Wang, A. C. Bovik, H. R. Sheikh and E. P. Simoncelli,</span><br><span class="line"> *   &quot;Image quality assessment: From error visibility to structural similarity,&quot;</span><br><span class="line"> *   IEEE Transactions on Image Processing, vol. 13, no. 4, pp. 600-612, Apr. 2004.</span><br><span class="line"> *</span><br><span class="line"> * To improve speed, this implementation uses the standard approximation of</span><br><span class="line"> * overlapped 8x8 block sums, rather than the original gaussian weights.</span><br><span class="line"> *&#x2F;</span><br></pre></td></tr></table></figure>
+
+<h3 id="standard-approximation-of-overlapped-8x8-block-sums"><a href="#standard-approximation-of-overlapped-8x8-block-sums" class="headerlink" title="standard approximation of overlapped 8x8 block sums"></a>standard approximation of overlapped 8x8 block sums</h3><p>接下来就解释一下注释中的<em>standard approximation of overlapped 8x8 block sums</em>究竟是什么含义。在解释的过程中会分解成两个部分来解释：<em>overlapped 8x8 block</em>和<em>sums</em>。</p>
+<h3 id="overlapped-8x8-block的含义"><a href="#overlapped-8x8-block的含义" class="headerlink" title="overlapped 8x8 block的含义"></a>overlapped 8x8 block的含义</h3><p>FFMpeg在计算图像$SSIM$时，首先以$4 \times 4$的块大小把<strong>图1</strong>所示的分辨率为$W \times H$的图像：<br><img src="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/1.jpg" alt="图1"><br>图1：原始图像</p>
+<p>分割为<strong>图2</strong>的样式。<br><img src="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/2.jpg" alt="图2"></p>
+<p>图2：分割后的图像</p>
+<p>对于<strong>图2</strong>中的每一块用$block(i,j)$来表示（<em>图2中的红色块</em>），FFMpeg使用$block(i,j)$及其<strong>上、右、右上块</strong>（<em>图2中的绿色块</em>）来计算其$SSIM:SSIM(x_{ij},y_{ij})$。</p>
+<p>$block(i,j)$及其<strong>上、右、右上块</strong>构成一个$8\times8$的像素块，并且该$8\times8$的块和计算$block(i,j+1)$的$SSIM$用到的$8\times8$的块存在重合像素，这就是注释中的<strong>overlapped 8x8 block</strong>的真正含义。</p>
+<p>因此，根据如上规则：$i \in [1,\frac{H}{4}],j \in [0,\frac{W}{4}-1]$。也就是说：第0行和最后一列的块不会计算$SSIM$。</p>
+<p>最后得到FFMpeg中的$SSIM$计算方式为：</p>
+<p>$$<br>SSIM = MSSIM(X,Y) = \frac{1}{N}\sum_{i=1}^{\frac{H}{4}}\sum_{j=0}^{\frac{W}{4}-1}{SSIM(x_{ij}, y_{ij})}<br>$$</p>
+<p>$$<br>N=(\frac{H}{4}-1)(\frac{W}{4}-1)<br>$$</p>
+<h3 id="sums的含义"><a href="#sums的含义" class="headerlink" title="sums的含义"></a>sums的含义</h3>]]></content>
+      <categories>
+        <category>视频技术</category>
+      </categories>
+      <tags>
+        <tag>SSIM</tag>
+        <tag>FFMpeg</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>解决hexo-asset-image的图片地址错误问题</title>
     <url>/2020/02/05/handle-the-bug-of-hexo-asset-image-plugin/</url>
     <content><![CDATA[<p>由于<code>hexo-asset-image</code>插件存在bug，会导致博文中引用图片时无法生成正确的链接地址，进而导致图片无法访问的现象。<br>具体解决方案为将文件<code>node_modules/hexo-asset-image/index.js</code>替换为如下的内容：</p>
