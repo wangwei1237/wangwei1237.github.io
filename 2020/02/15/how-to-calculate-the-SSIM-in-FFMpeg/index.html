@@ -168,7 +168,7 @@
 </ul>
 <p>利用如上的公式对$SSIM$的公式进行计算可以得到：<br>$$<br>SSIM(x,y)=\frac{(2\mu_x\mu_y+C_1)(2\sigma_{xy}+C_2)}{(\mu_x^2+\mu_y^2+C_1)(\sigma_x^2+\sigma_y^2+C_2)}<br>$$</p>
 <p>$$<br>=\frac{(2s1s2+64^2C_1)(2\cdot64s12-2s1s2+64\cdot63C_2)}{(s1^2+s2^2+64^2C_1)(64ss-s1^2-s2^2+64\cdot63C_2)}<br>$$</p>
-<p>FFMpeg中，对$C_1$和$C_2$的定义中的因子<strong>64</strong>或<strong>63</strong>也是根据上面的公式，但是从公式看，FFMpeg对<code>ssim_c1</code>的计算少乘了64：</p>
+<p>FFMpeg中，对$C_1$和$C_2$的定义中的因子<strong>64</strong>或<strong>63</strong>也是根据上面的公式，但是从公式看，<strong>FFMpeg对<code>ssim_c1</code>的计算少乘了64</strong>：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssim_c1 &#x3D; 0.01 * 0.01 * 255 * 255 * 64 + 0.5</span><br><span class="line">ssim_c2 &#x3D; 0.03 * 0.03 * 255 * 255 * 64 * 63 + 0.5</span><br></pre></td></tr></table></figure>
 
 <p>当然，为了简化处理，FFMpeg还做了如下的定义：</p>
