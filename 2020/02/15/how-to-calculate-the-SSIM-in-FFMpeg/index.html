@@ -175,7 +175,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vars  &#x3D; ss  * 64 - s1 * s1 - s2 * s2;</span><br><span class="line">covar &#x3D; s12 * 64 - s1 * s2;</span><br></pre></td></tr></table></figure>
 
 <p>因此，最终在FFMpeg中，计算$SSIM$的公式为：</p>
-<p>$$<br>SSIM(x,y)=\frac{(2s1s2+{ssim_c}_1)(2covar+{ssim_c}_2)}{(s1^2+s2^2+{ssim_c}_1)(vars + {ssim_c}_2)}<br>$$</p>
+<p>$$<br>SSIM(x,y)=\frac{(2s1s2+C_1)(2covar+C_2)}{(s1^2+s2^2+C_1)(vars + C_2)}<br>$$</p>
 <p>如上的公式就是函数<code>ssim_end1()</code>中最终的计算方式。</p>
 <h3 id="利用各块的SSIM计算图像的SSIM"><a href="#利用各块的SSIM计算图像的SSIM" class="headerlink" title="利用各块的SSIM计算图像的SSIM"></a>利用各块的SSIM计算图像的SSIM</h3><p>计算完所有块的$SSIM$之后，就可以计算所有块的平均$SSIM$并作为该图像的$SSIM$：</p>
 <p>$$<br>SSIM(X,Y)= \frac{1}{N}\sum_{i=1}^{\frac{H}{4}}\sum_{j=0}^{\frac{W}{4}-1}{SSIM(x_{ij}, y_{ij})}<br>$$</p>
