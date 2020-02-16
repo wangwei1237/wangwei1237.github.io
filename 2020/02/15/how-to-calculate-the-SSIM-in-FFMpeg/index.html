@@ -67,7 +67,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.7k字</span>
+            <span class="post-count">2.1k字</span>
         </span>
     </span>
 
@@ -76,7 +76,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">7分钟</span>
+            <span class="post-count">9分钟</span>
         </span>
     </span>
 </div>
@@ -148,8 +148,35 @@
 <li>先对4个块的sums结果进行加和处理，得到$8\times8$块的sums结果</li>
 <li>然后利用该$8\times8$块的sums来计算$block(i,j)$的$SSIM$</li>
 </ul>
-<p>函数<code>ssim_end1()</code>就展示了如何利用$8\times8$块的sums信息来计算$SSIM$。具体的计算方法如下：</p>
-<p><strong>待补充。。。</strong></p>
+<p>函数<code>ssim_end1()</code>就展示了如何利用$8\times8$块的sums信息来计算$SSIM$。具体的计算方法如下。</p>
+<p>将红色区块$block(i,j)$的图像放大一点，如图3所示。我们接下来计算其$SSIM$。<br><img src="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/3.jpg" alt="图3"><br>图3：<em>block(i,j)</em>的示意图</p>
+<p>在计算时，首先将4个区块的sums值求和，得到$8\times8$区块的sums值，分别为：</p>
+<ul>
+<li>$s1=\sum_{i=0}^{64}{x_i}$</li>
+<li>$s2=\sum_{i=0}^{64}{y_i}$</li>
+<li>$ss=\sum_{i=0}^{64}{(x_i^2+y_i^2)}$</li>
+<li>$s12=\sum_{i=0}^{64}{(x_i \cdot y_i)}$</li>
+</ul>
+<p>根据如上的计算，可以得到$\mu_x$，$\mu_y$，$\mu_x\mu_y$，$\mu_x^2+\mu_y^2$，$\sigma_x^2+\sigma_y^2$，$\sigma_{xy}$：</p>
+<ul>
+<li>$\mu_x=\frac{1}{64} \cdot s1$</li>
+<li>$\mu_y=\frac{1}{64} \cdot s2$</li>
+<li>$\mu_x\mu_y=\frac{1}{64 \cdot 64}(s1 \cdot s2)$</li>
+<li>$\mu_x^2+\mu_y^2=\frac{1}{64 \cdot 64}\big((s1)^2+(s2)^2\big)$</li>
+<li>$\sigma_x^2+\sigma_y^2=\frac{1}{64 \cdot 63}\big(64 \cdot ss-(s1)^2- (s2)^2\big)$</li>
+<li>$\sigma_{xy}=\frac{1}{64 \cdot 63}(64 \cdot s12 - s1 \cdot s2)$</li>
+</ul>
+<p>利用如上的公式对$SSIM$的公式进行计算可以得到：<br>$$<br>SSIM(x,y)=\frac{(2\mu_x\mu_y+C_1)(2\sigma_{xy}+C_2)}{(\mu_x^2+\mu_y^2+C_1)(\sigma_x^2+\sigma_y^2+C_2)}<br>$$</p>
+<p>$$<br>=\frac{(2s1s2+64^2C_1)(2\cdot64s12-2s1s2+64\cdot63C_2)}{(s1^2+s2^2+64^2C_1)(64ss-s1^2-s2^2+64\cdot63C_2)}<br>$$</p>
+<p>FFMpeg中，对$C_1$和$C_2$的定义中多乘<strong>64</strong>或<strong>63</strong>的理由也就是根据上面的公式，但是从公式看，FFMpeg对<code>ssim_c1</code>的计算少乘了64：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssim_c1 &#x3D; 0.01 * 0.01 * 255 * 255 * 64 + 0.5</span><br><span class="line">ssim_c2 &#x3D; 0.03 * 0.03 * 255 * 255 * 64 * 63 + .5</span><br></pre></td></tr></table></figure>
+
+<p>当然，为了简化处理，FFMpeg还做了如下的定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vars  &#x3D; ss  * 64 - s1 * s1 - s2 * s2;</span><br><span class="line">covar &#x3D; s12 * 64 - s1 * s2;</span><br></pre></td></tr></table></figure>
+
+<p>因此，最终在FFMpeg中，计算$SSIM$的公式为：</p>
+<p>$$<br>SSIM(x,y)=\frac{(2s1s2+{ssim_c}_1)(2covar+{ssim_c}_2)}{(s1^2+s2^2+{ssim_c}_1)(vars + {ssim_c}_2)}<br>$$</p>
+<p>如上的公式就是函数<code>ssim_end1()</code>中最终的计算方式。</p>
 <h3 id="利用各块的SSIM计算图像的SSIM"><a href="#利用各块的SSIM计算图像的SSIM" class="headerlink" title="利用各块的SSIM计算图像的SSIM"></a>利用各块的SSIM计算图像的SSIM</h3><p>计算完所有块的$SSIM$之后，就可以计算所有块的平均$SSIM$并作为该图像的$SSIM$：</p>
 <p>$$<br>SSIM(X,Y)= \frac{1}{N}\sum_{i=1}^{\frac{H}{4}}\sum_{j=0}^{\frac{W}{4}-1}{SSIM(x_{ij}, y_{ij})}<br>$$</p>
 <p>$$<br>N=(\frac{H}{4}-1)(\frac{W}{4}-1)<br>$$</p>
