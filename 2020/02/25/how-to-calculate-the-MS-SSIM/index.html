@@ -111,9 +111,9 @@
 <ul>
 <li>图像信号的采样密度</li>
 <li>用户的观看距离</li>
-<li>HVS的感知能力。</li>
+<li>HVS的感知能力</li>
 </ul>
-<p>当如上的因素发生变化时，则对给定图像的主观评估也会随着发生变化。单尺度的SSIM算法可能仅适用于某个特定的场景。为了解决该问题，论文<strong>Multi-scale structural similarity for image quality assessment</strong>在$SSIM$算法的基础上提出了如图1所示的多尺度的结构相似性评估算法，即$MS-SSIM$算法。</p>
+<p>当如上的因素发生变化时，则对给定图像的主观评估也会随之发生变化。单尺度的SSIM算法可能仅适用于某个特定的配置。为了解决该问题，论文<strong>Multi-scale structural similarity for image quality assessment</strong>在$SSIM$算法的基础上提出了如图1所示的多尺度的结构相似性评估算法，即$MS-SSIM$算法。</p>
 <p><img src="/2020/02/25/how-to-calculate-the-MS-SSIM/1.jpg" alt="图1. MS-SSIM算法"></p>
 <p>图1. MS-SSIM算法，L 表示低通滤波器，2↓ 表示采样间隔为2的下采样</p>
 <p>因此，$MS-SSIM$实际上是一种以不同分辨率合并图像细节的图像质量评估方法。对于$MS-SSIM$，原始图像的$scale=1$，图像的最大$scale=M$。对$scale=j$的尺度而言，其亮度、对比度、结构的相似性分别表示为：</p>
@@ -134,7 +134,7 @@
 <li>$\alpha_4=0.2363$</li>
 <li>$\alpha_5=0.1333$</li>
 </ul>
-<h2 id="MS-SSIM算法的实现"><a href="#MS-SSIM算法的实现" class="headerlink" title="MS-SSIM算法的实现"></a>MS-SSIM算法的实现</h2><p>采用FFMpeg中的$SSIM$的实现方式来实现MS-SSIM。根据<a href="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/">FFMpeg如何计算图像的SSIM</a>的介绍：</p>
+<h2 id="MS-SSIM算法的实现"><a href="#MS-SSIM算法的实现" class="headerlink" title="MS-SSIM算法的实现"></a>MS-SSIM算法的实现</h2><p>采用FFMpeg中的$SSIM$的实现方式来实现$MS-SSIM$。根据<a href="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/">FFMpeg如何计算图像的SSIM</a>的介绍：</p>
 <p>$$<br>MS-SSIM(X,Y)=\bigg(\frac{2s1 \cdot s2 + ssimC_{1}}{s1^2+s2^2+ssimC_{1}}\bigg)^{\alpha_{M}} \cdot \prod _{j=1}^{M}\bigg(\frac{2covar + ssimC_2}{vars + ssimC_2}\bigg)^{\alpha_j}<br>$$</p>
 <p>对于图像采样而言，采用简单的$2 \times 2$的卷积核执行图像的下采样，：</p>
 <p>$$<br>\begin{bmatrix}<br>\frac{1}{4} &amp; \frac{1}{4} \\<br>\frac{1}{4} &amp; \frac{1}{4} \\<br>\end{bmatrix}<br>$$</p>
