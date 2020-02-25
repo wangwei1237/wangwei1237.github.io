@@ -10,7 +10,7 @@
    
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    The Proof of the ssim_end1() in FFMpeg |  17哥
+    如何计算MS-SSIM |  17哥
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -35,7 +35,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-the-proof-of-the-SSIM-in-FFMpeg" class="article article-type-post" itemscope
+  <article id="post-how-to-calculate-the-MS-SSIM" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -43,7 +43,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  The Proof of the ssim_end1() in FFMpeg
+  如何计算MS-SSIM
 </h1>
   
 
@@ -52,10 +52,14 @@
 
     
     <div class="article-meta">
-      <a href="/2020/02/18/the-proof-of-the-SSIM-in-FFMpeg/" class="article-date">
-  <time datetime="2020-02-18T01:41:36.000Z" itemprop="datePublished">2020-02-18</time>
+      <a href="/2020/02/25/how-to-calculate-the-MS-SSIM/" class="article-date">
+  <time datetime="2020-02-25T07:08:40.000Z" itemprop="datePublished">2020-02-25</time>
 </a>
       
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
+  </div>
+
       
       
 <div class="word_count">
@@ -63,7 +67,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">269字</span>
+            <span class="post-count">1k字</span>
         </span>
     </span>
 
@@ -72,7 +76,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1分钟</span>
+            <span class="post-count">4分钟</span>
         </span>
     </span>
 </div>
@@ -83,6 +87,8 @@
 
     
     
+    <div class="tocbot"></div>
+
 
 
 
@@ -97,22 +103,48 @@
       
 
       
-      <p>$$<br>SSIM(a,b)=\frac{(2\mu_a\mu_b+C_1)(2\sigma_{ab}+C_2)}{(\mu_a^2+\mu_b^2+C_1)(\sigma_a^2+\sigma_b^2+C_2)}<br>$$</p>
-<p>$$<br>\mu_a=\frac{1}{64}fs1<br>$$</p>
+      <h2 id="SSIM的本质及其缺点"><a href="#SSIM的本质及其缺点" class="headerlink" title="SSIM的本质及其缺点"></a>SSIM的本质及其缺点</h2><p>在<a href="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/">FFMpeg如何计算图像的SSIM</a>中，详细介绍了$SSIM$的相关概念，并对FFMpeg中的$SSIM$实现做了详细的分析。$SSIM$算法基于HVS更适合从图像中提取结构信息的事实，并且利用结构相似度来计算图像的感知质量。在Z. Wang等人的论文<strong>Multi-scale structural similarity for image quality assessment</strong>中也提到，$SSIM$算法要好于当时的其它的感知图像质量指标。</p>
+<p>就其本质而言，$SSIM$是一种单尺度的算法，但是实际上正确的图像尺度取决于用户的观看条件，例如显示设备的分辨率，用户的观看距离等。因此，用单尺度的$SSIM$算法来评估图像的感知质量也存在其缺点。</p>
 <a id="more"></a>
 
-<p>$$<br>\mu_b=\frac{1}{64}fs2<br>$$</p>
-<p>$$<br>\sigma_a^2+\sigma_b^2=\frac{1}{63}(\sum_{i,j}(a(i,j)-\mu_a)^2 + \sum_{i,j}(b(i,j)-\mu_b)^2)<br>$$</p>
-<p>$$<br>=\frac{1}{63}\sum_{i,j}(a(i,j)^2+\mu_a^2-2 \cdot a(i,j) \cdot \mu_a+b(i,j)^2+\mu_b^2-2 \cdot b(i,j) \cdot \mu_b)<br>$$</p>
-<p>$$<br>=\frac{1}{63}(\sum_{i,j}(a(i,j)^2+b(i,j)^2)-2(\mu_a\sum_{i,j}a(i,j)+\mu_b\sum_{i,j}b(i,j))+\sum_{i,j}<br>(\mu_a^2+\mu_b^2))<br>$$<br>$$<br>=\frac{1}{63}(fss-2 \cdot \frac{1}{64}(fs1^2+fs2^2)+\frac{1}{64}(fs1^2+fs2^2)<br>$$</p>
-<p>$$<br>=\frac{1}{63}(fss-\frac{1}{64}(fs1^2+fs2^2))<br>$$</p>
-<p>$$<br>=\frac{1}{63}\frac{1}{64}(64fss-fs1^2-fs2^2)<br>$$</p>
-<p>$$<br>\sigma_{ab}=\frac{1}{63}\sum_{i,j}((a(i,j)-\mu_a)(b(i,j)-\mu_b))<br>$$</p>
-<p>$$<br>=\frac{1}{63}\sum_{i,j}(a(i,j) \cdot b(i,j)-a(i,j)\mu_b-b(i,j)\mu_a+\mu_a \cdot \mu_b)<br>$$</p>
-<p>$$<br>=\frac{1}{63}(fs12-fs1 \cdot \mu_b-fs2 \cdot \mu_a+fs1 \cdot \mu_b)<br>$$</p>
-<p>$$<br>=\frac{1}{63}(fs12-\frac{1}{64}fs1 \cdot fs2)<br>$$</p>
-<p>$$<br>=\frac{1}{63}\frac{1}{64}(64fs12-fs1 \cdot fs2)<br>$$</p>
-<p>$$<br>\therefore SSIM(a,b)=\frac{(2fs1 \cdot fs2+64^2C_1)(2 \cdot 64fs12-2fs1fs2+63 \cdot 64C_2)}{(fs1^2+fs2^2+64^2C_1)(64fss-fs1^2-fs2^2+63 \cdot 64C_2)}<br>$$</p>
+<h2 id="MS-SSIM的基本概念"><a href="#MS-SSIM的基本概念" class="headerlink" title="MS-SSIM的基本概念"></a>MS-SSIM的基本概念</h2><p>图像细节的可感知性取决于：</p>
+<ul>
+<li>图像信号的采样密度</li>
+<li>用户的观看距离</li>
+<li>HVS的感知能力。</li>
+</ul>
+<p>当如上的因素发生变化时，则对给定图像的主观评估也会随着发生变化。单尺度的SSIM算法可能仅适用于某个特定的场景。为了解决该问题，论文<strong>Multi-scale structural similarity for image quality assessment</strong>在$SSIM$算法的基础上提出了如图1所示的多尺度的结构相似性评估算法，即$MS-SSIM$算法。</p>
+<p><img src="/2020/02/25/how-to-calculate-the-MS-SSIM/1.jpg" alt="图1. MS-SSIM算法"></p>
+<p>图1. MS-SSIM算法，L 表示低通滤波器，2↓ 表示采样间隔为2的下采样</p>
+<p>因此，$MS-SSIM$实际上是一种以不同分辨率合并图像细节的图像质量评估方法。对于$MS-SSIM$，原始图像的$scale=1$，图像的最大$scale=M$。对$scale=j$的尺度而言，其亮度、对比度、结构的相似性分别表示为：</p>
+<ul>
+<li>$l_j(X,Y)$</li>
+<li>$c_j(X,Y)$</li>
+<li>$s_j(X,Y)$</li>
+</ul>
+<p>因此，根据图1可以得到$MS-SSIM$的计算方式。</p>
+<p>$$<br>MS-SSIM(X,Y)=\big[l_M(X,Y)\big]^{\alpha_M} \cdot \prod _{j=1}^{M}  {\big[c_j(X,Y)\big]^{\beta_j}\big[s_j(X,Y)\big]^{\gamma_j}}<br>$$</p>
+<p>一般，令$\alpha_j=\beta_j=\gamma_j \ \ , \ j \in [1, M]$，我们得到：</p>
+<p>$$<br>MS-SSIM(X,Y)=\big[l_M(X,Y)\big]^{\alpha_M} \cdot \prod _{j=1}^{M}  {\big[c_j(X,Y) \cdot s_j(X,Y)\big]^{\alpha_j}}<br>$$</p>
+<p><strong>Multi-scale structural similarity for image quality assessment</strong>给出了一种计算各尺度参数的方法，并同时给出不同尺度的参数值：</p>
+<ul>
+<li>$\alpha_1=0.0448$</li>
+<li>$\alpha_2=0.2856$</li>
+<li>$\alpha_3=0.3001$</li>
+<li>$\alpha_4=0.2363$</li>
+<li>$\alpha_5=0.1333$</li>
+</ul>
+<h2 id="MS-SSIM算法的实现"><a href="#MS-SSIM算法的实现" class="headerlink" title="MS-SSIM算法的实现"></a>MS-SSIM算法的实现</h2><p>采用FFMpeg中的$SSIM$的实现方式来实现MS-SSIM。根据<a href="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/">FFMpeg如何计算图像的SSIM</a>的介绍：</p>
+<p>$$<br>MS-SSIM(X,Y)=\bigg(\frac{2s1 \cdot s2 + ssimC_{1}}{s1^2+s2^2+ssimC_{1}}\bigg)^{\alpha_{M}} \cdot \prod _{j=1}^{M}\bigg(\frac{2covar + ssimC_2}{vars + ssimC_2}\bigg)^{\alpha_j}<br>$$</p>
+<p>对于图像采样而言，采用简单的$2 \times 2$的卷积核执行图像的下采样，：</p>
+<p>$$<br>\begin{bmatrix}<br>\frac{1}{4} &amp; \frac{1}{4} \\<br>\frac{1}{4} &amp; \frac{1}{4} \\<br>\end{bmatrix}<br>$$</p>
+<p>具体的采样代码如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void downsample_2x2_mean(pixel *input, int width, int height, pixel *output) &#123;</span><br><span class="line">    int downsample_width &#x3D;  width &gt;&gt; 1;</span><br><span class="line">    int downsample_height &#x3D; height &gt;&gt; 1;</span><br><span class="line"></span><br><span class="line">    for (int y &#x3D; 0; y &lt; downsample_height; y++) &#123;</span><br><span class="line">        for (int x &#x3D;0; x &lt; downsample_width; x++) &#123;</span><br><span class="line">            output[y * downsample_width + x] &#x3D; (input[2 * y * width + 2 * x] +</span><br><span class="line">                                                input[2 * y * width + 2 * x + 1] +</span><br><span class="line">                                                input[(2 * y + 1) * width + 2 * x] +</span><br><span class="line">                                                input[(2 * y + 1) * width + 2 * x + 1]) &#x2F; 4;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后利用<a href="https://github.com/FFmpeg/FFmpeg/blob/master/tests/tiny_ssim.c" target="_blank" rel="noopener">tiny_ssim</a>中的<code>ssim_plane()</code>迭代计算$MS-SSIM$。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">float ms_ssim_plane(pixel *pix1, pixel *pix2, int width, int height, int scale) &#123;</span><br><span class="line">    for (int i &#x3D; 0; i &lt; w * h; i++) &#123;</span><br><span class="line">        ori_img1[i] &#x3D; pix1[i];</span><br><span class="line">        ori_img2[i] &#x3D; pix2[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 计算每个尺度的ssim值.</span><br><span class="line">    for (int i &#x3D; 1; i &lt;&#x3D; scale; i++) &#123;</span><br><span class="line">        if (i !&#x3D; 1) &#123;</span><br><span class="line">            downsample_2x2_mean(ori_img1, w, h, sample_img1);</span><br><span class="line">            downsample_2x2_mean(ori_img2, w, h, sample_img2);</span><br><span class="line">            w &#x3D; w &gt;&gt; 1;</span><br><span class="line">            h &#x3D; h &gt;&gt; 1;</span><br><span class="line">            for (int j &#x3D; 0; j &lt; w * h; j++) &#123;</span><br><span class="line">                ori_img1[j] &#x3D; sample_img1[j];</span><br><span class="line">                ori_img2[j] &#x3D; sample_img2[j];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        value &#x3D; ssim_plane(ori_img1, w, ori_img2, w, w, h, temp, NULL);</span><br><span class="line">        result *&#x3D; pow(value.C_S, WEIGHT[i-1]);</span><br><span class="line">        luminance_value[i-1] &#x3D; value.L;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    result *&#x3D; pow(luminance_value[scale-1], WEIGHT[scale-1]);</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整的代码可以参考<a href="https://github.com/wangwei1237/video_codec_evaluation/blob/master/test/test_msssim.cpp" target="_blank" rel="noopener">test_msssim.cpp</a>。代码的很大部分是由我的同事<em>贤杰</em>(github: <a href="https://github.com/bodhisatan" target="_blank" rel="noopener">@bodhisatan</a>)实现的，在此一并表示感谢。</p>
 
       
       <!-- reward -->
@@ -167,14 +199,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2020/02/18/the-proof-of-the-SSIM-in-FFMpeg/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2020/02/25/how-to-calculate-the-MS-SSIM/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFMpeg/" rel="tag">FFMpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSIM/" rel="tag">SSIM</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MS-SSIM/" rel="tag">MS-SSIM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSIM/" rel="tag">SSIM</a></li></ul>
 
 
     </footer>
@@ -185,19 +217,10 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/02/25/how-to-calculate-the-MS-SSIM/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            如何计算MS-SSIM
-          
-        </div>
-      </a>
     
-    
-      <a href="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/" class="article-nav-link">
+      <a href="/2020/02/18/the-proof-of-the-SSIM-in-FFMpeg/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">FFMpeg如何计算图像的SSIM</div>
+        <div class="article-nav-title">The Proof of the ssim_end1() in FFMpeg</div>
       </a>
     
   </nav>
