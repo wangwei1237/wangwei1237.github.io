@@ -199,34 +199,34 @@
 </ul>
 <h1 id="基本术语"><a href="#基本术语" class="headerlink" title="基本术语"></a>基本术语</h1><p>一个<strong>图像</strong>可以视作一个<strong>二维矩阵</strong>。如果将<strong>色彩</strong>考虑进来，我们可以做出推广：将这个图像视作一个<strong>三维矩阵</strong>——多出来的维度用于储存色彩信息。</p>
 <p>如果我们选择三原色（红、绿、蓝）代表这些色彩，这就定义了三个平面：第一个是红色平面，第二个是绿色平面，最后一个是蓝色平面。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/image_3d_matrix_rgb.png" alt="an image is a 3d matrix RGB" title="An image is a 3D matrix"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/image_3d_matrix_rgb.png" alt="an image is a 3d matrix RGB" title="An image is a 3D matrix"></p>
 <p>我们把这个矩阵里的每一个点称为<strong>像素</strong>（图像元素）。像素的色彩由三原色的<strong>强度</strong>（通常用数值表示）表示。例如，一个<strong>红色像素</strong>是指强度为 0 的绿色，强度为 0 的蓝色和强度最大的红色。<strong>粉色像素</strong>可以通过三种颜色的组合表示。如果规定强度的取值范围是 0 到 255，<strong>红色 255、绿色 192、蓝色 203</strong> 则表示粉色。</p>
 <blockquote>
 <h3 id="编码彩色图像的其它方法"><a href="#编码彩色图像的其它方法" class="headerlink" title="编码彩色图像的其它方法"></a>编码彩色图像的其它方法</h3><p>还有许多其它模型也可以用来表示色彩，进而组成图像。例如，给每种颜色都标上序号（如下图），这样每个像素仅需一个字节就可以表示出来，而不是 RGB 模型通常所需的 3 个。在这样一个模型里我们可以用一个二维矩阵来代替三维矩阵去表示我们的色彩，这将节省存储空间，但色彩的数量将会受限。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/nes-color-palette.png" alt="NES palette" title="NES palette"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/nes-color-palette.png" alt="NES palette" title="NES palette"></p>
 </blockquote>
 <p>例如以下几张图片。第一张包含所有颜色平面。剩下的分别是红、绿、蓝色平面（显示为灰调）（译注：颜色强度高的地方显示为亮色，强度低为暗色）。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/rgb_channels_intensity.png" alt="RGB channels intensity" title="RGB channels intensity"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/rgb_channels_intensity.png" alt="RGB channels intensity" title="RGB channels intensity"></p>
 <p>我们可以看到，对于最终的成像，红色平面对强度的贡献更多（三个平面最亮的是红色平面），蓝色平面（最后一张图片）的贡献大多只在马里奥的眼睛和他衣服的一部分。所有颜色平面对马里奥的胡子（最暗的部分）均贡献较少。</p>
 <p>存储颜色的强度，需要占用一定大小的数据空间，这个大小被称为颜色深度。假如每个颜色（平面）的强度占用 8 bit（取值范围为 0 到 255），那么颜色深度就是 24（8*3）bit，我们还可以推导出我们可以使用 2 的 24 次方种不同的颜色。</p>
 <blockquote>
 <p>很棒的学习材料：<a href="http://www.cambridgeincolour.com/tutorials/camera-sensors.htm" target="_blank" rel="noopener">现实世界的照片是如何拍摄成 0 和 1 的</a>。</p>
 </blockquote>
 <p>图片的另一个属性是<strong>分辨率</strong>，即一个平面内像素的数量。通常表示成宽<em>高，例如下面这张 *</em>4x4** 的图片。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/resolution.png" alt="image resolution" title="image resolution"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/resolution.png" alt="image resolution" title="image resolution"></p>
 <blockquote>
 <h3 id="自己动手：玩转图像和颜色"><a href="#自己动手：玩转图像和颜色" class="headerlink" title="自己动手：玩转图像和颜色"></a>自己动手：玩转图像和颜色</h3><p>你可以使用 <a href="#如何使用-jupyter">jupyter</a>（python, numpy, matplotlib 等等）<a href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2020/02/28/Introduction-to-digital-video-technology/py/image_as_3d_array.ipynb" target="_blank" rel="noopener">玩转图像</a>。</p>
 <p>你也可以学习<a href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2020/02/28/Introduction-to-digital-video-technology/py/filters_are_easy.ipynb" target="_blank" rel="noopener">图像滤镜（边缘检测，磨皮，模糊。。。）的原理</a>。</p>
 </blockquote>
 <p>图像或视频还有一个属性是宽高比，它简单地描述了图像或像素的宽度和高度之间的比例关系。</p>
 <p>当人们说这个电影或照片是 16:9 时，通常是指显示宽高比（DAR），然而我们也可以有不同形状的单个像素，我们称为像素宽高比（PAR）。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/DAR.png" alt="display aspect ratio" title="display aspect ratio"></p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/PAR.png" alt="pixel aspect ratio" title="pixel aspect ratio"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/DAR.png" alt="display aspect ratio" title="display aspect ratio"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/PAR.png" alt="pixel aspect ratio" title="pixel aspect ratio"></p>
 <blockquote>
 <h2 id="DVD-的-DAR-是-4-3"><a href="#DVD-的-DAR-是-4-3" class="headerlink" title="DVD 的 DAR 是 4:3"></a>DVD 的 DAR 是 4:3</h2><p>虽然 DVD 的实际分辨率是 704x480，但它依然保持 4:3 的宽高比，因为它有一个 10:11（704x10／480x11）的 PAR。</p>
 </blockquote>
 <p>现在我们可以将<strong>视频</strong>定义为在<strong>单位时间</strong>内<strong>连续的 n 帧</strong>，这可以视作一个新的维度，n 即为帧率，若单位时间为秒，则等同于 FPS (每秒帧数 Frames Per Second)。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/video.png" alt="video" title="video"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/video.png" alt="video" title="video"></p>
 <p>播放一段视频每秒所需的数据量就是它的<strong>比特率</strong>（即常说的码率）。</p>
 <blockquote>
 <p>比特率 = 宽 * 高 * 颜色深度 * 帧每秒</p>
@@ -235,11 +235,11 @@
 <p>当<strong>比特率</strong>几乎恒定时称为恒定比特率（<strong>CBR</strong>）；但它也可以变化，称为可变比特率（<strong>VBR</strong>）。</p>
 <blockquote>
 <p>这个图形显示了一个受限的 VBR，当帧为黑色时不会花费太多的数据量。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/vbr.png" alt="constrained vbr" title="constrained vbr"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/vbr.png" alt="constrained vbr" title="constrained vbr"></p>
 </blockquote>
 <p>在早期，工程师们想出了一项技术能将视频的感官帧率加倍而<strong>没有消耗额外带宽</strong>。这项技术被称为<strong>隔行扫描</strong>；总的来说，它在一个时间点发送一个画面——画面用于填充屏幕的一半，而下一个时间点发送的画面用于填充屏幕的另一半。</p>
 <p>如今的屏幕渲染大多使用<strong>逐行扫描技术</strong>。这是一种显示、存储、传输运动图像的方法，每帧中的所有行都会被依次绘制。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/interlaced_vs_progressive.png" alt="interlaced vs progressive" title="interlaced vs progressive"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/interlaced_vs_progressive.png" alt="interlaced vs progressive" title="interlaced vs progressive"></p>
 <p>现在我们知道了数字化<strong>图像</strong>的原理；它的<strong>颜色</strong>的编排方式；给定<strong>帧率</strong>和<strong>分辨率</strong>时，展示一个视频需要花费多少<strong>比特率</strong>；它是恒定的（CBR）还是可变的（VBR）；还有很多其它内容，如隔行扫描和 PAR。</p>
 <blockquote>
 <h2 id="自己动手：检查视频属性"><a href="#自己动手：检查视频属性" class="headerlink" title="自己动手：检查视频属性"></a>自己动手：检查视频属性</h2><p>你可以<a href="https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#inspect-stream" target="_blank" rel="noopener">使用 ffmpeg 或 mediainfo 检查大多数属性的解释</a>。</p>
@@ -250,14 +250,14 @@
 </blockquote>
 <p>为此，我们可以<strong>利用视觉特性</strong>：和区分颜色相比，我们区分亮度要更加敏锐。<strong>时间上的重复</strong>：一段视频包含很多只有一点小小改变的图像。<strong>图像内的重复</strong>：每一帧也包含很多颜色相同或相似的区域。</p>
 <h2 id="颜色，亮度和我们的眼睛"><a href="#颜色，亮度和我们的眼睛" class="headerlink" title="颜色，亮度和我们的眼睛"></a>颜色，亮度和我们的眼睛</h2><p>我们的眼睛<a href="http://vanseodesign.com/web-design/color-luminance/" target="_blank" rel="noopener">对亮度比对颜色更敏感</a>，你可以看看下面的图片自己测试。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/luminance_vs_color.png" alt="luminance vs color" title="luminance vs color"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/luminance_vs_color.png" alt="luminance vs color" title="luminance vs color"></p>
 <p>如果你看不出左图的<strong>方块 A 和方块 B</strong> 的颜色是<strong>相同的</strong>，那么好，是我们的大脑玩了一个小把戏，这让我们更多的去注意光与暗，而不是颜色。右边这里有一个使用同样颜色的连接器，那么我们（的大脑）就能轻易分辨出事实，它们是同样的颜色。</p>
 <blockquote>
 <p><strong>简单解释我们的眼睛工作的原理</strong></p>
 <p><a href="http://www.biologymad.com/nervoussystem/eyenotes.htm" target="_blank" rel="noopener">眼睛是一个复杂的器官</a>，有许多部分组成，但我们最感兴趣的是视锥细胞和视杆细胞。眼睛有<a href="https://en.wikipedia.org/wiki/Photoreceptor_cell" target="_blank" rel="noopener">大约1.2亿个视杆细胞和6百万个视锥细胞</a>。</p>
 <p><strong>简单来说</strong>，让我们把颜色和亮度放在眼睛的功能部位上。<a href="https://en.wikipedia.org/wiki/Rod_cell" target="_blank" rel="noopener">视杆细胞</a><strong>主要负责亮度</strong>，而<a href="https://en.wikipedia.org/wiki/Cone_cell" target="_blank" rel="noopener">视锥细胞</a><strong>负责颜色</strong>，有三种类型的视锥，每个都有不同的颜料，叫做：<a href="https://upload.wikimedia.org/wikipedia/commons/1/1e/Cones_SMJ2_E.svg" target="_blank" rel="noopener">S-视锥（蓝色），M-视锥（绿色）和L-视锥（红色）</a>。</p>
 <p>既然我们的视杆细胞（亮度）比视锥细胞多很多，一个合理的推断是相比颜色，我们有更好的能力去区分黑暗和光亮。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/eyes.jpg" alt="eyes composition" title="eyes composition"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/eyes.jpg" alt="eyes composition" title="eyes composition"></p>
 </blockquote>
 <p>一旦我们知道我们对<strong>亮度</strong>（图像中的亮度）更敏感，我们就可以利用它。</p>
 <h3 id="颜色模型"><a href="#颜色模型" class="headerlink" title="颜色模型"></a>颜色模型</h3><p>我们最开始学习的<a href="#基本术语">彩色图像的原理</a>使用的是 <strong>RGB 模型</strong>，但也有其他模型。有一种模型将亮度（光亮）和色度（颜色）分离开，它被称为 <strong>YCbCr</strong><sup>*</sup>。</p>
@@ -265,7 +265,7 @@
 <p><sup>*</sup> 有很多种模型做同样的分离。</p>
 </blockquote>
 <p>这个颜色模型使用 <strong>Y</strong> 来表示亮度，还有两种颜色通道：Cb（蓝色色度） 和 Cr（红色色度）。YCbCr 可以由 RGB 转换得来，也可以转换回 RGB。使用这个模型我们可以创建拥有完整色彩的图像，如下图。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/ycbcr.png" alt="ycbcr 例子" title="ycbcr 例子"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/ycbcr.png" alt="ycbcr 例子" title="ycbcr 例子"></p>
 <h3 id="YCbCr-和-RGB-之间的转换"><a href="#YCbCr-和-RGB-之间的转换" class="headerlink" title="YCbCr 和 RGB 之间的转换"></a>YCbCr 和 RGB 之间的转换</h3><p>有人可能会问，在<strong>不使用绿色（色度）</strong>的情况下，我们如何表现出所有的色彩？</p>
 <p>为了回答这个问题，我们将介绍从 RGB 到 YCbCr 的转换。我们将使用 <a href="https://en.wikipedia.org/wiki/ITU-R" target="_blank" rel="noopener">ITU-R 小组</a>*建议的<a href="https://en.wikipedia.org/wiki/Rec._601" target="_blank" rel="noopener">标准 BT.601</a> 中的系数。</p>
 <p>第一步是计算亮度，我们将使用 ITU 建议的常量，并替换 RGB 值。</p>
@@ -281,9 +281,9 @@
 <p><sup>*</sup>组织和标准在数字视频领域中很常见，它们通常定义什么是标准，例如，<a href="https://en.wikipedia.org/wiki/Rec._2020" target="_blank" rel="noopener">什么是 4K？我们应该使用什么帧率？分辨率？颜色模型？</a></p>
 </blockquote>
 <p>通常，<strong>显示屏</strong>（监视器，电视机，屏幕等等）<strong>仅使用 RGB 模型</strong>，并以不同的方式来组织，看看下面这些放大效果：</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/new_pixel_geometry.jpg" alt="pixel geometry" title="pixel geometry"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/new_pixel_geometry.jpg" alt="pixel geometry" title="pixel geometry"></p>
 <h3 id="色度子采样"><a href="#色度子采样" class="headerlink" title="色度子采样"></a>色度子采样</h3><p>一旦我们能从图像中分离出亮度和色度，我们就可以利用人类视觉系统对亮度比色度更敏感的特点，选择性地剔除信息。<strong>色度子采样</strong>是一种编码图像时，使<strong>色度分辨率低于亮度</strong>的技术。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/ycbcr_subsampling_resolution.png" alt="ycbcr 子采样分辨率" title="ycbcr 子采样分辨率"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/ycbcr_subsampling_resolution.png" alt="ycbcr 子采样分辨率" title="ycbcr 子采样分辨率"></p>
 <p>我们应该减少多少色度分辨率呢？已经有一些模式定义了如何处理分辨率和合并（<code>最终的颜色 = Y + Cb + Cr</code>）。</p>
 <p>这些模式称为子采样系统，并被表示为 3 部分的比率 - <code>a:x:y</code>，其定义了色度平面的分辨率，与亮度平面上的、分辨率为 <code>a x 2</code> 的小块之间的关系。</p>
 <ul>
@@ -298,77 +298,77 @@
 <blockquote>
 <p>YCbCr 4:2:0 合并</p>
 <p>这是使用 YCbCr 4:2:0 合并的一个图像的一块，注意我们每像素只花费 12bit。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/ycbcr_420_merge.png" alt="YCbCr 4:2:0 合并" title="YCbCr 4:2:0 合并"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/ycbcr_420_merge.png" alt="YCbCr 4:2:0 合并" title="YCbCr 4:2:0 合并"></p>
 </blockquote>
 <p>下图是同一张图片使用几种主要的色度子采样技术进行编码，第一行图像是最终的 YCbCr，而最后一行图像展示了色度的分辨率。这么小的损失确实是一个伟大的胜利。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/chroma_subsampling_examples.jpg" alt="色度子采样例子" title="色度子采样例子"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/chroma_subsampling_examples.jpg" alt="色度子采样例子" title="色度子采样例子"></p>
 <p>前面我们计算过我们需要 <a href="#消除冗余">278GB 去存储一个一小时长，分辨率在720p和30fps的视频文件</a>。如果我们使用 <code>YCbCr 4:2:0</code> 我们能剪掉<code>一半的大小（139GB）</code><sup>*</sup>，但仍然不够理想。</p>
 <blockquote>
 <p><sup>*</sup> 我们通过将宽、高、颜色深度和 fps 相乘得出这个值。前面我们需要 24 bit，现在我们只需要 12 bit。</p>
 </blockquote>
 <blockquote>
 <h3 id="自己动手：检查-YCbCr-直方图"><a href="#自己动手：检查-YCbCr-直方图" class="headerlink" title="自己动手：检查 YCbCr 直方图"></a>自己动手：检查 YCbCr 直方图</h3><p>你可以<a href="https://github.com/leandromoreira/digital_video_introduction/blob/master/encoding_pratical_examples.md#generates-yuv-histogram" target="_blank" rel="noopener">使用 ffmpeg 检查 YCbCr 直方图</a>。这个场景有更多的蓝色贡献，由<a href="https://en.wikipedia.org/wiki/Histogram" target="_blank" rel="noopener">直方图</a>显示。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/yuv_histogram.png" alt="ycbcr 颜色直方图" title="ycbcr 颜色直方图"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/yuv_histogram.png" alt="ycbcr 颜色直方图" title="ycbcr 颜色直方图"></p>
 </blockquote>
 <h2 id="帧类型"><a href="#帧类型" class="headerlink" title="帧类型"></a>帧类型</h2><p>现在我们进一步消除<code>时间冗余</code>，但在这之前让我们来确定一些基本术语。假设我们一段 30fps 的影片，这是最开始的 4 帧。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_1.png" alt="球 1" title="球 1"> <img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_2.png" alt="球 2" title="球 2"> <img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_3.png" alt="球 3" title="球 3"><br><img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_4.png" alt="球 4" title="球 4"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_1.png" alt="球 1" title="球 1"> <img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_2.png" alt="球 2" title="球 2"> <img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_3.png" alt="球 3" title="球 3"><br><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_4.png" alt="球 4" title="球 4"></p>
 <p>我们可以在帧内看到<strong>很多重复内容</strong>，如<strong>蓝色背景</strong>，从 0 帧到第 3 帧它都没有变化。为了解决这个问题，我们可以将它们<strong>抽象地分类</strong>为三种类型的帧。</p>
 <h3 id="I-帧（帧内编码，关键帧）"><a href="#I-帧（帧内编码，关键帧）" class="headerlink" title="I 帧（帧内编码，关键帧）"></a>I 帧（帧内编码，关键帧）</h3><p>I 帧（可参考，关键帧，帧内编码）是一个<strong>自足的帧</strong>。它不依靠任何东西来渲染，I 帧与静态图片相似。第一帧通常是 I 帧，但我们将看到 I 帧被定期插入其它类型的帧之间。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_1.png" alt="球 1" title="球 1"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_1.png" alt="球 1" title="球 1"></p>
 <h3 id="P-帧（预测）"><a href="#P-帧（预测）" class="headerlink" title="P 帧（预测）"></a>P 帧（预测）</h3><p>P 帧利用了一个事实：当前的画面几乎总能<strong>使用之前的一帧进行渲染</strong>。例如，在第二帧，唯一的改变是球向前移动了。仅仅使用（第二帧）对前一帧的引用和差值，我们就能重建前一帧。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_1.png" alt="球 1" title="球 1"> &lt;-  <img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_2_diff.png" alt="球 2" title="球 2"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_1.png" alt="球 1" title="球 1"> &lt;-  <img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_2_diff.png" alt="球 2" title="球 2"></p>
 <blockquote>
 <h4 id="自己动手：具有单个-I-帧的视频"><a href="#自己动手：具有单个-I-帧的视频" class="headerlink" title="自己动手：具有单个 I 帧的视频"></a>自己动手：具有单个 I 帧的视频</h4><p>既然 P 帧使用较少的数据，为什么我们不能用<a href="https://github.com/leandromoreira/digital_video_introduction/blob/master/encoding_pratical_examples.md#1-i-frame-and-the-rest-p-frames" target="_blank" rel="noopener">单个 I 帧和其余的 P 帧</a>来编码整个视频？</p>
 <p>编码完这个视频之后，开始观看它，并<strong>快进到视频的末尾部分</strong>，你会注意到<strong>它需要花一些时间</strong>才真正跳转到这部分。这是因为 <strong>P 帧需要一个引用帧</strong>（比如 I 帧）才能渲染。</p>
 <p>你可以做的另一个快速试验，是使用单个 I 帧编码视频，然后<a href="https://github.com/leandromoreira/digital_video_introduction/blob/master/encoding_pratical_examples.md#1-i-frames-per-second-vs-05-i-frames-per-second" target="_blank" rel="noopener">再次编码且每 2 秒插入一个 I 帧</a>，并<strong>比较成品的大小</strong>。</p>
 </blockquote>
 <h3 id="B-帧（双向预测）"><a href="#B-帧（双向预测）" class="headerlink" title="B 帧（双向预测）"></a>B 帧（双向预测）</h3><p>如何引用前面和后面的帧去做更好的压缩？！简单地说 B 帧就是这么做的。</p>
-<p> <img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_1.png" alt="球 1" title="球 1"> &lt;-  <img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_2_diff.png" alt="球 2" title="球 2"> -&gt; <img src="/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_3.png" alt="球 3" title="球 3"></p>
+<p> <img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_1.png" alt="球 1" title="球 1"> &lt;-  <img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_2_diff.png" alt="球 2" title="球 2"> -&gt; <img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_background_ball_3.png" alt="球 3" title="球 3"></p>
 <blockquote>
 <h4 id="自己动手：使用-B-帧比较视频"><a href="#自己动手：使用-B-帧比较视频" class="headerlink" title="自己动手：使用 B 帧比较视频"></a>自己动手：使用 B 帧比较视频</h4><p>你可以生成两个版本，一个使用 B 帧，另一个<a href="https://github.com/leandromoreira/digital_video_introduction/blob/master/encoding_pratical_examples.md#no-b-frames-at-all" target="_blank" rel="noopener">全部不使用 B 帧</a>，然后查看文件的大小以及画质。</p>
 </blockquote>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>这些帧类型用于提供更好的压缩率，我们将在下一章看到这是如何发生的。现在，我们可以想到 I 帧是昂贵的，P 帧是便宜的，最便宜的是 B 帧。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/frame_types.png" alt="帧类型例子" title="帧类型例子"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/frame_types.png" alt="帧类型例子" title="帧类型例子"></p>
 <h2 id="时间冗余（帧间预测）"><a href="#时间冗余（帧间预测）" class="headerlink" title="时间冗余（帧间预测）"></a>时间冗余（帧间预测）</h2><p>让我们探究去除<strong>时间上的重复</strong>，去除这一类冗余的技术就是<strong>帧间预测</strong>。</p>
 <p>我们将尝试<strong>花费较少的数据量</strong>去编码在时间上连续的 0 号帧和 1 号帧。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/original_frames.png" alt="原始帧" title="原始帧"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/original_frames.png" alt="原始帧" title="原始帧"></p>
 <p>我们可以做个减法，我们简单地<strong>用 0 号帧减去 1 号帧</strong>，得到残差，这样我们就只需要<strong>对残差进行编码</strong>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/difference_frames.png" alt="残差帧" title="残差帧"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/difference_frames.png" alt="残差帧" title="残差帧"></p>
 <p>但我们有一个<strong>更好的方法</strong>来节省数据量。首先，我们将<code>0 号帧</code> 视为一个个分块的集合，然后我们将尝试将 <code>帧 1</code> 和 <code>帧 0</code> 上的块相匹配。我们可以将这看作是<strong>运动预测</strong>。</p>
 <blockquote>
 <h3 id="维基百科—块运动补偿"><a href="#维基百科—块运动补偿" class="headerlink" title="维基百科—块运动补偿"></a>维基百科—块运动补偿</h3><p>“运动补偿是一种描述相邻帧（相邻在这里表示在编码关系上相邻，在播放顺序上两帧未必相邻）差别的方法，具体来说是描述前面一帧（相邻在这里表示在编码关系上的前面，在播放顺序上未必在当前帧前面）的每个小块怎样移动到当前帧中的某个位置去。”</p>
 </blockquote>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/original_frames_motion_estimation.png" alt="原始帧运动预测" title="原始帧运动预测"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/original_frames_motion_estimation.png" alt="原始帧运动预测" title="原始帧运动预测"></p>
 <p>我们预计那个球会从 <code>x=0, y=25</code> 移动到 <code>x=6, y=26</code>，<strong>x</strong> 和 <strong>y</strong> 的值就是<strong>运动向量</strong>。<strong>进一步</strong>节省数据量的方法是，只编码这两者运动向量的差。所以，最终运动向量就是 <code>x=6 (6-0), y=1 (26-25)</code>。</p>
 <blockquote>
 <p>实际情况下，这个球会被切成 n 个分区，但处理过程是相同的。</p>
 </blockquote>
 <p>帧上的物体<strong>以三维方式移动</strong>，当球移动到背景时会变小。当我们尝试寻找匹配的块，<strong>找不到完美匹配的块</strong>是正常的。这是一张运动预测与实际值相叠加的图片。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/motion_estimation.png" alt="运动预测" title="运动预测"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/motion_estimation.png" alt="运动预测" title="运动预测"></p>
 <p>但我们能看到当我们使用<strong>运动预测</strong>时，<strong>编码的数据量少于</strong>使用简单的残差帧技术。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/comparison_delta_vs_motion_estimation.png" alt="运动预测 vs 残差 " title="运动预测 vs 残差"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/comparison_delta_vs_motion_estimation.png" alt="运动预测 vs 残差 " title="运动预测 vs 残差"></p>
 <p>你可以<a href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2020/02/28/Introduction-to-digital-video-technology/py/frame_difference_vs_motion_estimation_plus_residual.ipynb" target="_blank" rel="noopener">使用 jupyter 玩转这些概念</a>。</p>
 <blockquote>
 <h3 id="自己动手：查看运动向量"><a href="#自己动手：查看运动向量" class="headerlink" title="自己动手：查看运动向量"></a>自己动手：查看运动向量</h3><p>我们可以<a href="https://github.com/leandromoreira/digital_video_introduction/blob/master/encoding_pratical_examples.md#generate-debug-video" target="_blank" rel="noopener">使用 ffmpeg 生成包含帧间预测（运动向量）的视频</a>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/motion_vectors_ffmpeg.png" alt="ffmpeg 帧间预测（运动向量）" title="ffmpeg 帧间预测（运动向量）"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/motion_vectors_ffmpeg.png" alt="ffmpeg 帧间预测（运动向量）" title="ffmpeg 帧间预测（运动向量）"></p>
 <p>或者我们也可使用 <a href="https://software.intel.com/en-us/intel-video-pro-analyzer" target="_blank" rel="noopener">Intel® Video Pro Analyzer</a>（需要付费，但也有只能查看前 10 帧的免费试用版）。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/inter_prediction_intel_video_pro_analyzer.png" alt="Intel® Video Pro Analyzer 使用帧间预测" title="inter prediction intel video pro analyzer"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/inter_prediction_intel_video_pro_analyzer.png" alt="Intel® Video Pro Analyzer 使用帧间预测" title="inter prediction intel video pro analyzer"></p>
 </blockquote>
 <h2 id="空间冗余（帧内预测）"><a href="#空间冗余（帧内预测）" class="headerlink" title="空间冗余（帧内预测）"></a>空间冗余（帧内预测）</h2><p>如果我们分析一个视频里的<strong>每一帧</strong>，我们会看到有<strong>许多区域是相互关联的</strong>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/repetitions_in_space.png" alt="空间内重复" title="空间内重复"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/repetitions_in_space.png" alt="空间内重复" title="空间内重复"></p>
 <p>让我们举一个例子。这个场景大部分由蓝色和白色组成。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/smw_bg.png" alt="smw 背景" title="smw 背景"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_bg.png" alt="smw 背景" title="smw 背景"></p>
 <p>这是一个 <code>I 帧</code>，我们<strong>不能使用前面的帧来预测</strong>，但我们仍然可以压缩它。我们将编码我们选择的那块红色区域。如果我们<strong>看看它的周围</strong>，我们可以<strong>估计它周围颜色的变化</strong>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/smw_bg_block.png" alt="smw 背景块" title="smw 背景块"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_bg_block.png" alt="smw 背景块" title="smw 背景块"></p>
 <p>我们预测:帧中的颜色在垂直方向上保持一致，这意味着<strong>未知像素的颜色与临近的像素相同</strong>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/smw_bg_prediction.png" alt="smw 背景预测" title="smw 背景预测"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_bg_prediction.png" alt="smw 背景预测" title="smw 背景预测"></p>
 <p>我们的<strong>预测会出错</strong>，所以我们需要先利用这项技术（<strong>帧内预测</strong>），然后<strong>减去实际值</strong>，算出残差，得出的矩阵比原始数据更容易压缩。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/smw_residual.png" alt="smw 残差" title="smw 残差"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/smw_residual.png" alt="smw 残差" title="smw 残差"></p>
 <blockquote>
 <h3 id="自己动手：查看帧内预测"><a href="#自己动手：查看帧内预测" class="headerlink" title="自己动手：查看帧内预测"></a>自己动手：查看帧内预测</h3><p>你可以<a href="https://github.com/leandromoreira/digital_video_introduction/blob/master/encoding_pratical_examples.md#generate-debug-video" target="_blank" rel="noopener">使用 ffmpeg 生成包含宏块及预测的视频</a>。请查看 ffmpeg 文档以了解<a href="https://trac.ffmpeg.org/wiki/Debug/MacroblocksAndMotionVectors" target="_blank" rel="noopener">每个块颜色的含义</a>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/macro_blocks_ffmpeg.png" alt="ffmpeg 帧内预测（宏块）" title="ffmpeg 帧内预测（宏块）"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/macro_blocks_ffmpeg.png" alt="ffmpeg 帧内预测（宏块）" title="ffmpeg 帧内预测（宏块）"></p>
 <p>或者我们也可使用 <a href="https://software.intel.com/en-us/intel-video-pro-analyzer" target="_blank" rel="noopener">Intel® Video Pro Analyzer</a>（需要付费，但也有只能查看前 10 帧的免费试用版）。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/intra_prediction_intel_video_pro_analyzer.png" alt="Intel® Video Pro Analyzer 帧内预测" title="Intel® Video Pro Analyzer 帧内预测"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/intra_prediction_intel_video_pro_analyzer.png" alt="Intel® Video Pro Analyzer 帧内预测" title="Intel® Video Pro Analyzer 帧内预测"></p>
 </blockquote>
 <h1 id="视频编解码器是如何工作的？"><a href="#视频编解码器是如何工作的？" class="headerlink" title="视频编解码器是如何工作的？"></a>视频编解码器是如何工作的？</h1><h2 id="是什么？为什么？怎么做？"><a href="#是什么？为什么？怎么做？" class="headerlink" title="是什么？为什么？怎么做？"></a>是什么？为什么？怎么做？</h2><p><strong>是什么？</strong> 就是用于压缩或解压数字视频的软件或硬件。<strong>为什么？</strong> 人们需要在有限带宽或存储空间下提高视频的质量。还记得当我们计算每秒 30 帧，每像素 24 bit，分辨率是 480x240 的视频<a href="#基本术语">需要多少带宽</a>吗？没有压缩时是 <strong>82.944 Mbps</strong>。电视或互联网提供 HD/FullHD/4K 只能靠视频编解码器。<strong>怎么做？</strong> 我们将简单介绍一下主要的技术。</p>
 <blockquote>
@@ -380,7 +380,7 @@
 <p>视频编解码器 <a href="https://en.wikipedia.org/wiki/H.261" target="_blank" rel="noopener">H.261</a> 诞生在 1990（技术上是 1988），被设计为以 <strong>64 kbit/s 的数据速率</strong>工作。它已经使用如色度子采样、宏块，等等理念。在 1995 年，<strong>H.263</strong> 视频编解码器标准被发布，并继续延续到 2001 年。</p>
 <p>在 2003 年 <strong>H.264/AVC</strong> 的第一版被完成。在同一年，一家叫做 <strong>TrueMotion</strong> 的公司发布了他们的<strong>免版税</strong>有损视频压缩的视频编解码器，称为 <strong>VP3</strong>。在 2008 年，<strong>Google 收购了</strong>这家公司，在同一年发布 <strong>VP8</strong>。在 2012 年 12 月，Google 发布了 <strong>VP9</strong>，<strong>市面上大约有 3/4 的浏览器</strong>（包括手机）支持。</p>
 <p><a href="https://en.wikipedia.org/wiki/AOMedia_Video_1" target="_blank" rel="noopener">AV1</a> 是由 <strong>Google, Mozilla, Microsoft, Amazon, Netflix, AMD, ARM, NVidia, Intel, Cisco</strong> 等公司组成的<a href="http://aomedia.org/" target="_blank" rel="noopener">开放媒体联盟（AOMedia）</a>设计的一种新的视频编解码器，免版税，开源。<strong>第一版</strong> 0.1.0 参考编解码器<strong>发布于 2016 年 4 月 7 号</strong>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/codec_history_timeline.png" alt="编解码器历史线路图" title="编解码器历史线路图"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/codec_history_timeline.png" alt="编解码器历史线路图" title="编解码器历史线路图"></p>
 <blockquote>
 <h3 id="AV1-的诞生"><a href="#AV1-的诞生" class="headerlink" title="AV1 的诞生"></a>AV1 的诞生</h3><p>2015 年早期，Google 正在 VP10 上工作，Xiph (Mozilla) 正在 Daala 上工作，Cisco 开源了它的称为 Thor 的免版税视频编解码器。</p>
 <p>接着 MPEG LA 宣布了 HEVC (H.265) 每年版税的的上限，比 H.264 高 8 倍，但很快他们又再次改变了条款：</p>
@@ -391,18 +391,18 @@
 </ul>
 <p><a href="http://aomedia.org/about-us/" target="_blank" rel="noopener">开放媒体联盟</a>由硬件厂商（Intel, AMD, ARM , Nvidia, Cisco），内容分发商（Google, Netflix, Amazon），浏览器维护者（Google, Mozilla），等公司创建。</p>
 <p>这些公司有一个共同目标，一个免版税的视频编解码器，所以 AV1 诞生时使用了一个更<a href="http://aomedia.org/license/patent/" target="_blank" rel="noopener">简单的专利许可证</a>。<strong>Timothy B. Terriberry</strong> 做了一个精彩的介绍，<a href="https://www.youtube.com/watch?v=lzPaldsmJbk" target="_blank" rel="noopener">关于 AV1 的概念，许可证模式和它当前的状态</a>，就是本节的来源。</p>
-<p>前往 <a href="http://aomanalyzer.org/" target="_blank" rel="noopener">http://aomanalyzer.org/</a>， 你会惊讶于<strong>使用你的浏览器就可以分析 AV1 编解码器</strong>。<br><img src="/2020/02/28/Introduction-to-digital-video-technology/av1_browser_analyzer.png" alt="av1 浏览器分析器" title="浏览器分析器"></p>
+<p>前往 <a href="http://aomanalyzer.org/" target="_blank" rel="noopener">http://aomanalyzer.org/</a>， 你会惊讶于<strong>使用你的浏览器就可以分析 AV1 编解码器</strong>。<br><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/av1_browser_analyzer.png" alt="av1 浏览器分析器" title="浏览器分析器"></p>
 <p>附：如果你想了解更多编解码器的历史，你需要了解<a href="https://www.vcodex.com/video-compression-patents/" target="_blank" rel="noopener">视频压缩专利</a>背后的基本知识。</p>
 </blockquote>
 <h2 id="通用编解码器"><a href="#通用编解码器" class="headerlink" title="通用编解码器"></a>通用编解码器</h2><p>我们接下来要介绍<strong>通用视频编解码器背后的主要机制</strong>，大多数概念都很实用，并被现代编解码器如 VP9, AV1 和 HEVC 使用。需要注意：我们将简化许多内容。有时我们会使用真实的例子（主要是 H.264）来演示技术。</p>
 <h2 id="第一步-图片分区"><a href="#第一步-图片分区" class="headerlink" title="第一步 - 图片分区"></a>第一步 - 图片分区</h2><p>第一步是<strong>将帧</strong>分成几个<strong>分区</strong>，<strong>子分区</strong>甚至更多。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/picture_partitioning.png" alt="图片分区" title="图片分区"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/picture_partitioning.png" alt="图片分区" title="图片分区"></p>
 <p><strong>但是为什么呢？</strong>有许多原因，比如，当我们分割图片时，我们可以更精确的处理预测，在微小移动的部分使用较小的分区，而在静态背景上使用较大的分区。</p>
 <p>通常，编解码器<strong>将这些分区组织</strong>成切片（或瓦片），宏（或编码树单元）和许多子分区。这些分区的最大大小有所不同，HEVC 设置成 64x64，而 AVC 使用 16x16，但子分区可以达到 4x4 的大小。</p>
 <p>还记得我们学过的<strong>帧的分类</strong>吗？你也可以<strong>把这些概念应用到块</strong>，因此我们可以有 I 切片，B 切片，I 宏块等等。</p>
 <blockquote>
 <h3 id="自己动手：查看分区"><a href="#自己动手：查看分区" class="headerlink" title="自己动手：查看分区"></a>自己动手：查看分区</h3><p>我们也可以使用 <a href="https://software.intel.com/en-us/intel-video-pro-analyzer" target="_blank" rel="noopener">Intel® Video Pro Analyzer</a>（需要付费，但也有只能查看前 10 帧的免费试用版）。这是 <a href="https://github.com/leandromoreira/digital_video_introduction/blob/master/encoding_pratical_examples.md#transcoding" target="_blank" rel="noopener">VP9 分区</a>的分析。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/paritions_view_intel_video_pro_analyzer.png" alt="Intel® Video Pro Analyzer VP9 分区视图 " title="Intel® Video Pro Analyzer VP9 分区视图"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/paritions_view_intel_video_pro_analyzer.png" alt="Intel® Video Pro Analyzer VP9 分区视图 " title="Intel® Video Pro Analyzer VP9 分区视图"></p>
 </blockquote>
 <h2 id="第二步-预测"><a href="#第二步-预测" class="headerlink" title="第二步 - 预测"></a>第二步 - 预测</h2><p>一旦我们有了分区，我们就可以在它们之上做出预测。对于<a href="#时间冗余（帧间预测）">帧间预测</a>，我们需要<strong>发送运动向量和残差</strong>；至于<a href="#空间冗余（帧内预测）">帧内预测</a>，我们需要<strong>发送预测方向和残差</strong>。</p>
 <h2 id="第三步-转换"><a href="#第三步-转换" class="headerlink" title="第三步 - 转换"></a>第三步 - 转换</h2><p>在我们得到残差块（<code>预测分区-真实分区</code>）之后，我们可以用一种方式<strong>变换</strong>它，这样我们就知道<strong>哪些像素我们应该丢弃</strong>，还依然能保持<strong>整体质量</strong>。这个确切的行为有几种变换方式。</p>
@@ -417,31 +417,31 @@
 </blockquote>
 <p>如果你不理解每个要点的好处，不用担心，我们会尝试进行一些实验，以便从中看到真正的价值。</p>
 <p>我们来看下面的<strong>像素块</strong>（8x8）：</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/pixel_matrice.png" alt="像素值矩形" title="像素值矩形"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/pixel_matrice.png" alt="像素值矩形" title="像素值矩形"></p>
 <p>下面是其渲染的块图像（8x8）：</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/gray_image.png" alt="像素值矩形" title="像素值矩形"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/gray_image.png" alt="像素值矩形" title="像素值矩形"></p>
 <p>当我们对这个像素块<strong>应用 DCT</strong> 时， 得到如下<strong>系数块</strong>（8x8）：</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/dct_coefficient_values.png" alt="系数值 values" title="系数值"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/dct_coefficient_values.png" alt="系数值 values" title="系数值"></p>
 <p>接着如果我们渲染这个系数块，就会得到这张图片：</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/dct_coefficient_image.png" alt="dct 系数图片" title="dct 系数图片"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/dct_coefficient_image.png" alt="dct 系数图片" title="dct 系数图片"></p>
 <p>如你所见它看起来完全不像原图像，我们可能会注意到<strong>第一个系数</strong>与其它系数非常不同。第一个系数被称为直流分量，代表了输入数组中的<strong>所有样本</strong>，有点<strong>类似于平均值</strong>。</p>
 <p>这个系数块有一个有趣的属性：高频部分和低频部分是分离的。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/dctfrequ.jpg" alt="dct 频率系数属性" title="dct 频率系数属性"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/dctfrequ.jpg" alt="dct 频率系数属性" title="dct 频率系数属性"></p>
 <p>在一张图像中，<strong>大多数能量</strong>会集中在<a href="https://www.iem.thm.de/telekom-labor/zinke/mk/mpeg2beg/whatisit.htm" target="_blank" rel="noopener">低频部分</a>，所以如果我们将图像转换成频率系数，并<strong>丢掉高频系数</strong>，我们就能<strong>减少描述图像所需的数据量</strong>，而不会牺牲太多的图像质量。</p>
 <blockquote>
 <p>频率是指信号变化的速度。</p>
 </blockquote>
 <p>让我们通过实验学习这点，我们将使用 DCT 把原始图像转换为频率（系数块），然后丢掉最不重要的系数。</p>
 <p>首先，我们将它转换为其<strong>频域</strong>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/dct_coefficient_values.png" alt="系数值" title="系数值"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/dct_coefficient_values.png" alt="系数值" title="系数值"></p>
 <p>然后我们丢弃部分（67%）系数，主要是它的右下角部分。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/dct_coefficient_zeroed.png" alt="系数清零" title="系数清零"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/dct_coefficient_zeroed.png" alt="系数清零" title="系数清零"></p>
 <p>然后我们从丢弃的系数块重构图像（记住，这需要可逆），并与原始图像相比较。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/original_vs_quantized.png" alt="原始 vs 量化" title="原始 vs 量化"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/original_vs_quantized.png" alt="原始 vs 量化" title="原始 vs 量化"></p>
 <p>如我们所见它酷似原始图像，但它引入了许多与原来的不同，我们<strong>丢弃了67.1875%</strong>，但我们仍然得到至少类似于原来的东西。我们可以更加智能的丢弃系数去得到更好的图像质量，但这是下一个主题。</p>
 <blockquote>
 <h3 id="使用全部像素形成每个系数"><a href="#使用全部像素形成每个系数" class="headerlink" title="使用全部像素形成每个系数"></a>使用全部像素形成每个系数</h3><p>重要的是要注意，每个系数并不直接映射到单个像素，但它是所有像素的加权和。这个神奇的图形展示了如何计算出第一和第二个系数，使用每个唯一的索引做权重。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/applicat.jpg" alt="dct 计算" title="dct 计算"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/applicat.jpg" alt="dct 计算" title="dct 计算"></p>
 <p>来源：<a href="https://web.archive.org/web/20150129171151/https://www.iem.thm.de/telekom-labor/zinke/mk/mpeg2beg/whatisit.htm" target="_blank" rel="noopener">https://web.archive.org/web/20150129171151/https://www.iem.thm.de/telekom-labor/zinke/mk/mpeg2beg/whatisit.htm</a></p>
 <p>你也可以尝试<a href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2020/02/28/Introduction-to-digital-video-technology/py/dct_better_explained.ipynb" target="_blank" rel="noopener">通过查看在 DCT 基础上形成的简单图片来可视化 DCT</a>。例如，这是使用每个系数权重<a href="https://en.wikipedia.org/wiki/Discrete_cosine_transform#Example_of_IDCT" target="_blank" rel="noopener">形成的字符 A</a>。</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Idct-animation.gif" alt></p>
@@ -453,9 +453,9 @@
 </blockquote>
 <h2 id="第四步-量化"><a href="#第四步-量化" class="headerlink" title="第四步 - 量化"></a>第四步 - 量化</h2><p>当我们丢弃一些系数时，在最后一步（变换），我们做了一些形式的量化。这一步，我们选择性地剔除信息（<strong>有损部分</strong>）或者简单来说，我们将<strong>量化系数以实现压缩</strong>。</p>
 <p>我们如何量化一个系数块？一个简单的方法是均匀量化，我们取一个块并<strong>将其除以单个的值</strong>（10），并舍入值。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/quantize.png" alt="量化" title="量化"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/quantize.png" alt="量化" title="量化"></p>
 <p>我们如何<strong>逆转</strong>（重新量化）这个系数块？我们可以通过<strong>乘以我们先前除以的相同的值</strong>（10）来做到。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/re-quantize.png" alt="逆转量化" title="逆转量化"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/re-quantize.png" alt="逆转量化" title="逆转量化"></p>
 <p>这<strong>不是最好的方法</strong>，因为它没有考虑到每个系数的重要性，我们可以使用一个<strong>量化矩阵</strong>来代替单个值，这个矩阵可以利用 DCT 的属性，多量化右下部，而少（量化）左上部，<a href="https://www.hdm-stuttgart.de/~maucher/Python/MMCodecs/html/jpegUpToQuant.html" target="_blank" rel="noopener">JPEG 使用了类似的方法</a>，你可以通过<a href="https://github.com/google/guetzli/blob/master/guetzli/jpeg_data.h#L40" target="_blank" rel="noopener">查看源码看看这个矩阵</a>。</p>
 <blockquote>
 <h3 id="自己动手：量化"><a href="#自己动手：量化" class="headerlink" title="自己动手：量化"></a>自己动手：量化</h3><p>你可以玩转<a href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2020/02/28/Introduction-to-digital-video-technology/py/dct_experiences.ipynb" target="_blank" rel="noopener">量化</a></p>
@@ -532,13 +532,13 @@
 </tr>
 </tbody></table>
 <p>考虑到这个表，我们可以构建一个区间，区间包含了所有可能的字符，字符按出现概率排序。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/range.png" alt="初始算法区间" title="初始算法区间"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/range.png" alt="初始算法区间" title="初始算法区间"></p>
 <p>让我们编码 <strong>eat</strong> 流，我们选择第一个字符 <strong>e</strong> 位于 <strong>0.3 到 0.6</strong> （但不包括 0.6）的子区间，我们选择这个子区间，按照之前同等的比例再次分割。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/second_subrange.png" alt="第二个子区间" title="第二个子区间"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/second_subrange.png" alt="第二个子区间" title="第二个子区间"></p>
 <p>让我们继续编码我们的流 <strong>eat</strong>，现在使第二个 <strong>a</strong> 字符位于 <strong>0.3 到 0.39</strong> 的区间里，接着再次用同样的方法编码最后的字符 <strong>t</strong>，得到最后的子区间 <strong>0.354 到 0.372</strong>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/arithimetic_range.png" alt="最终算法区间" title="最终算法区间"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/arithimetic_range.png" alt="最终算法区间" title="最终算法区间"></p>
 <p>我们只需从最后的子区间 0.354 到 0.372 里选择一个数，让我们选择 0.36，不过我们可以选择这个子区间里的任何数。仅靠这个数，我们将可以恢复原始流 <strong>eat</strong>。就像我们在区间的区间里画了一根线来编码我们的流。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/range_show.png" alt="最终区间横断面" title="最终区间横断面"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/range_show.png" alt="最终区间横断面" title="最终区间横断面"></p>
 <p><strong>反向过程</strong>（又名解码）一样简单，用数字 <strong>0.36</strong> 和我们原始区间，我们可以进行同样的操作，不过现在是使用这个数字来还原被编码的流。</p>
 <p>在第一个区间，我们发现数字落入了一个子区间，因此，这个子区间是我们的第一个字符，现在我们再次切分这个子区间，像之前一样做同样的过程。我们会注意到 <strong>0.36</strong> 落入了 <strong>a</strong> 的区间，然后我们重复这一过程直到得到最后一个字符 <strong>t</strong>（形成我们原始编码过的流 eat）。</p>
 <p>编码器和解码器都<strong>必须知道</strong>字符概率表，因此，你也需要传送这个表。</p>
@@ -559,12 +559,12 @@
 </blockquote>
 <p>这个命令会使用下面的图片作为帧，生成一个具有<strong>单个帧</strong>，64x64 和颜色空间为 yuv420 的原始 h264 比特流。</p>
 <blockquote>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/minimal.png" alt="使用帧来生成极简 h264 比特流" title="使用帧来生成极简 h264 比特流"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/minimal.png" alt="使用帧来生成极简 h264 比特流" title="使用帧来生成极简 h264 比特流"></p>
 </blockquote>
 <h3 id="H-264-比特流"><a href="#H-264-比特流" class="headerlink" title="H.264 比特流"></a>H.264 比特流</h3><p>AVC (H.264) 标准规定信息将在宏帧（网络概念上的）内传输，称为 <a href="https://en.wikipedia.org/wiki/Network_Abstraction_Layer" target="_blank" rel="noopener">NAL</a>（网络抽象层）。NAL 的主要目标是提供“网络友好”的视频呈现方式，该标准必须适用于电视（基于流），互联网（基于数据包）等。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/nal_units.png" alt="H.264 NAL 单元" title="H.264 NAL 单元"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/nal_units.png" alt="H.264 NAL 单元" title="H.264 NAL 单元"></p>
 <p><a href="https://en.wikipedia.org/wiki/Frame_synchronization" target="_blank" rel="noopener">同步标记</a>用来定义 NAL 单元的边界。每个同步标记的值固定为  <code>0x00 0x00 0x01</code> ，最开头的标记例外，它的值是  <code>0x00 0x00 0x00 0x01</code> 。如果我们在生成的 h264 比特流上运行 <strong>hexdump</strong>，我们可以在文件的开头识别至少三个 NAL。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/minimal_yuv420_hex.png" alt="NAL 单元上的同步标记" title="NAL 单元上的同步标记"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/minimal_yuv420_hex.png" alt="NAL 单元上的同步标记" title="NAL 单元上的同步标记"></p>
 <p>我们之前说过，解码器需要知道不仅仅是图片数据，还有视频的详细信息，如：帧、颜色、使用的参数等。每个 NAL 的<strong>第一位</strong>定义了其分类和<strong>类型</strong>。</p>
 <table>
 <thead>
@@ -630,7 +630,7 @@
 <p>如果我们跳过第一个同步标记，就可以通过解码<strong>第一个字节</strong>来了解第一个 <strong>NAL 的类型</strong>。</p>
 <p>例如同步标记之后的第一个字节是 <code>01100111</code>，第一位（<code>0</code>）是 <strong>forbidden_zero_bit</strong> 字段，接下来的两位（<code>11</code>）告诉我们是 <strong>nal_ref_idc</strong> 字段，其表示该 NAL 是否是参考字段，其余 5 位（<code>00111</code>）告诉我们是 <strong>nal_unit_type</strong> 字段，在这个例子里是 NAL 单元 <strong>SPS</strong> (7)。</p>
 <p>SPS NAL 的第 2 位 (<code>binary=01100100, hex=0x64, dec=100</code>) 是 <strong>profile_idc</strong> 字段，显示编码器使用的配置，在这个例子里，我们使用<a href="https://en.wikipedia.org/wiki/H.264/MPEG-4_AVC#Profiles" target="_blank" rel="noopener">受限高配置</a>，一种没有 B（双向预测） 切片支持的高配置。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/minimal_yuv420_bin.png" alt="SPS 二进制视图" title="SPS 二进制视图"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/minimal_yuv420_bin.png" alt="SPS 二进制视图" title="SPS 二进制视图"></p>
 <p>当我们阅读 SPS NAL 的 H.264 比特流规范时，会为<strong>参数名称</strong>，<strong>分类</strong>和<strong>描述</strong>找到许多值，例如，看看字段 <code>pic_width_in_mbs_minus_1</code> 和 <code>pic_height_in_map_units_minus_1</code>。</p>
 <table>
 <thead>
@@ -656,24 +656,24 @@
 </blockquote>
 <p>如果我们对这些字段的值进行一些计算，将最终得出<strong>分辨率</strong>。我们可以使用值为 <code>119（ (119 + 1) * macroblock_size = 120 * 16 = 1920）</code>的 <code>pic_width_in_mbs_minus_1</code> 表示 <code>1920 x 1080</code>，再次为了减少空间，我们使用 <code>119</code> 来代替编码 <code>1920</code>。</p>
 <p>如果我们再次使用二进制视图检查我们创建的视频 (ex: <code>xxd -b -c 11 v/minimal_yuv420.h264</code>)，可以跳到帧自身上一个 NAL。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/slice_nal_idr_bin.png" alt="h264 idr 切片头" title="h264 idr 切片头"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/slice_nal_idr_bin.png" alt="h264 idr 切片头" title="h264 idr 切片头"></p>
 <p>我们可以看到最开始的 6 个字节：<code>01100101 10001000 10000100 00000000 00100001 11111111</code>。我们已经知道第一个字节告诉我们 NAL 的类型，在这个例子里， (<code>00101</code>) 是 <strong>IDR 切片 (5)</strong>，可以进一步检查它：</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/slice_header.png" alt="h264 切片头规格" title="h264 切片头规格"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/slice_header.png" alt="h264 切片头规格" title="h264 切片头规格"></p>
 <p>对照规范，我们能解码切片的类型（<strong>slice_type</strong>），帧号（<strong>frame_num</strong>）等重要字段。</p>
 <p>为了获得一些字段（<code>ue(v), me(v), se(v) 或 te(v)</code>）的值，我们需要称为 <a href="https://pythonhosted.org/bitstring/exp-golomb.html" target="_blank" rel="noopener">Exponential-Golomb</a> 的特定解码器来解码它。当存在很多默认值时，这个方法编码变量值特别高效。</p>
 <blockquote>
 <p>这个视频里 <strong>slice_type</strong> 和 <strong>frame_num</strong> 的值是 7（I 切片）和 0（第一帧）。</p>
 </blockquote>
 <p>我们可以将<strong>比特流视为一个协议</strong>，如果你想学习更多关于比特流的内容，请参考 <a href="http://www.itu.int/rec/T-REC-H.264-201610-I" target="_blank" rel="noopener">ITU H.264 规范</a>。这个宏观图展示了图片数据（压缩过的 YUV）所在的位置。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/h264_bitstream_macro_diagram.png" alt="h264 比特流宏观图" title="h264 比特流宏观图"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/h264_bitstream_macro_diagram.png" alt="h264 比特流宏观图" title="h264 比特流宏观图"></p>
 <p>我们可以探究其它比特流，如 <a href="https://storage.googleapis.com/downloads.webmproject.org/docs/vp9/vp9-bitstream-specification-v0.6-20160331-draft.pdf" target="_blank" rel="noopener">VP9 比特流</a>，<a href="http://handle.itu.int/11.1002/1000/11885-en?locatt=format:pdf" target="_blank" rel="noopener">H.265（HEVC）</a>或是我们的新朋友 <a href="https://medium.com/@mbebenita/av1-bitstream-analyzer-d25f1c27072b#.d5a89oxz8" target="_blank" rel="noopener">AV1 比特流</a>，<a href="http://www.gpac-licensing.com/2016/07/12/vp9-av1-bitstream-format/" target="_blank" rel="noopener">他们很相似吗？不</a>，但只要学习了其中之一，学习其他的就简单多了。</p>
 <blockquote>
 <h3 id="自己动手：检查-H-264-比特流"><a href="#自己动手：检查-H-264-比特流" class="headerlink" title="自己动手：检查 H.264 比特流"></a>自己动手：检查 H.264 比特流</h3><p>我们可以<a href="https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#generate-a-single-frame-video" target="_blank" rel="noopener">生成一个单帧视频</a>，使用 <a href="https://en.wikipedia.org/wiki/MediaInfo" target="_blank" rel="noopener">mediainfo</a> 检查它的 H.264 比特流。事实上，你甚至可以查看<a href="https://github.com/MediaArea/MediaInfoLib/blob/master/Source/MediaInfo/Video/File_Avc.cpp" target="_blank" rel="noopener">解析 h264(AVC) 视频流的源代码</a>。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/mediainfo_details_1.png" alt="mediainfo h264 比特流的详情 " title="mediainfo h264 比特流的详情"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/mediainfo_details_1.png" alt="mediainfo h264 比特流的详情 " title="mediainfo h264 比特流的详情"></p>
 <p>我们也可使用 <a href="https://software.intel.com/en-us/intel-video-pro-analyzer" target="_blank" rel="noopener">Intel® Video Pro Analyzer</a>，需要付费，但也有只能查看前 10 帧的免费试用版，这已经够达成学习目的了。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/intel-video-pro-analyzer.png" alt="Intel® Video Pro Analyzer h264 比特流的详情" title="Intel® Video Pro Analyzer h264 比特流的详情"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/intel-video-pro-analyzer.png" alt="Intel® Video Pro Analyzer h264 比特流的详情" title="Intel® Video Pro Analyzer h264 比特流的详情"></p>
 </blockquote>
-<h2 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h2><p>我们可以看到我们学了许多<strong>使用相同模型的现代编解码器</strong>。事实上，让我们看看 Thor 视频编解码器框图，它包含所有我们学过的步骤。你现在应该能更好地理解数字视频领域内的创新和论文。<br><img src="/2020/02/28/Introduction-to-digital-video-technology/thor_codec_block_diagram.png" alt="thor 编解码器块图" title="thor 编解码器块图"></p>
+<h2 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h2><p>我们可以看到我们学了许多<strong>使用相同模型的现代编解码器</strong>。事实上，让我们看看 Thor 视频编解码器框图，它包含所有我们学过的步骤。你现在应该能更好地理解数字视频领域内的创新和论文。<br><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/thor_codec_block_diagram.png" alt="thor 编解码器块图" title="thor 编解码器块图"></p>
 <p>之前我们计算过我们<a href="#色度子采样">需要 139GB 来保存一个一小时，720p 分辨率和30fps的视频文件</a>，如果我们使用在这里学过的技术，如<strong>帧间和帧内预测，转换，量化，熵编码和其它</strong>我们能实现——假设我们<strong>每像素花费 0.031 bit</strong>——同样观感质量的视频，<strong>对比 139GB 的存储，只需 367.82MB</strong>。</p>
 <blockquote>
 <p>我们根据这里提供的示例视频选择<strong>每像素使用 0.031 bit</strong>。</p>
@@ -681,16 +681,16 @@
 <h2 id="H-265-如何实现比-H-264-更好的压缩率"><a href="#H-265-如何实现比-H-264-更好的压缩率" class="headerlink" title="H.265 如何实现比 H.264 更好的压缩率"></a>H.265 如何实现比 H.264 更好的压缩率</h2><p>我们已经更多地了解了编解码器的工作原理，那么就容易理解新的编解码器如何使用更少的数据量传输更高分辨率的视频。</p>
 <p>我们将比较 AVC 和 HEVC，要记住的是：我们几乎总是要在压缩率和更多的 CPU 周期（复杂度）之间作权衡。</p>
 <p>HEVC 比 AVC 有更大和更多的<strong>分区</strong>（和<strong>子分区</strong>）选项，更多<strong>帧内预测方向</strong>，<strong>改进的熵编码</strong>等，所有这些改进使得 H.265 比 H.264 的压缩率提升 50%。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/avc_vs_hevc.png" alt="h264 vs h265" title="H.264 vs H.265"></p>
-<h1 id="在线流媒体"><a href="#在线流媒体" class="headerlink" title="在线流媒体"></a>在线流媒体</h1><h2 id="通用架构"><a href="#通用架构" class="headerlink" title="通用架构"></a>通用架构</h2><p><img src="/2020/02/28/Introduction-to-digital-video-technology/general_architecture.png" alt="general_architecture"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/avc_vs_hevc.png" alt="h264 vs h265" title="H.264 vs H.265"></p>
+<h1 id="在线流媒体"><a href="#在线流媒体" class="headerlink" title="在线流媒体"></a>在线流媒体</h1><h2 id="通用架构"><a href="#通用架构" class="headerlink" title="通用架构"></a>通用架构</h2><p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/general_architecture.png" alt="general_architecture"></p>
 <p>[TODO]</p>
-<h2 id="渐进式下载和自适应流"><a href="#渐进式下载和自适应流" class="headerlink" title="渐进式下载和自适应流"></a>渐进式下载和自适应流</h2><p><img src="/2020/02/28/Introduction-to-digital-video-technology/progressive_download.png" alt="progressive_download"></p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/adaptive_streaming.png" alt="adaptive_streaming"></p>
+<h2 id="渐进式下载和自适应流"><a href="#渐进式下载和自适应流" class="headerlink" title="渐进式下载和自适应流"></a>渐进式下载和自适应流</h2><p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/progressive_download.png" alt="progressive_download"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/adaptive_streaming.png" alt="adaptive_streaming"></p>
 <p>[TODO]</p>
 <h2 id="内容保护"><a href="#内容保护" class="headerlink" title="内容保护"></a>内容保护</h2><p>我们可以用一个简单的令牌认证系统来保护视频。用户需要拥有一个有效的令牌才可以播放视频，CDN 会拒绝没有令牌的用户的请求。它与大多数网站的身份认证系统非常相似。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/token_protection.png" alt="token_protection"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/token_protection.png" alt="token_protection"></p>
 <p>仅仅使用令牌认证系统，用户仍然可以下载并重新分发视频。DRM 系统可以用来避免这种情况。</p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/drm.png" alt="drm"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/drm.png" alt="drm"></p>
 <p>实际情况下，人们通常同时使用这两种技术提供授权和认证。</p>
 <h3 id="DRM"><a href="#DRM" class="headerlink" title="DRM"></a>DRM</h3><h4 id="主要系统"><a href="#主要系统" class="headerlink" title="主要系统"></a>主要系统</h4><ul>
 <li>FPS - <a href="https://developer.apple.com/streaming/fps/" target="_blank" rel="noopener"><strong>FairPlay Streaming</strong></a></li>
@@ -702,7 +702,7 @@
 <h4 id="怎么做"><a href="#怎么做" class="headerlink" title="怎么做"></a>怎么做</h4><p>我们将用一种简单的、抽象的方式描述 DRM</p>
 <p>现有一份<strong>内容 C1</strong>（如 HLS 或 DASH 视频流），一个<strong>播放器 P1</strong>（如 shaka-clappr, exo-player 或 iOS），装在<strong>设备 D1</strong>（如智能手机、电视或台式机/笔记本）上，使用 <strong>DRM 系统 DRM1</strong>（如 FairPlay Streaming, PlayReady, Widevine）</p>
 <p>内容 C1 由 DRM1 用一个<strong>对称密钥 K1</strong> 加密，生成<strong>加密内容 C’1</strong></p>
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/drm_general_flow.jpeg" alt="DRM 一般流程" title="DRM 一般流程"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/drm_general_flow.jpeg" alt="DRM 一般流程" title="DRM 一般流程"></p>
 <p>设备 D1 上的播放器 P1 有一个非对称密钥对，密钥对包含一个<strong>私钥 PRK1</strong>（这个密钥是受保护的<sup>1</sup>，只有 <strong>D1</strong> 知道密钥内容），和一个<strong>公钥 PUK1</strong></p>
 <blockquote>
 <p><strong><sup>1</sup>受保护的</strong>: 这种保护可以<strong>通过硬件</strong>进行保护，例如, 将这个密钥存储在一个特殊的芯片（只读）中，芯片的工作方式就像一个用来解密的[黑箱]。 或<strong>通过软件</strong>进行保护（较低的安全系数）。DRM 系统提供了识别设备所使用的保护类型的方法。</p>
@@ -712,7 +712,7 @@
 <p><strong>P1</strong> 使用它的本地 DRM 系统（这可以使用 <a href="https://zh.wikipedia.org/wiki/系统芯片" target="_blank" rel="noopener">SoC</a> ，一个专门的硬件和软件，这个系统可以使用它的私钥 PRK1 用来<strong>解密</strong>内容，它可以解密被加密过的<strong>K1P1D1 的对称密钥 K1</strong>。理想情况下，密钥不会被导出到内存以外的地方。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">K1 &#x3D; dec(K1P1D1, PRK1)</span><br><span class="line"></span><br><span class="line">P1.play(dec(C&#39;1, K1))</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/02/28/Introduction-to-digital-video-technology/drm_decoder_flow.jpeg" alt="DRM 解码流程" title="DRM 解码流程"></p>
+<p><img src="/17/17/2020/02/28/Introduction-to-digital-video-technology/drm_decoder_flow.jpeg" alt="DRM 解码流程" title="DRM 解码流程"></p>
 <h1 id="如何使用-jupyter"><a href="#如何使用-jupyter" class="headerlink" title="如何使用 jupyter"></a>如何使用 jupyter</h1><p>确保你已安装 docker，只需运行 <code>./s/start_jupyter.sh</code>，然后按照控制台的说明进行操作。</p>
 <h1 id="会议"><a href="#会议" class="headerlink" title="会议"></a>会议</h1><ul>
 <li><a href="https://demuxed.com/" target="_blank" rel="noopener">DEMUXED</a> - 您可以<a href="https://www.youtube.com/channel/UCIc_DkRxo9UgUSTvWVNCmpA" target="_blank" rel="noopener">查看最近的2个活动演示</a>。</li>

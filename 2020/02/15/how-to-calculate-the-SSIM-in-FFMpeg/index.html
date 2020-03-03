@@ -117,8 +117,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> * tiny_ssim.c</span><br><span class="line"> * Computes the Structural Similarity Metric between two rawYV12 video files.</span><br><span class="line"> * original algorithm:</span><br><span class="line"> * Z. Wang, A. C. Bovik, H. R. Sheikh and E. P. Simoncelli,</span><br><span class="line"> *   &quot;Image quality assessment: From error visibility to structural similarity,&quot;</span><br><span class="line"> *   IEEE Transactions on Image Processing, vol. 13, no. 4, pp. 600-612, Apr. 2004.</span><br><span class="line"> *</span><br><span class="line"> * To improve speed, this implementation uses the standard approximation of</span><br><span class="line"> * overlapped 8x8 block sums, rather than the original gaussian weights.</span><br><span class="line"> *&#x2F;</span><br></pre></td></tr></table></figure>
 
 <h3 id="standard-approximation-of-overlapped-8x8-block-sums"><a href="#standard-approximation-of-overlapped-8x8-block-sums" class="headerlink" title="standard approximation of overlapped 8x8 block sums"></a>standard approximation of overlapped 8x8 block sums</h3><p>接下来就解释一下注释中的<em>standard approximation of overlapped 8x8 block sums</em>究竟是什么含义。在解释的过程中会分解成两个部分来解释：<em>overlapped 8x8 block</em>和<em>sums</em>。</p>
-<h3 id="overlapped-8x8-block的含义"><a href="#overlapped-8x8-block的含义" class="headerlink" title="overlapped 8x8 block的含义"></a>overlapped 8x8 block的含义</h3><p>FFMpeg在计算图像$SSIM$时，首先以$4 \times 4$的块大小把<strong>图1</strong>所示的分辨率为$W \times H$的图像：<br><img src="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/1.jpg" alt="图1"><br>图1：原始图像</p>
-<p>分割为<strong>图2</strong>的样式。<br><img src="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/2.jpg" alt="图2"></p>
+<h3 id="overlapped-8x8-block的含义"><a href="#overlapped-8x8-block的含义" class="headerlink" title="overlapped 8x8 block的含义"></a>overlapped 8x8 block的含义</h3><p>FFMpeg在计算图像$SSIM$时，首先以$4 \times 4$的块大小把<strong>图1</strong>所示的分辨率为$W \times H$的图像：<br><img src="/17/17/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/1.jpg" alt="图1"><br>图1：原始图像</p>
+<p>分割为<strong>图2</strong>的样式。<br><img src="/17/17/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/2.jpg" alt="图2"></p>
 <p>图2：分割后的图像</p>
 <p>对于<strong>图2</strong>中的每一块用$block(i,j)$来表示（<em>图2中的红色块</em>），FFMpeg使用$block(i,j)$及其<strong>上、右、右上块</strong>（<em>图2中的绿色块</em>）来计算其$SSIM:SSIM(x_{ij},y_{ij})$。</p>
 <p>$block(i,j)$及其<strong>上、右、右上块</strong>构成一个$8\times8$的像素块，并且该$8\times8$的块和计算$block(i,j+1)$的$SSIM$用到的$8\times8$的块存在重合像素，这就是注释中的<strong>overlapped 8x8 block</strong>的真正含义。</p>
@@ -150,7 +150,7 @@
 <li>然后利用该$8\times8$块的sums来计算$block(i,j)$的$SSIM$</li>
 </ul>
 <p>函数<code>ssim_end1()</code>就展示了如何利用$8\times8$块的sums信息来计算$SSIM$。具体的计算方法如下。</p>
-<p>将红色区块$block(i,j)$的图像放大一点，如图3所示。我们接下来计算其$SSIM$。<br><img src="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/3.jpg" alt="图3"><br>图3：<em>block(i,j)</em>的示意图</p>
+<p>将红色区块$block(i,j)$的图像放大一点，如图3所示。我们接下来计算其$SSIM$。<br><img src="/17/17/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/3.jpg" alt="图3"><br>图3：<em>block(i,j)</em>的示意图</p>
 <p>在计算时，首先将4个区块的sums值求和，得到$8\times8$区块的sums值，分别为：</p>
 <ul>
 <li>$s1=\sum_{i=0}^{63}{x_i}$</li>
