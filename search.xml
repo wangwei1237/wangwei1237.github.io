@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>图像金字塔简介</title>
+    <url>/2020/03/18/introduction-to-image-pyramid/</url>
+    <content><![CDATA[<h1 id="图像金字塔"><a href="#图像金字塔" class="headerlink" title="图像金字塔"></a>图像金字塔</h1><h2 id="图像金字塔的概念"><a href="#图像金字塔的概念" class="headerlink" title="图像金字塔的概念"></a>图像金字塔的概念</h2><p>一般而言，我们处理的图像通常是恒定大小（分辨率）的图像。但是在某些特殊的场景下，需要处理同一图像的不同分辨率的图像。例如，在图像中搜索某些内容时（例如面部），由于不确定待搜索的内容在图像中的区域大小，因此需要创建一个具有不同分辨率的图像集，并在该图像集的所有图像中执行搜索操作。</p>
+<p>这些具有不同分辨率的图像集称为“图像金字塔”。之所以称其为“图像金字塔”，是因为当这些图像按照分辨率由低到高堆叠在一起时，底部的最大图像和顶部的最小图像看起来就像是一座金字塔。</p>
+<p>因此，图像金字塔是图像的集合，这些图像集合由单个原始图像通过连续的降采样——直到达到某个期望的暂停点为止——产生。</p>
+<a id="more"></a>
+
+<p><img src="/2020/03/18/introduction-to-image-pyramid/1.jpg" alt></p>
+<h2 id="图像金字塔的分类"><a href="#图像金字塔的分类" class="headerlink" title="图像金字塔的分类"></a>图像金字塔的分类</h2><p>应用中经常用到的图像金字塔主要有两种：</p>
+<ul>
+<li>高斯金字塔</li>
+<li>拉普拉斯金字塔</li>
+</ul>
+<p>高斯金字塔一般用于图像的降采样，而拉普拉斯金字塔则用于通过图像金字塔中的低分辨率图像重构高分率图像的图像上采样。</p>
+<h3 id="高斯金字塔"><a href="#高斯金字塔" class="headerlink" title="高斯金字塔"></a>高斯金字塔</h3><p>高斯金字塔中的低分辨率图像是通过删除高分辨率图像中的行和列而产生，具体如下所示：</p>
+<ul>
+<li>令高斯金字塔中第$i$层的图像为$G_i$</li>
+<li>使用一个高斯核对$G_i$执行卷积操作得到$G_i^{‘}$</li>
+<li>然后删除$G_i^{‘}$中的偶数行和偶数列，得到$G_{i+1}$</li>
+</ul>
+<p>根据如上的步骤，可以知道，第$i+1$级图像的分辨率是第$i$级图像的分辨率的$\frac{1}{4}$。</p>
+<h4 id="pyrDown"><a href="#pyrDown" class="headerlink" title="pyrDown"></a>pyrDown</h4><p>在OpenCV中，可以使用<code>cv2.pyrDown()</code>生成图像的上一层级图像。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">higher_resolution = cv2.imread(<span class="string">'img.jpg'</span>)</span><br><span class="line">lower_resolution  = cv2.pyrDown(higher_resolution)</span><br></pre></td></tr></table></figure>
+
+<p>下图是一个4级的高斯金字塔的例子。<br><img src="/2020/03/18/introduction-to-image-pyramid/2.jpg" alt></p>
+<h4 id="pyrUp"><a href="#pyrUp" class="headerlink" title="pyrUp"></a>pyrUp</h4><p>我们还可以使用<code>cv2.pyrUp()</code>将图像转换为每个方向两倍大小的图像，该函数</p>
+<ul>
+<li>首先将图像的大小在各个维度上扩展2倍</li>
+<li>然后对新增的行用0进行填充</li>
+<li>最后再使用高斯滤波器执行卷积计算来获取“丢失”的像素的值</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">higher_resolution_2 = cv2.pyrUp(lower_resolution)</span><br></pre></td></tr></table></figure>
+
+<p>从如上的步骤不难发现，<code>cv2.pyrUp()</code>并不是<code>cv2.pyrDown()</code>的逆运算，因为<code>cv2.pyrDown()</code>是一个丢失信息的操作，一旦分辨率降低，就会存在信息丢失。</p>
+<p>因此，在示例代码中，<code>higher_resolution_2</code>和<code>higher_resolution</code>是不同的。</p>
+<p>对[pyrDown](# pyrDown)中的图像执行<code>pyrUp()</code>效果如下所示：<br><img src="/2020/03/18/introduction-to-image-pyramid/3.jpg" alt></p>
+<h3 id="拉普拉斯金字塔"><a href="#拉普拉斯金字塔" class="headerlink" title="拉普拉斯金字塔"></a>拉普拉斯金字塔</h3><p>为了从图像金字塔中的低分辨率图像恢复高分辨率的图像，需要使用下采样过程中丢弃的信息。而这些数据则构成了拉普拉斯金字塔。</p>
+<p>令$L_i$为高斯金字塔的第$i$级图像$G_i$下采样得到第$i+1$级图像$G_{i+1}$时丢失的信息，则：</p>
+<p>$$L_i=G_i - cv2.pyrUp(G_{i+1})$$</p>
+<p>${L_i | i \in 1…n}$则构成拉普拉斯金字塔。</p>
+<p>拉普拉斯金字塔由高斯金字塔而形成，并没有其它的额外功能，并且拉普拉斯金字塔图像和图像的边缘图像很像。在拉普拉斯金字塔中的图像的大多数元素为零。一个4级拉普拉斯金字塔的图像如下所示（已调整图像的曝光度以增强图像内容）：<br><img src="/2020/03/18/introduction-to-image-pyramid/4.jpg" alt></p>
+<h2 id="图像金字塔的应用"><a href="#图像金字塔的应用" class="headerlink" title="图像金字塔的应用"></a>图像金字塔的应用</h2><p>图像金字塔的一种应用是图像融合。例如，在图像拼接中会将两个图像堆叠，但是由于图像之间的不连续性，这种对原始图像的直接拼接的效果并不好。例如，我们直接拼接如下图所以的两幅图像：</p>
+<p><img src="/2020/03/18/introduction-to-image-pyramid/5.jpg" alt></p>
+<p>的效果为：</p>
+<p><img src="/2020/03/18/introduction-to-image-pyramid/7.jpg" alt="Direct_blending"></p>
+<p>此时，使用“图像金字塔”融合图像则可以让拼接之后的图像看起来天衣无缝。例如，按照如下的步骤使用“图像金字塔”来拼接如上的图像：</p>
+<ol>
+<li>加载图像</li>
+<li>计算图像的高斯金字塔（在此示例中，级数为6）</li>
+<li>从高斯金字塔中计算拉普拉斯金字塔</li>
+<li>在每个拉普拉斯金字塔中加入苹果的左半部分和橙子的右半部分</li>
+<li>最后，从联合图像金字塔中重建原始图像</li>
+</ol>
+<p>最终的拼接效果如下所示：<br><img src="/2020/03/18/introduction-to-image-pyramid/6.jpg" alt></p>
+<p>如下则是该示例的完成代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np,sys</span><br><span class="line"></span><br><span class="line">A = cv2.imread(<span class="string">'apple.jpg'</span>)</span><br><span class="line">B = cv2.imread(<span class="string">'orange.jpg'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># generate Gaussian pyramid for A</span></span><br><span class="line">G = A.copy()</span><br><span class="line">gpA = [G]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">6</span>):</span><br><span class="line">    G = cv2.pyrDown(G)</span><br><span class="line">    gpA.append(G)</span><br><span class="line"></span><br><span class="line"><span class="comment"># generate Gaussian pyramid for B</span></span><br><span class="line">G = B.copy()</span><br><span class="line">gpB = [G]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">6</span>):</span><br><span class="line">    G = cv2.pyrDown(G)</span><br><span class="line">    gpB.append(G)</span><br><span class="line"></span><br><span class="line"><span class="comment"># generate Laplacian Pyramid for A</span></span><br><span class="line">lpA = [gpA[<span class="number">5</span>]]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>,<span class="number">0</span>,<span class="number">-1</span>):</span><br><span class="line">    GE = cv2.pyrUp(gpA[i])</span><br><span class="line">    L = cv2.subtract(gpA[i<span class="number">-1</span>],GE)</span><br><span class="line">    lpA.append(L)</span><br><span class="line"></span><br><span class="line"><span class="comment"># generate Laplacian Pyramid for B</span></span><br><span class="line">lpB = [gpB[<span class="number">5</span>]]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>,<span class="number">0</span>,<span class="number">-1</span>):</span><br><span class="line">    GE = cv2.pyrUp(gpB[i])</span><br><span class="line">    L = cv2.subtract(gpB[i<span class="number">-1</span>],GE)</span><br><span class="line">    lpB.append(L)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Now add left and right halves of images in each level</span></span><br><span class="line">LS = []</span><br><span class="line">ii = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> la,lb <span class="keyword">in</span> zip(lpA,lpB):</span><br><span class="line">    ii=ii+<span class="number">1</span></span><br><span class="line">    rows,cols,dpt = la.shape</span><br><span class="line">    ls = np.hstack((la[:,<span class="number">0</span>:int(cols/<span class="number">2</span>)], lb[:,int(cols/<span class="number">2</span>):]))</span><br><span class="line">    cv2.imwrite(<span class="string">'py_'</span> + str(ii) + <span class="string">'.jpg'</span>, ls)</span><br><span class="line">    LS.append(ls)</span><br><span class="line"></span><br><span class="line"><span class="comment"># now reconstruct</span></span><br><span class="line">ls_ = LS[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">6</span>):</span><br><span class="line">    ls_ = cv2.pyrUp(ls_)</span><br><span class="line">    ls_ = cv2.add(ls_, LS[i])</span><br><span class="line"></span><br><span class="line"><span class="comment"># image with direct connecting each half</span></span><br><span class="line">real = np.hstack((A[:,:int(cols/<span class="number">2</span>)],B[:,int(cols/<span class="number">2</span>):]))</span><br><span class="line"></span><br><span class="line">cv2.imwrite(<span class="string">'Pyramid_blending2.jpg'</span>,ls_)</span><br><span class="line">cv2.imwrite(<span class="string">'Direct_blending.jpg'</span>,real)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>视觉技术</category>
+      </categories>
+      <tags>
+        <tag>图像金字塔</tag>
+        <tag>高斯金字塔</tag>
+        <tag>拉普拉斯金字塔</tag>
+        <tag>image pyramid</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>数字视频基本概念</title>
     <url>/2020/03/03/digital-video-concept/</url>
     <content><![CDATA[<p>在学习和研究视频技术的过程中，联合几个同事一起翻译了<a href="https://link.springer.com/book/10.1007/978-1-4302-6713-3" target="_blank" rel="noopener">Digital Video Concepts, Methods, and Metrics: Quality, Compression, Performance, and Power Trade-off Analysis</a>，形成了<a href="/digital-video-concept"><strong>数字视频概念，方法和测量指标：质量，压缩，性能和电量等的权衡分析（中文版）</strong></a>。该翻译版本仅供学习交流之用。希望对想学习和了解数字视频相关技术的同学，有所帮助。</p>
