@@ -118,8 +118,8 @@
 <h3 id="高斯金字塔"><a href="#高斯金字塔" class="headerlink" title="高斯金字塔"></a>高斯金字塔</h3><p>高斯金字塔中的低分辨率图像是通过删除高分辨率图像中的行和列而产生，具体如下所示：</p>
 <ul>
 <li>令高斯金字塔中第$i$层的图像为$G_i$</li>
-<li>使用一个高斯核对$G_i$执行卷积操作得到$G_i^{‘}$</li>
-<li>然后删除$G_i^{‘}$中的偶数行和偶数列，得到$G_{i+1}$</li>
+<li>使用一个高斯核对$G_i$执行卷积操作得到$G_i^{\prime}$</li>
+<li>然后删除$G_i^{\prime}$中的偶数行和偶数列，得到$G_{i+1}$</li>
 </ul>
 <p>根据如上的步骤，可以知道，第$i+1$级图像的分辨率是第$i$级图像的分辨率的$\frac{1}{4}$。</p>
 <h4 id="pyrDown"><a href="#pyrDown" class="headerlink" title="pyrDown"></a>pyrDown</h4><p>在OpenCV中，可以使用<code>cv2.pyrDown()</code>生成图像的上一层级图像。</p>
@@ -136,7 +136,7 @@
 
 <p>从如上的步骤不难发现，<code>cv2.pyrUp()</code>并不是<code>cv2.pyrDown()</code>的逆运算，因为<code>cv2.pyrDown()</code>是一个丢失信息的操作，一旦分辨率降低，就会存在信息丢失。</p>
 <p>因此，在示例代码中，<code>higher_resolution_2</code>和<code>higher_resolution</code>是不同的。</p>
-<p>对[pyrDown](# pyrDown)中的图像执行<code>pyrUp()</code>效果如下所示：<br><img src="/2020/03/18/introduction-to-image-pyramid/3.jpg" alt></p>
+<p>对<a href="#pyrDown">pyrDown</a>中的图像执行<code>pyrUp()</code>效果如下所示：<br><img src="/2020/03/18/introduction-to-image-pyramid/3.jpg" alt></p>
 <h3 id="拉普拉斯金字塔"><a href="#拉普拉斯金字塔" class="headerlink" title="拉普拉斯金字塔"></a>拉普拉斯金字塔</h3><p>为了从图像金字塔中的低分辨率图像恢复高分辨率的图像，需要使用下采样过程中丢弃的信息。而这些数据则构成了拉普拉斯金字塔。</p>
 <p>令$L_i$为高斯金字塔的第$i$级图像$G_i$下采样得到第$i+1$级图像$G_{i+1}$时丢失的信息，则：</p>
 <p>$$L_i=G_i - cv2.pyrUp(G_{i+1})$$</p>
