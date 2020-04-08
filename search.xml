@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>macOS Catalina编译的FFMpeg运行crash</title>
+    <url>/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/</url>
+    <content><![CDATA[<p>因为近期正在调研&amp;了解<a href="https://github.com/Haivision/srt" target="_blank" rel="noopener">SRT协议</a>的相关内容，为了方便，需要打开FFMpeg的<code>--enable-libsrt</code>功能并重新编译FFMpeg，从而保证FFMpeg支持SRT协议。但是重新编译之后却发现启动ffmpeg工具就会被内核杀死，具体如下所示。</p>
+<p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/1.jpg" alt></p>
+<a id="more"></a>
+
+<p>利用<em>lldb</em>调试该<em>ffmpeg</em>发现直接提示<code>error: Malformed Mach-o file</code>的错误，具体如下：</p>
+<p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/2.jpg" alt></p>
+<p>编译异常的Mac版本和Xcode版本信息分别如下：</p>
+<p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/3.jpg" alt></p>
+<p>查阅了<a href="https://trac.ffmpeg.org/ticket/8073" target="_blank" rel="noopener">网上的资料</a>，也查看了<a href="https://github.com/Homebrew/homebrew-core/blob/master/Formula/ffmpeg.rb" target="_blank" rel="noopener">brew编译FFMpeg的指令</a>，原因可能是：<strong>Xcode11下clang默认开启-fstack-check</strong>。</p>
+<p>同时，在如下图所示的Xcode 10.3版本的Mac上则可编译成功：</p>
+<p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/4.jpg" alt></p>
+<p>因此根据如上信息：<code>./configure</code>时需要增加<code>--host-cflags=-fno-stack-check</code>配置。</p>
+<p>但是增加该配置之后，编译出的ffmpeg依然无法正常运行。</p>
+<p><strong>暂时先将这个问题记录下来，等有时间了再彻底追查一下。</strong></p>
+]]></content>
+      <categories>
+        <category>视频技术</category>
+      </categories>
+      <tags>
+        <tag>FFMpeg</tag>
+        <tag>编译</tag>
+        <tag>macOS Catalina</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android环境下编译libyuv</title>
     <url>/2020/03/30/compile-libyuv-for-Android/</url>
     <content><![CDATA[<p>libyuv是Google开源的实现各种YUV格式与RGB格式之间相互转换、旋转、缩放的库。关于libyuv的具体介绍可以参考<a href="https://chromium.googlesource.com/libyuv/libyuv" target="_blank" rel="noopener">官网介绍</a>。</p>
@@ -1000,8 +1027,8 @@
 <p>$$<br>\therefore SSIM(a,b)=\frac{(2fs1 \cdot fs2+64^2C_1)(2 \cdot 64fs12-2fs1fs2+63 \cdot 64C_2)}{(fs1^2+fs2^2+64^2C_1)(64fss-fs1^2-fs2^2+63 \cdot 64C_2)}<br>$$</p>
 ]]></content>
       <tags>
-        <tag>SSIM</tag>
         <tag>FFMpeg</tag>
+        <tag>SSIM</tag>
       </tags>
   </entry>
   <entry>
@@ -1098,8 +1125,8 @@
         <category>视频技术</category>
       </categories>
       <tags>
-        <tag>SSIM</tag>
         <tag>FFMpeg</tag>
+        <tag>SSIM</tag>
       </tags>
   </entry>
   <entry>
