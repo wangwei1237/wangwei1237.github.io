@@ -18,10 +18,10 @@
   <link rel="shortcut icon" href="/favicon.ico" />
   
   
-<link rel="stylesheet" href="/17/dist/main.css">
+<link rel="stylesheet" href="/dist/main.css">
 
   
-<link rel="stylesheet" href="/17/css/custom.css">
+<link rel="stylesheet" href="/css/custom.css">
 
   
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
@@ -55,12 +55,12 @@
 
     
     <div class="article-meta">
-      <a href="/17/2020/03/18/introduction-to-image-pyramid/" class="article-date">
+      <a href="/2020/03/18/introduction-to-image-pyramid/" class="article-date">
   <time datetime="2020-03-18T13:38:18.000Z" itemprop="datePublished">2020-03-18</time>
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/17/categories/%E8%A7%86%E8%A7%89%E6%8A%80%E6%9C%AF/">视觉技术</a>
+    <a class="article-category-link" href="/categories/%E8%A7%86%E8%A7%89%E6%8A%80%E6%9C%AF/">视觉技术</a>
   </div>
 
       
@@ -109,7 +109,7 @@
 <a id="more"></a>
 
 <p>因此，图像金字塔是图像的集合，这些图像集合由单个原始图像通过连续的降采样——直到达到某个期望的暂停点为止——产生。</p>
-<p><img src="/17/2020/03/18/introduction-to-image-pyramid/1.jpg" alt></p>
+<p><img src="/2020/03/18/introduction-to-image-pyramid/1.jpg" alt></p>
 <h2 id="图像金字塔的分类"><a href="#图像金字塔的分类" class="headerlink" title="图像金字塔的分类"></a>图像金字塔的分类</h2><p>应用中经常用到的图像金字塔主要有两种：</p>
 <ul>
 <li>高斯金字塔</li>
@@ -126,7 +126,7 @@
 <h4 id="pyrDown"><a href="#pyrDown" class="headerlink" title="pyrDown"></a>pyrDown</h4><p>在OpenCV中，可以使用<code>cv2.pyrDown()</code>生成图像的上一层级图像。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">higher_resolution = cv2.imread(<span class="string">'img.jpg'</span>)</span><br><span class="line">lower_resolution  = cv2.pyrDown(higher_resolution)</span><br></pre></td></tr></table></figure>
 
-<p>下图是一个4级的高斯金字塔的例子。<br><img src="/17/2020/03/18/introduction-to-image-pyramid/2.jpg" alt></p>
+<p>下图是一个4级的高斯金字塔的例子。<br><img src="/2020/03/18/introduction-to-image-pyramid/2.jpg" alt></p>
 <h4 id="pyrUp"><a href="#pyrUp" class="headerlink" title="pyrUp"></a>pyrUp</h4><p>我们还可以使用<code>cv2.pyrUp()</code>将图像转换为每个方向两倍大小的图像，该函数</p>
 <ul>
 <li>首先将图像的大小在各个维度上扩展2倍</li>
@@ -137,12 +137,12 @@
 
 <p>从如上的步骤不难发现，<code>cv2.pyrUp()</code>并不是<code>cv2.pyrDown()</code>的逆运算，因为<code>cv2.pyrDown()</code>是一个丢失信息的操作，一旦分辨率降低，就会存在信息丢失。</p>
 <p>因此，在示例代码中，<code>higher_resolution_2</code>和<code>higher_resolution</code>是不同的。</p>
-<p>对<a href="#pyrDown">pyrDown</a>中的图像执行<code>pyrUp()</code>效果如下所示：<br><img src="/17/2020/03/18/introduction-to-image-pyramid/3.jpg" alt></p>
+<p>对<a href="#pyrDown">pyrDown</a>中的图像执行<code>pyrUp()</code>效果如下所示：<br><img src="/2020/03/18/introduction-to-image-pyramid/3.jpg" alt></p>
 <h3 id="拉普拉斯金字塔"><a href="#拉普拉斯金字塔" class="headerlink" title="拉普拉斯金字塔"></a>拉普拉斯金字塔</h3><p>为了从图像金字塔中的低分辨率图像恢复高分辨率的图像，需要使用下采样过程中丢弃的信息。而这些数据则构成了拉普拉斯金字塔。</p>
 <p>令$L_i$为高斯金字塔的第$i$级图像$G_i$下采样得到第$i+1$级图像$G_{i+1}$时丢失的信息，则：</p>
 <p>$$L_i=G_i - cv2.pyrUp(G_{i+1})$$</p>
 <p>$\{L_i | i \in 1…n\}$则构成拉普拉斯金字塔。</p>
-<p>拉普拉斯金字塔由高斯金字塔而形成，并没有其它的额外功能，并且拉普拉斯金字塔图像和图像的边缘图像很像。在拉普拉斯金字塔中的图像的大多数元素为零。一个4级拉普拉斯金字塔的图像如下所示（已调整图像的曝光度以增强图像内容）：<br><img src="/17/2020/03/18/introduction-to-image-pyramid/4.jpg" alt></p>
+<p>拉普拉斯金字塔由高斯金字塔而形成，并没有其它的额外功能，并且拉普拉斯金字塔图像和图像的边缘图像很像。在拉普拉斯金字塔中的图像的大多数元素为零。一个4级拉普拉斯金字塔的图像如下所示（已调整图像的曝光度以增强图像内容）：<br><img src="/2020/03/18/introduction-to-image-pyramid/4.jpg" alt></p>
 <h2 id="尺度空间和图像金字塔卷积核的选择"><a href="#尺度空间和图像金字塔卷积核的选择" class="headerlink" title="尺度空间和图像金字塔卷积核的选择"></a>尺度空间和图像金字塔卷积核的选择</h2><p>在现实世界中，客观物体在不同尺度时有着不同的结构。这意味着，如果从不同的尺度去观察同一个物体，会得出不一样的结果。例如，从不同的距离观察同一个图像时，随着距离的不断缩小，能够观察到的图像的结构也有所不同。</p>
 <p>观察一棵树的尺度和观察一片树叶的尺度也是不同的：观察一棵树的适当尺度应该是<strong>米</strong>，而观察一片叶子可能需要更细粒度的尺度才能得出较好的结果。</p>
 <p>当计算机系统要对一个未知的场景进行分析时，并不能提前预知用什么样的尺度来描述图像信息中的<strong>interesting structures</strong>是最合适的。因此，唯一可行的方案就是将多个不同尺度的描述都考虑进来，以便捕获未知的尺度变化。</p>
@@ -168,9 +168,9 @@
 <li>存在无穷小的算子（可微性）</li>
 </ul>
 <h2 id="图像金字塔的应用"><a href="#图像金字塔的应用" class="headerlink" title="图像金字塔的应用"></a>图像金字塔的应用</h2><p>图像金字塔的一种应用是图像融合。例如，在图像拼接中会将两个图像堆叠，但是由于图像之间的不连续性，这种对原始图像的直接拼接的效果并不好。例如，我们对如下图所示的两幅图像：</p>
-<p><img src="/17/2020/03/18/introduction-to-image-pyramid/5.jpg" alt></p>
+<p><img src="/2020/03/18/introduction-to-image-pyramid/5.jpg" alt></p>
 <p>的直接拼接效果和采用图像金字塔拼接效果分别为（左图为直接拼接）：</p>
-<p><img src="/17/2020/03/18/introduction-to-image-pyramid/8.jpg" alt></p>
+<p><img src="/2020/03/18/introduction-to-image-pyramid/8.jpg" alt></p>
 <p>由此可以看出，使用“图像金字塔”融合图像则可以让拼接之后的图像看起来天衣无缝。</p>
 <p>可以按照如下的步骤使用“图像金字塔”来拼接如上的图像（<a href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2020/03/18/introduction-to-image-pyramid/image_pyramid_blend.ipynb" target="_blank" rel="noopener">玩转多尺度图像融合</a>)：</p>
 <ol>
@@ -259,7 +259,7 @@
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/17/tags/image-pyramid/" rel="tag">image pyramid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/17/tags/%E5%9B%BE%E5%83%8F%E9%87%91%E5%AD%97%E5%A1%94/" rel="tag">图像金字塔</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/17/tags/%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94/" rel="tag">拉普拉斯金字塔</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/17/tags/%E9%AB%98%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94/" rel="tag">高斯金字塔</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/image-pyramid/" rel="tag">image pyramid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E9%87%91%E5%AD%97%E5%A1%94/" rel="tag">图像金字塔</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94/" rel="tag">拉普拉斯金字塔</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%AB%98%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94/" rel="tag">高斯金字塔</a></li></ul>
 
 
     </footer>
@@ -270,7 +270,7 @@
   
   <nav class="article-nav">
     
-      <a href="/17/2020/03/30/compile-libyuv-for-Android/" class="article-nav-link">
+      <a href="/2020/03/30/compile-libyuv-for-Android/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
@@ -280,7 +280,7 @@
       </a>
     
     
-      <a href="/17/2020/03/03/digital-video-concept/" class="article-nav-link">
+      <a href="/2020/03/03/digital-video-concept/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
         <div class="article-nav-title">数字视频基本概念</div>
       </a>
@@ -366,29 +366,29 @@
 <nav class="navbar">
   
   <div class="logo">
-    <a href="/17/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
   </div>
   
   <ul class="nav nav-main">
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/17/">主页</a>
+      <a class="nav-item-link" href="/">主页</a>
     </li>
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/17/archives">归档</a>
+      <a class="nav-item-link" href="/archives">归档</a>
     </li>
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/17/categories">分类</a>
+      <a class="nav-item-link" href="/categories">分类</a>
     </li>
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/17/tags">标签</a>
+      <a class="nav-item-link" href="/tags">标签</a>
     </li>
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/17/aboutme">关于我</a>
+      <a class="nav-item-link" href="/aboutme">关于我</a>
     </li>
     
   </ul>
@@ -430,16 +430,16 @@
   </div>
 </div>
     
-<script src="/17/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery-2.0.3.min.js"></script>
 
 
-<script src="/17/js/lazyload.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
 
 
 
 
 
-<script src="/17/js/tocbot.min.js"></script>
+<script src="/js/tocbot.min.js"></script>
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
@@ -462,7 +462,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
 
-<script src="/17/dist/main.js"></script>
+<script src="/dist/main.js"></script>
 
 
 
