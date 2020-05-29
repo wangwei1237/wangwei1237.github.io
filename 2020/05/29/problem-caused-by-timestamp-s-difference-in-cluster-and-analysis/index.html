@@ -11,7 +11,7 @@
    
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    软件的熵和破窗原理 |  17哥
+    集群时间戳不一致导致的问题及其分析和思考 |  17哥
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -44,7 +44,7 @@
   <div id="app">
     <main class="content on">
       <section class="outer">
-  <article id="post-Software-Entropy-and-A-Broken-Window" class="article article-type-post" itemscope
+  <article id="post-problem-caused-by-timestamp-s-difference-in-cluster-and-analysis" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -52,7 +52,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  软件的熵和破窗原理
+  集群时间戳不一致导致的问题及其分析和思考
 </h1>
  
 
@@ -61,12 +61,12 @@
 
     
     <div class="article-meta">
-      <a href="/2020/05/20/Software-Entropy-and-A-Broken-Window/" class="article-date">
-  <time datetime="2020-05-20T10:53:32.000Z" itemprop="datePublished">2020-05-20</time>
+      <a href="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/" class="article-date">
+  <time datetime="2020-05-29T01:23:18.000Z" itemprop="datePublished">2020-05-29</time>
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%BD%AF%E4%BB%B6%E7%90%86%E8%AE%BA/">软件理论</a>
+    <a class="article-category-link" href="/categories/%E6%80%BB%E7%BB%93/">总结</a>
   </div>
 
       
@@ -76,7 +76,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.6k</span>
+            <span class="post-count">1.3k</span>
         </span>
     </span>
 
@@ -111,35 +111,48 @@
 
       
       <blockquote>
-<p><strong>如下的内容，摘选自《程序员修炼之道——通向务实的最高境界（第二版）》。</strong></p>
+<p>1883年11月18日，美国第一个全国统一铁路时刻表诞生，这一天的正午时分，美国东部的时钟全部回拨。从此，上帝的时间被改用人间的指针来度量。 ——<strong>公司的力量</strong></p>
 </blockquote>
-<p>虽然软件开发不受绝大多数物理法则的约束，但我们无法躲避来自“熵”的增加的重击。“熵”是一个物理学术语，它定义了一个系统的“无序”总量。不幸的是，热力学法则决定了宇宙中的熵会趋向最大化。当软件中的无序化增加时，程序员会说“软件在腐烂”。有些人可能会用更乐观的术语来称呼它，即“技术债”，潜台词是说他们总有一天会偿还的——恐怕不会还了。</p>
-<p><img src="/2020/05/20/Software-Entropy-and-A-Broken-Window/1.png" alt></p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近遇到的业务上的问题涉及：<em>在一个集群中，存在部分机器的<code>时间戳</code>和其它机器不一致而导致的重大问题</em>。为了不泄露业务的相关信息，文中会用一个类似的场景来对这个问题进行分析。</p>
 <a id="more"></a>
 
-<p>不过不管叫什么名字，债务和腐烂都可能失控地蔓延开。</p>
-<p>有很多因素会导致软件腐烂。最重要的一个似乎是项目工作中的心理性状态，或者说文化。即使是一个单人团队，你的项目的心理性状态也是个非常脆弱的东西。即使有最合理的计划和最佳的人员，项目还是可能在生命周期中逐步荒废、腐烂。但也有一些项目在经历了巨大的困难、持续不断的挫折之后，成功地对抗了天然的无序化倾向，走出了困境。</p>
-<p>是什么造成了差异？</p>
-<p>在城市中心，有些建筑干净漂亮，而另一些则破落不堪。为什么会这样？一些犯罪和城市衰败领域的研究人员发现了一个有趣的触发机制，只需一样东西就能非常迅速地把一幢干净完好的宜居建筑变成一个破败的废弃物。</p>
-<h2 id="破窗原理"><a href="#破窗原理" class="headerlink" title="破窗原理"></a>破窗原理</h2><p>一扇破损的窗户，只要一段时间不去修理，建筑中的居民就会潜移默化地产生一种被遗弃的感觉——当权者不关心这幢建筑的感觉。然后，其他的窗户也开始损坏，居民开始乱丢废物，墙上开始出现涂鸦，建筑开始出现严重的结构性损坏。在看上去很短的时间内，建筑的损坏程度就足以打消业主们想修好它的期望，被遗弃的感觉终变成了现实。</p>
-<p><img src="/2020/05/20/Software-Entropy-and-A-Broken-Window/2.jpeg" alt></p>
-<p>为何造成这样的影响？</p>
-<p><strong>心理学家的研究表明，绝望是会传染的，就像狭窄空间中的流感病毒。无视一个明显损坏的东西，会强化这样一种观念：看来没有什么是能修好的，也没人在乎，一切都命中注定了。所有的负面情绪会在团队成员间蔓延，变成恶性循环。</strong></p>
-<h2 id="不要放任破窗"><a href="#不要放任破窗" class="headerlink" title="不要放任破窗"></a>不要放任破窗</h2><p><strong>不要搁置“破窗”(糟糕的设计、错误的决定、低劣的代码）不去修理。</strong></p>
-<p>每发现一个就赶紧修一个。如果没有足够的时间完全修好，那么就把它钉起来。也许你可以注释掉那些糟糕的代码，显示一行“尚未实现”的信息，或用假数据先替代一下。采取行动，预防进一步的损害发生，表明一切尽在你的掌握中。</p>
-<p>现在我们了解了一旦窗户开始破裂，运转良好的干净系统会迅速恶化。还有一些其他因素会导致软件腐烂，我们将在别处探讨，但与其他任何因素相比，漠视会加速腐烂的过程。</p>
-<p>你或许会觉得，没人有时间来来回回清理项目中所有的碎玻璃。如果你真这么想，劝你还是趁早多想想怎么料理这个项目的后事，或是直接离开是非之地。</p>
-<p>不要让熵赢得胜利。</p>
-<h2 id="先勿伤害"><a href="#先勿伤害" class="headerlink" title="先勿伤害"></a>先勿伤害</h2><p>多年以前，Andy认识一个土豪。他的房子富丽堂皇，屋子里摆满了无价的古董，到处陈列着精美的艺术品。有一天，一张挂毯因为离客厅壁炉太近而着火了。消防员奋勇冲进去救民于水火，当然主要是火。但是在把巨大的水管拖进屋子前，他们停了下来——尽管里面火势紧急——消防员毅然选择先在前门和火源之间铺上垫子，因为他们觉得水管太脏。</p>
-<p>他们不想弄坏地毯。</p>
-<p>现在听起来这很偏激。消防部门的首要任务当然是灭火，何必管过程中的那些附带损害呢？但是，他们在清醒地评估了形势后，出于对自己控制这场火势能力的绝对自信，还是尽力兼顾了不对财物造成不必要的毁害。</p>
-<p>这也是软件开发中应该遵循的方法：<strong>不要只是因为一些东西非常危急，就去造成附带损害。破窗一扇都嫌太多</strong>。</p>
-<p><img src="/2020/05/20/Software-Entropy-and-A-Broken-Window/3.jpg" alt></p>
-<p><strong>一扇破窗——一段设计情糕的代码，一个让团队在整个项目周期内都必须要遵守的糟糕的管理决策——是一切衰退的开始。</strong></p>
-<p>如果你发现自己正处在有几扇破窗的项目中，就非常容易陷入这样的想法——“反正代码所有其他部分都是一坨屎，我只是随大流而已。”</p>
-<p>项目在这个时间点之前是否一直良好运行并不重要。在最初启发“破窗理论”的实验中，一辆废弃的汽车完好无损地停放了一个星期。但是一旦有一块玻璃被打破，这辆车在几个小时内就会被扒光并翻了个底朝天。</p>
-<p><strong>出于同样原因，如果身处一个健康团队，你们项目的代码如此完美——编写清晰、设计优良、简洁优雅——你就会倾向于格外地小心，不把它弄糟。</strong>就像那些消防员一样，即使屋内火势熊熊（截止时限、发行日期、销售演示，等等），你也不想成为第一个弄乱它、造成附带损害的人。反之，这个项目就会从某一扇破窗（糟糕的设计，混乱的代码……）开始衰退，腐烂……</p>
-<p>一定要告诉自己，“不要打破窗户”。</p>
+<h2 id="时间戳（unix-time-stamp）"><a href="#时间戳（unix-time-stamp）" class="headerlink" title="时间戳（unix time stamp）"></a>时间戳（unix time stamp）</h2><p>需要注意的是，这里涉及到的问题是集群<code>时间戳</code>不一致而不是<code>时间</code>不一致。</p>
+<p><a href="https://www.unixtimestamp.com" target="_blank" rel="noopener">The unix time stamp</a> is a way to track time as a running total of seconds. This count starts at the Unix Epoch on January 1st, 1970 at UTC. Therefore, the unix time stamp is merely the number of seconds between a particular date and the Unix Epoch. It should also be pointed out (thanks to the comments from visitors to this site) that <strong><code>this point in time technically does not change no matter where you are located on the globe</code></strong>. This is very useful to computer systems for tracking and sorting dated information in dynamic and distributed applications both online and client side.</p>
+<p>由此可知，<code>时间戳</code>和<code>时间</code>不同，是一个和时区无关的全球一致的时间计量方式。不同集群会因为其所在的时区不同而存在时间不同的问题，但是其时间戳是一致的。</p>
+<p>Linux系统而言，时间戳可以利用<a href="https://www.gnu.org/software/shellutils/shellutils.html" target="_blank" rel="noopener"><code>GNU shell utilities</code></a>提供的<a href="https://github.com/coreutils/coreutils/blob/master/src/date.c" target="_blank" rel="noopener"><code>date</code>命令</a>来获取。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ date +%s</span><br><span class="line">$ 1590719825</span><br></pre></td></tr></table></figure>
+
+<h2 id="时间戳不一致带来的问题"><a href="#时间戳不一致带来的问题" class="headerlink" title="时间戳不一致带来的问题"></a>时间戳不一致带来的问题</h2><p>考虑如下的一个购物站点的活动场景，如下的场景可能不会在现实的电商活动中存在，该场景仅仅是为了说明本文的问题而抽象的一个场景。</p>
+<blockquote>
+<p>原价100￥的商品，现价10￥元销售，但前提是下单的用户需要在1分钟内完成支付。如果下单用户未能在1分钟内完成支付，则该订单无效，同时该用户无法继续以折扣价下单。</p>
+</blockquote>
+<p>为了方便问题说明，下单和支付等功能合并在<code>trade</code>，产生的相关数据则存储于<code>DB</code>。简化之后的架构如下所示：</p>
+<p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/1.png" alt></p>
+<p>当<code>trade</code>为单机部署时，不会存在问题。但是当<code>trade</code>作为集群部署时，则会存在集群时间戳不一致导致用户支付失败的问题。具体如下所示：</p>
+<p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/2.png" alt></p>
+<p>如图所示，<code>m1</code>和<code>m2</code>的时间戳是一致的，但是<code>m3</code>的时间戳比其它机器正好快了<strong>60s</strong>。因此，如果<code>支付</code>的流量由<code>m3</code>机器的<code>trade</code>处理，则即便是在1分钟内支付，因为因为<code>m3</code>机器的时间戳快60s而导致支付超时，进而导致用户支付失败，影响用户体验。</p>
+<p>这就是我们要讲的：在一个集群中，部分机器的<code>时间戳</code>和其它机器不一致而导致的重大问题。</p>
+<h2 id="问题如何解决"><a href="#问题如何解决" class="headerlink" title="问题如何解决"></a>问题如何解决</h2><p>在不修改系统架构的前提下修复该问题，则可以利用同一时钟同步集群中所有机器的时钟，从而让集群的时钟保持同步，进而解决该问题。具体的方案如下图所示。</p>
+<p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/3.png" alt></p>
+<h3 id="ntp"><a href="#ntp" class="headerlink" title="ntp"></a>ntp</h3><p>对Linux而言，可以使用<a href="https://en.wikipedia.org/wiki/Network_Time_Protocol" target="_blank" rel="noopener"><code>ntp</code></a>来实现集群的时间同步。</p>
+<p>同步时间，可以使用<code>ntpdate</code>命令，也可以使用<code>ntpd</code>服务。</p>
+<h3 id="ntpdate"><a href="#ntpdate" class="headerlink" title="ntpdate"></a>ntpdate</h3><p>使用<code>ntpdate</code>比较简单。格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ntpdate [-nv] [NTP IP&#x2F;hostname]</span><br><span class="line">$ ntpdate 192.168.0.1</span><br><span class="line">$ ntpdate time.ntp.org</span><br></pre></td></tr></table></figure>
+
+<p><code>ntpdate</code>只是强制将系统时间设置为ntp服务器时间。如果机器cpu tick有问题，这种同步治标不治本。此时，一般配合<code>cron</code>任务来定期同步。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 12 * * * * &#x2F;usr&#x2F;sbin&#x2F;ntpdate 192.168.0.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="ntpd"><a href="#ntpd" class="headerlink" title="ntpd"></a>ntpd</h3><p>使用<code>ntpd</code>服务，要好于使用<code>ntpdate+cron</code>。</p>
+<p><code>ntpdate</code>同步时间，会造成时间的跳跃，对一些依赖时间的程序和服务会造成影响，比如sleep，timer等。</p>
+<p><code>ntpd</code>服务可以在修正时间的同时，修正cpu tick。</p>
+<p>理想的做法为，在开机的时候，使用<code>ntpdate</code>强制同步时间，在其他时候使用<code>ntpd</code>服务来同步时间。</p>
+<p>需要注意的是，<code>ntpd</code>有一个自我保护设置: 如果本机时间与源时间相差太大, 则<code>ntpd</code>不运行。所以新设置的时间服务器一定要先利用<code>ntpdate</code>命令获取初始时间, 然后启动<code>ntpd</code>服务。</p>
+<p>关于ntpd的使用，网上已经有很多资料了，这里就不做过多的介绍了。</p>
+<h3 id="ntpstat"><a href="#ntpstat" class="headerlink" title="ntpstat"></a>ntpstat</h3><p><code>ntpstat</code>用于显示网络时间的同步状态。<code>ntpstat</code>会给出本地计算机上运行的<code>ntpd</code>的同步状态。如果本地系统与参考时间源同步，则<code>ntpstat</code>会给出近似的时间精度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ntpstat</span><br><span class="line">synchronised to NTP server (192.168.0.1) at stratum 3</span><br><span class="line">   time correct to within 43 ms</span><br><span class="line">   polling server every 1024 s</span><br></pre></td></tr></table></figure>
+
+<h2 id="问题引申"><a href="#问题引申" class="headerlink" title="问题引申"></a>问题引申</h2><p>虽然可以利用<code>ntp</code>来同步集群时间，但是有一个问题是值的思考的：<strong>如何在集群时钟不同的情况下，解决<a href="#时间戳不一致带来的问题">时间戳不一致带来的问题</a>一节中描述的问题</strong>。</p>
+<p>系统在架构上要做何种优化，才能避免业务对集群时钟同步的依赖？而这种优化所带来的系统架构的复杂度和成本又将如何？</p>
 
       
       <!-- reward -->
@@ -204,14 +217,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2020/05/20/Software-Entropy-and-A-Broken-Window/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%80%BA/" rel="tag">技术债</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ntp/" rel="tag">ntp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%B6%E9%97%B4%E6%88%B3%E4%B8%8D%E5%90%8C%E6%AD%A5/" rel="tag">时间戳不同步</a></li></ul>
 
 
     </footer>
@@ -222,19 +235,10 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            集群时间戳不一致导致的问题及其分析和思考
-          
-        </div>
-      </a>
     
-    
-      <a href="/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/" class="article-nav-link">
+      <a href="/2020/05/20/Software-Entropy-and-A-Broken-Window/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">matplotlib的backends以及非交互式绘图</div>
+        <div class="article-nav-title">软件的熵和破窗原理</div>
       </a>
     
   </nav>
