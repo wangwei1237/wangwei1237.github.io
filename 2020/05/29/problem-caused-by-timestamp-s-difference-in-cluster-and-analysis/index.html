@@ -130,9 +130,9 @@
 <p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/1.png" alt></p>
 <p>当<code>trade</code>为单机部署时，不会存在问题。但是当<code>trade</code>作为集群部署时，则会存在集群时间戳不一致导致用户支付失败的问题。具体如下所示：</p>
 <p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/2.png" alt></p>
-<p>如图所示，<code>m1</code>和<code>m2</code>的时间戳是一致的，但是<code>m3</code>的时间戳比其它机器正好快了<strong>60s</strong>。因此，如果<code>支付</code>的流量由<code>m3</code>机器的<code>trade</code>处理，则即便是在1分钟内支付，因为因为<code>m3</code>机器的时间戳快60s而导致支付超时，进而导致用户支付失败，影响用户体验。</p>
+<p>如图所示，<code>m1</code>和<code>m2</code>的时间戳是一致的，但是<code>m3</code>的时间戳比其它机器正好快了<strong>60s</strong>。因此，如果<code>支付</code>的流量由<code>m3</code>机器的<code>trade</code>处理，则即便是在1分钟内支付，因为<code>m3</code>机器的时间戳快60s而导致支付超时，进而导致用户支付失败，影响用户体验。</p>
 <p>这就是我们要讲的：在一个集群中，部分机器的<code>时间戳</code>和其它机器不一致而导致的重大问题。</p>
-<h2 id="问题如何解决"><a href="#问题如何解决" class="headerlink" title="问题如何解决"></a>问题如何解决</h2><p>在不修改系统架构的前提下修复该问题，则可以利用同一时钟同步集群中所有机器的时钟，从而让集群的时钟保持同步，进而解决该问题。具体的方案如下图所示。</p>
+<h2 id="问题如何解决"><a href="#问题如何解决" class="headerlink" title="问题如何解决"></a>问题如何解决</h2><p>在不修改系统架构的前提下，则可以利用同一时钟同步集群中所有机器的时钟，从而让集群的时钟保持同步，进而解决该问题。具体的方案如下图所示。</p>
 <p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/3.png" alt></p>
 <h3 id="ntp"><a href="#ntp" class="headerlink" title="ntp"></a>ntp</h3><p>对Linux而言，可以使用<a href="https://en.wikipedia.org/wiki/Network_Time_Protocol" target="_blank" rel="noopener"><code>ntp</code></a>来实现集群的时间同步。</p>
 <p>同步时间，可以使用<code>ntpdate</code>命令，也可以使用<code>ntpd</code>服务。</p>
