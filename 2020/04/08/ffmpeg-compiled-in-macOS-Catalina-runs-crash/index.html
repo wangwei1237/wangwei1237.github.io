@@ -11,7 +11,7 @@
    
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    macOS Catalina编译的FFMpeg运行crash |  17哥
+    macOS Catalina的strip版本异常导致编译的FFMpeg运行被kill |  17哥
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -52,7 +52,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  macOS Catalina编译的FFMpeg运行crash
+  macOS Catalina的strip版本异常导致编译的FFMpeg运行被kill
 </h1>
  
 
@@ -76,7 +76,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">236</span>
+            <span class="post-count">831</span>
         </span>
     </span>
 
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
@@ -96,6 +96,8 @@
 
     
     
+    <div class="tocbot"></div>
+
 
 
 
@@ -121,7 +123,34 @@
 <p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/4.jpg" alt></p>
 <p>因此根据如上信息：<code>./configure</code>时需要增加<code>--host-cflags=-fno-stack-check</code>配置。</p>
 <p>但是增加该配置之后，编译出的ffmpeg依然无法正常运行。</p>
-<p><strong>暂时先将这个问题记录下来，等有时间了再彻底追查一下。</strong></p>
+<h2 id="发现原因"><a href="#发现原因" class="headerlink" title="发现原因"></a>发现原因</h2><p><strong>恰好最近升级了系统和Xcode版本，想着再编译一下看下是否可用，终于有了新的发现。</strong></p>
+<p>编译的系统版本和Xcode版本如下所示：</p>
+<p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/5.jpg" alt></p>
+<p>编译命令如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> .&#x2F;configure --enable-shared --enable-pthreads --enable-version3 --enable-avresample \</span><br><span class="line">--cc&#x3D;clang --host-cflags&#x3D; --host-ldflags&#x3D; --enable-ffplay --enable-gnutls --enable-gpl \</span><br><span class="line">--enable-libaom --enable-libbluray --enable-libmp3lame --enable-libopus \</span><br><span class="line">--enable-librubberband --enable-libsnappy --enable-libtesseract --enable-libtheora \</span><br><span class="line">--enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 \</span><br><span class="line">--enable-libx265 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype \</span><br><span class="line">--enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb \</span><br><span class="line">--enable-libopenjpeg --enable-librtmp --enable-libspeex --enable-libsoxr \</span><br><span class="line">--enable-videotoolbox --disable-libjack --disable-indev&#x3D;jack</span><br></pre></td></tr></table></figure>
+
+<p>编译之后，惊喜的发现，虽然<code>ffprobe</code>命令依旧异常，但是<code>ffprobe_g</code>命令已经可以使用了。具体如下图所示：</p>
+<p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/6.jpg" alt></p>
+<p><code>ffprobe</code>和<code>ffprobe_g</code>的不同就是<code>ffprobe_g</code>会包含调试信息。</p>
+<p>回顾编译指令的最后几条指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LD ffmpeg_g</span><br><span class="line">LD ffprobe_g</span><br><span class="line">LD ffplay_g</span><br><span class="line">STRIP ffmpeg</span><br><span class="line">STRIP ffprobe</span><br><span class="line">STRIP ffplay</span><br></pre></td></tr></table></figure>
+
+<p>可以发现，在编译的最后，使用<code>strip</code>命令，去掉了<code>ffprobe</code>中的调试信息。那么是否是<code>strip</code>命令有问题呢？</p>
+<p>带着这个疑问，写了一段测试代码<code>test.cpp</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Hello World!"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>clang++</code>编译并对比利用<code>strip</code>命令去掉调试信息前后的运行结果，终于发现了问题所在：</p>
+<p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/7.jpg" alt></p>
+<p>至此，终于找到原因：<code>strip</code>命令生成的无调试信息的可执行程序，会发生<code>Malformed Mach-o file</code>的现象。</p>
+<h2 id="修正strip版本"><a href="#修正strip版本" class="headerlink" title="修正strip版本"></a>修正strip版本</h2><p>怀疑机器上的<code>strip</code>版本异常导致去掉调试信息后的可执行文件出现异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ which strip</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;opt&#x2F;binutils&#x2F;bin&#x2F;strip</span><br><span class="line">$ which clang++</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;clang++</span><br><span class="line">$ ls &#x2F;usr&#x2F;bin&#x2F;strip</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;strip</span><br><span class="line">$ &#x2F;usr&#x2F;bin&#x2F;strip -x a.out</span><br><span class="line">$ .&#x2F;a.out</span><br><span class="line">Hello World!</span><br></pre></td></tr></table></figure>
+
+<p>经过如上的过程发现，确实是<code>strip</code>的版本有问题，利用<code>/usr/bin/strip</code>生成的无调试信息的可执行程序是正常的。</p>
+<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><p>在编译ffmpeg时，利用<code>--strip</code>选项来指定<code>strip</code>的版本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> .&#x2F;configure --enable-shared --enable-pthreads --enable-version3 --enable-avresample \</span><br><span class="line">--cc&#x3D;clang --host-cflags&#x3D; --host-ldflags&#x3D; --enable-ffplay --enable-gnutls --enable-gpl \</span><br><span class="line">--enable-libaom --enable-libbluray --enable-libmp3lame --enable-libopus \</span><br><span class="line">--enable-librubberband --enable-libsnappy --enable-libtesseract --enable-libtheora \</span><br><span class="line">--enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 \</span><br><span class="line">--enable-libx265 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype \</span><br><span class="line">--enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb \</span><br><span class="line">--enable-libopenjpeg --enable-librtmp --enable-libspeex --enable-libsoxr \</span><br><span class="line">--enable-videotoolbox --disable-libjack --disable-indev&#x3D;jack \</span><br><span class="line">--strip&#x3D;&#x2F;usr&#x2F;bin&#x2F;strip</span><br></pre></td></tr></table></figure>
+
+<p>大功告成，问题解决，具体如下所示：</p>
+<p><img src="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/8.jpg" alt></p>
 
       
       <!-- reward -->
@@ -193,7 +222,7 @@
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFMpeg/" rel="tag">FFMpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS-Catalina/" rel="tag">macOS Catalina</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFMpeg/" rel="tag">FFMpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS-Catalina/" rel="tag">macOS Catalina</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/strip/" rel="tag">strip</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li></ul>
 
 
     </footer>
