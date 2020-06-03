@@ -35,7 +35,7 @@
 
   
 
-</head>
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
 
 </html>
 
@@ -112,16 +112,17 @@
       <blockquote>
 <p>1883年11月18日，美国第一个全国统一铁路时刻表诞生，这一天的正午时分，美国东部的时钟全部回拨。从此，上帝的时间被改用人间的指针来度量。 ——<strong>公司的力量</strong></p>
 </blockquote>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近遇到的业务上的问题涉及：<em>在一个集群中，存在部分机器的<code>时间戳</code>和其它机器不一致而导致的重大问题</em>。为了不泄露业务的相关信息，文中会用一个类似的场景来对这个问题进行分析。</p>
+<h2 id="背景">背景</h2>
+<p>最近遇到的业务上的问题涉及：<em>在一个集群中，存在部分机器的<code>时间戳</code>和其它机器不一致而导致的重大问题</em>。为了不泄露业务的相关信息，文中会用一个类似的场景来对这个问题进行分析。</p>
 <a id="more"></a>
-
-<h2 id="时间戳（unix-time-stamp）"><a href="#时间戳（unix-time-stamp）" class="headerlink" title="时间戳（unix time stamp）"></a>时间戳（unix time stamp）</h2><p>需要注意的是，这里涉及到的问题是集群<code>时间戳</code>不一致而不是<code>时间</code>不一致。</p>
+<h2 id="时间戳-unix-time-stamp">时间戳（unix time stamp）</h2>
+<p>需要注意的是，这里涉及到的问题是集群<code>时间戳</code>不一致而不是<code>时间</code>不一致。</p>
 <p><a href="https://www.unixtimestamp.com" target="_blank" rel="noopener">The unix time stamp</a> is a way to track time as a running total of seconds. This count starts at the Unix Epoch on January 1st, 1970 at UTC. Therefore, the unix time stamp is merely the number of seconds between a particular date and the Unix Epoch. It should also be pointed out (thanks to the comments from visitors to this site) that <strong><code>this point in time technically does not change no matter where you are located on the globe</code></strong>. This is very useful to computer systems for tracking and sorting dated information in dynamic and distributed applications both online and client side.</p>
 <p>由此可知，<code>时间戳</code>和<code>时间</code>不同，是一个和时区无关的全球一致的时间计量方式。不同集群会因为其所在的时区不同而存在时间不同的问题，但是其时间戳是一致的。</p>
 <p>Linux系统而言，时间戳可以利用<a href="https://www.gnu.org/software/shellutils/shellutils.html" target="_blank" rel="noopener"><code>GNU shell utilities</code></a>提供的<a href="https://github.com/coreutils/coreutils/blob/master/src/date.c" target="_blank" rel="noopener"><code>date</code>命令</a>来获取。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ date +%s</span><br><span class="line">$ 1590719825</span><br></pre></td></tr></table></figure>
-
-<h2 id="时间戳不一致带来的问题"><a href="#时间戳不一致带来的问题" class="headerlink" title="时间戳不一致带来的问题"></a>时间戳不一致带来的问题</h2><p>考虑如下的一个购物站点的活动场景，如下的场景可能不会在现实的电商活动中存在，该场景仅仅是为了说明本文的问题而抽象的一个场景。</p>
+<h2 id="时间戳不一致带来的问题">时间戳不一致带来的问题</h2>
+<p>考虑如下的一个购物站点的活动场景，如下的场景可能不会在现实的电商活动中存在，该场景仅仅是为了说明本文的问题而抽象的一个场景。</p>
 <blockquote>
 <p>原价100￥的商品，现价10￥元销售，但前提是下单的用户需要在1分钟内完成支付。如果下单用户未能在1分钟内完成支付，则该订单无效，同时该用户无法继续以折扣价下单。</p>
 </blockquote>
@@ -131,26 +132,29 @@
 <p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/2.png" alt></p>
 <p>如图所示，<code>m1</code>和<code>m2</code>的时间戳是一致的，但是<code>m3</code>的时间戳比其它机器正好快了<strong>60s</strong>。因此，如果<code>支付</code>的流量由<code>m3</code>机器的<code>trade</code>处理，则即便是在1分钟内支付，因为<code>m3</code>机器的时间戳快60s而导致支付超时，进而导致用户支付失败，影响用户体验。</p>
 <p>这就是我们要讲的：在一个集群中，部分机器的<code>时间戳</code>和其它机器不一致而导致的重大问题。</p>
-<h2 id="问题如何解决"><a href="#问题如何解决" class="headerlink" title="问题如何解决"></a>问题如何解决</h2><p>在不修改系统架构的前提下，则可以利用同一时钟同步集群中所有机器的时钟，从而让集群的时钟保持同步，进而解决该问题。具体的方案如下图所示。</p>
+<h2 id="问题如何解决">问题如何解决</h2>
+<p>在不修改系统架构的前提下，则可以利用同一时钟同步集群中所有机器的时钟，从而让集群的时钟保持同步，进而解决该问题。具体的方案如下图所示。</p>
 <p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/3.png" alt></p>
-<h3 id="ntp"><a href="#ntp" class="headerlink" title="ntp"></a>ntp</h3><p>对Linux而言，可以使用<a href="https://en.wikipedia.org/wiki/Network_Time_Protocol" target="_blank" rel="noopener"><code>ntp</code></a>来实现集群的时间同步。</p>
+<h3 id="ntp">ntp</h3>
+<p>对Linux而言，可以使用<a href="https://en.wikipedia.org/wiki/Network_Time_Protocol" target="_blank" rel="noopener"><code>ntp</code></a>来实现集群的时间同步。</p>
 <p>同步时间，可以使用<code>ntpdate</code>命令，也可以使用<code>ntpd</code>服务。</p>
-<h3 id="ntpdate"><a href="#ntpdate" class="headerlink" title="ntpdate"></a>ntpdate</h3><p>使用<code>ntpdate</code>比较简单。格式如下：</p>
+<h3 id="ntpdate">ntpdate</h3>
+<p>使用<code>ntpdate</code>比较简单。格式如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ntpdate [-nv] [NTP IP&#x2F;hostname]</span><br><span class="line">$ ntpdate 192.168.0.1</span><br><span class="line">$ ntpdate time.ntp.org</span><br></pre></td></tr></table></figure>
-
 <p><code>ntpdate</code>只是强制将系统时间设置为ntp服务器时间。如果机器cpu tick有问题，这种同步治标不治本。此时，一般配合<code>cron</code>任务来定期同步。例如：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 12 * * * * &#x2F;usr&#x2F;sbin&#x2F;ntpdate 192.168.0.1</span><br></pre></td></tr></table></figure>
-
-<h3 id="ntpd"><a href="#ntpd" class="headerlink" title="ntpd"></a>ntpd</h3><p>使用<code>ntpd</code>服务，要好于使用<code>ntpdate+cron</code>。</p>
+<h3 id="ntpd">ntpd</h3>
+<p>使用<code>ntpd</code>服务，要好于使用<code>ntpdate+cron</code>。</p>
 <p><code>ntpdate</code>同步时间，会造成时间的跳跃，对一些依赖时间的程序和服务会造成影响，比如sleep，timer等。</p>
 <p><code>ntpd</code>服务可以在修正时间的同时，修正cpu tick。</p>
 <p>理想的做法为，在开机的时候，使用<code>ntpdate</code>强制同步时间，在其他时候使用<code>ntpd</code>服务来同步时间。</p>
 <p>需要注意的是，<code>ntpd</code>有一个自我保护设置: 如果本机时间与源时间相差太大, 则<code>ntpd</code>不运行。所以新设置的时间服务器一定要先利用<code>ntpdate</code>命令获取初始时间, 然后启动<code>ntpd</code>服务。</p>
 <p>关于ntpd的使用，网上已经有很多资料了，这里就不做过多的介绍了。</p>
-<h3 id="ntpstat"><a href="#ntpstat" class="headerlink" title="ntpstat"></a>ntpstat</h3><p><code>ntpstat</code>用于显示网络时间的同步状态。<code>ntpstat</code>会给出本地计算机上运行的<code>ntpd</code>的同步状态。如果本地系统与参考时间源同步，则<code>ntpstat</code>会给出近似的时间精度。</p>
+<h3 id="ntpstat">ntpstat</h3>
+<p><code>ntpstat</code>用于显示网络时间的同步状态。<code>ntpstat</code>会给出本地计算机上运行的<code>ntpd</code>的同步状态。如果本地系统与参考时间源同步，则<code>ntpstat</code>会给出近似的时间精度。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ntpstat</span><br><span class="line">synchronised to NTP server (192.168.0.1) at stratum 3</span><br><span class="line">   time correct to within 43 ms</span><br><span class="line">   polling server every 1024 s</span><br></pre></td></tr></table></figure>
-
-<h2 id="问题引申"><a href="#问题引申" class="headerlink" title="问题引申"></a>问题引申</h2><p>虽然可以利用<code>ntp</code>来同步集群时间，但是有一个问题是值的思考的：<strong>如何在集群时钟不同的情况下，解决<a href="#时间戳不一致带来的问题">时间戳不一致带来的问题</a>一节中描述的问题</strong>。</p>
+<h2 id="问题引申">问题引申</h2>
+<p>虽然可以利用<code>ntp</code>来同步集群时间，但是有一个问题是值的思考的：<strong>如何在集群时钟不同的情况下，解决<a href="#%E6%97%B6%E9%97%B4%E6%88%B3%E4%B8%8D%E4%B8%80%E8%87%B4%E5%B8%A6%E6%9D%A5%E7%9A%84%E9%97%AE%E9%A2%98">时间戳不一致带来的问题</a>一节中描述的问题</strong>。</p>
 <p>系统在架构上要做何种优化，才能避免业务对集群时钟同步的依赖？而这种优化所带来的系统架构的复杂度和成本又将如何？</p>
 
       
@@ -533,30 +537,6 @@
 </script>
 
 <!-- MathJax -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-      tex2jax: {
-          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-          processEscapes: true,
-          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-  });
-
-  MathJax.Hub.Queue(function() {
-      var all = MathJax.Hub.getAllJax(), i;
-      for(i=0; i < all.length; i += 1) {
-          all[i].SourceElement().parentNode.className += ' has-jax';
-      }
-  });
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script>
-  var ayerConfig = {
-    mathjax: true
-  }
-</script>
 
 <!-- Katex -->
 
