@@ -116,7 +116,7 @@ class Circle {
       const style = this.renderCanvas.style
       style.position = 'fixed'
       style.top = style.left = 0
-      style.zIndex = '999999999999999999999999999999999999999999'
+      style.zIndex = '99999'
       style.pointerEvents = 'none'
   
       style.width = this.renderCanvas.width = this.computerCanvas.width = this.globalWidth
