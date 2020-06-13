@@ -45,9 +45,13 @@
       
     <main class="content on">
       <section class="outer">
-  <article id="post-how-to-calculate-the-MS-SSIM" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
+  <article
+  id="post-how-to-calculate-the-MS-SSIM"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
   <div class="article-inner">
     
     <header class="article-header">
@@ -58,20 +62,15 @@
  
 
     </header>
-    
-
-    
+     
     <div class="article-meta">
       <a href="/2020/02/25/how-to-calculate-the-MS-SSIM/" class="article-date">
   <time datetime="2020-02-25T07:08:40.000Z" itemprop="datePublished">2020-02-25</time>
-</a>
-      
+</a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
   </div>
-
-      
-      
+  
 <div class="word_count">
     <span class="post-time">
         <span class="post-meta-item-icon">
@@ -90,28 +89,18 @@
         </span>
     </span>
 </div>
-
-      
+ 
     </div>
-    
-
-    
-    
+      
     <div class="tocbot"></div>
 
 
 
 
-
-    
-
-    
+  
     <div class="article-entry" itemprop="articleBody">
-      
-      
-
-      
-      <h2 id="ssim的本质及其缺点">SSIM的本质及其缺点</h2>
+       
+  <h2 id="ssim的本质及其缺点">SSIM的本质及其缺点</h2>
 <p>在<a href="/2020/02/15/how-to-calculate-the-SSIM-in-FFMpeg/">FFMpeg如何计算图像的SSIM</a>中，详细介绍了<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>S</mi><mi>I</mi><mi>M</mi></mrow><annotation encoding="application/x-tex">SSIM</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span></span></span></span>的相关概念，并对FFMpeg中的<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>S</mi><mi>I</mi><mi>M</mi></mrow><annotation encoding="application/x-tex">SSIM</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span></span></span></span>实现做了详细的分析。<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>S</mi><mi>I</mi><mi>M</mi></mrow><annotation encoding="application/x-tex">SSIM</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span></span></span></span>算法基于HVS更擅长从图像中提取结构信息的事实，并且利用结构相似度来计算图像的感知质量。在Z. Wang等人的论文<strong>Multi-scale structural similarity for image quality assessment</strong>中也提到，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>S</mi><mi>I</mi><mi>M</mi></mrow><annotation encoding="application/x-tex">SSIM</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span></span></span></span>算法要好于当时的其它的感知图像质量指标。</p>
 <p>就其本质而言，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>S</mi><mi>I</mi><mi>M</mi></mrow><annotation encoding="application/x-tex">SSIM</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span></span></span></span>是一种单尺度的算法，但是实际上正确的图像尺度取决于用户的观看条件，例如显示设备的分辨率，用户的观看距离等。因此，用单尺度的<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>S</mi><mi>I</mi><mi>M</mi></mrow><annotation encoding="application/x-tex">SSIM</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span></span></span></span>算法来评估图像的感知质量也存在其缺点。</p>
 <a id="more"></a>
@@ -160,28 +149,26 @@
 <p>然后利用<a href="https://github.com/FFmpeg/FFmpeg/blob/master/tests/tiny_ssim.c" target="_blank" rel="noopener">tiny_ssim</a>中的<code>ssim_plane()</code>迭代计算<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>S</mi><mo>−</mo><mi>S</mi><mi>S</mi><mi>I</mi><mi>M</mi></mrow><annotation encoding="application/x-tex">MS-SSIM</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span></span></span></span>。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">float ms_ssim_plane(pixel *pix1, pixel *pix2, int width, int height, int scale) &#123;</span><br><span class="line">    for (int i &#x3D; 0; i &lt; w * h; i++) &#123;</span><br><span class="line">        ori_img1[i] &#x3D; pix1[i];</span><br><span class="line">        ori_img2[i] &#x3D; pix2[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 计算每个尺度的ssim值.</span><br><span class="line">    for (int i &#x3D; 1; i &lt;&#x3D; scale; i++) &#123;</span><br><span class="line">        if (i !&#x3D; 1) &#123;</span><br><span class="line">            downsample_2x2_mean(ori_img1, w, h, sample_img1);</span><br><span class="line">            downsample_2x2_mean(ori_img2, w, h, sample_img2);</span><br><span class="line">            w &#x3D; w &gt;&gt; 1;</span><br><span class="line">            h &#x3D; h &gt;&gt; 1;</span><br><span class="line">            for (int j &#x3D; 0; j &lt; w * h; j++) &#123;</span><br><span class="line">                ori_img1[j] &#x3D; sample_img1[j];</span><br><span class="line">                ori_img2[j] &#x3D; sample_img2[j];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        value &#x3D; ssim_plane(ori_img1, w, ori_img2, w, w, h, temp, NULL);</span><br><span class="line">        result *&#x3D; pow(value.C_S, WEIGHT[i-1]);</span><br><span class="line">        luminance_value[i-1] &#x3D; value.L;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    result *&#x3D; pow(luminance_value[scale-1], WEIGHT[scale-1]);</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>完整的代码可以参考<a href="https://gitee.com/wangwei1237/wangwei1237/blob/master/2020/02/25/how-to-calculate-the-MS-SSIM/test_msssim.cpp" target="_blank" rel="noopener">test_msssim.cpp</a>。代码的很大部分是由我的同事<em>贤杰</em>(github: <a href="https://github.com/bodhisatan" target="_blank" rel="noopener">@bodhisatan</a>)实现的，在此一并表示感谢。</p>
-
-      
+ 
       <!-- reward -->
       
     </div>
     
+
+    <!-- copyright -->
     
-      <!-- copyright -->
-      
-        <div class="declare">
-          <ul class="post-copyright">
-            <li>
-              <i class="ri-copyright-line"></i>
-              <strong>版权声明： </strong>
-              本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
-            </li>
-          </ul>
-        </div>
-        
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+        </li>
+      </ul>
+    </div>
+    
     <footer class="article-footer">
-      
-          
+       
 <div class="share-btn">
       <span class="share-sns share-outer">
         <i class="ri-share-forward-line"></i>
@@ -228,18 +215,13 @@
     </div>
 </div>
 
-<div id="share-mask"></div>
-      
-      
+<div id="share-mask"></div>  
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MS-SSIM/" rel="tag">MS-SSIM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSIM/" rel="tag">SSIM</a></li></ul>
 
-
     </footer>
-
   </div>
 
-  
-  
+   
   <nav class="article-nav">
     
       <a href="/2020/02/28/Introduction-to-digital-video-technology/" class="article-nav-link">
@@ -259,13 +241,8 @@
     
   </nav>
 
-
   
-
-  
-
-  
-  
+   
 <div class="gitalk" id="gitalk-container"></div>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.css">
@@ -291,10 +268,9 @@
 
   gitalk.render('gitalk-container')
 </script>
-
   
-
 </article>
+
 </section>
       <footer class="footer">
   <div class="outer">
