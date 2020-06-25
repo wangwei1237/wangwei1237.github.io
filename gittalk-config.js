@@ -4,7 +4,7 @@ var gitalk = new Gitalk({
     "repo": "wangwei1237.github.io",
     "owner": "wangwei1237",
     "admin": ["wangwei1237"],
-    "id": decodeURI(window.location.pathname),
+    "id": window.location.pathname.split('/')[window.location.pathname.split('/').length - 1],
     "distractionFreeMode": false
 });
 
