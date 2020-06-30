@@ -10,9 +10,11 @@ greenfield:
 management consultancy: 管理咨询公司
 multi-tenant: 多租户
 organizational-silos: 组织孤岛
+project sponsor: 项目发起人
 referential integrity: 参照完整性
 Scale-ups: 规模企业
 single-tenant: 单租户
+stakeholder: 
 Startups: 初创企业
 strangler fig approach: 绞杀者模式
 sunk cost: 沉默成本
