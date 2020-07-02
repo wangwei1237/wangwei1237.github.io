@@ -13,6 +13,7 @@ management consultancy: 管理咨询公司
 multi-tenant: 多租户
 organizational-silos: 组织孤岛
 project sponsor: 项目发起人
+project owner: 产品负责人
 referential integrity: 参照完整性
 Scale-ups: 规模企业
 shallow extractions: 浅层抽取
