@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="17哥,17g,17G,17" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    使用Boost::Python用C++开发Python库 |  17哥
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-write-python-library-using-c-with-boost-python"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  使用Boost::Python用C++开发Python库
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/06/13/write-python-library-using-c-with-boost-python/" class="article-date">
+  <time datetime="2020-06-13T07:48:18.000Z" itemprop="datePublished">2020-06-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/python/">python</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="背景">背景</h2>
+<p>很多系统都会用<code>json</code>格式进行数据交互。为了保证数据在系统上下游的自动校验，避免数据结构异常带来的系统稳定性问题，可以采用<a href="http://json-schema.org" target="_blank" rel="noopener"><code>json-schema</code></a>来定义<code>json接口</code>，并利用<a href="https://datatracker.ietf.org/doc/draft-handrews-json-schema-validation" target="_blank" rel="noopener"><code>json-schema-validator</code></a>来校验接口响应的结构的合法性。</p>
+<p>然而系统中不同子系统的实现（编程语言）并非总是一致，虽然各种语言都提供了<a href="https://datatracker.ietf.org/doc/draft-handrews-json-schema-validation" target="_blank" rel="noopener"><code>json-schema-validator</code></a>的具体实现，但是不同语言支持的<code>json-schema-validator</code>标准的版本并非完全一致，这会对后续的使用带来一些混乱，例如：</p>
+<ul>
+<li>Java: <a href="https://github.com/java-json-tools/json-schema-validator" target="_blank" rel="noopener">json-schema-validator</a>支持<a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00" target="_blank" rel="noopener">Draft 4</a></li>
+<li>C++: <a href="https://github.com/pboettch/json-schema-validator" target="_blank" rel="noopener">json-schema-validator</a>支持<a href="https://tools.ietf.org/html/draft-handrews-json-schema-validation-01" target="_blank" rel="noopener">Draft 7</a></li>
+<li>Python <a href="https://github.com/Julian/jsonschema" target="_blank" rel="noopener">jsonschema</a>支持<a href="https://tools.ietf.org/html/draft-handrews-json-schema-validation-01" target="_blank" rel="noopener">Draft 7</a></li>
+</ul>
+<a id="more"></a>
+<p>目前大多数语言，例如：Java, Golang, Php, Python, Lua等都支持C/C++的扩展。因此，可以用C/C++来为其他语言提供统一的扩展库支持，本文就是介绍怎么利用<code>Boost::Python</code>库提供<a href="https://github.com/pboettch/json-schema-validator" target="_blank" rel="noopener"><code>json-schema-validator</code></a>的Python支持，并介绍如何利用<code>distutils</code>来编译&amp;分发Python库。</p>
+<p><img src="/2020/06/13/write-python-library-using-c-with-boost-python/1.png" alt></p>
+<h2 id="python调用c-c-的方式">Python调用C/C++的方式</h2>
+<p>有两种方式可以实现Python调用C/C++编写的库：</p>
+<ul>
+<li>使用Python扩展</li>
+<li>使用<code>ctypes</code>模块直接加载C/C++编写的so</li>
+</ul>
+<h4 id="ctypes加载so文件">ctypes加载so文件</h4>
+<p><code>ctype</code>是Python的外部函数库。它提供了C兼容的数据类型，并允许在DLL或共享库中调用函数。</p>
+<p><code>ctype</code>是Python封装的API函数库。其中<code>cdll = &lt;ctypes.LibraryLoader object&gt;</code>是一个库加载器对象，调用<code>cdll.LoadLibrary</code>便可调用C/C++的so库。</p>
+<p>此处不再对如何使用<code>ctype</code>模块加载so文件做过多的介绍，具体可以参考其<a href="https://docs.python.org/3/library/ctypes.html#module-ctypes" target="_blank" rel="noopener">官方文档</a>。</p>
+<h4 id="使用python扩展">使用Python扩展</h4>
+<p>该方式是Python为整合其它语言而提供的一种扩展机制，并且该机制不局限于C/C++，也可以用于其它语言。Python的可扩展性具有如下的优点：</p>
+<ul>
+<li>方便为语言增加新功能</li>
+<li>具有可定制性</li>
+<li>可以实现代码复用</li>
+<li>……</li>
+</ul>
+<p>该方式的具体使用此处也不再做过多介绍，具体信息可以直接参考Python的官方文档<a href="https://docs.python.org/3/extending/building.html" target="_blank" rel="noopener"><strong>Building C and C++ Extensions</strong></a>来了解。接下来要讲的例子就是利用了<code>可以实现代码复用</code>的优点。</p>
+<p>如<a href="https://docs.python.org/3/extending/building.html" target="_blank" rel="noopener"><strong>Building C and C++ Extensions</strong></a>所示，Python提供了<code>Python/C++ API</code>用来实现Python和C++的交互。然而，直接使用这些API来完成Python和C/C++的交互还是会存在很多重复工作的。<code>Boost::Python</code>则对<code>Python/C++ API</code>进行了抽象和包装，从而使得Python和C++的交互更加方便。</p>
+<h2 id="boost-python封装c-c-扩展">Boost::Python封装C/C++扩展</h2>
+<p>接下来我们介绍我们是如何利用Boost::Python来为<a href="https://github.com/pboettch/json-schema-validator" target="_blank" rel="noopener">nlohmann_json_schema_validator</a>增加Python扩展。</p>
+<p><code>nlohmann_json_schema_validator</code> is a C++ library for validating JSON documents based on a <strong>JSON Schema</strong> which itself should validate with <strong>draft-7 of JSON Schema Validation</strong>.</p>
+<h4 id="编译nlohmann-json-schema-validator库">编译nlohmann json schema validator库</h4>
+<p><code>nlohmann json schema validator</code>支持产出可执行的bin文件以及可供其他项目使用的动态库。为了可以将该扩展包装成Python扩展，我们需要生成该库的动态库。</p>
+<p>首先根据<code>nlohmann json schema validator</code>的<a href="https://github.com/pboettch/json-schema-validator/blob/master/README.md#building-as-shared-library" target="_blank" rel="noopener">编译文档</a>编译出<code>nlohmann json schema validator</code>的动态库。</p>
+<p><img src="/2020/06/13/write-python-library-using-c-with-boost-python/2.jpg" alt></p>
+<h4 id="boost-python封装c-c-代码">Boost::Python封装C/C++代码</h4>
+<p>在安装Boost的时候，虽然Boost的头文件中存在Boost::Python相关的hpp文件，但是默认却没有该动态库。因此，在使用Boost::Python之前，首先需要安装该库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install boost-python3</span><br></pre></td></tr></table></figure>
+<p>然后，我们用C++编写<code>class json_validator_python;</code>来封装<code>nlohmann json schema validator</code>库，并利用Boost::Python来导出，具体如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// jsv_python.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;nlohmann/json-schema.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/python.hpp&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> boost::python;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JSON_SCHEMA_VALIDATOR_API</span> <span class="title">json_validator_python</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    nlohmann::json_schema::json_validator validator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    json_validator_python() &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set_root_schema</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;json_string)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        validator.set_root_schema(nlohmann::json::parse(json_string.<span class="built_in">begin</span>(), json_string.<span class="built_in">end</span>()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">validate</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;json_string)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        validator.validate(nlohmann::json::parse(json_string.<span class="built_in">begin</span>(), json_string.<span class="built_in">end</span>()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// json_schema_validator为module名，必需和生成的so库名一样</span></span><br><span class="line">BOOST_PYTHON_MODULE(json_schema_validator)</span><br><span class="line">&#123;</span><br><span class="line">    class_&lt;json_validator_python, boost::noncopyable&gt; (<span class="string">"json_validator_python"</span>)</span><br><span class="line">            .def(<span class="string">"set_root_schema"</span>, &amp;json_validator_python::set_root_schema)</span><br><span class="line">            .def(<span class="string">"validate"</span>, &amp;json_validator_python::validate)</span><br><span class="line">            ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如上所示的<code>BOOST_PYTHON_MODULE</code>代码，目的是导出类及成员方法，这些导出的类和方法可以在Python中调用。</p>
+<p>关于Boost::Python更详细的使用，可以参考其<a href="https://www.boost.org/doc/libs/1_66_0/libs/python/doc/html/index.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<h4 id="编译并产出python扩展">编译并产出Python扩展</h4>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">g++ --std&#x3D;c++11 -fPIC -c jsv_python.cpp \</span><br><span class="line">-I$&#123;json-schema-validator_PATH&#125;&#x2F;src \</span><br><span class="line">-I$&#123;nlohmann-json_PATH&#125; \</span><br><span class="line">-I$&#123;Boost_PATH&#125;&#x2F;include \</span><br><span class="line">-I$&#123;Python_INCLUDE_PATH&#125;</span><br><span class="line"></span><br><span class="line">g++ --std&#x3D;c++11 -shared \</span><br><span class="line">-L$&#123;json-schema-validator_LIB_PATH&#125; \</span><br><span class="line">-L$&#123;Python_LIB_PATH&#125; \</span><br><span class="line">-L$&#123;Boost_Python_LIB_PATH&#125; \</span><br><span class="line">-lnlohmann_json_schema_validator \</span><br><span class="line">-lboost_python38 -lpython3.8 \</span><br><span class="line">-o json_schema_validator.so jsv_python.o</span><br></pre></td></tr></table></figure>
+<p>如上的指令，会生成封装之后的Python扩展：<code>json_schema_validator.so</code>。</p>
+<h4 id="测试python扩展">测试python扩展</h4>
+<p>在当前目录执行如下的Python代码，可以发现，我们封装的扩展已经可以当做Python扩展来导入并使用了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json_schema_validator <span class="keyword">as</span> jsv</span><br><span class="line"></span><br><span class="line">validator = jsv.json_validator_python()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">isValidator = <span class="literal">True</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    validator.set_root_schema(<span class="string">'&#123;"type":"object", "properties": &#123;"a":&#123;"type": "string"&#125;&#125;&#125;'</span>)</span><br><span class="line">    validator.validate(<span class="string">'&#123;"a":"1"&#125;'</span>);</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    isValidator = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">print(isValidator)</span><br></pre></td></tr></table></figure>
+<h2 id="使用distutils编译并分发扩展">使用distutils编译并分发扩展</h2>
+<p>为了使用方便，使用<a href="https://docs.python.org/3/extending/building.html" target="_blank" rel="noopener"><strong>Building C and C++ Extensions</strong></a>介绍的<code>distutils模块</code>编译Python扩展。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> distutils.core <span class="keyword">import</span> setup, Extension</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">os.environ[<span class="string">"CC"</span>] = <span class="string">"g++"</span></span><br><span class="line">os.environ[<span class="string">"CXX"</span>] = <span class="string">"g++"</span></span><br><span class="line"></span><br><span class="line">module1 = Extension(<span class="string">'json_schema_validator'</span>,</span><br><span class="line">                    include_dirs = [<span class="string">'../../src'</span>,</span><br><span class="line">                        <span class="string">'../../'</span>,</span><br><span class="line">                        <span class="string">'/usr/local/Cellar/boost/1.72.0_3/include'</span>,</span><br><span class="line">                        <span class="string">'/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/include/python3.8'</span>],</span><br><span class="line">                    libraries = [<span class="string">'boost_python38'</span>, <span class="string">'python3.8'</span>,</span><br><span class="line">                        <span class="string">'nlohmann_json_schema_validator'</span>],</span><br><span class="line">                    library_dirs = [<span class="string">'/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/lib'</span>,</span><br><span class="line">                        <span class="string">'/usr/local/Cellar/boost-python3/1.72.0_1/lib'</span>,</span><br><span class="line">                        <span class="string">'.'</span>],</span><br><span class="line">                    sources = [<span class="string">'jsv_python.cpp'</span>],</span><br><span class="line">                    extra_compile_args=[<span class="string">'--std=c++11'</span>],</span><br><span class="line">                    extra_link_args=[<span class="string">'--std=c++11'</span>])</span><br><span class="line"></span><br><span class="line">setup (name = <span class="string">'json-schema-validator'</span>,</span><br><span class="line">       version = <span class="string">'1.0'</span>,</span><br><span class="line">       description = <span class="string">'json schema validator'</span>,</span><br><span class="line">       ext_modules = [module1])</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python3 setup.py build</span><br><span class="line">$ python3 setup.py install</span><br><span class="line">$ export LD_LIBRARY_PATH&#x3D;$LD_LIBRARY_PATH:&#x2F;usr&#x2F;local&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;json_schema_validator</span><br></pre></td></tr></table></figure>
+<p>然后就可以在任意位置，执行<a href="#%E6%B5%8B%E8%AF%95python%E6%89%A9%E5%B1%95">测试python扩展</a>一节的测试代码啦。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2020/06/13/write-python-library-using-c-with-boost-python/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Boost-Python/" rel="tag">Boost::Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/distutils/" rel="tag">distutils</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/setup-py/" rel="tag">setup.py</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/07/08/autotest-is-a-working-culture-first/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            自动化测试首先是一种工作文化
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">集群时间戳不一致导致的问题及其分析和思考</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.css">
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '7bf1e91eaff35fd004dc',
+    clientSecret: 'd151c7bc85d544dafe2c0de75e3a174623229a3a',
+    repo: 'wangwei1237.github.io',
+    owner: 'wangwei1237',
+    admin: ['wangwei1237'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+  
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020
+        <i class="ri-heart-fill heart_icon"></i> wangwei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s4.cnzz.com/z_stat.php?id=1278605528&amp;online=1&amp;show=line'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
+        
+    
+
+
+<!-- busuanzi  -->
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>
