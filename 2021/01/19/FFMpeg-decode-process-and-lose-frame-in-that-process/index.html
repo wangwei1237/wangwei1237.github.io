@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>FFmpeg解码API以及在解码过程中存在的丢帧问题 |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-FFMpeg-decode-process-and-lose-frame-in-that-process"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  FFmpeg解码API以及在解码过程中存在的丢帧问题
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/" class="article-date">
+  <time datetime="2021-01-19T14:10:38.000Z" itemprop="datePublished">2021-01-19</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">5 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/1.png" alt></p>
+<h2 id="背景">背景</h2>
+<p>在优化视频客观全参考算法（主要是<em>PSNR</em>, <em>SSIM</em>, <em>MS-SSIM</em>）时，我们首先利用FFmpeg提供的API（<em><code>avcodec_send_packet()</code></em>，<em><code>avcodec_receive_frame()</code></em>）对输入的两个MP4文件转成对应的YUV格式的数据文件，然后再基于这两份YUV数据文件进行计算，得到对应的结果。</p>
+<p>但是，我们发现，MP4文件转成YUV数据后，总是会发生<strong>丢失视频最后几帧</strong>的现象。</p>
+<p>为了弄清楚这个问题，查阅了FFmpeg的源码，并参考了网络上的资料，然后总结出了这篇文章。</p>
+<span id="more"></span>
+<h2 id="ffmpeg的编解码api">FFmpeg的编解码API</h2>
+<p>从<a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/commit/7fc329e2dd6226dfecaa4a1d7adf353bf2773726">3.1版本</a>开始，FFmpeg提供了<a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/release/3.1/libavcodec/avcodec.h">新的编解码API</a>来对音视频数据进行编解码操作，从而实现对输入和输出的解耦：</p>
+<ul>
+<li>解码API
+<ul>
+<li>avcodec_send_packet()</li>
+<li>avcodec_receive_frame()</li>
+</ul>
+</li>
+<li>编码API
+<ul>
+<li>avcodec_send_frame()</li>
+<li>avcodec_receive_packet()</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @ingroup libavc</span></span><br><span class="line"><span class="comment"> * @defgroup lavc_encdec send/receive encoding and decoding API overview</span></span><br><span class="line"><span class="comment"> * @&#123;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The avcodec_send_packet()/avcodec_receive_frame()/avcodec_send_frame()/</span></span><br><span class="line"><span class="comment"> * avcodec_receive_packet() functions provide an encode/decode API, which</span></span><br><span class="line"><span class="comment"> * decouples input and output.</span></span><br><span class="line"><span class="comment"> * ...</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<p>同时，也正是从3.1版本开始，之前的编解码API也被标注为<code>deprecated</code>：</p>
+<ul>
+<li>解码API
+<ul>
+<li>avcodec_decode_video2()</li>
+<li>avcodec_decode_audio4():</li>
+</ul>
+</li>
+<li>编码API
+<ul>
+<li>avcodec_encode_video2()</li>
+<li>avcodec_encode_audio2()</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">attribute_deprecated</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">avcodec_decode_audio4</span><span class="params">(AVCodecContext *avctx, AVFrame *frame,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> *got_frame_ptr, <span class="keyword">const</span> AVPacket *avpkt)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>在我们的工具中，我们采用了新的解码API：<code>avcodec_send_packet()</code>和<code>avcodec_receive_frame()</code>，实现视频帧的解码，并将解码后的数据转成YUV数据。具体的代码片段如下，<a target="_blank" rel="noopener" href="https://wangwei1237.gitee.io/2021/01/19/FFmpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_1.cpp">点击可查看完整测试代码</a>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">process_frame</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//decode operation.</span></span><br><span class="line"><span class="keyword">while</span> (!<span class="built_in">av_read_frame</span>(fmt_ctx, pkt)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (pkt-&gt;stream_index != video_stream_idx) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                         frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        i++;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">av_packet_unref</span>(pkt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从代码可以看出，<code>i</code>是解码帧的总数，但是我们运行之后发现，一个252帧的视频，最终只得到了248帧。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> frame count: 248</span></span><br></pre></td></tr></table></figure>
+<h2 id="send-packet-receive-frame">send_packet &amp; receive_frame</h2>
+<p>为了加深对解码API的了解，以便能查出问题原因，我们查阅了<a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/avcodec.h">FFmpeg的代码</a>，从代码的注释中，我们发现了问题：<strong>我们没有遵循API的使用规范，同时FFmpeg在注释中也说明了为什么会出现我们遇到的问题</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * ... </span></span><br><span class="line"><span class="comment">  * At the beginning of decoding or encoding, the codec might accept multiple</span></span><br><span class="line"><span class="comment">  * input frames/packets without returning a frame, until its internal buffers</span></span><br><span class="line"><span class="comment">  * are filled. This situation is handled transparently if you follow the steps</span></span><br><span class="line"><span class="comment">  * outlined above.</span></span><br><span class="line"><span class="comment">  * </span></span><br><span class="line"><span class="comment">  * End of stream situations. These require &quot;flushing&quot; (aka draining) the codec,</span></span><br><span class="line"><span class="comment">  * as the codec might buffer multiple frames or packets internally for</span></span><br><span class="line"><span class="comment">  * performance or out of necessity (consider B-frames).</span></span><br><span class="line"><span class="comment">  * ...</span></span><br><span class="line"><span class="comment">  */</span></span><br></pre></td></tr></table></figure>
+<p>也就是说，为了提升性能或出于其他的考虑，解码器会在内部缓存多个<code>frames</code>/<code>packets</code>。因此，当流结束的时候，需要对解码器执行<code>flushing</code>操作，以便获取解码器缓存的<code>frames</code>/<code>packets</code>。</p>
+<p>我们的工具中，在流结束之后，并没有执行<code>flushing</code>操作，因此就出现了解码过程丢帧的现象。按照FFmpeg的指导，我们补充了如下的逻辑，以便获取解码器中缓存的帧，<a target="_blank" rel="noopener" href="https://wangwei1237.gitee.io/2021/01/19/FFmpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_2.cpp">点击可查看完整测试代码</a>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Flush remaining frames that are cached in the decoder</span></span><br><span class="line"><span class="keyword">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">av_init_packet</span>(pkt);</span><br><span class="line">pkt-&gt;data = <span class="literal">NULL</span>;</span><br><span class="line">pkt-&gt;size = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                     frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    i++;</span><br><span class="line">    packet_new = <span class="number">1</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>再次运行，我们发现，丢帧问题消失了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> frame count: 252</span></span><br></pre></td></tr></table></figure>
+<h2 id="ffmpeg解码api状态机">FFMPeg解码API状态机</h2>
+<h3 id="avcodec-send-packet返回值">avcodec_send_packet返回值</h3>
+<p>从FFmpeg的源码中，我们会发现，正常情况下，<code>avcodec_send_packet()</code>函数的返回值主要有以下三种：</p>
+<ul>
+<li><code>0</code>: on success.</li>
+<li><code>EAGAIN</code>: input is not accepted in the current state - user must read output with avcodec_receive_frame() (once all output is read, the packet should be resent, and the call will not fail with EAGAIN).</li>
+<li><code>EOF</code>: the decoder has been flushed, and no new packets can be sent to it (also returned if more than 1 flush packet is sent).</li>
+</ul>
+<h3 id="avcodec-receive-frame返回值">avcodec_receive_frame返回值</h3>
+<p>同样的，正常情况下，<code>avcodec_receive_frame()</code>函数的返回值主要有以下三种：</p>
+<ul>
+<li><code>0</code>: success, a frame was returned.</li>
+<li><code>EAGAIN</code>: output is not available in this state - user must try to send new input.</li>
+<li><code>EOF</code>: the decoder has been fully flushed, and there will be no more output frames.</li>
+</ul>
+<h3 id="解码api状态机">解码API状态机</h3>
+<p><code>avcodec_send_packet()</code>和<code>avcodec_receive_frame()</code>不同的返回值代表了解码器的不同的状态。</p>
+<p>对API的调用实际上是一种动作，而API的返回值则用来标志当前解码器的状态。因此，解码API的整个过程实际上就是一个状态机。</p>
+<p>根据<a href="#avcodec_send_packet%E8%BF%94%E5%9B%9E%E5%80%BC">avcodec_send_packet返回值</a>和<a href="#avcodec_receive_frame%E8%BF%94%E5%9B%9E%E5%80%BC">avcodec_receive_frame返回值</a>中的介绍，可以得到正常情况下，解码过程的状态机，如下图所示。</p>
+<p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/2.png" alt></p>
+<p>在图中，<code>节点</code>代表状态（API的返回值），<code>箭头</code>代表API的调用。蓝色表示和<code>avcodec_send_packet()</code>相关，红色表示和<code>avcodec_receive_frame()</code>相关。</p>
+<p><a target="_blank" rel="noopener" href="https://wangwei1237.gitee.io/2021/01/19/FFmpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_2.cpp">我们修复版本的解码实现</a>实际上就是对如上图所示的状态机的实现。</p>
+<p>而如果在实现的时候，没有处理如下图所示的状态，则会导致无法获取视频最后几帧的问题。</p>
+<p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/3.png" alt></p>
+<h2 id="思考">思考</h2>
+<ul>
+<li>源码面前，了无秘密。侯捷老师说过“源码面前，了无秘密”。工作中发现，源码确实是我们获取知识和经验的一个非常有效的途径，尤其是那些好的开源项目的源码，更是如此。</li>
+<li>源码还是我们解决问题的强有力的手段之一。对于这些优秀的开源项目的源码而言，代码只是一个部分，源码中的注释、文档等会为我们提供足够的资源。这次问题的解决就是依赖源码，之前在Android摄像头Mock技术的研究中，也是在查阅Android相关源码后才有了思路。因此，当我们在工作中遇到问题的时候，第一手的资料还是源码（当然，要有源码才行），其次才是官方文档，最后才是网络上的其他资源。</li>
+<li>看了那么多的源码才发现：优秀的项目是那么的一致，而糟糕的项目，各有各的糟糕之处。</li>
+</ul>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFMpeg/" rel="tag">FFMpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/avcodec-receive-frame/" rel="tag">avcodec_receive_frame</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/avcodec-send-packet/" rel="tag">avcodec_send_packet</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%86%E9%A2%91%E8%A7%A3%E7%A0%81/" rel="tag">视频解码</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%A3%E7%A0%81%E4%B8%A2%E5%B8%A7/" rel="tag">解码丢帧</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/01/26/HDR-introduction/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            HDR技术导论
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/01/11/Trust-but-Verify/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">信任，但也要核查</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '7bf1e91eaff35fd004dc',
+    clientSecret: 'd151c7bc85d544dafe2c0de75e3a174623229a3a',
+    repo: 'wangwei1237.github.io',
+    owner: 'wangwei1237',
+    admin: ['wangwei1237'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2021
+        <i class="ri-heart-fill heart_icon"></i> wangwei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s4.cnzz.com/z_stat.php?id=1278605528&amp;online=1&amp;show=line'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
+        
+    
+ 
+<!-- busuanzi  -->
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>

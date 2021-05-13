@@ -1,0 +1,1044 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>4.6 改变数据的所有权 · Monolith to Microservices</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="wangwei17">
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-page-toc-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-tbfed-pagefooter/footer.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-hints/plugin-hints.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Data_Synchronization.html" />
+    
+    
+    <link rel="prev" href="Pattern_Database-as-a-Service_Interface.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+    
+        
+        <li>
+            <a href="https://wangwei1237.gitee.io/" target="_blank" class="custom-link">17哥的个人网站</a>
+        </li>
+    
+    
+
+    
+    <li class="divider"></li>
+    
+
+    
+        
+        <li class="header">0. 前言</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    0.1 前言
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">1. 关于微服务，此章足矣</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="What_Are_Microservices.html">
+            
+                <a href="What_Are_Microservices.html">
+            
+                    
+                    1.1 什么是微服务
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="The_Monolith.html">
+            
+                <a href="The_Monolith.html">
+            
+                    
+                    1.2 单体应用
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="On_Coupling_and_Cohesion.html">
+            
+                <a href="On_Coupling_and_Cohesion.html">
+            
+                    
+                    1.3 关于耦合和内聚
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="Just_Enough_Domain_Driven_Design.html">
+            
+                <a href="Just_Enough_Domain_Driven_Design.html">
+            
+                    
+                    1.4 领域驱动设计
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">2. 规划迁移</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="Understanding_the_Goal.html">
+            
+                <a href="Understanding_the_Goal.html">
+            
+                    
+                    2.1 了解迁移的目标
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="Why_Might_You_Choose_Microservices.html">
+            
+                <a href="Why_Might_You_Choose_Microservices.html">
+            
+                    
+                    2.2 为什么选择微服务
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="When_Might_Microservices_Be_a_Bad_Idea.html">
+            
+                <a href="When_Might_Microservices_Be_a_Bad_Idea.html">
+            
+                    
+                    2.3 什么时候微服务不是一个好的选择
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="Trade_Offs.html">
+            
+                <a href="Trade_Offs.html">
+            
+                    
+                    2.4 权衡折衷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="Taking_People_on_the_Journey.html">
+            
+                <a href="Taking_People_on_the_Journey.html">
+            
+                    
+                    2.5 带动其他人员
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="Changing_Organizations.html">
+            
+                <a href="Changing_Organizations.html">
+            
+                    
+                    2.6 组织变革
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="Importance_of_Incremental_Migration.html">
+            
+                <a href="Importance_of_Incremental_Migration.html">
+            
+                    
+                    2.7 增量迁移的重要性
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.8" data-path="Cost_of_Change.html">
+            
+                <a href="Cost_of_Change.html">
+            
+                    
+                    2.8 变革的成本
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.9" data-path="So_Where_Do_We_Start.html">
+            
+                <a href="So_Where_Do_We_Start.html">
+            
+                    
+                    2.9 我们从哪里启程
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.10" data-path="Domain_Driven_Design.html">
+            
+                <a href="Domain_Driven_Design.html">
+            
+                    
+                    2.10 领域驱动设计
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.11" data-path="A_Combined_Model.html">
+            
+                <a href="A_Combined_Model.html">
+            
+                    
+                    2.11 融合模型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.12" data-path="Reorganizing_Teams.html">
+            
+                <a href="Reorganizing_Teams.html">
+            
+                    
+                    2.12 重组团队
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.13" data-path="How_Will_You_Know_if_the_Transition_Is_Working.html">
+            
+                <a href="How_Will_You_Know_if_the_Transition_Is_Working.html">
+            
+                    
+                    2.13 如何知道迁移过程是否有效
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">3. 拆解单体应用</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="To_Change_the_Monolith_or_Not.html">
+            
+                <a href="To_Change_the_Monolith_or_Not.html">
+            
+                    
+                    3.1 改变单体应用，还是不改变？
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="Migration_Patterns.html">
+            
+                <a href="Migration_Patterns.html">
+            
+                    
+                    3.2 迁移模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="Pattern_Strangler_Fig_Application.html">
+            
+                <a href="Pattern_Strangler_Fig_Application.html">
+            
+                    
+                    3.3 绞杀者模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="Changing_Behavior_While_Migrating_Functionality.html">
+            
+                <a href="Changing_Behavior_While_Migrating_Functionality.html">
+            
+                    
+                    3.4 在功能迁移过程中对其修改
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="Pattern_UI_Composition.html">
+            
+                <a href="Pattern_UI_Composition.html">
+            
+                    
+                    3.5 UI组合模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="Pattern_Branch_by_Abstraction.html">
+            
+                <a href="Pattern_Branch_by_Abstraction.html">
+            
+                    
+                    3.6 抽象分支模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="Pattern_Parallel_Run.html">
+            
+                <a href="Pattern_Parallel_Run.html">
+            
+                    
+                    3.7 新老并行模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="Pattern_Decorating_Collaborator.html">
+            
+                <a href="Pattern_Decorating_Collaborator.html">
+            
+                    
+                    3.8 装饰协作模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9" data-path="Pattern_Change_Data_Capture.html">
+            
+                <a href="Pattern_Change_Data_Capture.html">
+            
+                    
+                    3.9 CDC模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">4. 拆分数据库</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="Pattern_The_Shared_Database.html">
+            
+                <a href="Pattern_The_Shared_Database.html">
+            
+                    
+                    4.1 共享数据库
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="But_It_Cant_Be_Done.html">
+            
+                <a href="But_It_Cant_Be_Done.html">
+            
+                    
+                    4.2 然而，现在无法拆分数据库
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="Pattern_Database_View.html">
+            
+                <a href="Pattern_Database_View.html">
+            
+                    
+                    4.3 数据库视图
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="Pattern_Database_Wrapping_Service.html">
+            
+                <a href="Pattern_Database_Wrapping_Service.html">
+            
+                    
+                    4.4 把数据库包装成服务
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="Pattern_Database-as-a-Service_Interface.html">
+            
+                <a href="Pattern_Database-as-a-Service_Interface.html">
+            
+                    
+                    4.5 把数据库视为服务接口
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="5.6" data-path="Transferring_Ownership.html">
+            
+                <a href="Transferring_Ownership.html">
+            
+                    
+                    4.6 改变数据的所有权
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7" data-path="Data_Synchronization.html">
+            
+                <a href="Data_Synchronization.html">
+            
+                    
+                    4.7 数据同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.8" data-path="Pattern_Synchronize_Data_in_Application.html">
+            
+                <a href="Pattern_Synchronize_Data_in_Application.html">
+            
+                    
+                    4.8 在应用中同步数据
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.9" data-path="Pattern_Tracer_Write.html">
+            
+                <a href="Pattern_Tracer_Write.html">
+            
+                    
+                    4.9 跟踪器写入模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.10" data-path="Splitting_Apart_the_Database.html">
+            
+                <a href="Splitting_Apart_the_Database.html">
+            
+                    
+                    4.10 拆分数据库
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.11" data-path="Splitting_the_Database_First_or_the_Code.html">
+            
+                <a href="Splitting_the_Database_First_or_the_Code.html">
+            
+                    
+                    4.11 先拆分数据库还是先拆分代码
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.12" data-path="Schema_Separation_Examples.html">
+            
+                <a href="Schema_Separation_Examples.html">
+            
+                    
+                    4.12 数据分离的例子
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.13" data-path="Pattern_Split_Table.html">
+            
+                <a href="Pattern_Split_Table.html">
+            
+                    
+                    4.13 拆分表
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.14" data-path="Pattern_Move_ForeignKey_Relationship_to_Code.html">
+            
+                <a href="Pattern_Move_ForeignKey_Relationship_to_Code.html">
+            
+                    
+                    4.14 把表的外键关系移至代码
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.15" data-path="Transactions.html">
+            
+                <a href="Transactions.html">
+            
+                    
+                    4.15 数据库事务
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.16" data-path="Sagas.html">
+            
+                <a href="Sagas.html">
+            
+                    
+                    4.16 Sagas
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">5. 成长的烦恼</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="More_Services_More_Pain.html">
+            
+                <a href="More_Services_More_Pain.html">
+            
+                    
+                    5.1 服务越多，烦恼越多
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="Ownership_at_Scale.html">
+            
+                <a href="Ownership_at_Scale.html">
+            
+                    
+                    5.2 团队不断扩张时的微服务所有制问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="Breaking_Changes.html">
+            
+                <a href="Breaking_Changes.html">
+            
+                    
+                    5.3 破坏性的服务变更
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.4" data-path="Reporting.html">
+            
+                <a href="Reporting.html">
+            
+                    
+                    5.4 报表问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.5" data-path="Monitoring_and_Troubleshooting.html">
+            
+                <a href="Monitoring_and_Troubleshooting.html">
+            
+                    
+                    5.5 监控和问题定位
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.6" data-path="Local_Developer_Experience.html">
+            
+                <a href="Local_Developer_Experience.html">
+            
+                    
+                    5.6 本地开发体验的问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.7" data-path="Running_Too_Many_Things.html">
+            
+                <a href="Running_Too_Many_Things.html">
+            
+                    
+                    5.7 微服务部署和状态管理的问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.8" data-path="End-to-End_Testing.html">
+            
+                <a href="End-to-End_Testing.html">
+            
+                    
+                    5.8 端到端的测试
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.9" data-path="Global_Versus_Local_Optimization.html">
+            
+                <a href="Global_Versus_Local_Optimization.html">
+            
+                    
+                    5.9 局部优化 VS. 全局优化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.10" data-path="Robustness_and_Resiliency.html">
+            
+                <a href="Robustness_and_Resiliency.html">
+            
+                    
+                    5.10 系统的鲁棒性和弹性
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.11" data-path="Orphaned_Services.html">
+            
+                <a href="Orphaned_Services.html">
+            
+                    
+                    5.11 孤儿服务的问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">6. 结束语</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="Closing_Words.html">
+            
+                <a href="Closing_Words.html">
+            
+                    
+                    6. 结束语
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >4.6 改变数据的所有权</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x6539;&#x53D8;&#x6570;&#x636E;&#x7684;&#x6240;&#x6709;&#x6743;">&#x6539;&#x53D8;&#x6570;&#x636E;&#x7684;&#x6240;&#x6709;&#x6743;</h1>
+<p>&#x5230;&#x76EE;&#x524D;&#x4E3A;&#x6B62;&#xFF0C;&#x6211;&#x4EEC;&#x8FD8;&#x6CA1;&#x6709;&#x771F;&#x6B63;&#x89E3;&#x51B3;&#x6839;&#x672C;&#x95EE;&#x9898;&#x3002;&#x6211;&#x4EEC;&#x53EA;&#x662F;&#x7528;&#x5404;&#x79CD;&#x4E0D;&#x540C;&#x7684;&#x7EF7;&#x5E26;&#x6765;&#x5305;&#x624E;&#x4E00;&#x4E2A;&#x5927;&#x578B;&#x7684;&#x3001;&#x5171;&#x4EAB;&#x7684;&#x6570;&#x636E;&#x5E93;&#x3002;&#x5728;&#x5F00;&#x59CB;&#x8003;&#x8651;&#x4ECE;&#x5DE8;&#x578B;&#x7684;&#x5355;&#x4F53;&#x6570;&#x636E;&#x5E93;&#x4E2D;&#x62BD;&#x53D6;&#x6570;&#x636E;&#x8FD9;&#x4E00;&#x68D8;&#x624B;&#x7684;&#x4EFB;&#x52A1;&#x4E4B;&#x524D;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x8003;&#x8651;&#x6211;&#x4EEC;&#x6240;&#x8BA8;&#x8BBA;&#x7684;&#x6570;&#x636E;&#x5B9E;&#x9645;&#x4E0A;&#x5E94;&#x8BE5;&#x5B58;&#x653E;&#x5728;&#x4F55;&#x5904;&#x3002;&#x5F53;&#x6211;&#x4EEC;&#x5C06;&#x670D;&#x52A1;&#x4ECE;&#x5355;&#x4F53;&#x4E2D;&#x62C6;&#x5206;&#x51FA;&#x6765;&#x65F6;&#xFF0C;&#x67D0;&#x4E9B;&#x6570;&#x636E;&#x5E94;&#x8BE5;&#x968F;&#x4E4B;&#x4E00;&#x8D77;&#x63D0;&#x4F9B;&#xFF0C;&#x800C;&#x6709;&#x4E9B;&#x6570;&#x636E;&#x5219;&#x5E94;&#x8BE5;&#x4FDD;&#x7559;&#x5728;&#x539F;&#x5904;&#x3002;</p>
+<ul>
+<li>&#x5982;&#x679C;&#x6211;&#x4EEC;&#x63A5;&#x53D7;&#x8FD9;&#x6837;&#x7684;&#x60F3;&#x6CD5;&#x2014;&#x2014;<a href="Just_Enough_Domain_Driven_Design.html#&#x805A;&#x5408;">&#x5FAE;&#x670D;&#x52A1;&#x5C01;&#x88C5;&#x4E00;&#x4E2A;&#x6216;&#x591A;&#x4E2A;&#x805A;&#x5408;&#x76F8;&#x5173;&#x8054;&#x7684;&#x903B;&#x8F91;</a>&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x8FD8;&#x9700;&#x8981;&#x628A;&#x805A;&#x5408;&#x7684;&#x72B6;&#x6001;&#x7BA1;&#x7406;&#x4EE5;&#x53CA;&#x4E0E;&#x4E4B;&#x5173;&#x8054;&#x7684;&#x6570;&#x636E;&#x79FB;&#x5230;&#x5FAE;&#x670D;&#x52A1;&#x81EA;&#x5DF1;&#x7684;&#x6570;&#x636E;schema&#x4E2D;&#x3002;</li>
+<li>&#x53E6;&#x4E00;&#x65B9;&#x9762;&#xFF0C;&#x5982;&#x679C;&#x6211;&#x4EEC;&#x7684;&#x65B0;&#x7684;&#x5FAE;&#x670D;&#x52A1;&#x9700;&#x8981;&#x4E0E;&#x4ECD;&#x5728;&#x5355;&#x4F53;&#x4E2D;&#x7684;&#x805A;&#x5408;&#x4EA4;&#x4E92;&#xFF0C;&#x5219;&#x9700;&#x8981;&#x901A;&#x8FC7;&#x5B9A;&#x4E49;&#x660E;&#x786E;&#x7684;&#x63A5;&#x53E3;&#x6765;&#x5F00;&#x653E;&#x6B64;&#x529F;&#x80FD;&#x3002;</li>
+</ul>
+<p>&#x73B0;&#x5728;&#xFF0C;&#x8BA9;&#x6211;&#x4EEC;&#x770B;&#x770B;&#x5982;&#x4E0A;&#x7684;&#x4E24;&#x79CD;&#x9009;&#x62E9;&#x3002;</p>
+<h2 id="&#x5728;&#x5355;&#x4F53;&#x4E2D;&#x5F00;&#x653E;&#x805A;&#x5408;">&#x5728;&#x5355;&#x4F53;&#x4E2D;&#x5F00;&#x653E;&#x805A;&#x5408;</h2>
+<p>&#x5728;<a href="#f48">&#x56FE;4-8</a>&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x7684;&#x65B0;&#x670D;&#x52A1;&#x2014;&#x2014;Invocing&#x9700;&#x8981;&#x8BBF;&#x95EE;&#x4E0E;&#x7BA1;&#x7406;&#x53D1;&#x7968;&#x6CA1;&#x6709;&#x76F4;&#x63A5;&#x5173;&#x7CFB;&#x7684;&#x5404;&#x79CD;&#x4FE1;&#x606F;&#x3002;&#x81F3;&#x5C11;&#xFF0C;Invocing&#x670D;&#x52A1;&#x9700;&#x8981;&#x5F53;&#x524D;&#x7684;Employees&#x805A;&#x5408;&#x7684;&#x76F8;&#x5173;&#x4FE1;&#x606F;&#x6765;&#x7BA1;&#x7406;&#x5BA1;&#x6279;&#x5DE5;&#x4F5C;&#x3002;&#x800C;&#x76EE;&#x524D;&#xFF0C;Employees&#x7684;&#x76F8;&#x5173;&#x6570;&#x636E;&#x5168;&#x90E8;&#x4F4D;&#x4E8E;&#x5355;&#x4F53;&#x6570;&#x636E;&#x5E93;&#x4E2D;&#x3002;&#x5728;&#x5355;&#x4F53;&#x4E0A;&#xFF0C;&#x901A;&#x8FC7;&#x670D;&#x52A1;&#x7AEF;&#x70B9;&#xFF08;&#x53EF;&#x80FD;&#x662F;API&#x6216;&#x4E8B;&#x4EF6;&#x6D41;&#xFF09;&#x5F00;&#x653E;Employees&#x805A;&#x5408;&#x7684;&#x76F8;&#x5173;&#x4FE1;&#x606F;&#xFF0C;&#x6211;&#x4EEC;&#x660E;&#x786E;&#x4E86;Invoice&#x670D;&#x52A1;&#x6240;&#x9700;&#x8981;&#x7684;&#x4FE1;&#x606F;&#x3002;</p>
+<p><img src="../images/4_8.png" alt=""></p>
+<p><span id="f48">&#x56FE;4-8</span>. &#x901A;&#x8FC7;&#x9002;&#x5F53;&#x7684;&#x670D;&#x52A1;&#x63A5;&#x53E3;&#x5F00;&#x653E;&#x5355;&#x4F53;&#x7684;&#x4FE1;&#x606F;&#xFF0C;&#x4ECE;&#x800C;&#x4F7F;&#x6211;&#x4EEC;&#x7684;&#x65B0;&#x5FAE;&#x670D;&#x52A1;&#x53EF;&#x4EE5;&#x8BBF;&#x95EE;&#x8FD9;&#x4E9B;&#x4FE1;&#x606F;</p>
+<p>&#x6211;&#x4EEC;&#x60F3;&#x8981;&#x628A;&#x5FAE;&#x670D;&#x52A1;&#x89C6;&#x4E3A;&#x884C;&#x4E3A;&#xFF08;<em>behaviro</em>&#xFF09;&#x548C;&#x72B6;&#x6001;&#xFF08;<em>state</em>&#xFF09;&#x7684;&#x7EC4;&#x5408;&#x3002;&#x6211;&#x5DF2;&#x7ECF;&#x8BA8;&#x8BBA;&#x8FC7;&#x8FD9;&#x6837;&#x7684;&#x60F3;&#x6CD5;&#xFF1A;&#x628A;&#x5FAE;&#x670D;&#x52A1;&#x89C6;&#x4E3A;&#x5305;&#x542B;&#x4E00;&#x4E2A;&#x6216;&#x591A;&#x4E2A;&#x7528;&#x6765;&#x7BA1;&#x7406;&#x9886;&#x57DF;&#x805A;&#x5408;&#xFF08;<em>domain aggregates</em>&#xFF09;&#x7684;&#x72B6;&#x6001;&#x673A;&#x3002;&#x5F53;&#x4ECE;&#x5355;&#x4F53;&#x4E2D;&#x66B4;&#x9732;&#x805A;&#x5408;&#x65F6;&#xFF0C;&#x6211;&#x4EEC;&#x5E0C;&#x671B;&#x4EE5;&#x76F8;&#x540C;&#x7684;&#x65B9;&#x5F0F;&#x6765;&#x601D;&#x8003;&#x3002;&#x5355;&#x4F53;&#x4ECD;&#x7136;&#x201C;&#x62E5;&#x6709;&#x201D;&#x5982;&#x4E0B;&#x7684;&#x6982;&#x5FF5;&#xFF1A;&#x4EC0;&#x4E48;&#x6837;&#x7684;&#x72B6;&#x6001;&#x4FEE;&#x6539;&#x662F;&#x5141;&#x8BB8;&#x7684;&#xFF0C;&#x4EC0;&#x4E48;&#x6837;&#x7684;&#x72B6;&#x6001;&#x4FEE;&#x6539;&#x662F;&#x4E0D;&#x5141;&#x8BB8;&#x7684;&#x3002;&#x6211;&#x4EEC;&#x4E0D;&#x60F3;&#x4EC5;&#x4EC5;&#x5C06;&#x5176;&#x89C6;&#x4E3A;&#x6570;&#x636E;&#x5E93;&#x7684;&#x5305;&#x88C5;&#x5668;&#x3002;</p>
+<p>&#x9664;&#x4E86;&#x516C;&#x5F00;&#x6570;&#x636E;&#x4E4B;&#x5916;&#xFF0C;&#x6211;&#x4EEC;&#x8FD8;&#x5C06;&#x516C;&#x5F00;&#x5982;&#x4E0B;&#x7684;&#x64CD;&#x4F5C;&#xFF1A;&#x5141;&#x8BB8;&#x5916;&#x90E8;&#x5404;&#x65B9;&#x67E5;&#x8BE2;&#x805A;&#x5408;&#x7684;&#x5F53;&#x524D;&#x72B6;&#x6001;&#xFF0C;&#x5141;&#x8BB8;&#x5916;&#x90E8;&#x5404;&#x65B9;&#x53D1;&#x8D77;&#x65B0;&#x72B6;&#x6001;&#x8F6C;&#x6362;&#x7684;&#x8BF7;&#x6C42;&#x3002;&#x6211;&#x4EEC;&#x4ECD;&#x7136;&#x53EF;&#x4EE5;&#x51B3;&#x5B9A;&#x4ECE;&#x670D;&#x52A1;&#x8FB9;&#x754C;&#x516C;&#x5F00;&#x805A;&#x5408;&#x7684;&#x54EA;&#x4E9B;&#x72B6;&#x6001;&#xFF0C;&#x5E76;&#x9650;&#x5236;&#x53EF;&#x4EE5;&#x4ECE;&#x5916;&#x90E8;&#x8BF7;&#x6C42;&#x4EC0;&#x4E48;&#x72B6;&#x6001;&#x8F6C;&#x6362;&#x64CD;&#x4F5C;&#x3002;</p>
+<h3 id="&#x62BD;&#x53D6;&#x66F4;&#x591A;&#x670D;&#x52A1;&#x7684;&#x9014;&#x5F84;">&#x62BD;&#x53D6;&#x66F4;&#x591A;&#x670D;&#x52A1;&#x7684;&#x9014;&#x5F84;</h3>
+<p>&#x901A;&#x8FC7;&#x5B9A;&#x4E49;Invoice&#x670D;&#x52A1;&#x7684;&#x9700;&#x6C42;&#xFF0C;&#x5E76;&#x5728;&#x5B9A;&#x4E49;&#x660E;&#x786E;&#x7684;&#x63A5;&#x53E3;&#x4E2D;&#x663E;&#x5F0F;&#x516C;&#x5F00;&#x6240;&#x9700;&#x7684;&#x4FE1;&#x606F;&#xFF0C;&#x6211;&#x4EEC;&#x5C06;&#x6709;&#x53EF;&#x80FD;&#x53D1;&#x73B0;&#x672A;&#x6765;&#x7684;&#x670D;&#x52A1;&#x8FB9;&#x754C;&#x3002;&#x5728;<a href="#f49">&#x56FE;4-9</a>&#x4E2D;&#xFF0C;&#x63A5;&#x4E0B;&#x6765;&#xFF0C;&#x663E;&#x800C;&#x6613;&#x89C1;&#x7684;&#x6B65;&#x9AA4;&#x53EF;&#x80FD;&#x662F;&#x63D0;&#x53D6;Employee&#x670D;&#x52A1;&#x3002;&#x901A;&#x8FC7;&#x4E00;&#x4E2A;API&#x6765;&#x5F00;&#x653E;&#x4E0E;&#x5458;&#x5DE5;&#x76F8;&#x5173;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x6478;&#x7D22;&#x4E86;&#x5F88;&#x4E45;&#x6765;&#x4E86;&#x89E3;&#x6D88;&#x8D39;&#x8005;&#x5BF9;&#x65B0;&#x7684;Employee&#x670D;&#x52A1;&#x7684;&#x9700;&#x6C42;&#x3002;</p>
+<p><img src="../images/4_9.png" alt=""></p>
+<p><span id="f49">&#x56FE;4-9</span>. &#x4F7F;&#x7528;&#x73B0;&#x6709;&#x7684;&#x7AEF;&#x70B9;&#x6765;&#x9A71;&#x52A8;&#x62BD;&#x53D6;&#x65B0;&#x7684;Employee&#x670D;&#x52A1;</p>
+<p>&#x5F53;&#x7136;&#xFF0C;&#x5982;&#x679C;&#x6211;&#x4EEC;&#x786E;&#x5B9E;&#x4ECE;&#x5355;&#x4F53;&#x4E2D;&#x63D0;&#x53D6;&#x4E86;&#x90A3;&#x4E9B;employees&#x805A;&#x5408;&#xFF0C;&#x800C;&#x5355;&#x4F53;&#x9700;&#x8981;&#x90A3;&#x4E9B;employee&#x6570;&#x636E;&#xFF0C;&#x5219;&#x53EF;&#x80FD;&#x9700;&#x8981;&#x4FEE;&#x6539;&#x5355;&#x4F53;&#x624D;&#x80FD;&#x4F7F;&#x7528;Employee&#x65B0;&#x670D;&#x52A1;&#xFF01;</p>
+<h3 id="&#x4F55;&#x5904;&#x4F7F;&#x7528;&#x8BE5;&#x6A21;&#x5F0F;">&#x4F55;&#x5904;&#x4F7F;&#x7528;&#x8BE5;&#x6A21;&#x5F0F;</h3>
+<p>&#x5F53;&#x4ECD;&#x7136;&#x7531;&#x6570;&#x636E;&#x5E93;&#x201C;&#x62E5;&#x6709;&#x201D;&#x6240;&#x8981;&#x8BBF;&#x95EE;&#x7684;&#x6570;&#x636E;&#x65F6;&#xFF0C;&#x6B64;&#x6A21;&#x5F0F;&#x53EF;&#x4EE5;&#x5F88;&#x597D;&#x5730;&#x4F7F;&#x65B0;&#x670D;&#x52A1;&#x53EF;&#x4EE5;&#x83B7;&#x5F97;&#x6240;&#x9700;&#x7684;&#x8BBF;&#x95EE;&#x6743;&#x9650;&#x3002;&#x62BD;&#x53D6;&#x670D;&#x52A1;&#x65F6;&#xFF0C;&#x65B0;&#x670D;&#x52A1;&#x56DE;&#x8C03;&#x5355;&#x4F53;&#x6765;&#x8BBF;&#x95EE;&#x5176;&#x6240;&#x9700;&#x7684;&#x6570;&#x636E;&#x53EF;&#x80FD;&#x6BD4;&#x76F4;&#x63A5;&#x8BBF;&#x95EE;&#x5355;&#x4F53;&#x7684;&#x6570;&#x636E;&#x5E93;&#x7684;&#x65B9;&#x5F0F;&#x8981;&#x591A;&#x505A;&#x4E9B;&#x5DE5;&#x4F5C;&#xFF0C;&#x4F46;&#x4ECE;&#x957F;&#x8FDC;&#x6765;&#x770B;&#xFF0C;&#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x66F4;&#x597D;&#x7684;&#x4E3B;&#x610F;&#x3002;&#x6211;&#x4EC5;&#x5728;&#x65E0;&#x6CD5;&#x4FEE;&#x6539;&#x6240;&#x6D89;&#x53CA;&#x5230;&#x7684;&#x5355;&#x4F53;&#x4EE5;&#x516C;&#x5F00;&#x8FD9;&#x4E9B;&#x65B0;&#x7AEF;&#x70B9;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#x624D;&#x4F1A;&#x8003;&#x8651;&#x4F7F;&#x7528;&#x6570;&#x636E;&#x5E93;&#x89C6;&#x56FE;&#x3002;&#x5728;&#x65E0;&#x6CD5;&#x4FEE;&#x6539;&#x5355;&#x4F53;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x5355;&#x4F53;&#x6570;&#x636E;&#x5E93;&#x7684;&#x6570;&#x636E;&#x5E93;&#x89C6;&#x56FE;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x524D;&#x9762;&#x8BA8;&#x8BBA;&#x7684;CDC&#x6A21;&#x5F0F;&#xFF08;&#x5177;&#x4F53;&#x53C2;&#x89C1;&#x7B2C;120&#x9875;&#x7684;<a href="Pattern_Change_Data_Capture.html">CDC&#x6A21;&#x5F0F;</a>&#xFF09;&#xFF0C;&#x6216;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x4E13;&#x7528;&#x7684;&#x6570;&#x636E;&#x5E93;&#x5305;&#x88C5;&#x670D;&#x52A1;&#xFF08; &#x53C2;&#x9605;&#x7B2C;132&#x9875;&#x7684;<a href="Pattern_Database_Wrapping_Service.html">&#x628A;&#x6570;&#x636E;&#x5E93;&#x5305;&#x88C5;&#x6210;&#x670D;&#x52A1;</a>&#xFF09;&#xFF0C;&#x4EE5;&#x5F00;&#x653E;&#x6211;&#x4EEC;&#x6240;&#x9700;&#x7684;Employee&#x4FE1;&#x606F;&#x3002;</p>
+<h2 id="&#x4FEE;&#x6539;&#x6570;&#x636E;&#x7684;&#x6240;&#x6709;&#x6743;">&#x4FEE;&#x6539;&#x6570;&#x636E;&#x7684;&#x6240;&#x6709;&#x6743;</h2>
+<p>&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x7814;&#x7A76;&#x4E86;&#xFF1A;&#x5F53;Invoice&#x670D;&#x52A1;&#x9700;&#x8981;&#x8BBF;&#x95EE;&#x5176;&#x4ED6;&#x7684;&#x529F;&#x80FD;&#x6240;&#x62E5;&#x6709;&#x7684;&#x6570;&#x636E;&#xFF08;&#x5982;&#x524D;&#x6240;&#x8FF0;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x8BBF;&#x95EE;Employee&#x6570;&#x636E;&#xFF09;&#x65F6;&#xFF0C;&#x4F1A;&#x53D1;&#x751F;&#x4EC0;&#x4E48;&#x3002;&#x4F46;&#x662F;&#xFF0C;&#x5F53;&#x6211;&#x4EEC;&#x8003;&#x8651;&#x5F53;&#x524D;&#x4F4D;&#x4E8E;&#x5355;&#x4F53;&#x4E2D;&#x7684;&#x6570;&#x636E;&#x5E94;&#x8BE5;&#x7531;&#x6211;&#x4EEC;&#x65B0;&#x62BD;&#x53D6;&#x7684;&#x670D;&#x52A1;&#x6765;&#x63A7;&#x5236;&#x65F6;&#xFF0C;&#x4F1A;&#x53D1;&#x751F;&#x4EC0;&#x4E48;&#xFF1F;</p>
+<p>&#x5728;<a href="#f410">&#x56FE;4-10</a>&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x6982;&#x8FF0;&#x4E86;&#x9700;&#x8981;&#x8FDB;&#x884C;&#x7684;&#x4FEE;&#x6539;&#x3002;&#x56E0;&#x4E3A;&#x5E94;&#x8BE5;&#x7531;Invoice&#x6765;&#x7BA1;&#x7406;&#x6570;&#x636E;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF0C;&#x56E0;&#x6B64;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x628A;&#x4E0E;Invoice&#x76F8;&#x5173;&#x7684;&#x6570;&#x636E;&#x4ECE;&#x5355;&#x4F53;&#x4E2D;&#x79FB;&#x51FA;&#xFF0C;&#x5E76;&#x79FB;&#x81F3;&#x65B0;&#x7684;Invoice&#x670D;&#x52A1;&#x4E2D;&#x3002;&#x7136;&#x540E;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x4FEE;&#x6539;&#x5355;&#x4F53;&#xFF0C;&#x4EE5;&#x5C06;Invoice&#x670D;&#x52A1;&#x89C6;&#x4E3A;&#x4E0E;&#x53D1;&#x7968;&#x76F8;&#x5173;&#x7684;&#x6570;&#x636E;&#x7684;&#x771F;&#x5B9E;&#x6765;&#x6E90;&#xFF1B;&#x5E76;&#x4FEE;&#x6539;&#x5355;&#x4F53;&#xFF0C;&#x4EE5;&#x4F7F;&#x5176;&#x8C03;&#x7528;Invoice&#x670D;&#x52A1;&#x7AEF;&#x70B9;&#x4EE5;&#x8BFB;&#x53D6;&#x6570;&#x636E;&#x6216;&#x8BF7;&#x6C42;&#x6570;&#x636E;&#x4FEE;&#x6539;&#x3002;</p>
+<p><img src="../images/4_10.png" alt=""></p>
+<p><span id="f410">&#x56FE;4-10</span>. &#x65B0;&#x7684;Invoice&#x670D;&#x52A1;&#x62E5;&#x6709;&#x76F8;&#x5173;&#x6570;&#x636E;&#x7684;&#x6240;&#x6709;&#x6743;</p>
+<p>&#x4F46;&#x662F;&#xFF0C;&#x4ECE;&#x73B0;&#x6709;&#x7684;&#x5355;&#x4F53;&#x6570;&#x636E;&#x5E93;&#x4E2D;&#x5265;&#x79BB;&#x53D1;&#x7968;&#x6570;&#x636E;&#x53EF;&#x80FD;&#x662F;&#x4E00;&#x4E2A;&#x590D;&#x6742;&#x7684;&#x95EE;&#x9898;&#x3002;&#x6211;&#x4EEC;&#x53EF;&#x80FD;&#x5FC5;&#x987B;&#x8003;&#x8651;&#x7834;&#x574F;&#x5916;&#x952E;&#x7EA6;&#x675F;&#x3001;&#x7834;&#x574F;&#x4E8B;&#x52A1;&#x8FB9;&#x754C;&#x7B49;&#x7B49;&#x7684;&#x5F71;&#x54CD;&#xFF0C;&#x6240;&#x6709;&#x7684;&#x8FD9;&#x4E9B;&#x4E3B;&#x9898;&#xFF0C;&#x6211;&#x4EEC;&#x90FD;&#x5C06;&#x5728;&#x672C;&#x7AE0;&#x7684;&#x540E;&#x9762;&#x6765;&#x4ECB;&#x7ECD;&#x3002;&#x5982;&#x679C;&#x53EF;&#x4EE5;&#x4FEE;&#x6539;&#x5355;&#x4F53;&#xFF0C;&#x4EE5;&#x4FBF;&#x5355;&#x4F53;&#x4EC5;&#x9700;&#x8981;&#x8BFB;&#x53D6;&#x4E0E;&#x53D1;&#x7968;&#x76F8;&#x5173;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x5219;&#x53EF;&#x4EE5;&#x8003;&#x8651;&#x4ECE;&#x53D1;&#x7968;&#x670D;&#x52A1;&#x7684;&#x6570;&#x636E;&#x5E93;&#x4E2D;&#x6295;&#x5F71;&#x89C6;&#x56FE;&#xFF0C;&#x5982;<a href="#f411">&#x56FE;4-11</a>&#x6240;&#x793A;&#x3002;&#x4F46;&#x662F;&#xFF0C;&#x6B64;&#x65F6;&#xFF0C;&#x6570;&#x636E;&#x5E93;&#x89C6;&#x56FE;&#x7684;&#x6240;&#x6709;&#x9650;&#x5236;&#x4E5F;&#x90FD;&#x5C06;&#x540C;&#x65F6;&#x751F;&#x6548;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x5F3A;&#x70C8;&#x5EFA;&#x8BAE;&#x4FEE;&#x6539;&#x5355;&#x4F53;&#xFF0C;&#x4EE5;&#x76F4;&#x63A5;&#x8C03;&#x7528;&#x65B0;&#x7684;Invoice&#x670D;&#x52A1;&#x3002;</p>
+<p><img src="../images/4_11.png" alt=""></p>
+<p><span id="f411">&#x56FE;4-11</span>. &#x628A;Invoice&#x6570;&#x636E;&#x4F5C;&#x4E3A;&#x89C6;&#x56FE;&#x6295;&#x5F71;&#x56DE;&#x5355;&#x4F53;</p>
+<h3 id="&#x4F55;&#x5904;&#x4F7F;&#x7528;&#x8BE5;&#x6A21;&#x5F0F;">&#x4F55;&#x5904;&#x4F7F;&#x7528;&#x8BE5;&#x6A21;&#x5F0F;</h3>
+<p>&#x4F55;&#x5904;&#x4F7F;&#x7528;&#x8BE5;&#x6A21;&#x5F0F;&#x66F4;&#x52A0;&#x660E;&#x786E;&#x3002;&#x5982;&#x679C;&#x65B0;&#x62BD;&#x53D6;&#x7684;&#x670D;&#x52A1;&#x5C01;&#x88C5;&#x4E86;&#x4FEE;&#x6539;&#x67D0;&#x4E9B;&#x6570;&#x636E;&#x7684;&#x4E1A;&#x52A1;&#x903B;&#x8F91;&#xFF0C;&#x5219;&#x8FD9;&#x4E9B;&#x6570;&#x636E;&#x5E94;&#x5728;&#x65B0;&#x670D;&#x52A1;&#x7684;&#x63A7;&#x5236;&#x4E4B;&#x4E0B;&#x3002;&#x6570;&#x636E;&#x5E94;&#x4ECE;&#x4ECE;&#x6765;&#x7684;&#x5730;&#x65B9;&#x79FB;&#x5230;&#x65B0;&#x670D;&#x52A1;&#x4E2D;&#x3002;&#x5F53;&#x7136;&#xFF0C;&#x5C06;&#x6570;&#x636E;&#x79FB;&#x51FA;&#x73B0;&#x6709;&#x6570;&#x636E;&#x5E93;&#x7684;&#x8FC7;&#x7A0B;&#x5E76;&#x975E;&#x662F;&#x4E00;&#x4E2A;&#x7B80;&#x5355;&#x7684;&#x8FC7;&#x7A0B;&#x3002;&#x5B9E;&#x9645;&#x4E0A;&#xFF0C;&#x5C06;&#x6570;&#x636E;&#x79FB;&#x9664;&#x73B0;&#x6709;&#x6570;&#x636E;&#x5E93;&#x5C06;&#x662F;&#x672C;&#x7AE0;&#x5176;&#x4F59;&#x90E8;&#x5206;&#x7684;&#x91CD;&#x70B9;&#x3002;</p>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.css">
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+
+<script src="https://wangwei1237.gitee.io/md5.min.js"></script>
+
+<div id="gitalk-container" class="page-footer"></div>
+
+<script src="https://wangwei1237.gitee.io/gittalk-config.js"></script> 
+
+<footer class="page-footer"><span class="copyright">Copyrights &#xA9; wangwei all right reserved</span></footer>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Pattern_Database-as-a-Service_Interface.html" class="navigation navigation-prev " aria-label="Previous page: 4.5 把数据库视为服务接口">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Data_Synchronization.html" class="navigation navigation-next " aria-label="Next page: 4.7 数据同步">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"4.6 改变数据的所有权","level":"5.6","depth":1,"next":{"title":"4.7 数据同步","level":"5.7","depth":1,"path":"docs/Data_Synchronization.md","ref":"docs/Data_Synchronization.md","articles":[]},"previous":{"title":"4.5 把数据库视为服务接口","level":"5.5","depth":1,"path":"docs/Pattern_Database-as-a-Service_Interface.md","ref":"docs/Pattern_Database-as-a-Service_Interface.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","tbfed-pagefooter","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyrights &copy wangwei"},"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/monolith-to-microservices/"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Monolith to Microservices","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"从单体应用到微服务架构","extension":null},"file":{"path":"docs/Transferring_Ownership.md","mtime":"2020-09-16T10:04:22.768Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-10T08:16:53.379Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-page-toc-button/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-cnzz/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

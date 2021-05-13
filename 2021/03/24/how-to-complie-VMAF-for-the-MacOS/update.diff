@@ -1,0 +1,119 @@
+diff --git a/libvmaf/meson_options.txt b/libvmaf/meson_options.txt
+index ac4ad9de..0eab815f 100644
+--- a/libvmaf/meson_options.txt
++++ b/libvmaf/meson_options.txt
+@@ -25,5 +25,5 @@ option('built_in_models',
+ 
+ option('enable_float',
+     type: 'boolean',
+-    value: false,
++    value: true,
+     description: 'Compile floating-point feature extractors into the library')
+diff --git a/libvmaf/test/meson.build b/libvmaf/test/meson.build
+index c4cc4660..694c841a 100644
+--- a/libvmaf/test/meson.build
++++ b/libvmaf/test/meson.build
+@@ -7,7 +7,7 @@ test_inc = include_directories('.')
+ test_context = executable('test_context',
+     ['test.c', 'test_context.c'],
+     include_directories : [libvmaf_inc, test_inc],
+-    link_with : get_option('default_library') == 'both' ? libvmaf.get_static_lib() : libvmaf,
++    link_with : libvmaf,
+     dependencies:[stdatomic_dependency],
+ )
+ 
+@@ -20,7 +20,7 @@ test_picture = executable('test_picture',
+ test_feature_collector = executable('test_feature_collector',
+     ['test.c', 'test_feature_collector.c', '../src/log.c'],
+     include_directories : [libvmaf_inc, test_inc, include_directories('../src/feature/'), include_directories('../src')],
+-    link_with : get_option('default_library') == 'both' ? libvmaf.get_static_lib() : libvmaf,
++    link_with : libvmaf,
+ )
+ 
+ test_log = executable('test_log',
+@@ -37,7 +37,7 @@ test_thread_pool = executable('test_thread_pool',
+ test_model = executable('test_model',
+     ['test.c', 'test_model.c', '../src/dict.c', '../src/svm.cpp', '../src/pdjson.c', '../src/read_json_model.c', '../src/log.c', json_model_c_sources],
+     include_directories : [libvmaf_inc, test_inc, include_directories('../src')],
+-    link_with : get_option('default_library') == 'both' ? libvmaf.get_static_lib() : libvmaf,
++    link_with : libvmaf,
+     c_args : vmaf_cflags_common,
+     cpp_args : vmaf_cflags_common,
+     dependencies : thread_lib,
+@@ -48,7 +48,7 @@ test_predict = executable('test_predict',
+      '../src/feature/feature_collector.c', '../src/feature/alias.c', '../src/model.c', '../src/svm.cpp', '../src/log.c',
+      '../src/read_json_model.c', '../src/pdjson.c', json_model_c_sources, '../src/feature/feature_name.c', '../src/feature/feature_extractor.c'],
+     include_directories : [libvmaf_inc, test_inc, include_directories('../src')],
+-    link_with : get_option('default_library') == 'both' ? libvmaf.get_static_lib() : libvmaf,
++    link_with : libvmaf,
+     c_args : vmaf_cflags_common,
+     cpp_args : vmaf_cflags_common,
+     dependencies : thread_lib,
+diff --git a/libvmaf/tools/meson.build b/libvmaf/tools/meson.build
+index cdfcf161..d15e5e1b 100644
+--- a/libvmaf/tools/meson.build
++++ b/libvmaf/tools/meson.build
+@@ -10,7 +10,7 @@ vmafossexec = executable(
+     dependencies: [stdatomic_dependency],
+     c_args : vmaf_cflags_common,
+     cpp_args : vmaf_cflags_common,
+-    link_with : get_option('default_library') == 'both' ? libvmaf.get_static_lib() : libvmaf,
++    link_with : libvmaf,
+     install : false,
+ )
+ 
+@@ -20,6 +20,6 @@ vmaf = executable(
+     include_directories : [libvmaf_inc, vmaf_include],
+     dependencies: [stdatomic_dependency],
+     c_args : [vmaf_cflags_common, compat_cflags],
+-    link_with : get_option('default_library') == 'both' ? libvmaf.get_static_lib() : libvmaf,
++    link_with : libvmaf,
+     install : true,
+ )
+diff --git a/python/vmaf/config.py b/python/vmaf/config.py
+index a30d290d..d3691db2 100644
+--- a/python/vmaf/config.py
++++ b/python/vmaf/config.py
+@@ -209,12 +209,22 @@ class DisplayConfig(object):
+     @staticmethod
+     def show(**kwargs):
+         from vmaf import plt
+-        if 'write_to_dir' in kwargs:
+-            format = kwargs['format'] if 'format' in kwargs else 'png'
+-            filedir = kwargs['write_to_dir'] if kwargs['write_to_dir'] is not None else VmafConfig.workspace_path('output')
+-            os.makedirs(filedir, exist_ok=True)
+-            for fignum in plt.get_fignums():
+-                fig = plt.figure(fignum)
+-                fig.savefig(os.path.join(filedir, str(fignum) + '.' + format), format=format)
++        import matplotlib
++
++        if matplotlib.rcParams['backend'] == 'agg':
++            if 'write_to_dir' in kwargs:
++                format = kwargs['format'] if 'format' in kwargs else 'png'
++                filedir = kwargs['write_to_dir'] if kwargs['write_to_dir'] is not None else VmafConfig.workspace_path('output')
++                os.makedirs(filedir, exist_ok=True)
++                for fignum in plt.get_fignums():
++                    fig = plt.figure(fignum)
++                    fig.savefig(os.path.join(filedir, str(fignum) + '.' + format), format=format)
++            else:
++                format = 'png'
++                filedir = VmafConfig.workspace_path('output')
++                os.makedirs(filedir, exist_ok=True)
++                for fignum in plt.get_fignums():
++                    fig = plt.figure(fignum)
++                    fig.savefig(os.path.join(filedir, str(fignum) + '.' + format), format=format)
+         else:
+             plt.show()
+diff --git a/python/vmaf/svmutil.py b/python/vmaf/svmutil.py
+index c709f3f0..6da61f97 100644
+--- a/python/vmaf/svmutil.py
++++ b/python/vmaf/svmutil.py
+@@ -7,7 +7,7 @@ from vmaf.config import VmafConfig
+ 
+ 
+ # This will work only when running with a checked out vmaf source, but not via pip install
+-libsvm_path = VmafConfig.root_path('third_party', 'libsvm', 'python')
++libsvm_path = VmafConfig.root_path('site-packages', 'libsvm')
+ 
+ 
+ if libsvm_path not in sys.path:

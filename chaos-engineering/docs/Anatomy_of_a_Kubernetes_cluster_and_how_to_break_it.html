@@ -1,0 +1,865 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>12.1 Anatomy of a Kubernetes cluster and how to break it · Chaos Engineering</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="wangwei17">
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-page-toc-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-hints/plugin-hints.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Summary_of_key_components.html" />
+    
+    
+    <link rel="prev" href="Under_the_hood_of_Kubernetes.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+    
+        
+        <li>
+            <a href="https://wangwei1237.gitee.io/" target="_blank" class="custom-link">17哥的个人网站</a>
+        </li>
+    
+    
+
+    
+    <li class="divider"></li>
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">PART 3: Chaos Engineering beyond machines</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="Chaos_in_Kubernetes.html">
+            
+                <a href="Chaos_in_Kubernetes.html">
+            
+                    
+                    10 Chaos in Kubernetes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1.1" data-path="Porting_things_onto_Kubernetes.html">
+            
+                <a href="Porting_things_onto_Kubernetes.html">
+            
+                    
+                    10.1 Porting things onto Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.1.2" data-path="Whats_Kubernetes_in_7_minutes.html">
+            
+                <a href="Whats_Kubernetes_in_7_minutes.html">
+            
+                    
+                    10.2 What’s Kubernetes (in 7 minutes)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.1.3" data-path="Setting_up_a_Kubernetes_cluster.html">
+            
+                <a href="Setting_up_a_Kubernetes_cluster.html">
+            
+                    
+                    10.3 Setting up a Kubernetes cluster
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.1.4" data-path="Testing_out_software_running_on_Kubernetes.html">
+            
+                <a href="Testing_out_software_running_on_Kubernetes.html">
+            
+                    
+                    10.4 Testing out software running on Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.1.5" data-path="Summary_10.html">
+            
+                <a href="Summary_10.html">
+            
+                    
+                    10.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="Automating_Kubernetes_experiments.html">
+            
+                <a href="Automating_Kubernetes_experiments.html">
+            
+                    
+                    11 Automating Kubernetes experiments
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.2.1" data-path="Automating_chaos_with_PowerfulSeal.html">
+            
+                <a href="Automating_chaos_with_PowerfulSeal.html">
+            
+                    
+                    11.1 Automating chaos with PowerfulSeal
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.2" data-path="Ongoing_testing_Service_Level_Objectives_SLOs.html">
+            
+                <a href="Ongoing_testing_Service_Level_Objectives_SLOs.html">
+            
+                    
+                    11.2 Ongoing testing & Service Level Objectives (SLOs)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="Cloud_layer.html">
+            
+                <a href="Cloud_layer.html">
+            
+                    
+                    11.3 Cloud layer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.4" data-path="Summary_11.html">
+            
+                <a href="Summary_11.html">
+            
+                    
+                    11.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="Under_the_hood_of_Kubernetes.html">
+            
+                <a href="Under_the_hood_of_Kubernetes.html">
+            
+                    
+                    12 Under the hood of Kubernetes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="2.3.1" data-path="Anatomy_of_a_Kubernetes_cluster_and_how_to_break_it.html">
+            
+                <a href="Anatomy_of_a_Kubernetes_cluster_and_how_to_break_it.html">
+            
+                    
+                    12.1 Anatomy of a Kubernetes cluster and how to break it
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.2" data-path="Summary_of_key_components.html">
+            
+                <a href="Summary_of_key_components.html">
+            
+                    
+                    12.2 Summary of key components
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.3" data-path="Summary_12.html">
+            
+                <a href="Summary_12.html">
+            
+                    
+                    12.3 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="Chaos_engineering_for_people.html">
+            
+                <a href="Chaos_engineering_for_people.html">
+            
+                    
+                    13 Chaos engineering (for) people
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.4.1" data-path="Chaos_engineering_mindset.html">
+            
+                <a href="Chaos_engineering_mindset.html">
+            
+                    
+                    13.1 Chaos engineering mindset
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.2" data-path="Getting_the_buy_in.html">
+            
+                <a href="Getting_the_buy_in.html">
+            
+                    
+                    13.2 Getting the buy-in
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.3" data-path="Teams_as_distributed_systems.html">
+            
+                <a href="Teams_as_distributed_systems.html">
+            
+                    
+                    13.3 Teams as distributed systems
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.4" data-path="Summary_13.html">
+            
+                <a href="Summary_13.html">
+            
+                    
+                    13.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.5" data-path="Where_to_go_from_here.html">
+            
+                <a href="Where_to_go_from_here.html">
+            
+                    
+                    13.5 Where to go from here
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >12.1 Anatomy of a Kubernetes cluster and how to break it</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="121-anatomy-of-a-kubernetes-cluster-and-how-to-break-it">12.1 Anatomy of a Kubernetes cluster and how to break it</h1>
+<p>As I&#x2019;m writing, Kubernetes is one of the hottest technologies out there. And it&#x2019;s for a good reason; it solves a whole lot of problems that come from running a large number of applications on large clusters. But like everything else in life, it comes with some costs. One of them is the complexity of the underlying workings of Kubernetes. And although this can be somewhat alleviated by using managed Kubernetes clusters, where most of it is someone else&#x2019;s problem, you&#x2019;re never fully insulated from the consequences. And perhaps you&#x2019;re reading this on your way to a job managing Kubernetes clusters, which is yet another reason to understand how things work.</p>
+<p>Regardless of whose problem this is, it&#x2019;s good to know how Kubernetes works under the hood and how to test it works well. And as you&#x2019;re about to see, chaos engineering fits neatly right in.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE </p>
+<p>KEEPING UP WITH THE KUBERNETIANS</p>
+<p>In this section, I&#x2019;m going to describe things as they stand for Kubernetes v1.18.3. Kubernetes is a fast-moving target, so even though special care was taken to keep the details in this section as future-proof as possible, things change quickly in Kubernetes Land.</p>
+</div></div></p>
+<p>Let&#x2019;s start at the beginning - with the control plane.</p>
+<h2 id="1211-control-plane">12.1.1 Control plane</h2>
+<p>Kubernetes control plane is the brain of the cluster. It consists of the following components:</p>
+<ul>
+<li>etcd - the database storing all the information about the cluster</li>
+<li>kube-apiserver - the server through which all interactions with the cluster are done, and that stores information in etcd</li>
+<li>kube-controller-manager - implements the infinite loop reading the current state, and attempting to modify it to converge into the desired state</li>
+<li>kube-scheduler - detects newly created pods and assigns them to nodes, taking into account various constraints (affinity, resource requirements, policies, etc)</li>
+<li>kube-cloud-manager (optional) - controls cloud-specific resources (VMs, routing)</li>
+</ul>
+<p>In the previous chapter, we created a deployment for Goldpinger. Let&#x2019;s see, on a high level, what happens under the hood in the control plane when you run a <code>kubectl apply</code> command. First, your request reaches the <code>kube-apiserver</code> of your cluster. The server validates the request and stores the new or modified resources in <code>etcd</code>. In our case, it creates a new deployment resource. Once that&#x2019;s done, <code>kube-controller-manager</code> gets notified of the new deployment. It reads the current state to see what needs to be done, and eventually creates new pods through another call to <code>kube-apiserver</code>. Once the <code>kube-apiserver</code> stores it in <code>etcd</code>, the <code>kube-scheduler</code> gets notified about the new pods, picks the best node to run them, assigns the node to them, and updates them back in <code>kube-apiserver</code>. As you can see, the <code>kube-apiserver</code> is at the center of it all, and all the logic is implemented in asynchronous, eventually consistent loops in loosely connected components. See figure 12.1 for a graphic representation.</p>
+<p>Figure 12.1 Kubernetes control plane interactions when creating a deployment</p>
+<p><img src="../images/12.1.jpg" alt=""></p>
+<p>Let&#x2019;s take a closer look at each of these components and see their strengths and weaknesses, starting with etcd.</p>
+<h3 id="etcd">etcd</h3>
+<p>Legend has it that etcd (<a href="https://etcd.io/" target="_blank">https://etcd.io/</a>) was first written by an intern at a company called CoreOS that was bought by Red Hat that was acquired by IBM. Talk about bigger fish eating smaller fish. If the legend is to be believed, it was an exercise in implementing a distributed consensus algorithm called Raft (<a href="https://raft.github.io/" target="_blank">https://raft.github.io/</a>). What does consensus have to do with etcd?</p>
+<p>Four words: availability and fault tolerance. Earlier in this chapter, we spoke about mean time to failure (MTTF) and how with just 20 servers, you were playing Russian roulette with 0.05% probability of losing your data every day. If you have only a single copy of the data, when it&#x2019;s gone it&#x2019;s gone. We want a system that&#x2019;s immune to that. That&#x2019;s fault tolerance.</p>
+<p>Similarly, if you have a single server, if it&#x2019;s down your system is down. We want a system that&#x2019;s immune to that. That&#x2019;s availability.</p>
+<p>In order to achieve fault tolerance and availability, there isn&#x2019;t really much else that you can do other than run multiple copies. And that&#x2019;s where you run into trouble: the multiple copies have to somehow agree on a version of reality. In other words, they need to reach a consensus.</p>
+<p>Consensus is agreeing on watching a movie on Netflix. If you&#x2019;re by yourself, there is no one to argue with. When you&#x2019;re with your partner, it becomes almost impossible, because neither of you can gather a majority for a particular choice. That&#x2019;s when power moves and barter comes into play. But if you add a third person, then whoever convinces them gains a majority and wins the argument.</p>
+<p>That&#x2019;s pretty much exactly how Raft (and by extension, etcd) works. Instead of running a single etcd instance, you run a cluster with an odd number of nodes (typically three or five) and then the instances use the consensus algorithm to decide on the leader who basically makes all decisions while in power. If the leader stops responding (Raft uses a system of heartbeats, or regular calls between all instances, to detect that), a new election begins where everyone announces their candidacy, votes for themselves, and waits for other votes to come in. Whoever gets a majority of votes assumes power. The best thing about Raft is that it&#x2019;s relatively easy to understand. The second best thing about Raft is that it works.</p>
+<p>If you&apos;d like to see the algorithm in action, their official website has a very nice animation with heartbeats represented as little balls flying between bigger balls representing nodes (<a href="https://raft.github.io/" target="_blank">https://raft.github.io/</a>). I took a screenshot showing a five-node-cluster (S1 to S5) in figure 12.2. It&#x2019;s also interactive, so you can take nodes down and see how the rest of the system copes.</p>
+<p>Figure 12.2 Animation showing Raft consensus algorithm in action (<a href="https://raft.github.io/" target="_blank">https://raft.github.io/</a>)</p>
+<p><img src="../images/12.2.jpg" alt=""></p>
+<p>I could talk (and I have talked) about etcd and Raft all day, but let&#x2019;s focus on what&#x2019;s important from the chaos engineering perspective. Etcd holds pretty much all of the data about a Kubernetes cluster. It&#x2019;s strongly consistent, meaning that the data you write to etcd is replicated to all nodes, and regardless of which node you connect to, you get the up-to-date data. The price you pay for that is in performance. Typically you&#x2019;ll be running in clusters of three or five nodes, because that tends to give enough fault tolerance and any extra nodes just slow the cluster down with little benefit. And odd numbers of members are better, because they actually decrease fault tolerance.</p>
+<p>Take a three-node cluster for example. To achieve a quorum, you need a majority of two nodes (n/2+1 = 3/2+1 = 2). Or looking at it from the availability perspective, you can lose a single node and your cluster keeps working. Now, if you add an extra node for a total of four, now you need a majority of three to function. That means that you still can survive only a single node failure at a time, but you now have more nodes in the cluster that can fail, so overall you are worse off in terms of fault tolerance.</p>
+<p>Running etcd reliably is not easy. It requires an understanding of your hardware profiles, tweaking various parameters accordingly, continuous monitoring, and keeping up to date with bug fixes and improvements in etcd itself. It also requires building an understanding of what actually happens when failure occurs and whether the cluster heals correctly. And that&#x2019;s where chaos engineering can really shine. The way that etcd is run varies from one Kubernetes offering to another, so the details will vary too, but here are a few high-level ideas:</p>
+<ol>
+<li>Experiment 1: in a three-node cluster take down a single etcd instance<ul>
+<li>Does kubectl still work? Can you schedule, modify and scale new pods?</li>
+<li>Do you see any failures connecting to etcd? Etcd clients are expected to retry their requests to another instance, if the one they connected to doesn&#x2019;t respond</li>
+<li>When you take the node back up, does the etcd cluster recover? How long does it take?</li>
+<li>Can you see the new leader election and small increase in traffic in your monitoring setup?</li>
+</ul>
+</li>
+<li>Experiment 2: restrict resources (CPU) available to an etcd instance to simulate an unusually high load on the machine running the instance<ul>
+<li>Does the cluster still work?</li>
+<li>Does the cluster slow down? By how much?</li>
+</ul>
+</li>
+<li>Experiment 3: add a networking delay to a single etcd instance<ul>
+<li>Does a single slow instance affect the overall performance?</li>
+<li>Can you see the slowness in your monitoring setup? Will you be alerted if that happens? Does your dashboard show how close the values are to the limits (the values causing timeouts)?</li>
+</ul>
+</li>
+<li>Experiment 4: take down enough nodes for the etcd cluster to lose quorum<ul>
+<li>Does kubectl still work?</li>
+<li>Do the pods already on the cluster keep running?</li>
+<li>Does healing work?<ul>
+<li>If you kill a pod, is it restarted?</li>
+<li>If you delete a pod managed by a deployment, will a new pod be created?</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>This book gives you all the tools you need to implement all of these experiments and more. Etcd is the memory of your cluster, so it&#x2019;s crucial to test it well. And if you&#x2019;re using a managed Kubernetes offering, you&#x2019;re trusting that the people responsible for running your clusters know the answers to all these questions (and that they can prove it with experimental data). Ask them. If they&#x2019;re taking your money, they should be able to give you reasonable answers!</p>
+<p>Hopefully that&#x2019;s enough for a primer on etcd. Let&#x2019;s pull the thread a little bit more and look at the only thing actually speaking to etcd in your cluster - the kube-apiserver.</p>
+<h3 id="kube-apiserver">kube-apiserver</h3>
+<p>The kube-apiserver, true to its name, provides a set of APIs to read and modify the state of your cluster. Every component interacting with the cluster does so through the kube-apiserver. For availability reasons, kube-apiserver also needs to be run in multiple copies. But because all the state is stored in etcd and etcd takes care of its consistency, kube-apiserver can be stateless. That means that running it is much simpler, and as long as there are enough instances running to handle the load of requests, we&#x2019;re good. There is no need to worry about majorities or anything like that. It also means that they can be load-balanced, although some internal components are often configured to skip the load balancer. Figure 12.3 shows what this typically looks like.</p>
+<p>Figure 12.3 Etcd and kube-apiserver</p>
+<p><img src="../images/12.3.jpg" alt=""></p>
+<p>From the chaos engineering perspective, you might be interested in knowing how slowness on the kube-apiserver affects the overall performance of the cluster. Here are a few ideas:</p>
+<ol>
+<li>Experiment 1: create traffic to the kube-apiserver<ul>
+<li>Since everything, including the internal components responsible for creating, updating and scheduling resources, talks to kube-apiserver, creating enough traffic to keep it busy could affect how the cluster behaves.</li>
+</ul>
+</li>
+<li>Experiment 2: add network slowness<ul>
+<li>Similarly, adding a networking delay in front of the proxy could lead to build up of queuing of new requests and adversely affect the cluster.</li>
+</ul>
+</li>
+</ol>
+<p>Overall, you will find kube-apiserver start up quickly and perform pretty well. Despite the amount of work that it does, running it is pretty lightweight. Next in the line, the kube-controller-manager.</p>
+<h3 id="kube-controller-manager">kube-controller-manager</h3>
+<p>Kube-controller-manager implements the infinite control loop, continuously detecting changes in the cluster state and reacting to them to move it toward the desired state. You can think of it as a collection of loops, each handling a particular type of resource.</p>
+<p>Do you remember when you created a deployment with kubectl in the previous chapter? What actually happened is that kubectl connected to an instance of kube-apiserver and requested creation of a new resource of type deployment. That was picked up by kube-controller-manager, which in turn created a <code>ReplicaSet</code>. The purpose of the latter is to manage a set of pods, ensuring that the desired number runs on the cluster. How is it done? You guessed it: a replica set controller (part of kube-controller-manager) picks it up and creates pods. Both the notification mechanism (called watch in Kubernetes) and the updates are served by the kube-apiserver. See figure 12.4 for a graphical representation. A similar cascade happens when a deployment is updated or deleted; the corresponding controllers get notified about the change and do their bit.</p>
+<p>Figure 12.4 Kubernetes control plane interactions when creating a deployment - more details</p>
+<p><img src="../images/12.4.jpg" alt=""></p>
+<p>This loosely coupled setup allows for separation of responsibilities; each controller does only one thing. It is also the heart of Kubernetes&#x2019; ability to heal from failure. Any discrepancies from the desired state will be attempted to be corrected ad infinitum.</p>
+<p>Like kube-apiserver, kube-controller-manager is typically run in multiple copies for failure resilience. Unlike kube-apiserver, only one of the copies is actually doing work at a time. The instances agree between themselves on who the leader is through acquiring a lease in etcd.</p>
+<p>How does that work? Thanks to its property of strong consistency, etcd can be used as a leader-election mechanism. In fact, its API allows for acquiring what they call a lock - a distributed mutex with an expiration date. Let&#x2019;s say that you run three instances of the kube-controller manager. If all three try to acquire the lease simultaneously, only one will succeed. The lease then needs to be renewed before it expires. If the leader stops working or disappears, the lease will expire and another copy will acquire it. Once again, etcd comes in handy and allows for offloading a difficult problem (leader election) and keeping the component relatively simple.</p>
+<p>From the chaos engineering perspective, here are some ideas of experiments:</p>
+<ol>
+<li>Experiment 1: how busy your kube-apiserver is may affect the speed at which your cluster converges towards the desired state<ul>
+<li>Kube-controller-manager gets all its information about the cluster from kube-apiserver. It&#x2019;s worth understanding how any extra traffic on kube-apiserver affects the speed at which your cluster is converging towards the desired state. At what point does kube-controller-manager start timing out, rendering the cluster broken?</li>
+</ul>
+</li>
+<li>Experiment 2: how your lease expiry affects how quickly the cluster recovers from losing the leader instance of kube-controller-manager<ul>
+<li>If you run your own Kubernetes cluster, you can choose various timeouts for this component. That includes the expiry time of the leadership lease. A shorter value will increase speed at which the cluster restarts converging towards the desired state after losing the leader kube-controller-manager, but it comes at a price of increased load on kube-apiserver and etcd. A larger value</li>
+</ul>
+</li>
+</ol>
+<p>When kube-controller-manager is done reacting to the new deployment, the pods are created, but they aren&#x2019;t scheduled anywhere. That&#x2019;s where kube-scheduler comes in.</p>
+<h3 id="kube-scheduler">kube-scheduler</h3>
+<p>Like we mentioned earlier, kube-scheduler&#x2019;s job is to detect pods that haven&#x2019;t been scheduled on any nodes, and find them a new home. It might be brand new pods, or it might be that a node that used to run the pod went down and a replacement is needed.</p>
+<p>Every time the kube-scheduler assigns a pod to run on a particular node in the cluster, it tries to find a best fit. Finding the best fit consists of two steps:</p>
+<ol>
+<li>filter out the nodes that don&#x2019;t satisfy the pod&#x2019;s requirements</li>
+<li>rank the remaining nodes by a giving them scores based on a predefined list of priorities</li>
+</ol>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>INFO</p>
+<p>If you&#x2019;d like to know the details of the algorithm used by the latest version of the kube-scheduler, you can see it in <a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-scheduling/scheduler_algorithm.md" target="_blank">https://github.com/kubernetes/community/blob/master/contributors/devel/sig-scheduling/scheduler_algorithm.md</a>.</p>
+</div></div></p>
+<p>For a quick overview, the filters include:</p>
+<ul>
+<li>check that the resources (CPU, RAM, disk) requested by the pod can fit in the node</li>
+<li>check that any ports requested on the host are available on the node</li>
+<li>check if the pod is supposed to run on a node with a particular hostname</li>
+<li>check that the affinity (or anti-affinity) requested by the pod matches (or doesn&#x2019;t match) the node</li>
+<li>check that the node is not under memory or disk pressure</li>
+</ul>
+<p>The priorities taken into account when ranking nodes include:</p>
+<ul>
+<li>the highest amount of free resources after scheduling (the higher the better - this has the effect of enforcing spreading)</li>
+<li>balance between the CPU and memory utilization (the more balanced the better)</li>
+<li>anti-affinity - nodes matching the anti-affinity setting are least preferred</li>
+<li>image locality - nodes already having the image are preferred (this has the effect of minimizing the amount of downloads of images)</li>
+</ul>
+<p>Just like kube-controller-manager, a cluster typically runs multiple copies of kube-scheduler but only the leader actually does the scheduling at any given time. From the chaos engineering perspective, this component is prone to basically the same issues as the kube-controller-manager.</p>
+<p>From the moment you ran the <code>kubectl apply</code> command, the components you just saw worked together to figure out how to move your cluster towards the new state you requested (the state with a new deployment). At the end of that process, the new pods were scheduled, assigned a node to run. But so far, we haven&#x2019;t seen the actual component that starts the newly scheduled process. Time to take a look at Kubelet.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE </p>
+<p>POP QUIZ: WHERE IS THE CLUSTER DATA STORED?</p>
+<p>Pick one:</p>
+<ol>
+<li>Spread across the various components on the cluster</li>
+<li>In /var/kubernetes/state.json</li>
+<li>In etcd</li>
+<li>In the cloud, uploaded using the latest AI and machine learning algorithms and leveraging the revolutionary power of blockchain technology</li>
+</ol>
+<p>See appendix B for answers.</p>
+</div></div></p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE </p>
+<p>POP QUIZ: WHAT&#x2019;S THE CONTROL PLANE IN KUBERNETES JARGON?</p>
+<p>Pick one:</p>
+<ol>
+<li>The set of components implementing the logic of Kubernetes converging towards the desired state</li>
+<li>A remote control aircraft, used in Kubernetes commercials</li>
+<li>A name for Kubelet and Docker</li>
+</ol>
+<p>See appendix B for answers.</p>
+</div></div></p>
+<h2 id="1212--kubelet-and-pause-container">12.1.2  Kubelet and pause container</h2>
+<p>Kubelet is the agent starting and stopping containers on a host to implement the pods you requested. Running a Kubelet daemon on a computer turns it into a part of a Kubernetes cluster. Don&#x2019;t be fooled by the affectionate name; Kubelet is a real workhorse, doing the dirty work ordered by the control plane. Like everything else on a cluster, it reads the state and takes its orders from the kube-apiserver. It also reports the data about the factual state of what&#x2019;s running on the node, whether it&#x2019;s running or crashing, how much CPU and RAM is actually used, and more. That data is later leveraged by the control plane to make decisions and make it available to the user.</p>
+<p>To illustrate how Kubelet works, let&#x2019;s do a thought experiment. Let&#x2019;s say that the deployment we created earlier always crashes within seconds after it starts. The pod is scheduled to be running on a particular node. The Kubelet daemon is notified about the new pod. First, it downloads the requested image. Then, it creates a new container with that image and the specified configuration. In fact, it creates two containers - the one we requested, and another special one called pause. What is the purpose of the pause container?</p>
+<p>It&#x2019;s a pretty neat hack. In Kubernetes, the unit of software is a pod, not a single container. Containers inside a pod need to share certain resources and not others. For example, processes in two containers inside a single pod share the same IP address and can communicate via localhost. Do you remember namespaces from the chapter on Docker? The IP address-sharing is implemented by sharing the network namespace. But other things, like for example the CPU limit, are applicable to each container separately. The reason for pause to exist is simply to hold these resources while the other containers might be crashing and coming back up. The pause container doesn&#x2019;t do much. It starts and immediately goes to sleep. The name is pretty fitting.</p>
+<p>Once the container is up, Kubelet will monitor it. If it crashes, it will bring it back up. See figure 12.5 for a graphical representation of the whole process.</p>
+<p>Figure 12.5 Kubelet starting a new pod</p>
+<p><img src="../images/12.5.jpg" alt=""></p>
+<p>When we delete the pod, or perhaps it gets rescheduled somewhere else, Kubelet takes care of removing the relevant containers. Without Kubelet, all the resources created and scheduled by the control plane would remain abstract concepts.</p>
+<p>This also makes Kubelet a single point of failure. If it crashes, for whatever reason, , no changes will be made to the containers running on that node, even though Kubernetes will happily accept your changes. They just won&#x2019;t ever get implemented on that node.</p>
+<p>From the perspective of chaos engineering, it&#x2019;s important to understand what actually happens to the cluster if Kubelet stops working. Here are a few ideas:</p>
+<ol>
+<li><p>Experiment 1: after Kubelet dies, how long does it take for pods to get rescheduled somewhere else?</p>
+<ul>
+<li>When Kubelet stops reporting its readiness to the control plane, after a certain timeout, it&#x2019;s marked as unavailable (NotReady). That timeout is configurable and defaults to 5 minutes at the time of writing. Pods are not immediately removed from that node. The control plane will wait another configurable timeout before it starts assigning the pods to another node.</li>
+<li>In a scenario where a node disappears (for example, the hypervisor running the VM crashes), this means that you&#x2019;re going to need to wait a certain minimal amount of time for the pods to start running somewhere else.</li>
+<li>If the pod is still running, but for some reason Kubelet can&#x2019;t connect to the control plane (network partition) or dies, then you&#x2019;re going to end up with a node running whatever it was running before the event, and it won&#x2019;t get any updates. One of the possible side-effects is to run extra copies of your software with potentially stale configuration.</li>
+<li>We&#x2019;ve covered the tools to take VMs up and down in the previous chapter, as well as killing processes. PowerfulSeal also supports executing commands over SSH, for example to kill or switch off Kubelet.</li>
+</ul>
+</li>
+<li><p>Experiment 2: does Kubelet restart correctly after crashing?</p>
+<ul>
+<li>Kubelet typically runs directly on the host to minimise the number of dependencies. If it crashes, it should be restarted.</li>
+<li>As we saw in chapter 2, sometimes setting things up to get restarted is harder than it initially looks, so it&#x2019;s worth checking that different patterns of crashing (consecutive crashes, time-spaced crashes, and so on) are all covered. This takes little time and can avoid pretty bad outages.</li>
+</ul>
+</li>
+</ol>
+<p>So the question now remains: how exactly does Kubelet run these containers? Let&#x2019;s take a look at that now.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE </p>
+<p>POP QUIZ: WHICH COMPONENT ACTUALLY STARTS AND STOPS PROCESSES ON THE HOST?</p>
+<p>Pick one:</p>
+<ol>
+<li>kube-apiserver</li>
+<li>etcd</li>
+<li>kubelet</li>
+<li>docker</li>
+</ol>
+<p>See appendix B for answers.</p>
+</div></div></p>
+<h2 id="1213-kubernetes-docker-and-container-runtimes">12.1.3 Kubernetes, Docker, and container runtimes</h2>
+<p>Kubelet leverages lower-level software to start and stop containers to implement the pods that you ask it to create. This lower-level software is often called container runtimes. In chapter 5, we covered Linux containers and Docker (their most popular representative), and that&#x2019;s for a good reason. Initially, Kubernetes was written to use Docker directly, and you can still see some naming that matches one-to-one to Docker; even the kubectl CLI feels similar to the Docker CLI.</p>
+<p>Today, Docker is still one of the most popular container runtimes to use with Kubernetes, but it&#x2019;s by no means the only option. Initially, the support for new runtimes was baked directly into Kubernetes internals. In order to make it easier to add new supported container runtimes, a new API was introduced to standardize the interface between Kubernetes and container runtimes. It is called container runtime interface (CRI) and you can read more about how they introduced it in Kubernetes 1.5 in 2016 at <a href="https://kubernetes.io/blog/2016/12/container-runtime-interface-cri-in-kubernetes/" target="_blank">https://kubernetes.io/blog/2016/12/container-runtime-interface-cri-in-kubernetes/</a>.</p>
+<p>Thanks to that new interface, interesting things happened. For example, since version 1.14, Kubernetes has had Windows support, where it uses Windows containers (<a href="https://docs.microsoft.com/en-us/virtualization/windowscontainers/" target="_blank">https://docs.microsoft.com/en-us/virtualization/windowscontainers/</a>) to start and stop containers on machines running Windows. And on Linux, other options have emerged; for example, the following runtimes leverage basically the same set of underlying technologies as Docker:</p>
+<ul>
+<li>containerd (<a href="https://containerd.io/" target="_blank">https://containerd.io/</a>) - the emerging industry standard that seems poised to eventually replace Docker. To make matters more confusing, Docker versions &gt;= 1.11.0 actually use containerd under the hood to run containers</li>
+<li>CRI-O (<a href="https://cri-o.io/" target="_blank">https://cri-o.io/</a>) - aims to provide a simple, lightweight container runtime optimized for use with Kubernetes</li>
+<li>rkt (<a href="https://coreos.com/rkt" target="_blank">https://coreos.com/rkt</a>) - initially developed by CoreOS, the project now appears to be no longer maintained. It was pronounced &#x201C;rocket&#x201D;.</li>
+</ul>
+<p>To further the confusion, the ecosystem has some more surprises for you. First, both containerd (and therefore Docker, which relies on it) and CRIO-O share some code by leveraging another open-source project called runC (<a href="https://github.com/opencontainers/runc" target="_blank">https://github.com/opencontainers/runc</a>), which manages the lower-level aspects of running a Linux container. Visually, when you stack the blocks on top of one another, it looks like figure 12.6. The user requests a pod, Kubernetes reaches out to the container runtime it was configured with. It might go to Docker, Containerd, or CRI-O, but at the end of the day it all ends up using runC.</p>
+<p>Figure 12.6 Container Runtime Interface, Docker, Containerd, CRI-O and runC.</p>
+<p><img src="../images/12.6.jpg" alt=""></p>
+<p>The second surprise is that in order to avoid having different standards pushed by different entities, a bunch of companies led by Docker came together to form the Open Container Initiative (or OCI for short <a href="https://opencontainers.org/" target="_blank">https://opencontainers.org/</a>). It provides two specifications:</p>
+<ol>
+<li>the Runtime Specification that describes how to run a filesystem bundle (new term to describe what used to be called a Docker image downloaded and unpacked)</li>
+<li>the Image Specification that describes what an OCI Image (new term for Docker image) looks like, how to build, upload, and download one</li>
+</ol>
+<p>As you might imagine, most people didn&#x2019;t just stop using names like Docker images and start prepending everything with OCI, so things can get a little bit confusing at times. But that&#x2019;s all right. At least there is a standard now!</p>
+<p>One more plot twist. In recent years, we&#x2019;ve seen a few interesting projects pop up, that implement the CRI, but instead of running Docker-style Linux containers, get creative:</p>
+<ul>
+<li>Kata Containers (<a href="https://katacontainers.io/" target="_blank">https://katacontainers.io/</a>) - runs &#x201C;lightweight VMs&#x201D; instead of containers, that are optimized for speed, to offer a &#x201C;container-like&#x201D; experience, but with stronger isolation offered by different hypervisors</li>
+<li>Firecracker (<a href="https://github.com/firecracker-microvm/firecracker" target="_blank">https://github.com/firecracker-microvm/firecracker</a>) - runs &#x201C;microVMs&#x201D;, also lightweight type of VMs, implemented using Linux Kernel Virtual Machine (KVM - <a href="https://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine" target="_blank">https://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine</a>). The idea is the same as Kata Containers, with a different implementation.</li>
+<li>gVisor (<a href="https://github.com/google/gvisor" target="_blank">https://github.com/google/gvisor</a>) - implements container isolation in a different way than Docker-style projects do. It runs a user space kernel that implements a subset of syscalls that it makes available to the processes running inside of the sandbox. It then sets things up to capture the syscalls made by the process and execute them in the user space kernel. Unfortunately, that capture and redirection of syscalls introduce a performance penalty. There are multiple mechanisms you can use to do that, but the default leverages <code>ptrace</code> that we briefly mention in the chapter on syscalls, and so it takes a serious performance hit.</li>
+</ul>
+<p>Now, if we plug these into the previous figure, we end up with something along the lines of figure 12.7. Once again, the user requests a pod, and Kubernetes makes a call through the CRI. But this time, depending on which container runtime you are using, the end process might be running in a container or a VM.</p>
+<p>Figure 12.7 RunC-based container runtimes, alongside Kata Containers, FIrecracker and gVisor.</p>
+<p><img src="../images/12.7.jpg" alt=""></p>
+<p>If you&#x2019;re running Docker as your container runtime, everything you learned in chapter 5 will be directly applicable to your Kuberentes cluster. If you&#x2019;re using ContainerD or CRI-O, it will be mostly the same, because they all use the same underlying technologies. GVisor will differ in many aspects, because of the different approach they chose to implement the isolation. If your cluster uses Kata Containers or Firecracker, you&#x2019;re going to be running VMs rather than containers. This is a fast-changing landscape, so it&#x2019;s worth following the new developments in this zone. Unfortunately, as much as I love these technologies, we need to wrap up. I strongly encourage you to at least play around with them.</p>
+<p>Let&#x2019;s take a look at the last piece of the puzzle - the Kubernetes networking model.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE </p>
+<p>POP QUIZ: CAN YOU USE A DIFFERENT CONTAINER RUNTIME THAN DOCKER?</p>
+<p>Pick one:</p>
+<ol>
+<li>If you&#x2019;re in the USA, it depends on the state. Some states allow it</li>
+<li>No, Docker is required for running Kubernetes</li>
+<li>Yes, you can use a number of alternative container runtimes, like CRI-O, containerd and others</li>
+</ol>
+<p>See appendix B for answers.</p>
+</div></div></p>
+<h2 id="1214-kubernetes-networking">12.1.4 Kubernetes networking</h2>
+<p>There are three parts of Kubernetes networking that you need to understand to be effective as a chaos engineering practitioner:</p>
+<ol>
+<li>pod-to-pod networking</li>
+<li>service networking</li>
+<li>ingress networking</li>
+</ol>
+<p>I&#x2019;ll walk you through them one by one. Let&#x2019;s start with pod-to-pod networking.</p>
+<h3 id="pod-to-pod-networking">Pod-to-pod networking</h3>
+<p>To communicate between pods, or have any traffic routed to them, pods need to be able to resolve each other&#x2019;s IP addresses. When discussing kubelet, we mentioned that the pause container was holding the IP address that was common for the whole pod. But where does this IP address come from, and how does it work?</p>
+<p>The answer is simple. It&#x2019;s a made-up IP address that&apos;s assigned to the pod by Kubelet when it starts. When configuring a Kubernetes cluster, a certain range of IP addresses is configured, and then subranges are given to every node in the cluster. Kubelet is then aware of that subrange, and when it creates a pod through the CRI, it gives it an IP address from its range. From the perspective of processes running in that pod, they will see that IP address as the address of their networking interface. So far so good.</p>
+<p>Unfortunately, by itself, this doesn&#x2019;t implement any pod-to-pod networking. It merely attributes a fake IP address to every pod, and then stores it in kube-apiserver.</p>
+<p>Kubernetes then expects you to configure the networking independently. In fact, it only gives you two conditions that you need to satisfy, and doesn&#x2019;t really care how you achieve that (<a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/#the-kubernetes-network-model" target="_blank">https://kubernetes.io/docs/concepts/cluster-administration/networking/#the-kubernetes-network-model</a>):</p>
+<ul>
+<li>all pods can communicate to all other pods on the cluster directly</li>
+<li>processes running on the node can communicate with all pods on that node</li>
+</ul>
+<p>This is typically done with an overlay network (<a href="https://en.wikipedia.org/wiki/Overlay_network" target="_blank">https://en.wikipedia.org/wiki/Overlay_network</a>), where the nodes in the cluster are configured to route the fake IP addresses between themselves, and deliver them to the right containers.</p>
+<p>Once again, the interface for dealing with the networking has been standardized. It&#x2019;s called Container Networking Interface (CNI). At the time of writing, there are 29 different options for implementing the networking layer listed in the official documentation (<a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/#how-to-implement-the-kubernetes-networking-model" target="_blank">https://kubernetes.io/docs/concepts/cluster-administration/networking/#how-to-implement-the-kubernetes-networking-model</a>). To keep things simple, I&#x2019;m going to show you an example of how one of the most basic works: flannel (<a href="https://github.com/coreos/flannel" target="_blank">https://github.com/coreos/flannel</a>).</p>
+<p>Flannel runs a daemon (flanneld) on each Kubernetes node and agrees on subranges of IP addresses that should be available to each node. It stores that information in etcd. Every instance of the daemon then ensures that the networking is configured to forward packets from different ranges to their respective nodes. On the other end, the receiving flanneld daemon delivers received packets to the right container. The forwarding is done using one of the supported existing backends, for example VXLAN (<a href="https://en.wikipedia.org/wiki/Virtual_Extensible_LAN" target="_blank">https://en.wikipedia.org/wiki/Virtual_Extensible_LAN</a>).</p>
+<p>To make it easier to understand, let&#x2019;s walk through a concrete example. Let&#x2019;s say that your cluster has two nodes, and the overall pod IP address range is 192.168.0.0/16. To keep things simple, let&#x2019;s say that node A was assigned range 192.168.1.0/24 and node B was assigned range 192.168.2.0/24. And node A has a pod A1, with an address 192.168.1.1 and it wants to send a packet to pod B2, with an address 192.168.2.2 running on node B.</p>
+<p>When pod A1 tries to connect to pod B2, the forwarding set up by flannel will match the node IP address range for node B and encapsulate and forward the packets there. On the receiving end, the instance of flannel running on node B will receive the packets, undo the encapsulation, and deliver them to pod B. From the perspective of a pod, our fake IP addresses are as real as anything else. Take a look at figure 12.8 that shows this in a graphical way.</p>
+<p>Figure 12.8 High-level overview of pod networking with flannel</p>
+<p><img src="../images/12.8.jpg" alt=""></p>
+<p>Flannel is pretty bare-bones. There are much more advanced solutions, doing things like allowing for dynamic policies that dictate which pods can talk to what other pods in what circumstances, and much more. But the high-level idea is the same: the pod IP addresses get routed, and there is a daemon running on each node that makes sure that happens. And that daemon will always be a fragile part of the setup.If it stops working, the networking settings will be stale and potentially wrong.</p>
+<p>That&#x2019;s the pod networking in a nutshell. There is another set of fake IP addresses in Kubernetes - service IP addresses. Let&#x2019;s take a look at that now.</p>
+<h3 id="service-networking">Service networking</h3>
+<p>As a reminder, services in Kubernetes give a shared IP address to a set of pods that you can mix and match based on the labels. In our previous example, we had some pods with a label <code>app=goldpinger:</code> the service used that same label to match the pods and give them a single IP address.</p>
+<p>Just like the pod IP addresses, the service IP addresses are completely made-up. They are implemented by a component called kube-proxy, that also runs on each node on your Kubernetes cluster. Kube-proxy watches for changes to the pods matching the particular label, and reconfigures the host to route these fake IP addresses to their respective destinations. They also offer some load-balancing. The single service IP address will resolve to many pod IP addresses, and depending on how kube-proxy is configured, you can load-balance them in different fashions.</p>
+<p>Kube-proxy can use multiple backends to implement the networking changes. One of them is to use iptables (<a href="https://en.wikipedia.org/wiki/Iptables" target="_blank">https://en.wikipedia.org/wiki/Iptables</a>). We don&#x2019;t have time to dive into how iptables works, but at the high level, it allows you to write a set of rules that modify the flow of the packets on the machine.</p>
+<p>In this mode, kube-proxy will create rules that forward the packets to particular pod IP addresses. If there is more than one pod, there will be rules for each pod, with corresponding probabilities. The first rule to match wins. Let&#x2019;s say that you have a service that resolves to three pods. On a high level, they would look something like this:</p>
+<ol>
+<li>if IP == SERVICE_IP, forward to pod A with probability 33%</li>
+<li>if IP == SERVICE_IP, forward to pod B with probability 50%</li>
+<li>if IP == SERVICE_IP, forward to pod C with probability 100%</li>
+</ol>
+<p>This way, on average, the traffic should be routed roughly equally to the three pods.</p>
+<p>The weakness of this setup is that iptables evaluates all the rules one by one, until it hits a rule that matches. As you can imagine, the pod services and pods you&#x2019;re running on your cluster, the more rules there will be, and therefore the bigger overhead this will create.</p>
+<p>To alleviate that problem, kube-proxy can also use IPVS (<a href="https://en.wikipedia.org/wiki/IP_Virtual_Server" target="_blank">https://en.wikipedia.org/wiki/IP_Virtual_Server</a>), which scales much better for large deployments.</p>
+<p>From the chaos engineering perspective, that&#x2019;s one of the things you need to be aware of. Here are a few ideas for chaos experiments:</p>
+<ol>
+<li>Experiment 1: does number of services affect the speed of networking?<ul>
+<li>If you&#x2019;re using iptables, you will find that just creating a few thousand services (even if they&#x2019;re empty) will suddenly slow down the networking on all nodes in a significant way. Do you think your cluster shouldn&#x2019;t be affected by that? You&#x2019;re one experiment away from checking that.</li>
+</ul>
+</li>
+<li>Experiment 2: how good is the load-balancing?<ul>
+<li>With the probability-based load balancing, you might sometimes find interesting results in terms of traffic split. It might be a good idea to verify your assumptions about that.</li>
+</ul>
+</li>
+<li>Experiment 3: what happens when kube-proxy is down?<ul>
+<li>If the networking is not updated, it is quite possible to end up with not only stale routing that doesn&#x2019;t work, but also routing to the wrong service. Can your setup detect when that happens? Would you get alerted, if requests start flowing to the wrong destinations?</li>
+</ul>
+</li>
+</ol>
+<p>Once you have a service configured, one last thing that you want to do with it is to make it accessible outside the cluster. That&#x2019;s what ingresses are designed for. Let&#x2019;s take a look at that now.</p>
+<h3 id="ingress-networking">Ingress networking</h3>
+<p>Having the routing work inside of the cluster is great, but the cluster won&#x2019;t be of much use if you can&#x2019;t access the software running on it from the outside. That&#x2019;s where the ingresses come in.</p>
+<p>In Kubernetes, an ingress is a natively supported resource that effectively describes a set of hosts and the destination service that these hosts should be routed to. For example, an ingress could say that requests for example.com should go to a service called example, in the namespace called mynamespace, and route to port 8080. It&#x2019;s a first-class citizen, natively supported by Kubernetes API.</p>
+<p>But once again, creating this kind of resource doesn&#x2019;t do anything by itself. You need to have an ingress controller installed that will listen on changes to the resources of this kind and implement them. And yes, you guessed it, there are multiple options. As I&#x2019;m looking at it now, the official docs list 15 options at <a href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/" target="_blank">https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/</a>.</p>
+<p>Let me use the nginx ingress controller (<a href="https://github.com/kubernetes/ingress-nginx" target="_blank">https://github.com/kubernetes/ingress-nginx</a>) as an example. We saw nginx in the previous chapters. It&#x2019;s often used as a reverse proxy, receiving traffic and sending it to some kind of server upstream. That&#x2019;s precisely how it&#x2019;s used in the ingress controller.</p>
+<p>When you deploy it, it runs a pod on each host. Inside of that pod, it runs an instance of nginx, and an extra process that listens to changes on resources of type ingress. Every time a change is detected, it re-generates a config for nginx, and asks nginx to reload it. Nginx then knows which hosts to listen on, and where to proxy the incoming traffic. It&#x2019;s that simple.</p>
+<p>It goes without saying, that the ingress controller is typically the single point of entry to the cluster, and so everything that prevents it from working well will deeply affect the cluster. And like any proxy, it&#x2019;s easy to mess up its parameters. From the chaos engineering perspective, here are some ideas to get you started:</p>
+<ol>
+<li>What happens when a new ingress is created or modified and a config is reloaded? Are the existing connections dropped? What about corner cases like websockets?</li>
+<li>Does your proxy have the same timeout as the service it proxies to? If you time out quicker, not only you can have outstanding requests being processed long after the proxy dropped the connection, but the consequent retries might accumulate and take down the target service.</li>
+</ol>
+<p>We could chat about that for a whole day, but this should be enough to get you started with your testing. Unfortunately, all good things come to an end. Let&#x2019;s finish with a summary of the key components we covered in this chapter.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE </p>
+<p>POP QUIZ: WHICH COMPONENT DID I JUST MAKE UP?</p>
+<p>Pick one:</p>
+<ol>
+<li>kube-apiserver</li>
+<li>kube-controller-manager</li>
+<li>kube-scheduler</li>
+<li>kube-converge-loop</li>
+<li>kubelet</li>
+<li>etcd</li>
+<li>kube-proxy</li>
+</ol>
+<p>See appendix B for answers.</p>
+</div></div></p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Under_the_hood_of_Kubernetes.html" class="navigation navigation-prev " aria-label="Previous page: 12 Under the hood of Kubernetes">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Summary_of_key_components.html" class="navigation navigation-next " aria-label="Next page: 12.2 Summary of key components">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"12.1 Anatomy of a Kubernetes cluster and how to break it","level":"2.3.1","depth":2,"next":{"title":"12.2 Summary of key components","level":"2.3.2","depth":2,"path":"docs/Summary_of_key_components.md","ref":"docs/Summary_of_key_components.md","articles":[]},"previous":{"title":"12 Under the hood of Kubernetes","level":"2.3","depth":1,"path":"docs/Under_the_hood_of_Kubernetes.md","ref":"docs/Under_the_hood_of_Kubernetes.md","articles":[{"title":"12.1 Anatomy of a Kubernetes cluster and how to break it","level":"2.3.1","depth":2,"path":"docs/Anatomy_of_a_Kubernetes_cluster_and_how_to_break_it.md","ref":"docs/Anatomy_of_a_Kubernetes_cluster_and_how_to_break_it.md","articles":[]},{"title":"12.2 Summary of key components","level":"2.3.2","depth":2,"path":"docs/Summary_of_key_components.md","ref":"docs/Summary_of_key_components.md","articles":[]},{"title":"12.3 Summary","level":"2.3.3","depth":2,"path":"docs/Summary_12.md","ref":"docs/Summary_12.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/chaos-engineering"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Chaos Engineering","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Chaos-Engineering","extension":null},"file":{"path":"docs/Anatomy_of_a_Kubernetes_cluster_and_how_to_break_it.md","mtime":"2020-12-09T03:48:02.114Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-09T07:58:23.938Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-page-toc-button/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-cnzz/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
