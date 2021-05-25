@@ -861,11 +861,11 @@
 NAME                 PROVISIONER             RECLAIMPOLICY   ...
 standard (default)   rancher.io/local-path   Delete          ...
 </code></pre>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE&#x2003;</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE&#x2003;</p>
 <p>The shorthand for <code>storageclass</code> is <code>sc</code>.</p>
 </div></div></p>
 <p>In many clusters, as in the example above, only one storage class called <code>standard</code> is configured. It&#x2019;s also marked as the default, which means that this is the class that is used to provision the persistent volume when you omit the <code>storageClassName</code> field in your persistent volume claim definition.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Remember that omitting the <code>storageClassName</code> field causes the default storage class to be used, whereas explicitly setting the field to <code>&quot;&quot;</code> disables dynamic provisioning and causes an existing volume to be selected and bound to the claim.</p>
 </div></div></p>
 <h3 id="inspecting-the-default-storage-class">Inspecting the default storage class</h3>
@@ -888,11 +888,11 @@ $ kubectl get sc standard -o yaml
 <p>#C The name of the provisioner that gets called to provision persistent volumes of this class.</p>
 <p>#D The reclaim policy for persistent volumes of this class.</p>
 <p>#E How volumes of this class are provisioned and bound.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>You&#x2019;ll notice that StorageClass objects have no <code>spec</code> or <code>status</code> sections. This is because the object only contains static information. Since the object&#x2019;s fields aren&#x2019;t organized in the two sections, the YAML manifest may be more difficult to read. This is also confounded by the fact that fields in YAML are typically sorted in alphabetical order, which means that some fields may appear above the <code>apiVersion</code>, <code>kind</code> or <code>metadata</code> fields. Be careful not to overlook these.</p>
 </div></div></p>
 <p>If you look closely at the top of the listing, you&#x2019;ll see that the storage class definition includes an annotation, which marks this particular storage class as the default.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>You&#x2019;ll learn what an object annotation is in chapter 10.</p>
 </div></div></p>
 <p>As specified in the storage class definition, each time you create a persistent volume claim that references this class, the provisioner <code>rancher.io/local-path</code> is called to provision the persistent volume.</p>
@@ -951,7 +951,7 @@ pvc-c71fb2c2...   1Gi        RWO            Delete           Bound    ...
 <p>Why was the volume created and bound to the claim only after you had deployed the pod? In an earlier example, the pre-provisioned volume was bound to the claim as soon as you created the claim. Is this a difference between static and dynamic provisioning? The answer is no.</p>
 <p>The system behaves this way because of how the storage class you&#x2019;re using is configured. You may remember that its YAML definition contained a field called <code>volumeBindingMode</code> that was set to <code>WaitForFirstConsumer</code>. This mode causes the system to wait until the first pod (the consumer of the claim) exists before binding the claim. The volume is only provisioned then and not earlier.</p>
 <p>Some types of volumes require such behaviour, as the system needs to know where the pod is scheduled before it can provision the volume. This is the case with provisioners that create node-local volumes, such as the one you find in clusters created with the kind tool (you may remember that the provisioner referenced in the storage class was <code>rancher.io/local-path</code>).</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Refer to the documentation of your chosen provisioner to determine whether it requires the volume binding mode to be set to <code>WaitForFirstConsumer</code>.</p>
 </div></div></p>
 <p>The alternative to <code>WaitForFirstConsumer</code> is the <code>Immediate</code> volume binding mode. The two modes are explained in the following table.</p>
@@ -981,7 +981,7 @@ pvc-c71fb2c2...   1Gi        RWO            Delete           Bound    ...
 <p>#A The provisioner used to provision volumes of this storage class</p>
 <p>#B This type parameter is passed to the provisioner</p>
 <p>As you can see, the annotation marks this storage class as default. If you create a persistent volume claim in GKE that references either this class or none at all, the provisioner <code>kubernetes.io/gce-pd</code> is called to create the volume. The parameter <code>type: pd-standard</code> is passed to the provisioner when the volume is to be provisioned. This tells the provisioner what type of GCE Persistent Disk to create.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Google Compute Engine supports several other disk types. Their availability depends on where you operate your cluster. To view the list of types for each availability zone, run <code>gcloud compute disk-types list</code>.</p>
 </div></div></p>
 <h3 id="using-an-ssd-persistent-disk-in-gke">Using an SSD persistent disk in GKE</h3>
@@ -999,7 +999,7 @@ pvc-c71fb2c2...   1Gi        RWO            Delete           Bound    ...
 <p>#B The name of this storage class</p>
 <p>#C The provisioner to use</p>
 <p>#D Tells the provisioner to provision an SSD disk</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE&#x2003;</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE&#x2003;</p>
 <p>If you&#x2019;re using another cloud provider, check their documentation to find the name of the provisioner and the parameters you need to pass in. If you&#x2019;re using Minikube or kind, and you&#x2019;d like to run this example, set the provisioner and parameters to the same values as in the default storage class. For this exercise, it doesn&#x2019;t matter if the provisioned volume doesn&#x2019;t actually use an SSD.</p>
 </div></div></p>
 <p>Create the StorageClass object by applying this manifest to your cluster and list the available storage classes to confirm that more than one is now available.</p>
@@ -1023,7 +1023,7 @@ pvc-c71fb2c2...   1Gi        RWO            Delete           Bound    ...
 <p>#A This claim requests that this specific storage class be used to provision the volume.</p>
 <p>Rather than just specifying the size and access modes and letting the system use the default storage class to provision the persistent volume, this claim specifies that the storage class <code>fast</code> be used for the volume. When you create the claim, the persistent volume is created by the provisioner referenced in this storage class.</p>
 <p>You can now use this claim in a new MongoDB pod. If you run this example on GKE, the pod will use an SSD volume.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE&#x2003;</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE&#x2003;</p>
 <p>If a persistent volume claim refers to a non-existent storage class, the claim remains <code>Pending</code> until the storage class is created. Kubernetes attempts to bind the claim at regular intervals, generating a <code>ProvisioningFailed</code> event each time. You can see the event if you execute the <code>kubectl</code> <code>describe</code> command on the claim.</p>
 </div></div></p>
 <h2 id="resizing-persistent-volumes">Resizing persistent volumes</h2>
@@ -1078,7 +1078,7 @@ mongodb-pvc-default   Bound    pvc-ed36b...   10Gi        RWO           ...
 <p>This section on dynamic provisioning should convince you that automating the provisioning of persistent volumes benefits both the cluster administrator and anyone who uses the cluster to deploy applications. By setting up the dynamic volume provisioner and configuring several storage classes with different performance or other features, the administrator gives cluster users the ability to provision as many persistent volumes of any type as they want. Each developer decides which storage class is best suited for each claim they create.</p>
 <h3 id="understanding-how-storage-classes-allow-claims-to-be-portable">Understanding how storage classes allow claims to be portable</h3>
 <p>Another great thing about storage classes is that claims refer to them by name. If the storage classes are named appropriately, such as <code>standard</code>, <code>fast</code>, and so on, the persistent volume claim manifests are portable across different clusters.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Remember that persistent volume claims are usually part of the application manifest and are written by application developers.</p>
 </div></div></p>
 <p>If you used GKE to run the previous examples, you can now try to deploy the same claim and pod manifests in a non-GKE cluster, such as a cluster created with Minikube or kind. In this way, you can see this portability for yourself. The only thing you need to ensure is that all your clusters use the storage class names.</p>
@@ -1133,7 +1133,7 @@ mongodb-pvc-default   Bound    pvc-ed36b...   10Gi        RWO           ...
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"8.3 Dynamic provisioning of persistent volumes","level":"4.5.3","depth":2,"next":{"title":"8.4 Node-local persistent volumes","level":"4.5.4","depth":2,"path":"docs/Nodelocal_persistent_volumes.md","ref":"docs/Nodelocal_persistent_volumes.md","articles":[]},"previous":{"title":"8.2 Creating persistent volumes and claims","level":"4.5.2","depth":2,"path":"docs/Creating_persistent_volumes_and_claims.md","ref":"docs/Creating_persistent_volumes_and_claims.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Dynamic_provisioning_of_persistent_volumes.md","mtime":"2020-11-22T04:07:53.193Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-10T08:08:07.100Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"8.3 Dynamic provisioning of persistent volumes","level":"4.5.3","depth":2,"next":{"title":"8.4 Node-local persistent volumes","level":"4.5.4","depth":2,"path":"docs/Nodelocal_persistent_volumes.md","ref":"docs/Nodelocal_persistent_volumes.md","articles":[]},"previous":{"title":"8.2 Creating persistent volumes and claims","level":"4.5.2","depth":2,"path":"docs/Creating_persistent_volumes_and_claims.md","ref":"docs/Creating_persistent_volumes_and_claims.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Dynamic_provisioning_of_persistent_volumes.md","mtime":"2021-05-25T09:07:29.771Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-25T09:08:05.572Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

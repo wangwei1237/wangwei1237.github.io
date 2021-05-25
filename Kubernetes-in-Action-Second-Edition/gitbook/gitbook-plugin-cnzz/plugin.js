@@ -14,7 +14,7 @@ require([
 
     console.log("visible:" + visible + ", style:" + style + ", siteid:" + siteid);
 
-    var stat = "<script src='https://s95.cnzz.com/z_stat.php?id="
+    var stat = "<script src='http://s95.cnzz.com/z_stat.php?id="
         + siteid + "&web_id=" + siteid + "' language='JavaScript'></script>";
 
     if (!visible) {

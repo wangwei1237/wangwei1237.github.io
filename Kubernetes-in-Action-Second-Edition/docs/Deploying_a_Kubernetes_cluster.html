@@ -859,12 +859,12 @@
 <p>If you&#x2019;ve been granted access to an existing cluster deployed by someone else, you can skip this section and go on to section 3.2 where you&#x2019;ll learn how to interact with Kubernetes clusters.</p>
 <h2 id="using-the-built-in-kubernetes-cluster-in-docker-desktop">Using the built-in Kubernetes cluster in Docker Desktop</h2>
 <p>If you use macOS or Windows, you&#x2019;ve most likely installed Docker Desktop to run the exercises in the previous chapter. It contains a single-node Kubernetes cluster that you can enable via its Settings dialog box. This may be the easiest way for you to start your Kubernetes journey, but keep in mind that the version of Kubernetes may not be as recent as when using the alternative options described in the next sections.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Although technically not a cluster, the single-node Kubernetes system provided by Docker Desktop should be enough to explore most of the topics discussed in this book. When an exercise requires a multi-node cluster, I will point this out.</p>
 </div></div></p>
 <h3 id="enabling-kubernetes-in-docker-desktop">Enabling Kubernetes in Docker Desktop</h3>
 <p>Assuming Docker Desktop is already installed on your computer, you can start the Kubernetes cluster by clicking the whale icon in the system tray and opening the Settings dialog box. Click the Kubernetes tab and make sure the Enable Kubernetes checkbox is selected. The components that make up the Control Plane run as Docker containers, but they aren&#x2019;t displayed in the list of running containers when you invoke the <code>docker ps</code> command. To display them, select the Show system containers checkbox.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>The initial installation of the cluster takes several minutes, as all container images for the Kubernetes components must be downloaded.</p>
 </div></div></p>
 <p>Figure 3.1 The Settings dialog box in Docker Desktop for Windows
@@ -890,7 +890,7 @@ Figure 3.2 Kubernetes running in Docker Desktop
 <p>After you run the command, you are in a shell that&#x2019;s effectively the same as if you had used SSH to enter the VM. Use this shell to explore the VM - try listing processes by executing the <code>ps aux</code> command or explore the network interfaces by running <code>ip addr</code>.</p>
 <h2 id="running-a-local-cluster-using-minikube">Running a local cluster using Minikube</h2>
 <p>Another way to create a Kubernetes cluster is to use Minikube, a tool maintained by the Kubernetes community. The version of Kubernetes that Minikube deploys is usually more recent than the version deployed by Docker Desktop. The cluster consists of a single node and is suitable for both testing Kubernetes and developing applications locally. It normally runs Kubernetes in a Linux VM, but if your computer is Linux-based, it can also deploy Kubernetes directly in your host OS via Docker.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If you configure Minikube to use a VM, you don&#x2019;t need Docker, but you do need a hypervisor like VirtualBox. In the other case you need Docker, but not the hypervisor.</p>
 </div></div></p>
 <h3 id="installing-minikube">Installing Minikube</h3>
@@ -918,7 +918,7 @@ Verifying Kubernetes components...
 Enabled addons: default-storageclass, storage-provisioner
 Done! kubectl is now configured to use &quot;minikube&quot;
 </code></pre><p>The process may take several minutes, because the VM image and the container images of the Kubernetes components must be downloaded.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>If you use Linux, you can reduce the resources required by Minikube by creating the cluster without a VM. Use this command: 
 <code>minikube start --vm-driver none</code></p>
 </div></div></p>
@@ -932,12 +932,12 @@ apiserver: Running
 kubeconfig: Configured
 </code></pre><p>The output of the command shows that the Kubernetes host (the VM that hosts Kubernetes) is running, and so are the Kubelet &#x2013; the agent responsible for managing the node &#x2013; and the Kubernetes API server. The last line shows that the kubectl command-line tool (CLI) is configured to use the Kubernetes cluster that Minikube has provided. Minikube doesn&#x2019;t install the CLI tool, but it does create its configuration file. Installation of the CLI tool is explained in section 3.2.</p>
 <h3 id="visualizing-the-system">Visualizing the system</h3>
-<p>The architecture of the system, which is shown in the next figure, is practically identical to the one in Docker Desktop.
-Figure 3.3 Running a single-node Kubernetes cluster using Minikube
+<p>The architecture of the system, which is shown in the next figure, is practically identical to the one in Docker Desktop.</p>
+<p>Figure 3.3 Running a single-node Kubernetes cluster using Minikube
 <img src="../images/3.3.png" alt="Figure 3.3 Running a single-node Kubernetes cluster using Minikube"></p>
 <p>The Control Plane components run in containers in the VM or directly in your host OS if you used the <code>--vm-driver</code> none option to create the cluster. The Kubelet runs directly in the VM&#x2019;s or your host&#x2019;s operating system. It runs the applications you deploy in the cluster via the Docker Daemon.</p>
 <p>You can run <code>minikube</code> <code>ssh</code> to log into the Minikube VM and explore it from inside. For example, you can see what&#x2019;s running in the VM by running <code>ps aux</code> to list running processes or <code>docker ps</code> to list running containers.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>If you want to list containers using your local docker CLI instance, as in the case of Docker Desktop, run the following command: <code>eval $(minikube docker-env)</code></p>
 </div></div></p>
 <h2 id="running-a-local-cluster-using-kind-kubernetes-in-docker">Running a local cluster using kind (Kubernetes in Docker)</h2>
@@ -954,7 +954,7 @@ Figure 3.3 Running a single-node Kubernetes cluster using Minikube
 [CA] chmod +x ./kind &amp;&amp; \
 [CA] mv ./kind /some-dir-in-your-PATH/kind
 </code></pre><p>Check the documentation to see what the latest version is and use it instead of v0.7.0 in the above example. Also, replace <code>/some-dir-in-your-PATH/</code> with an actual directory in your path.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p> Docker must be installed on your system to use kind.</p>
 </div></div></p>
 <h3 id="starting-a-kubernetes-cluster-with-kind">Starting a Kubernetes cluster with kind</h3>
@@ -979,7 +979,7 @@ $ kind get nodes
 kind-worker2
 kind-worker
 kind-control-plane
-</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Due to width restrictions, the node names <code>control-plane</code>, <code>worker1</code>, and <code>worker2</code> are used instead of the actual node names throughout this book.</p>
 </div></div></p>
 <p>Since each node runs as a container, you can also see the nodes by listing the running containers using <code>docker ps</code>, as the next listing shows.</p>
@@ -1014,7 +1014,7 @@ c3e66dfe44deb   be321f2ded3f3   16 min ago   Running   kube-apiserver ...
 <li>Downloading and installing the Google Cloud SDK, which includes the <code>gcloud</code> tool.</li>
 <li>Creating the cluster using the <code>gcloud</code> command-line tool.</li>
 </ol>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Certain operations (the one in step 2, for example) may take a few minutes to complete, so relax and grab a coffee in the meantime.</p>
 </div></div></p>
 <h3 id="creating-a-gke-kubernetes-cluster-with-three-nodes">Creating a GKE Kubernetes cluster with three nodes</h3>
@@ -1028,7 +1028,7 @@ Creating cluster kubia in europe-west3-c...
 kubeconfig entry generated for kubia.
 NAME   LOCAT.   MASTER_VER  MASTER_IP   MACH_TYPE     ... NODES STATUS
 kubia  eu-w3-c  1.13.11...  5.24.21.22  n1-standard-1 ... 3     RUNNING
-</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>I&#x2019;m creating all three worker nodes in the same zone, but you can also spread them across all zones in the region by setting the <code>compute/zone</code> config value to an entire region instead of a single zone. If you do so, note that <code>--num-nodes</code> indicates the number of nodes per zone. If the region contains three zones and you only want three nodes, you must set <code>--num-nodes</code> to <code>1</code>.</p>
 </div></div></p>
 <p>You should now have a running Kubernetes cluster with three worker nodes. Each node is a virtual machine provided by the Google Compute Engine (GCE) infrastructure-as-a-service platform. You can list GCE virtual machines using the command in the next listing.</p>
@@ -1038,7 +1038,7 @@ NAME      ZONE        MACHINE_TYPE   INTERNAL_IP  EXTERNAL_IP     STATUS
 ...-ctlk  eu-west3-c  n1-standard-1  10.156.0.16  34.89.238.55    RUNNING
 ...-gj1f  eu-west3-c  n1-standard-1  10.156.0.14  35.242.223.97   RUNNING
 ...-r01z  eu-west3-c  n1-standard-1  10.156.0.15  35.198.191.189  RUNNING
-</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>Each VM incurs costs. To reduce the cost of your cluster, you can reduce the number of nodes to one, or even to zero while not using it. See next section for details.</p>
 </div></div></p>
 <p>The system is shown in the next figure. Note that only your worker nodes run in GCE virtual machines. The control plane runs elsewhere - you can&#x2019;t access the machines hosting it.
@@ -1111,7 +1111,7 @@ Figure 3.5 Your Kubernetes cluster in Google Kubernetes Engine
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"3.1 Deploying a Kubernetes cluster","level":"3.3.1","depth":2,"next":{"title":"3.2 Interacting with Kubernetes","level":"3.3.2","depth":2,"path":"docs/Interacting_with_Kubernetes.md","ref":"docs/Interacting_with_Kubernetes.md","articles":[]},"previous":{"title":"3 DEPLOYING YOUR FIRST APPLICATION","level":"3.3","depth":1,"path":"docs/Deploying_your_first_application.md","ref":"docs/Deploying_your_first_application.md","articles":[{"title":"3.1 Deploying a Kubernetes cluster","level":"3.3.1","depth":2,"path":"docs/Deploying_a_Kubernetes_cluster.md","ref":"docs/Deploying_a_Kubernetes_cluster.md","articles":[]},{"title":"3.2 Interacting with Kubernetes","level":"3.3.2","depth":2,"path":"docs/Interacting_with_Kubernetes.md","ref":"docs/Interacting_with_Kubernetes.md","articles":[]},{"title":"3.3  Running your first application on Kubernetes","level":"3.3.3","depth":2,"path":"docs/Running_your_first_application_on_Kubernetes.md","ref":"docs/Running_your_first_application_on_Kubernetes.md","articles":[]},{"title":"3.4 Summary","level":"3.3.4","depth":2,"path":"docs/Summary_3.md","ref":"docs/Summary_3.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Deploying_a_Kubernetes_cluster.md","mtime":"2020-12-10T08:07:06.523Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-10T08:08:07.100Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"3.1 Deploying a Kubernetes cluster","level":"3.3.1","depth":2,"next":{"title":"3.2 Interacting with Kubernetes","level":"3.3.2","depth":2,"path":"docs/Interacting_with_Kubernetes.md","ref":"docs/Interacting_with_Kubernetes.md","articles":[]},"previous":{"title":"3 DEPLOYING YOUR FIRST APPLICATION","level":"3.3","depth":1,"path":"docs/Deploying_your_first_application.md","ref":"docs/Deploying_your_first_application.md","articles":[{"title":"3.1 Deploying a Kubernetes cluster","level":"3.3.1","depth":2,"path":"docs/Deploying_a_Kubernetes_cluster.md","ref":"docs/Deploying_a_Kubernetes_cluster.md","articles":[]},{"title":"3.2 Interacting with Kubernetes","level":"3.3.2","depth":2,"path":"docs/Interacting_with_Kubernetes.md","ref":"docs/Interacting_with_Kubernetes.md","articles":[]},{"title":"3.3  Running your first application on Kubernetes","level":"3.3.3","depth":2,"path":"docs/Running_your_first_application_on_Kubernetes.md","ref":"docs/Running_your_first_application_on_Kubernetes.md","articles":[]},{"title":"3.4 Summary","level":"3.3.4","depth":2,"path":"docs/Summary_3.md","ref":"docs/Summary_3.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Deploying_a_Kubernetes_cluster.md","mtime":"2021-05-25T09:07:29.771Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-25T09:08:05.572Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

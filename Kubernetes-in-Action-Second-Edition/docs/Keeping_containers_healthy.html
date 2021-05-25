@@ -873,7 +873,7 @@ kubia-ssl      1/2     NotReady   0          9m33s
 kubia-ssl      2/2     Running    1          9m34s
 </code></pre>
 <p>The listing shows that the pod&#x2019;s <code>STATUS</code> changes from <code>Running</code> to <code>NotReady</code>, while the <code>READY</code> column indicates that only one of the two containers is ready. Immediately thereafter, Kubernetes restarts the container and the pod&#x2019;s status returns to <code>Running</code>. The <code>RESTARTS</code> column indicates that one container has been restarted.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If one of the pod&#x2019;s containers fails, the other containers continue to run.</p>
 </div></div></p>
 <p>Now examine the output of the <code>kubectl get events -w</code> command you ran earlier. It is shown in the next listing.</p>
@@ -887,10 +887,10 @@ LAST SEEN   TYPE      REASON      OBJECT           MESSAGE
 </code></pre>
 <p>The events show that the new <code>envoy</code> container has been started. You should be able to access the application via HTTPS again. Please confirm with your browser or <code>curl</code>.</p>
 <p>The events in the listing also expose an important detail about how Kubernetes restarts containers. The second event indicates that the entire <code>envoy</code> container has been recreated. Kubernetes never restarts a container, but instead discards it and creates a new container. Regardless, we call this restarting a container.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Any data that the process writes to the container&#x2019;s filesystem is lost when the container is recreated. This behavior is sometimes undesirable. To persist data, you must add a storage volume to the pod, as explained in the next chapter.</p>
 </div></div></p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If init containers are defined in the pod and one of the pod&#x2019;s regular containers is restarted, the init containers are not executed again.</p>
 </div></div></p>
 <h3 id="configuring-the-pods-restart-policy">Configuring the pod&#x2019;s restart policy</h3>
@@ -905,7 +905,7 @@ LAST SEEN   TYPE      REASON      OBJECT           MESSAGE
 | OnFailure | The container is restarted only if the process terminates with a non-zero exit code, which by convention indicates failure. |
 | Never | The container is never restarted - not even when it fails. |</p>
 <p>Table 6.4 Pod restart policies</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Surprisingly, the restart policy is configured at the pod level and applies to all its containers. It can&#x2019;t be configured for each container individually.</p>
 </div></div></p>
 <h3 id="understanding-the-time-delay-inserted-before-a-container-is-restarted">Understanding the time delay inserted before a container is restarted</h3>
@@ -914,7 +914,7 @@ LAST SEEN   TYPE      REASON      OBJECT           MESSAGE
 <p>Figure 6.5 Exponential back-off between container restarts</p>
 <p><img src="../images/6.5.png" alt=""></p>
 <p>In the worst case, a container can therefore be prevented from starting for up to five minutes.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>The delay is reset to zero when the container has run successfully for 10 minutes. If the container must be restarted later, it is restarted immediately.</p>
 </div></div></p>
 <p>As you can see in the following listing, the container is in the <code>Waiting</code> state while it waits to be restarted, and the <code>reason</code> is shown as <code>CrashLoopBackOff</code>. The <code>message</code> field indicates how long it will take for the container to be restarted.</p>
@@ -926,7 +926,7 @@ $ kubectl get po kubia-ssl -o json | jq .status.containerStatuses
     <span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;back-off 40s restarting failed container=envoy ...&quot;</span>,
     <span class="hljs-string">&quot;reason&quot;</span>: <span class="hljs-string">&quot;CrashLoopBackOff&quot;</span>
 </code></pre>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>When you tell Envoy to terminate, it terminates with exit code zero, which means it hasn&#x2019;t crashed. The <code>CrashLoopBackOff</code> status can therefore be misleading.</p>
 </div></div></p>
 <h2 id="checking-the-containers-health-using-liveness-probes">Checking the container&#x2019;s health using liveness probes</h2>
@@ -934,7 +934,7 @@ $ kubectl get po kubia-ssl -o json | jq .status.containerStatuses
 <p>The application could catch these errors by itself and immediately terminate, but what about the situations where your application stops responding because it gets into an infinite loop or deadlock? What if the application can&#x2019;t detect this? To ensure that the application is restarted in such cases, it may be necessary to check its state from the outside.</p>
 <h3 id="introducing-liveness-probes">Introducing liveness probes</h3>
 <p>Kubernetes can be configured to check whether an application is still alive by defining a liveness probe. You can specify a liveness probe for each container in the pod. Kubernetes runs the probe periodically to ask the application if it&#x2019;s still alive and well. If the application doesn&#x2019;t respond, an error occurs, or the response is negative, the container is considered unhealthy and is terminated. The container is then restarted if the restart policy allows it.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Liveness probes can only be used in the pod&#x2019;s regular containers. They can&#x2019;t be defined in init containers.</p>
 </div></div></p>
 <h3 id="types-of-liveness-probes">Types of liveness probes</h3>
@@ -944,7 +944,7 @@ $ kubectl get po kubia-ssl -o json | jq .status.containerStatuses
 <li>A TCP Socket probe attempts to open a TCP connection to the specified port of the container. If the connection is successfully established, the probe is considered successful. If the connection can&#x2019;t be established in time, the probe is considered failed.</li>
 <li>An Exec probe executes a command inside the container and checks the exit code it terminates with. If the exit code is zero, the probe is successful. A non-zero exit code is considered a failure. The probe is also considered to have failed if the command fails to terminate in time.</li>
 </ul>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>In addition to a liveness probe, a container may also have a startup probe, which is discussed in section 6.2.6, and a readiness probe, which is explained in chapter 10.</p>
 </div></div></p>
 <h2 id="creating-an-http-get-liveness-probe">Creating an HTTP GET liveness probe</h2>
@@ -991,7 +991,7 @@ $ kubectl get po kubia-ssl -o json | jq .status.containerStatuses
 <p>The probe doesn&#x2019;t specify any other fields, so the default settings are used. The first request is sent 10s after the container starts and is repeated every 10s. If the application doesn&#x2019;t respond within one second, the probe attempt is considered failed. If it fails three times in a row, the container is considered unhealthy and is terminated.</p>
 <h3 id="understanding-liveness-probe-configuration-options">Understanding liveness probe configuration options</h3>
 <p>The administration interface of the Envoy proxy provides the special endpoint <code>/ready</code> through which it exposes its health status. Instead of targeting port <code>8443</code>, which is the port through which Envoy forwards HTTPS requests to Node.js, the liveness probe for the <code>envoy</code> container targets this special endpoint on the <code>admin</code> port, which is port number <code>9901</code>.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>As you can see in the <code>envoy</code> container&#x2019;s liveness probe, you can specify the probe&#x2019;s target port by name instead of by number.</p>
 </div></div></p>
 <p>The liveness probe for the <code>envoy</code> container also contains additional fields. These are best explained with the following figure.</p>
@@ -1065,7 +1065,7 @@ $ kubectl describe po kubia-liveness
 <p>#A This is the state of the new container.</p>
 <p>#B The previous container terminated with exit code 0.</p>
 <p>The exit code zero shown in the listing implies that the application process gracefully exited on its own. If it had been killed, the exit code would have been 137.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Exit code <code>128+n</code> indicates that the process exited due to external signal <code>n</code>. Exit code <code>137</code> is <code>128+9</code>, where <code>9</code> represents the <code>KILL</code> signal. You&#x2019;ll see this exit code whenever the container is killed. Exit code <code>143</code> is <code>128+15</code>, where <code>15</code> is the <code>TERM</code> signal. You&#x2019;ll typically see this exit code when the container runs a shell that has terminated gracefully.</p>
 </div></div></p>
 <p>Let&#x2019;s examine Envoy&#x2019;s log to confirm that it caught the <code>TERM</code> signal and has terminated by itself. You must use the <code>kubectl</code> <code>logs</code> command with the <code>--container</code> or the shorter <code>-c</code> option to specify what container you&#x2019;re interested in.</p>
@@ -1150,7 +1150,7 @@ $ kubectl logs kubia-liveness -c envoy -p
 <p>As shown in the following figure, unlike liveness probes, it&#x2019;s perfectly normal for a startup probe to fail. A failure only indicates that the application hasn&#x2019;t yet been completely started. A successful startup probe indicates that the application has started successfully, and Kubernetes should switch to the liveness probe. The liveness probe is then typically executed using a shorter period of time, which allows for faster detection of non-responsive applications.</p>
 <p>Figure 6.8 Fast detection of application health problems using a combination of startup and liveness probe</p>
 <p><img src="../images/6.8.png" alt=""></p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If the startup probe fails often enough to reach the <code>failureThreshold</code>, the container is terminated as it the liveness probe had failed.</p>
 </div></div></p>
 <p>Usually, the startup and liveness probes are configured to use the same HTTP endpoint, but different endpoints can be used. You can also configure the startup probe as an <code>exec</code> or <code>tcpSocket</code> probe instead of an httpGet probe.</p>
@@ -1161,14 +1161,14 @@ $ kubectl logs kubia-liveness -c envoy -p
 <h3 id="what-a-liveness-probe-should-check">What a liveness probe should check</h3>
 <p>The liveness probe for the <code>kubia</code> container isn&#x2019;t configured to call an actual health-check endpoint, but only checks that the Node.js server responds to simple HTTP requests for the root URI. This may seem overly simple, but even such a liveness probe works wonders, because it causes a restart of the container if the server no longer responds to HTTP requests, which is its main task. If no liveness probe was defined, the pod would remain in an unhealthy state where it doesn&#x2019;t respond to any requests and would have to be restarted manually. A simple liveness probe like this is better than nothing.</p>
 <p>To provide a better liveness check, web applications typically expose a specific health-check endpoint, such as <code>/healthz</code>. When this endpoint is called, the application performs an internal status check of all the major components running within the application to ensure that none of them have died or are no longer doing what they should.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>Make sure that the <code>/healthz</code> HTTP endpoint doesn&#x2019;t require authentication; otherwise the probe will always fail, causing your container to be restarted indefinitely.</p>
 </div></div></p>
 <p>Make sure that the application checks only the operation of its internal components and nothing that is influenced by an external factor. For example, the health-check endpoint of a frontend service should never respond with failure when it can&#x2019;t connect to a backend service. If the backend service fails, restarting the frontend will not solve the problem. Such a liveness probe will fail again after the restart, so the container will be restarted repeatedly until the backend is repaired. If many services are interdependent in this way, the failure of a single service can result in cascading failures across the entire system.</p>
 <h3 id="keeping-probes-light">Keeping probes light</h3>
 <p>The handler invoked by a liveness probe shouldn&#x2019;t use too much computing resources and shouldn&#x2019;t take too long to complete. By default, probes are executed relatively often and only given one second to complete.</p>
 <p>Using a handler that consumes a lot of CPU or memory can seriously affect the main process of your container. Later in the book you&#x2019;ll learn how to limit the CPU time and total memory available to a container. The CPU and memory consumed by the probe handler invocation count towards the resource quota of the container, so using a resource-intensive handler will reduce the CPU time available to the main process of the application.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>When running a Java application in your container, you may want to use an HTTP GET probe instead of an exec liveness probe that starts an entire JVM. The same applies to commands that require considerable computing resources.</p>
 </div></div></p>
 <h3 id="avoiding-retry-loops-in-your-probe-handlers">Avoiding retry loops in your probe handlers</h3>
@@ -1216,7 +1216,7 @@ $ kubectl logs kubia-liveness -c envoy -p
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"6.2 Keeping containers healthy","level":"4.3.2","depth":2,"next":{"title":"6.3 Executing actions at container start-up and shutdown","level":"4.3.3","depth":2,"path":"docs/Executing_actions_at_container_startup_and_shutdown.md","ref":"docs/Executing_actions_at_container_startup_and_shutdown.md","articles":[]},"previous":{"title":"6.1 Understanding the pod's status","level":"4.3.1","depth":2,"path":"docs/Understanding_the_pods_status.md","ref":"docs/Understanding_the_pods_status.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Keeping_containers_healthy.md","mtime":"2020-11-22T04:06:06.772Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-10T08:08:07.100Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"6.2 Keeping containers healthy","level":"4.3.2","depth":2,"next":{"title":"6.3 Executing actions at container start-up and shutdown","level":"4.3.3","depth":2,"path":"docs/Executing_actions_at_container_startup_and_shutdown.md","ref":"docs/Executing_actions_at_container_startup_and_shutdown.md","articles":[]},"previous":{"title":"6.1 Understanding the pod's status","level":"4.3.1","depth":2,"path":"docs/Understanding_the_pods_status.md","ref":"docs/Understanding_the_pods_status.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Keeping_containers_healthy.md","mtime":"2021-05-25T09:07:29.775Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-25T09:08:05.572Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -880,7 +880,7 @@ Hey there, this is kubia. Your IP is ::ffff:10.244.2.5.
 pod &quot;client-pod&quot; deleted
 </code></pre>
 <p>This command runs a pod with a single container created from the <code>tutum/curl</code> image. You can also use any other image that provides the <code>curl</code> binary executable. The <code>-it</code> option attaches your console to the container&#x2019;s standard input and output, the <code>--restart=Never</code> option ensures that the pod is considered Completed when the <code>curl</code> command and its container terminate, and the <code>--rm</code> options removes the pod at the end. The name of the pod is <code>client-pod</code> and the command executed in its container is <code>curl 10.244.2.4:8080</code>.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>You can also modify the command to run the <code>bash</code> shell in the client pod and then run <code>curl</code> from the shell.</p>
 </div></div></p>
 <p>Creating a pod just to see if it can access another pod is useful when you&#x2019;re specifically testing pod-to-pod connectivity. If you only want to know if your pod is responding to requests, you can also use the method explained in the next section.</p>
@@ -898,14 +898,14 @@ pod &quot;client-pod&quot; deleted
 Hey there, this is kubia. Your IP is ::ffff:127.0.0.1.
 </code></pre>
 <p>As you can see, <code>curl</code> has connected to the local proxy and received the response from the pod. While the <code>port-forward</code> command is the easiest method for communicating with a specific pod during development and troubleshooting, it&#x2019;s also the most complex method in terms of what happens underneath. Communication passes through several components, so if anything is broken in the communication path, you won&#x2019;t be able to talk to the pod, even if the pod itself is accessible via regular communication channels.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>The <code>kubectl port-forward</code> command can also forward connections to services instead of pods and has several other useful features. Run <code>kubectl port-forward --help</code> to learn more.</p>
 </div></div></p>
 <p>Figure 5.9 shows how the network packets flow from the <code>curl</code> process to your application and back.</p>
 <p>Figure 5.9 The long communication path between curl and the container when using port forwarding</p>
 <p><img src="../images/5.9.png" alt=""></p>
 <p>As shown in the figure, the <code>curl</code> process connects to the proxy, which connects to the API server, which then connects to the Kubelet on the node that hosts the pod, and the Kubelet then connects to the container through the pod&#x2019;s loopback device (in other words, through the localhost address). I&#x2019;m sure you&#x2019;ll agree that the communication path is exceptionally long.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>The application in the container must be bound to a port on the loopback device for the Kubelet to reach it. If it listens only on the pod&#x2019;s <code>eth0</code> network interface, you won&#x2019;t be able to reach it with the <code>kubectl port-forward</code> command.</p>
 </div></div></p>
 <h2 id="viewing-application-logs">Viewing application logs</h2>
@@ -938,7 +938,7 @@ $ kubectl logs kubia &#x2013;-timestamps=true
 2020-02-01T09:50:33.640897378Z Received request for / from ...
 2020-02-01T09:50:44.781473256Z Received request for / from ...
 </code></pre>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>You can display timestamps by only typing <code>--timestamps</code> without the value. For boolean options, merely specifying the option name sets the option to <code>true</code>. This applies to all kubectl options that take a Boolean value and default to <code>false</code>.</p>
 </div></div></p>
 <h3 id="displaying-recent-logs">Displaying recent logs</h3>
@@ -953,13 +953,13 @@ $ kubectl logs kubia &#x2013;-timestamps=true
 <p>Instead of using time to constrain the output, you can also specify how many lines from the end of the log you want to display. To display the last ten lines, try:</p>
 <pre><code class="lang-shell">$ kubectl logs kubia &#x2013;-tail=10
 </code></pre>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Kubectl options that take a value can be specified with an equal sign or with a space. Instead of <code>--tail=10</code>, you can also type <code>--tail 10</code>.</p>
 </div></div></p>
 <h3 id="understanding-the-availability-of-the-pods-logs">Understanding the availability of the pod&#x2019;s logs</h3>
 <p>Kubernetes keeps a separate log file for each container. They are usually stored in <code>/var/log/containers</code> on the node that runs the container. A separate file is created for each container. If the container is restarted, its logs are written to a new file. Because of this, if the container is restarted while you&#x2019;re following its log with <code>kubectl logs -f</code>, the command will terminate, and you&#x2019;ll need to run it again to stream the new container&#x2019;s logs.</p>
 <p>The <code>kubectl logs</code> command displays only the logs of the current container. To view the logs from the previous container, use the <code>--previous</code> (or <code>-p</code>) option.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Depending on your cluster configuration, the log files may also be rotated when they reach a certain size. In this case, <code>kubectl logs</code> will only display the new log file. When streaming the logs, you must restart the command to switch to the new file.</p>
 </div></div></p>
 <p>When you delete a pod, all its log files are also deleted. To make pods&#x2019; logs available permanently, you need to set up a central, cluster-wide logging system. Chapter 23 explains how.</p>
@@ -973,7 +973,7 @@ $ kubectl logs kubia &#x2013;-timestamps=true
 <p>To copy a file from your local file system to the container, run the following command:</p>
 <pre><code class="lang-shell">$ kubectl cp /path/to/local/file kubia:path/in/container
 </code></pre>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>The <code>kubectl cp</code> command requires the <code>tar</code> binary to be present in your container, but this requirement may change in the future.</p>
 </div></div></p>
 <h2 id="executing-commands-in-running-containers">Executing commands in running containers</h2>
@@ -1007,7 +1007,7 @@ root@kubia:/#
 <p>You can now explore the inside of the container by executing commands in the shell. For example, you can view the files in the container by running <code>ls -la</code>, view its network interfaces with <code>ip link</code>, or test its connectivity with <code>ping</code>. You can run any tool available in the container.</p>
 <h3 id="not-all-containers-allow-you-to-run-shells">Not all containers allow you to run shells</h3>
 <p>The container image of your application contains many important debugging tools, but this isn&#x2019;t the case with every container image. To keep images small and improve security in the container, most containers used in production don&#x2019;t contain any binary files other than those required for the container&#x2019;s primary process. This significantly reduces the attack surface, but also means that you can&#x2019;t run shells or other tools in production containers. Fortunately, a new Kubernetes feature called ephemeral containers allows you to debug running containers by attaching a debug container to them.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE TO MEAP READERS</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE TO MEAP READERS</p>
 <p>Ephemeral containers are currently an alpha feature, which means they may change or even be removed at any time. This is also why they are currently not explained in this book. If they graduate to beta before the book goes into production, a section explaining them will be added.</p>
 </div></div></p>
 <h2 id="attaching-to-a-running-container">Attaching to a running container</h2>
@@ -1056,7 +1056,7 @@ Hey there, this is kubia-stdin. Your IP is ::ffff:127.0.0.1.
 <pre><code class="lang-shell">$ kubectl attach -i kubia-stdin
 </code></pre>
 <p>Note the use of the additional option <code>-i</code> in the command. It instructs <code>kubectl</code> to pass its standard input to the container.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Like the <code>kubectl</code> <code>exec</code> command, <code>kubectl</code> <code>attach</code> also supports the <code>--tty</code> or <code>-t</code> option, which indicates that the standard input is a terminal (TTY), but the container must be configured to allocate a terminal through the <code>tty</code> field in the container definition.</p>
 </div></div></p>
 <p>You can now enter the new greeting into the terminal and press the ENTER key. The application should then respond with the new greeting:</p>
@@ -1068,7 +1068,7 @@ Greeting set to: Howdy
 Howdy, this is kubia-stdin. Your IP is ::ffff:127.0.0.1.
 </code></pre>
 <p>There&#x2019;s the new greeting. You can change it again by typing another line in the terminal with the <code>kubectl attach</code> command. To exit the <code>attach</code> command, press Control-C or the equivalent key.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>An additional field in the container definition, <code>stdinOnce</code>, determines whether the standard input channel is closed when the attach session ends. It&#x2019;s set to <code>false</code> by default, which allows you to use the standard input in every <code>kubectl attach</code> session. If you set it to <code>true</code>, standard input remains open only during the first session.</p>
 </div></div></p>
 
@@ -1114,7 +1114,7 @@ Howdy, this is kubia-stdin. Your IP is ::ffff:127.0.0.1.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"5.3 Interacting with the application and the pod","level":"4.2.3","depth":2,"next":{"title":"5.4 Running multiple containers in a pod","level":"4.2.4","depth":2,"path":"docs/Running_multiple_containers_in_a_pod.md","ref":"docs/Running_multiple_containers_in_a_pod.md","articles":[]},"previous":{"title":"5.2 Creating pods from YAML or JSON files","level":"4.2.2","depth":2,"path":"docs/Creating_pods_from_YAML_or_JSON_files.md","ref":"docs/Creating_pods_from_YAML_or_JSON_files.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Interacting_with_the_application_and_the_pod.md","mtime":"2020-11-22T04:05:09.269Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-10T08:08:07.100Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"5.3 Interacting with the application and the pod","level":"4.2.3","depth":2,"next":{"title":"5.4 Running multiple containers in a pod","level":"4.2.4","depth":2,"path":"docs/Running_multiple_containers_in_a_pod.md","ref":"docs/Running_multiple_containers_in_a_pod.md","articles":[]},"previous":{"title":"5.2 Creating pods from YAML or JSON files","level":"4.2.2","depth":2,"path":"docs/Creating_pods_from_YAML_or_JSON_files.md","ref":"docs/Creating_pods_from_YAML_or_JSON_files.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Interacting_with_the_application_and_the_pod.md","mtime":"2021-05-25T09:07:29.771Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-25T09:08:05.572Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

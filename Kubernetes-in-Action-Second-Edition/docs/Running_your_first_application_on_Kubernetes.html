@@ -860,7 +860,7 @@ deployment.apps/kubia created
 <li>You want the deployment to use the container image <code>luksa/kubia:1.0</code>.
 By default, the image is pulled from Docker Hub, but you can also specify the image registry in the image name (for example, <code>quay.io/luksa/kubia:1.0</code>).  </li>
 </ul>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>Make sure that the image is stored in a public registry and can be pulled without access authorization. You&#x2019;ll learn how to provide credentials for pulling private images in chapter 8.</p>
 </div></div></p>
 <p>The Deployment object is now stored in the Kubernetes API. The existence of this object tells Kubernetes that the luksa/kubia:1.0 container must run in your cluster. You&#x2019;ve stated your desired state. Kubernetes must now ensure that the actual state reflects your wishes.</p>
@@ -908,7 +908,7 @@ Normal  Started    21s   kubelet, worker2   Started container kubia
 <p>Figure 3.9 How creating a Deployment object results in a running application container
 <img src="../images/3.9.png" alt=""></p>
 <p>When you ran the kubectl create command, it created a new Deployment object in the cluster by sending an HTTP request to the Kubernetes API server. Kubernetes then created a new Pod object, which was then assigned or scheduled to one of the worker nodes. The Kubernetes agent on the worker node (the Kubelet) became aware of the newly created Pod object, saw that it was scheduled to its node, and instructed Docker to pull the specified image from the registry, create a container from the image, and execute it.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>DEFINITION&#x2003;</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>DEFINITION&#x2003;</p>
 <p>The term scheduling refers to the assignment of the pod to a node. The pod runs immediately, not at some point in the future. Just like how the CPU scheduler in an operating system selects what CPU to run a process on, the scheduler in Kubernetes decides what worker node should execute each container. Unlike an OS process, once a pod is assigned to a node, it runs only on that node. Even if it fails, this instance of the pod is never moved to other nodes, as is the case with CPU processes, but a new pod instance may be created to replace it.</p>
 </div></div></p>
 <p>Depending on what you use to run your Kubernetes cluster, the number of worker nodes in your cluster may vary. The figure shows only the worker node that the pod was scheduled to. In a multi-node cluster, none of the other worker nodes are involved in the process.</p>
@@ -933,11 +933,11 @@ $ kubectl get svc
 NAME         TYPE          CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
 kubernetes   ClusterIP     10.19.240.1    &lt;none&gt;        443/TCP         34m
 kubia        LoadBalancer  10.19.243.17   &lt;pending&gt;     8080:30838/TCP  4s
-</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE&#x2003;</p>
+</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE&#x2003;</p>
 <p>Notice the use of the abbreviation <code>svc</code> instead of <code>services</code>. Most resource types have a short name that you can use instead of the full object type (for example, <code>po</code> is short for <code>pods</code>, no for nodes and <code>deploy</code> for <code>deployments</code>).</p>
 </div></div></p>
 <p>The list shows two services with their types, IPs and the ports they expose. Ignore the kubernetes service for now and take a close look at the kubia service. It doesn&#x2019;t yet have an external IP address. Whether it gets one depends on how you&#x2019;ve deployed the cluster.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>LISTING THE AVAILABLE OBJECT TYPES WITH KUBECTL API-RESOURCES</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>LISTING THE AVAILABLE OBJECT TYPES WITH KUBECTL API-RESOURCES</p>
 <p>You&#x2019;ve used the <code>kubectl</code> <code>get</code> command to list various things in your cluster: Nodes, Deployments, Pods and now Services. These are all Kubernetes object types. You can display a list of all supported types by running <code>kubectl api-resources</code>. The list also shows the short name for each type and some other information you need to define objects in JSON/YAML files, which you&#x2019;ll learn in the following chapters.</p>
 </div></div></p>
 <h3 id="understanding-load-balancer-services">Understanding load balancer services</h3>
@@ -951,14 +951,14 @@ $ kubectl get svc kubia
 NAME        TYPE          CLUSTER-IP    EXTERNAL-IP    PORT(S)         AGE
 kubia       LoadBalancer  10.19.243.17  35.246.179.22  8080:30838/TCP  82s
 </code></pre><p>The external IP is now displayed. This means that the load balancer is ready to forward requests to your application for clients around the world.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If you deployed your cluster with Docker Desktop, the load balancer&#x2019;s IP address is shown as localhost, referring to your Windows or macOS machine, not the VM where Kubernetes and the application runs. If you use Minikube to create the cluster, no load balancer is created, but you can access the service in another way. More on this later.</p>
 </div></div></p>
 <h3 id="accessing-your-application-through-the-load-balancer">Accessing your application through the load balancer</h3>
 <p>You can now send requests to your application through the external IP and port of the service:</p>
 <pre><code>$ curl 35.246.179.22:8080
 Hey there, this is kubia-9d785b578-p449x. Your IP is ::ffff:1.2.3.4.
-</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If you use Docker Desktop, the service is available at <code>localhost:8080</code> from within your host operating system. Use curl or your browser to access it.</p>
 </div></div></p>
 <p>Congratulations! If you use Google Kubernetes Engine, you&#x2019;ve successfully published your application to users across the globe. Anyone who knows its IP and port can now access it. If you don&#x2019;t count the steps needed to deploy the cluster itself, only two simple commands were needed to deploy your application:</p>
@@ -976,7 +976,7 @@ http://192.168.99.102:30838
 </code></pre><p>The command prints out the URL of the service. You can now point curl or your browser to that URL to access your application:</p>
 <pre><code>$ curl http://192.168.99.102:30838
 Hey there, this is kubia-9d785b578-p449x. Your IP is ::ffff:172.17.0.1.
-</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>If you omit the <code>--url</code> option when running the <code>minikube service</code> command, your browser opens and loads the service URL.</p>
 </div></div></p>
 <p>You may wonder where this IP address and port come from. This is the IP of the Minikube virtual machine. You can confirm this by executing the <code>minikube ip</code> command. The Minikube VM is also your single worker node. The port <code>30838</code> is the so-called node port. It&#x2019;s the port on the worker node that forwards connections to your service. You may have noticed the port in the service&#x2019;s port list when you ran the <code>kubectl get svc</code> command:</p>
@@ -984,7 +984,7 @@ Hey there, this is kubia-9d785b578-p449x. Your IP is ::ffff:172.17.0.1.
 NAME        TYPE          CLUSTER-IP    EXTERNAL-IP    PORT(S)         AGE
 kubia       LoadBalancer  10.19.243.17  &lt;pending&gt;      8080:30838/TCP  82s
 </code></pre><p>Your service is accessible via this port number on all your worker nodes, regardless of whether you&#x2019;re using Minikube or any other Kubernetes cluster.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If you use Docker Desktop, the VM running Kubernetes can&#x2019;t be reached from your host OS through the VM&#x2019;s IP. You can access the service through the node port only within the VM by logging into it using the special container as described in section 3.1.1.</p>
 </div></div></p>
 <p>If you know the IP of at least one of your worker nodes, you should be able to access your service through this IP:port combination, provided that firewall rules do not prevent you from accessing the port.</p>
@@ -1022,18 +1022,18 @@ kubia-9d785b578-jmnj8  ...  10.244.2.4  worker2
 kubia-9d785b578-p449x  ...  10.244.2.3  worker2
 </code></pre><p>#A Pod scheduled to one node</p>
 <p>#B Two pods scheduled to another node</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>You can also use the <code>-o wide</code> output option to see additional information when listing other object types.</p>
 </div></div></p>
 <p>The wide output shows that one pod was scheduled to one node, whereas the other two were both scheduled to a different node. The Scheduler usually distributes pods evenly, but it depends on how it&#x2019;s configured. You&#x2019;ll learn more about scheduling in chapter 21.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>UNDERSTANDING WHY THE WORKER NODE A POD IS SCHEDULED TO IS NOT IMPORTANT</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>UNDERSTANDING WHY THE WORKER NODE A POD IS SCHEDULED TO IS NOT IMPORTANT</p>
 <p>Regardless of the node they run on, all instances of your application have an identical OS environment, because they run in containers created from the same container image. You may remember from the previous chapter that the only thing that might be different is the OS kernel, but this only happens when different nodes use different kernel versions or load different kernel modules.</p>
 <p>In addition, each pod gets its own IP and can communicate in the same way with any other pod - it doesn&#x2019;t matter if the other pod is on the same worker node, another node located in the same server rack or even a completely different data center.</p>
 <p>So far, you&#x2019;ve set no resource requirements for the pods, but if you had, each pod would have been allocated the requested amount of compute resources. It shouldn&#x2019;t matter to the pod which node provides these resources, as long as the pod&#x2019;s requirements are met.</p>
 <p>Therefore, you shouldn&#x2019;t care where a pod is scheduled to. It&#x2019;s also why the default <code>kubectl</code> <code>get</code> <code>pods</code> command doesn&#x2019;t display information about the worker nodes for the listed pods. In the world of Kubernetes, it&#x2019;s just not that important.</p>
 </div></div></p>
 <p>As you can see, scaling an application is incredibly easy. Once your application is in production and there is a need to scale it, you can add additional instances with a single command without having to manually install, configure and run additional copies.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>The app itself must support horizontal scaling. Kubernetes doesn&#x2019;t magically make your app scalable; it merely makes it trivial to replicate it.</p>
 </div></div></p>
 <h3 id="observing-requests-hitting-all-three-pods-when-using-the-service">Observing requests hitting all three pods when using the service</h3>
@@ -1126,7 +1126,7 @@ Hey there, this is kubia-9d785b578-p449x. Your IP is ::ffff:1.2.3.4.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"3.3  Running your first application on Kubernetes","level":"3.3.3","depth":2,"next":{"title":"3.4 Summary","level":"3.3.4","depth":2,"path":"docs/Summary_3.md","ref":"docs/Summary_3.md","articles":[]},"previous":{"title":"3.2 Interacting with Kubernetes","level":"3.3.2","depth":2,"path":"docs/Interacting_with_Kubernetes.md","ref":"docs/Interacting_with_Kubernetes.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Running_your_first_application_on_Kubernetes.md","mtime":"2020-11-22T04:03:53.117Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-10T08:08:07.100Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"3.3  Running your first application on Kubernetes","level":"3.3.3","depth":2,"next":{"title":"3.4 Summary","level":"3.3.4","depth":2,"path":"docs/Summary_3.md","ref":"docs/Summary_3.md","articles":[]},"previous":{"title":"3.2 Interacting with Kubernetes","level":"3.3.2","depth":2,"path":"docs/Interacting_with_Kubernetes.md","ref":"docs/Interacting_with_Kubernetes.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Running_your_first_application_on_Kubernetes.md","mtime":"2021-05-25T09:07:29.775Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-25T09:08:05.572Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

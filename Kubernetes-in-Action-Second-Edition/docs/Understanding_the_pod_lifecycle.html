@@ -890,7 +890,7 @@
 <p>The image-pull policy is also applied every time the container is restarted, so a closer look is warranted. Examine the following figure to understand the behavior of these three policies.</p>
 <p>Figure 6.11 An overview of the three different image-pull policies</p>
 <p><img src="../images/6.11.png" alt=""></p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>WARNING</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>WARNING</p>
 <p>If the <code>imagePullPolicy</code> is set to <code>Always</code> and the image registry is offline, the container will not run even if the same image is already stored locally. A registry that is unavailable may therefore prevent your application from (re)starting.</p>
 </div></div></p>
 <h3 id="running-the-containers">Running the containers</h3>
@@ -899,7 +899,7 @@
 <p><img src="../images/6.12.png" alt=""></p>
 <h3 id="restarting-failed-init-containers">Restarting failed init containers</h3>
 <p>If an init container terminates with an error and the pod&#x2019;s restart policy is set to <code>Always</code> or <code>OnFailure</code>, the failed init container is restarted. If the policy is set to <code>Never</code>, the subsequent init containers and the pod&#x2019;s regular containers are never started. The pod&#x2019;s status is displayed as <code>Init:Error</code> indefinitely. You must then delete and recreate the pod object to restart the application. For an example of such a pod, see the <code>fortune-init-fail-norestart.yaml</code> file in the book&#x2019;s code archive.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If the container needs to be restarted and <code>imagePullPolicy</code> is set to <code>Always</code>, the container image is pulled again. If the container had terminated due to an error and you push a new image with the same tag that fixes the error, you don&#x2019;t need to recreate the pod, as the updated container image will be pulled before the container is restarted.</p>
 </div></div></p>
 <h3 id="re-executing-the-pods-init-containers">Re-executing the pod&#x2019;s init containers</h3>
@@ -913,10 +913,10 @@ The Kubelet doesn&#x2019;t start all containers of the pod at the same time. It 
 <p>The following sequence runs independently for each container. First, the container image is pulled, and the container is started. When the container terminates, it is restarted, if this is provided for in the pod&#x2019;s restart policy. The container continues to run until the termination of the pod is initiated. A more detailed explanation of this sequence is presented next.</p>
 <h3 id="pulling-the-container-image">Pulling the container image</h3>
 <p>Before the container is created, its image is pulled from the image registry, following the pod&#x2019;s <code>imagePullPolicy</code>. Once the image is pulled, the container is created.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If one of the container images can&#x2019;t be pulled, the other containers run anyway.</p>
 </div></div></p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>WARNING</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>WARNING</p>
 <p>Containers don&#x2019;t necessarily start at the same moment. If pulling the image takes a long time, the container may start well after all the others have already started. Bear this in mind if one of your containers depends on another.</p>
 </div></div></p>
 <h3 id="running-the-container">Running the container</h3>
@@ -960,7 +960,7 @@ The Kubelet doesn&#x2019;t start all containers of the pod at the same time. It 
 </code></pre>
 <p>#A This pod&#x2019;s containers have 5 seconds to terminate after receiving the TERM signal or they will be killed</p>
 <p>In the listing above, the pod&#x2019;s <code>terminationGracePeriodSeconds</code> is set to <code>5</code>. If you create and then delete this pod, you&#x2019;ll see that its containers are terminated within 5s of receiving the <code>TERM</code> signal.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>A reduction of the termination grace period is rarely necessary. However, it is advisable to extend it if the application usually needs more time to shut down gracefully.</p>
 </div></div></p>
 <h3 id="specifying-the-deletion-grace-period-when-deleting-the-pod">Specifying the deletion grace period when deleting the pod</h3>
@@ -968,7 +968,7 @@ The Kubelet doesn&#x2019;t start all containers of the pod at the same time. It 
 <p>For example, to give the pod 10s to shut down, you run the following command:</p>
 <pre><code class="lang-shell">$ kubectl delete po kubia-ssl --grace-period 10
 </code></pre>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>NOTE</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
 <p>If you set this grace period to zero, the pod&#x2019;s pre-stop hooks are not executed.</p>
 </div></div></p>
 <h3 id="fixing-the-shutdown-behavior-of-the-kubia-application">Fixing the shutdown behavior of the kubia application</h3>
@@ -987,7 +987,7 @@ process.on(<span class="hljs-string">&apos;SIGTERM&apos;</span>, <span class="hl
 </code></pre>
 <p>After you make the change to the code, create a new container image with the tag <code>:1.1</code>, push it to your image registry, and deploy a new pod that uses the new image. If you don&#x2019;t want to bother to create the image, you can also use the image <code>luksa/kubia:1.1</code>, which is published on Docker Hub. To create the pod, apply the manifest in the file <code>kubia-ssl-v1-1.yaml</code>, which you can find in the book&#x2019;s code archive.</p>
 <p>If you delete this new pod, you&#x2019;ll see that it shuts down considerably faster. From the logs of the <code>kubia</code> container, you can see that it begins to shut down as soon as it receives the <code>TERM</code> signal.</p>
-<p><div class="alert alert-info hints-alert"><div class="hints-container"><p>TIP</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
 <p>You should make sure that your init containers also handle the <code>TERM</code> signal so that they shut down immediately if you delete the pod object while it&#x2019;s still being initialized.</p>
 </div></div></p>
 <h2 id="visualizing-the-full-lifecycle-of-the-pods-containers">Visualizing the full lifecycle of the pod&#x2019;s containers</h2>
@@ -1040,7 +1040,7 @@ process.on(<span class="hljs-string">&apos;SIGTERM&apos;</span>, <span class="hl
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"6.4 Understanding the pod lifecycle","level":"4.3.4","depth":2,"next":{"title":"6.5 Summary","level":"4.3.5","depth":2,"path":"docs/Summary_6.md","ref":"docs/Summary_6.md","articles":[]},"previous":{"title":"6.3 Executing actions at container start-up and shutdown","level":"4.3.3","depth":2,"path":"docs/Executing_actions_at_container_startup_and_shutdown.md","ref":"docs/Executing_actions_at_container_startup_and_shutdown.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Understanding_the_pod_lifecycle.md","mtime":"2020-11-22T04:06:26.774Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-10T08:08:07.100Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"6.4 Understanding the pod lifecycle","level":"4.3.4","depth":2,"next":{"title":"6.5 Summary","level":"4.3.5","depth":2,"path":"docs/Summary_6.md","ref":"docs/Summary_6.md","articles":[]},"previous":{"title":"6.3 Executing actions at container start-up and shutdown","level":"4.3.3","depth":2,"path":"docs/Executing_actions_at_container_startup_and_shutdown.md","ref":"docs/Executing_actions_at_container_startup_and_shutdown.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Understanding_the_pod_lifecycle.md","mtime":"2021-05-25T09:07:29.775Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-25T09:08:05.572Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
