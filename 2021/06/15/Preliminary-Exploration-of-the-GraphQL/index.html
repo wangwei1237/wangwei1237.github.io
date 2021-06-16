@@ -76,7 +76,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">309</span>
+            <span class="post-count">2.1k</span>
         </span>
     </span>
 
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">7 分钟</span>
         </span>
     </span>
 </div>
@@ -112,17 +112,50 @@
 <h2 id="graphql-vs-rest">GraphQL vs. REST</h2>
 <p>关于 GraphQL 和 REST 之间的详细对比，我认为可以参考 <em>GraphQL vs. REST</em>，此处不再赘述了<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup> <sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>。</p>
 <h2 id="graphql-的优势">GraphQL 的优势</h2>
-<h4 id="graphql-的类型系统">GraphQL 的类型系统</h4>
-<h4 id="graphql-的交互方式">GraphQL 的交互方式</h4>
+<h4 id="graphql-的强类型系统">GraphQL 的强类型系统</h4>
+<p>在 GraphQL 中，类型系统用于描述 GraphQL Server 的能力并用于判断一个查询是否有效。类型系统还描述了查询参数的输入类型，并在 GraphQL Runtime 中检查参数值的有效性。</p>
+<p>一个 GraphQL 服务是通过定义<code>类型</code>和<code>类型</code>上的<code>字段</code>来创建的，然后给每个<code>类型</code>上的每个<code>字段</code>提供<code>解析函数</code>。</p>
+<p>例如，在 <a target="_blank" rel="noopener" href="https://docs.github.com/en/graphql/overview/explorer">Github GraphQL Server</a> 中，使用 <code>viewer</code> 字段来描述当前登录用户的信息，而 <code>viewer</code> 的<code>类型</code>为 <code>User</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">type Query &#123;</span><br><span class="line">  viewer: User!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type User &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  location: <span class="built_in">String</span></span><br><span class="line">  login: <span class="built_in">String</span>!</span><br><span class="line">  name: <span class="built_in">String</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一旦启动某个 GraphQL Server，它就能接收 GraphQL 查询，并验证和执行该查询。GraphQL Server 首先会检查该查询以确保它只引用了已定义的<code>类型</code>和<code>字段</code>，然后运行指定的<code>解析函数</code>来生成结果。例如，我们可以在 <a target="_blank" rel="noopener" href="https://docs.github.com/en/graphql/overview/explorer">Github GraphQL Server</a> 中运行如下的查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">query &#123; </span><br><span class="line">  viewer &#123; </span><br><span class="line">    login</span><br><span class="line">    name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从如上的例子可以看出，GraphQL 实际上是一种强类型的Api。与使用普通的 REST Api 相比，强类型系统是 GraphQL 最吸引我的地方之一。在我看来，正是 GraphQL 强类型的特性，开创了 Api 的新天地。</p>
+<p>在我看来，REST Api 缺乏<code>类型系统</code>特性在开发中会引入很多的问题，工作中，我经常会遇到如下的情况：</p>
+<ul>
+<li>上游服务修改了 REST Api 的字段类型而未周知下游消费者导致下游服务异常甚至崩溃</li>
+<li>服务端未返回特定字段导致客户端崩溃</li>
+<li>客户端请求参数异常，导致服务端的错误率上升</li>
+<li>到处找借口文档，好不容易找到了忽然发现，接口文档和接口的返回并不一致，文档太滞后了</li>
+<li>……</li>
+</ul>
+<p>如果有一个类型系统进行约束，则情况会变的更好一点。因此，针对于 json 格式的 REST Api 而言，开始出现类似 <a target="_blank" rel="noopener" href="https://swagger.io/tools/swagger-ui/">Swagger UI</a> 这样的工具，利用 <a target="_blank" rel="noopener" href="https://json-schema.org/">Json Schema</a> 来强化其类型系统。虽然如此，但是，在我看来，基于 Json Schema 的 REST Api 类型系统仅仅是一个规范和建议而已，团队中的其他人不使用也没办法。但是，GraphQL 的类型系统是其根基，所有人必须遵守，这就在大家对接口描述形成统一认识上发挥着重要作用。</p>
+<p>同样的道理，对于 <a target="_blank" rel="noopener" href="https://github.com/Tencent/rapidjson/">rapidjson</a> 而言，从 v1.1 版本开始，也加入了 JSON Schema 功能，使其可以在解析或生成 JSON 时进行校验，以避免类型错误的 json 而导致的解析时崩溃问题的发生。</p>
+<p>弱类型语言引入类型系统也变得越来越流行，例如微软的 <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/">TypeScript</a>，PHP7 的 <a target="_blank" rel="noopener" href="https://www.php.net/manual/en/language.types.declarations.php">强类型模式</a>，还有 Facebook 开发的 <a target="_blank" rel="noopener" href="https://hacklang.org/">Hack语言</a>……</p>
+<p>弱类型语言，看似无拘无束，实则充满了混乱与危险；强类型语言，看似画地为牢，实则是另一种自由。在 GraphQL 类型系统的帮助下，我们可以精确的描述我们的接口数据，并且可以做到数据描述和接口完全对应。这种能力对于大型、多人协作式团队而言，至关重要。尤其是微服务盛行的今天，我认为，GraphQL 的强类型系统为微服务交互提供了新的活力。</p>
+<h4 id="我的地盘听我的-仅要我所需">我的地盘听我的，仅要我所需</h4>
+<p>在 GraphQL 中，GraphQL Runtime 确定 GraphQL Server 可以提供的能力，而消费端具体要获取哪些数据则完全由消费者说了算。对于下游消费者而言真正做到了：我的地盘，听我的！只要我所要的，不多也不少！</p>
+<p>之所以说 GraphQL 是革命性的新技术，我觉得就在于此。GraphQL 改变了服务之间交互的方式，让通信双方在交互的过程中更加平等，改变了之前响应数据完全由 Server 端说了算的局面。如今，在 GraphQL 中，客户端（消费端）可以以更加平等的地位，更加积极的参与到整个的数据交互过程。</p>
+<p>借助于 GraphQL 的类型系统，客户端可以更加自由的根据自己的需求来获得自己的所需，而无需收到 Server 端的限制。</p>
+<p>在我的个人博客站点中，我采用 <a target="_blank" rel="noopener" href="https://docs.github.com/en/actions">github action</a> 来编译并发布站点内容。站点中，会有很多基于 <a target="_blank" rel="noopener" href="https://www.gitbook.com/">gitbook</a> 的书籍，并且每一本书都对应一个 github 仓库。为了加快站点的发布速度，对于每一本书籍而言，都会提前编译并且将编译产物置于 latest release 中。在发布主站内容时，我利用 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io_src/blob/master/build_books.sh">build_books.sh</a> 脚本来获取书籍的 release 产物。如果采用REST Api，则相对比较简单，直接请求如下的 <code>end point</code> 即可：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//api.github.com/repos/wangwei1237/$&#123;BOOKS[i]&#125;/releases/latest</span></span><br></pre></td></tr></table></figure>
+<p>这种情况下，我只需要对应的 <code>assets.browser_download_url</code>字段，但是使用 REST Api 我没办法控制接口的返回数据，即便我只需要某一个字段，接口还是会返给我所有的数据。</p>
+<p>而如果使用 GraphQL，我就可以自己说了算了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GraphQL Query</span></span><br><span class="line">query <span class="function"><span class="title">getBooksAssetUrl</span>(<span class="params">$repo: <span class="built_in">String</span>!, $owner: <span class="built_in">String</span>!</span>)</span> &#123; </span><br><span class="line">  <span class="function"><span class="title">repository</span>(<span class="params">name: $repo, owner: $owner</span>)</span> &#123;</span><br><span class="line">    latestRelease &#123;</span><br><span class="line">      <span class="function"><span class="title">releaseAssets</span>(<span class="params">first: <span class="number">1</span></span>)</span> &#123;</span><br><span class="line">        nodes &#123;</span><br><span class="line">          downloadUrl</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Variables</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;repo&quot;</span>: <span class="string">&quot;monolith-to-microservices&quot;</span>,</span><br><span class="line">  <span class="string">&quot;owner&quot;</span>: <span class="string">&quot;wangwei1237&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Response</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;repository&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;latestRelease&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;releaseAssets&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;nodes&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">              <span class="string">&quot;downloadUrl&quot;</span>: <span class="string">&quot;https://github.com/wangwei1237/monolith-to-microservices/releases/download/v1.1.1/monolith-to-microservices.tar.gz&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">          ]</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因此，在这种情况下，GraphQL 完美的避免了不必要的数据传输（overfetching）<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup>,尤其是对于如下的场景：流量较大，网络较差，针对不同的客户端返回不同数据……，这个特性尤为重要。更重要的是，这个特性改变了通信双方的话语权。</p>
+<h4 id="精确预测响应数据">精确预测响应数据</h4>
+<p>GraphQL 不但改变了通信双方的话语权，还使得客户端可以精确的预测服务端的响应。在使用 REST Api 时，我们需要借助各种 Api 文档才能<strong>大概</strong>预测请求的响应，在开发中，这确实是一件非常讨厌的事情。无法精确的预测请求的响应，这回直接导致代码的容错性大大折扣。谁能确保所有的接口的接口文档都会详细的穷举所有情况下的接口响应呢？据我的经验而言，很难……</p>
+<p>当我请求一个没有 release 产物的的仓库时，根据 GraphQL 的类型系统，我会预测到，此时 GraphQL 会返回 null，如下所示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// latestRelease type</span></span><br><span class="line">latestRelease: Release</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Variables</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;repo&quot;</span>: <span class="string">&quot;wangwei1237.github.io&quot;</span>,</span><br><span class="line">  <span class="string">&quot;owner&quot;</span>: <span class="string">&quot;wangwei1237&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Response</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;repository&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;latestRelease&quot;</span>: <span class="literal">null</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="graphql-api-的版本控制">GraphQL API 的版本控制</h4>
 <h2 id="学习资源">学习资源</h2>
 <ul>
+<li><a target="_blank" rel="noopener" href="https://spec.graphql.cn/">https://spec.graphql.cn/</a></li>
+<li><a target="_blank" rel="noopener" href="https://graphql.org/">https://graphql.org/</a> or <a target="_blank" rel="noopener" href="https://graphql.cn">https://graphql.cn</a></li>
+<li><a target="_blank" rel="noopener" href="https://graphql.org/swapi-graphql/">https://graphql.org/swapi-graphql/</a></li>
 <li><a target="_blank" rel="noopener" href="https://docs.github.com/en/graphql">https://docs.github.com/en/graphql</a></li>
 <li><a target="_blank" rel="noopener" href="https://docs.github.com/en/graphql/overview/explorer">https://docs.github.com/en/graphql/overview/explorer</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.apollographql.com/docs/">https://www.apollographql.com/docs/</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.howtographql.com">https://www.howtographql.com</a></li>
-<li><a target="_blank" rel="noopener" href="https://graphql.org/">https://graphql.org/</a> or <a target="_blank" rel="noopener" href="https://graphql.cn">https://graphql.cn</a></li>
-<li><a target="_blank" rel="noopener" href="https://graphql.org/swapi-graphql/">https://graphql.org/swapi-graphql/</a></li>
 <li><a target="_blank" rel="noopener" href="https://wangwei1237.gitee.io/shares/GraphQL_in_Action.pdf">https://wangwei1237.gitee.io/shares/GraphQL_in_Action.pdf</a></li>
 </ul>
 <h2 id="参考文献">参考文献</h2>
@@ -138,6 +171,8 @@
 <li id="fn4" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.apollographql.com/blog/graphql/basics/graphql-vs-rest/">GraphQL vs. REST</a>. <a href="#fnref4" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn5" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.howtographql.com/basics/1-graphql-is-the-better-rest/">GraphQL is the better REST</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.prisma.io/blog/top-5-reasons-to-use-graphql-b60cfa683511">Reasons to use GraphQL | Top 5 Reasons Why and How to use GraphQL</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
