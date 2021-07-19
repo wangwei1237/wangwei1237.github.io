@@ -41,6 +41,39 @@
 </ul>
 <p>考虑到学习成本，改造成本，服务性能等问题，最终我们决定采用第 2 种方法对当前的微服务进行 GraphQL 升级。</p>
 <h2 id="graphql-迁移过程中的感想">GraphQL 迁移过程中的感想</h2>
+<h4 id="graphql-改造确实具有一定的成本">GraphQL 改造确实具有一定的成本</h4>
+<p>利用新技术改造老的系统必须要考虑的因素之一就是成本，这里面涉及到：</p>
+<ul>
+<li>新技术的学习成本</li>
+<li>开发的成本</li>
+<li>出现问题后的定位成本</li>
+<li>……</li>
+</ul>
+<p>我在 GraphQL 迁移过程所花费的成本上，重点还是学习成本，主要涉及：</p>
+<ul>
+<li>理论学习</li>
+<li>框架学习：<a href="https://docs.graphene-python.org/en/stable/">Graphene</a> 框架以及 <a href="https://docs.graphene-python.org/projects/django/en/latest/">Graphene-Django</a> 框架</li>
+</ul>
+<p>并且，整个学习所花费的时间比真正开发的时间要高很多，真正用于 GraphQL API 开发所花费的时间并不多。</p>
+<p>在整个的开发过程中，感觉 GraphQL API 比起 REST API 而言还是会增加少许的成本的，尤其是各种 type 的定义，确实会增加一点编码的成本。另外，由于 GraphQL 类型系统的限制，GraphQL API 的开发再也不能像 REST API 那样随心所欲了。GraphQL 确实需要从接口抽象开始设计，然后到接口实现。</p>
+<p>综上，GraphQL API 的开发确实要稍微的多花费一点时间。但是这额外的时间会带来额外的很多好处，比如和代码同步的接口文档。</p>
+<h4 id="graphql-的代码更简练">GraphQL 的代码更简练</h4>
+<p>个人感觉，在某些情况下，GraphQL 的类型系统使得其更具表达性，这可以让 GraphQL API 看起来更简练。</p>
+<p>如下所示的 GraphQL Schema 中，<code>videoList</code> 字段的类型为 <code>VideoList</code>，而 <code>VideoList</code> 类型则包含一个类型为 <code>[Video]</code> 的字段。因此对于 <code>videoList</code> 字段而言，只需要处理 <code>total</code> 和 <code>hasMore</code> 字段即可。从这个层面上讲，整个的代码会更加简洁。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">type</span> Query &#123;</span><br><span class="line">  video(vid: ID!): Video</span><br><span class="line">  videoList(first: Int!, </span><br><span class="line">            after: Int, </span><br><span class="line">            codec: VideoCodec, </span><br><span class="line">            <span class="built_in">format</span>: VideoDemux, </span><br><span class="line">            resolution: VideoResolution, </span><br><span class="line">            vid: Int): VideoList</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">type</span> VideoList &#123;</span><br><span class="line">  videos: [Video!]</span><br><span class="line">  total: Int!</span><br><span class="line">  hasMore: Boolean!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>尤其是在当 <code>video</code> 和 <code>videoList.videos</code> 所需的数据不一致时，GraphQL <em>按需请求</em>的特性使得服务端无需额外的改动，即可实现不同的请求方请求不同数据。而在 REST API 的老系统中，可以随处看到为了兼容不同请求方的各种补丁代码。</p>
+<h4 id="graphql-更加面向服务使用者">GraphQL 更加面向服务使用者</h4>
+<p>GraphQL API 完成之后，我们找了几名该服务的使用者来亲自体验 GraphQL API。得益于 GraphQL 提供的如下图所示的接口文档，大家普遍反馈使用 GraphQL API 比使用 REST API 更顺畅，更放心，更高效。使用 GraphQL API 后，再也不用到处找 API 的文档了。</p>
+<p><img src="/2021/07/17/The-First-Python-Project-For-GraphQL/6.gif" width="200px"></p>
+<p>对于 <code>videoList</code>，可以根据视频所用的编解码器（<code>codec</code> 参数）来进行筛选。对于下游消费者而言，如果使用 REST API，则需要通过各种格式的接口文档才能确定该参数的值；而使用 GraphQL API，则直接通过如上图所示的文档即可明确的了解到该参数的取值范围。</p>
+<p>尤其是当接口文档和接口的实现不一致的时候，REST API 的文档对于使用者而言，简直就是一场噩梦。而 GraphQL API 的文档是根据 GraphQL Schema 自动生成的，因此，GraphQL 天然就具有文档和代码同步的优势。</p>
+<p>尤其是在微服务大行其道的现在，相较于 REST API 而言，我认为 GraphQL API 的效率更高。这里的效率集中体现在<em>沟通效率</em>和<em>协作效率</em>。在 Sam Newman 的 <em>Monolith to Microservices</em> 的<a href="/monolith-to-microservices/docs/Breaking_Changes.html">破坏性的服务变更</a>中讲的那样：</p>
+<blockquote>
+<p>微服务作为更大的系统的一部分而存在。每个微服务要么使用其他微服务提供的功能，要么向其他微服务提供自己的功能，要么二者兼而有之。对于微服务架构而言，我们正在努力实现其独立可部署性。但是为了实现其独立部署，我们需要确保对微服务的修改不会干扰其下游消费者。</p>
+</blockquote>
+<p>因此，对于微服务架构下的系统而言，虽然不同的微服务内部可以做到独立部署，但是却不可避免的会使用到其他团队提供的微服务。当微服务的数量不断增加的同时更带来了异常复杂的沟通、协作成本，这种情况下，沟通效率可能会成为阻碍开发效能的重要因素。</p>
+<p>所以，我认为，GraphQL 对于微服务架构而言具备天然的优势。当然，如果 REST API 的接口文档能够做到和代码实现同步的话，使用 REST API 也是没有问题的，但是有多少团队可以做到这一点呢？</p>
+<h4 id="graphapi-的性能">GraphAPI 的性能</h4>
 ]]></content>
       <categories>
         <category>GraphQL</category>
