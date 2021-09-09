@@ -1,0 +1,37 @@
+diff --git a/libavfilter/vf_drawtext.c b/libavfilter/vf_drawtext.c
+index 7b1000e5bd..e6d4dc5630 100644
+--- a/libavfilter/vf_drawtext.c
++++ b/libavfilter/vf_drawtext.c
+@@ -199,6 +199,7 @@ typedef struct DrawTextContext {
+     int tc24hmax;                   ///< 1 if timecode is wrapped to 24 hours, 0 otherwise
+     int reload;                     ///< reload text file for each frame
+     int start_number;               ///< starting frame number for n/frame_num var
++    int c;                          ///< restart the frame number for each seconds
+ #if CONFIG_LIBFRIBIDI
+     int text_shaping;               ///< 1 to shape the text before drawing it
+ #endif
+@@ -246,7 +247,7 @@ static const AVOption drawtext_options[]= {
+     { "alpha",       "apply alpha while rendering", OFFSET(a_expr),      AV_OPT_TYPE_STRING, { .str = "1"     },          .flags = FLAGS },
+     {"fix_bounds", "check and fix text coords to avoid clipping", OFFSET(fix_bounds), AV_OPT_TYPE_BOOL, {.i64=0}, 0, 1, FLAGS},
+     {"start_number", "start frame number for n/frame_num variable", OFFSET(start_number), AV_OPT_TYPE_INT, {.i64=0}, 0, INT_MAX, FLAGS},
+-
++    {"c", "restart the frame number for each seconds", OFFSET(c), AV_OPT_TYPE_BOOL, {.i64=0}, 0, 1, FLAGS},
+ #if CONFIG_LIBFRIBIDI
+     {"text_shaping", "attempt to shape text before drawing", OFFSET(text_shaping), AV_OPT_TYPE_BOOL, {.i64=1}, 0, 1, FLAGS},
+ #endif
+@@ -1526,7 +1527,14 @@ static int filter_frame(AVFilterLink *inlink, AVFrame *frame)
+ #endif
+     }
+ 
+-    s->var_values[VAR_N] = inlink->frame_count_out + s->start_number;
++    AVRational frame_rate = inlink->frame_rate;
++    if (s->c && frame_rate.den > 0) {
++        int fps = frame_rate.num / frame_rate.den;
++        s->var_values[VAR_N] = (inlink->frame_count_out + s->start_number) % fps;
++    } else {
++        s->var_values[VAR_N] = inlink->frame_count_out + s->start_number;
++    }
++
+     s->var_values[VAR_T] = frame->pts == AV_NOPTS_VALUE ?
+         NAN : frame->pts * av_q2d(inlink->time_base);
+ 

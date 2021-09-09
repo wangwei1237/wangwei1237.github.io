@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>用 FFMpeg 把以秒为周期的帧序号信息写入到视频</title>
+    <url>/2021/09/09/Draw-Circle-Frame-Number-for-Each-Secnod-Using-FFmpeg/</url>
+    <content><![CDATA[<p>利用 FFMpeg 的 <a href="https://ffmpeg.org/ffmpeg-filters.html#drawtext-1"><strong>drawtext</strong></a> 滤镜，我们可以把特定的文本信息绘制于视频之上。FFMpeg 的 <strong>drawtext</strong> 滤镜可以绘制的文本信息可以参见文档 <a href="https://ffmpeg.org/ffmpeg-filters.html#Text-expansion">Text expansion</a> 中的描述。例如，我们可以把视频的帧号信息描绘在视频上：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ffmpeg -i test.mp4 -vf drawtext=text=%&#123;n&#125;:x=50:y=50 -y output.mp4</span></span><br></pre></td></tr></table></figure>
+<p>有时候，我们想绘制一些特殊的内容，比如：**当前帧是每秒中的第几帧？**这是一件有趣的事情，但是 <strong>drawtext</strong> 却没办法支持这种内容的绘制。在大多数场景下，我们几乎用户到这种特殊的功能，但是，如果遇到了，我们如何解决呢？</p>
+<span id="more"></span>
+<h2 id="不对写入信息做任何改变">不对写入信息做任何改变</h2>
+<p>实际上，不进行任何改变也可以实现目的，只是我们需要对现有的工具进行一定程度的整合。一般而言，写入特殊信息到视频中去后，我们会在后续的处理中提取该信息，然后进行很多逻辑判断。</p>
+<p>写入信息不做改变，那么就需要在提取信息或者更靠后的步骤进行改变。实际上我们可以在最后使用到该信息的步骤中进行判断就可以了，具体如下图所示：</p>
+<p><img src="/2021/09/09/Draw-Circle-Frame-Number-for-Each-Secnod-Using-FFmpeg/1.png" alt></p>
+<h2 id="修改-drawtext-滤镜">修改 drawtext 滤镜</h2>
+<p>可以使用市面上的视频编辑软件把<strong>当前帧是每秒中的第几帧</strong>的信息增加到视频中，但是这种手工操作的方式还是存在一定的复杂度。</p>
+<p>既然 drawtext 滤镜已经提供写入帧号信息的能力了，那么我们是否可以在 drawtext 滤镜的基础上来实现我们的目标呢？</p>
+<p>带着问题，阅读了 drawtext 滤镜的源码，发现还真可以实现。</p>
+<p>drawtext 滤镜使用如下的代码获取当前帧的帧序号：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">s-&gt;var_values[VAR_N] = inlink-&gt;frame_count_out + s-&gt;start_number;</span><br></pre></td></tr></table></figure>
+<p>其中， <code>inlink</code> 为 <code>AVFilterLink</code> 类型的变量，而 <code>AVFilterLink</code> 本身就提供了 <code>frame_rate</code> 信息。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AVFilterLink</span> &#123;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Frame rate of the stream on the link, or 1/0 if unknown or variable;</span></span><br><span class="line"><span class="comment">    * if left to 0/0, will be automatically copied from the first input</span></span><br><span class="line"><span class="comment">    * of the source filter if it exists.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * Sources should set it to the best estimation of the real frame rate.</span></span><br><span class="line"><span class="comment">    * If the source frame rate is unknown or variable, set this to 1/0.</span></span><br><span class="line"><span class="comment">    * Filters should update it if necessary depending on their function.</span></span><br><span class="line"><span class="comment">    * Sinks can use it to set a default output frame rate.</span></span><br><span class="line"><span class="comment">    * It is similar to the r_frame_rate field in AVStream.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    AVRational frame_rate;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现，对 drawtext 滤镜稍加改造，就可以实现目标，具体思路如下所示：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">AVRational frame_rate = inlink-&gt;frame_rate;</span><br><span class="line"><span class="keyword">int</span> fps = frame_rate.num / frame_rate.den;</span><br><span class="line">s-&gt;var_values[VAR_N] = (inlink-&gt;frame_count_out + s-&gt;start_number) % fps;</span><br></pre></td></tr></table></figure>
+<p>为了增加 drawtext 的兼容性，可以为该滤镜增加一个参数来，以控制当<code>text=%&#123;n&#125;</code>的时候，滤镜绘制的帧号究竟是连续的帧号还是帧号对帧率的模。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">AVRational frame_rate = inlink-&gt;frame_rate;</span><br><span class="line"><span class="keyword">if</span> (s-&gt;c &amp;&amp; frame_rate.den &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">int</span> fps = frame_rate.num / frame_rate.den;</span><br><span class="line">    s-&gt;var_values[VAR_N] = (inlink-&gt;frame_count_out + s-&gt;start_number) % fps;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    s-&gt;var_values[VAR_N] = inlink-&gt;frame_count_out + s-&gt;start_number;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>详细的修改代码可以参见 <a href="/2021/09/09/Draw-Circle-Frame-Number-for-Each-Secnod-Using-FFmpeg/vf_drawtext.patch">vf_drawtext.patch</a>。</p>
+<h2 id="修改-drawtext-之后的效果">修改 drawtext 之后的效果</h2>
+<p>此时，我们利用修改后的 drawtext 滤镜来生成我们需要视频，具体操作如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ffmpeg -i test.mp4 -vf drawtext=text=%&#123;n&#125;:x=50:y=50:c=1 -y output.mp4</span></span><br></pre></td></tr></table></figure>
+<p>生成的视频具体如下所示：</p>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=975468511&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>]]></content>
+      <categories>
+        <category>视频技术</category>
+      </categories>
+      <tags>
+        <tag>FFMpeg</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>视频压缩标准发展简史</title>
     <url>/2021/07/27/The-History-of-the-Video-Codec-Improvement/</url>
     <content><![CDATA[<p>多年以来，人们设计出许多不同的算法来压缩视频。视频压缩虽然听起来是一个很现代的词，但其实它从模拟视频开始，已经有很长的历史了。在本篇文章中，我会向大家一一介绍视频压缩史上的里程碑事件，正是这些事件的发生才有了今天的视频压缩。从过去到现在，各类视频压缩方法由最初的概念最终演化成现今的标准。很多压缩标准今天还在使用，人们也一直在继续开发和完善新的标准。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
