@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.4k</span>
+            <span class="post-count">2.5k</span>
         </span>
     </span>
 
@@ -133,7 +133,7 @@
 <p>对于视频检测而言，我们开发了一个项目，可以暂且称之为 MT。整个项目用 C++ 语言来开发，并且使用 CMake 来作为编译工具。因为需要对视频进行解码处理，因此该项目会依赖 FFMpeg。一开始，我们发现，在 CMake 中，<a target="_blank" rel="noopener" href="https://github.com/Microsoft/vcpkg/issues/1379">FFMpeg 并不支持使用 find_package 来查找 FFMPeg 的依</a>。为了简单期间，我们就用了暴力一点的方式来解决这个问题，我们在 CMakeLists 中写下了如下的代码：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="string">&quot;$&#123;ffmpeg_include_path&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">link_directories</span>(<span class="string">&quot;$&#123;ffmpeg_lib_path&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.so</span><br><span class="line">        libavcodec.so</span><br><span class="line">        libavformat.so</span><br><span class="line">        ......</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 <p>这段代码确实写的有些糟糕（你也可以试着说一下这段代码究竟有哪些问题），但是他看起来确实可以工作了。后来，我发现了 <a target="_blank" rel="noopener" href="https://github.com/snikulov/cmake-modules/blob/master/FindFFmpeg.cmake">FindFFmpeg.cmake</a> 这个开源的库可以更优雅的实现在 CMake 中查找 FFMpeg 的依赖，于是我让一个同事来升级之前那段有些糟糕的代码。</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include</span>(cmake/FindFFmpeg.cmake)</span><br><span class="line"></span><br><span class="line"><span class="keyword">IF</span> (APPLE)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( mpc</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.dylib </span><br><span class="line">        libavcodec.dylib </span><br><span class="line">        libavformat.dylib </span><br><span class="line">        ......</span><br><span class="line">)</span><br><span class="line"><span class="keyword">ELSEIF</span> (UNIX)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( mpc</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.so</span><br><span class="line">        libavcodec.so</span><br><span class="line">        libavformat.so</span><br><span class="line">        ......</span><br><span class="line">)</span><br><span class="line"><span class="keyword">ENDIF</span> ()</span><br></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include</span>(cmake/FindFFmpeg.cmake)</span><br><span class="line"></span><br><span class="line"><span class="keyword">IF</span> (APPLE)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.dylib </span><br><span class="line">        libavcodec.dylib </span><br><span class="line">        libavformat.dylib </span><br><span class="line">        ......</span><br><span class="line">)</span><br><span class="line"><span class="keyword">ELSEIF</span> (UNIX)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.so</span><br><span class="line">        libavcodec.so</span><br><span class="line">        libavformat.so</span><br><span class="line">        ......</span><br><span class="line">)</span><br><span class="line"><span class="keyword">ENDIF</span> ()</span><br></pre></td></tr></table></figure>
 <p>好吧，看起来问题是解决了。但是，我总觉得这段代码看上去有点别扭，这完全有悖于 CMake 的初衷呀：根据不同的系统链接不同动态库的逻辑为什么要这么显示的写出来？这段代码看起来就下下面这个图一样：</p>
 <p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/2.png" alt></p>
 <h4 id="我是怎么做的">我是怎么做的</h4>
@@ -166,18 +166,19 @@
 </ul>
 <p>相比较一上来就阅读项目的源码而言，阅读 README 是了解这个项目并准备使用该项目的最快速有效的方法。如果具备可以通过阅读源码提取到项目文档的能力的话，直接阅读源码也可以，但是我认为和阅读 README 相比，阅读源码的效率还是差一点的。</p>
 <h4 id="2-深入阅读需要用到的能力">2. 深入阅读需要用到的能力</h4>
-<p>在 <a href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/">FFmpeg 解码 API 以及在解码过程中存在的丢帧问题</a> 中，我提到过我是如何利用 FFMpeg Api 中的代码注释来定位并解决我们小组开发的工具中存在的 BUG。实际上，如果同事当时能够认真的阅读 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/release/3.1/libavcodec/avcodec.h">FFMpeg avcodec</a> 的文档（代码注释），那么就不会有这篇文章中的 BUG 了。</p>
-<p>因此，在阅读完 README 之后，如果要在自己的项目中使用开源项目的某个具体能力或 Api，那么首先需要针对需要使用的部分更详细的阅读：</p>
+<p>在 <a href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/">FFmpeg 解码 API 以及在解码过程中存在的丢帧问题</a> 中，我提到过我是如何利用 FFMpeg API 中的代码注释来定位并解决我们小组开发的工具中存在的 BUG。实际上，如果同事当时能够认真的阅读 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/release/3.1/libavcodec/avcodec.h">FFMpeg avcodec</a> 的文档（代码注释），那么就不会有这篇文章中的 BUG 了。</p>
+<p>因此，在阅读完 README 之后，如果要在自己的项目中使用开源项目的某个具体能力或 API，那么首先需要针对需要使用的部分更详细的阅读：</p>
 <ol>
 <li>
 <p>开发者指南中对应的内容</p>
 <ul>
 <li>Developer Guides：需要首先阅读 Developer Guides 中对应的相关资料，例如 <a target="_blank" rel="noopener" href="https://developer.android.com/guide/index.html">Android Developer Guides</a>，<a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/docs/intellij/getting-started.html">IntelliJ Platform SDK</a>……还有很多非开源项目也会有 Developer Guides，对于这种项目，Developer Guides 无疑是最好的、必须首先阅读的资料，比较典型的就是<a target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/navigation/">Apple Developer Guides</a>，我当时了解 iOS 消息推送相关的技术就是首先阅读的 <a target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/index.html#//apple_ref/doc/uid/TP40008194">Local and Remote Notification Programming Guide</a>，自我认为比查阅互联网上其他人总结的文档要高效很多。</li>
-<li>Document：除了 Developer Guides 之外，项目提供的 documentation 也是需要首先阅读的内容，例如 <a target="_blank" rel="noopener" href="http://nginx.org/en/docs/">nginx document</a>，<a target="_blank" rel="noopener" href="https://ffmpeg.org/documentation.html">FFMpeg document</a>，……</li>
+<li>Document：除了 Developer Guides 之外，项目提供的 documentation 也是需要首先阅读的内容，例如 <a target="_blank" rel="noopener" href="http://nginx.org/en/docs/">nginx document</a>，<a target="_blank" rel="noopener" href="https://ffmpeg.org/documentation.html">FFMpeg document</a>，……我比较喜欢使用 <a target="_blank" rel="noopener" href="https://kapeli.com/dash">Dash</a> 这款 MacOS 上的这款 API document 工具，真的非常方便。每当使用一个新的 API 或者使用一个自己拿不准的 API 的时候，Dash 总是我最好的帮手。<br>
+<img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/5.png" alt></li>
 </ul>
 </li>
 <li>
-<p>Api 对应的代码注释<br>
+<p>API 对应的代码注释<br>
 很多的项目，尤其是优秀的项目会有非常优秀的代码注释（很多文档也可能是从代码注释中自动生成的）。因此，在动手写代码之前，最好还是再认真阅读以下项目代码中的注释，这对于我们理解所引用的项目会有很大好处。</p>
 <p>在我的工作中，我经常会从开源代码的注释中获取灵感，进而找到解决我所遇到的问题的思路：</p>
 <ul>
@@ -199,7 +200,7 @@
 </ol>
 <h4 id="3-慎用搜索引擎">3. 慎用搜索引擎</h4>
 <p>真的，除非万不得已，除非是我们在执行了如上的步骤之后还没有找到解决方案时，我们才需要运用搜索引擎来帮我们找出如何使用某个项目中的特定能力的方法。我非常不建议一开始就运用搜索引擎，当然这在大多数情况下可能会解决我们的问题，但是我们会因为使用搜索引擎而错过获得更多知识、错过更全面的了解我们将要使用的对象的机会。</p>
-<p>并且，我们从搜索引擎获得的方案有时候可能会存在问题，我再 <a href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/">FFmpeg 解码 API 以及在解码过程中存在的丢帧问题</a> 中提到的解码丢帧问题就是通过搜索引擎而得到的方案。尤其是当我们还处于某方面的新手的时候，这种情况出现的可能会更大。</p>
+<p>并且，我们从搜索引擎获得的方案有时候可能会存在问题，我在 <a href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/">FFmpeg 解码 API 以及在解码过程中存在的丢帧问题</a> 中提到的解码丢帧问题就是通过搜索引擎而得到的方案。尤其是当我们还处于某方面的新手的时候，这种情况出现的可能会更大。</p>
 <h2 id="善用别人的代码">善用别人的代码</h2>
 <p>善用别人的项目让我们可以站在巨人的肩膀上工作，最重要的是我们需要了解、熟悉我们所用的代码。否则，我们不但没有利用这个项目的优势，反而让自己的项目变成了恐龙。</p>
 <p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/4.jpeg" alt></p>
