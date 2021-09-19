@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">862</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">3 分钟</span>
+            <span class="post-count">6 分钟</span>
         </span>
     </span>
 </div>
@@ -199,11 +199,30 @@
 <span id="more"></span>
 <h2 id="缘起">缘起</h2>
 <p>工作中，经常会自己定位或者帮助同事定位各种各样的 BUG。有时候，BUG 会比较简单，而有时候遇到的 BUG 则相对复杂。在帮助同事定位 BUG 的时候，经常会遇到同事描述的问题和最后实际定位之后的问题并不一致的情况。</p>
-<p>在问题定位中，我们要：大胆假设，小心求证。但是，我发现，好多人只做到了大胆假设，然后在定位 BUG 时，大胆假设了一个问题，然后在定位过程中就把这个大胆假设的问题当成了真正的问题，结果就是在定位 BUG 的道路上越走越迷糊……</p>
-<p>每次说到这个时候，大家普遍反馈：道理是这个道理，理论我们也都懂呀，但是就是做不到呀，怎么办呢？</p>
+<p>在问题定位中，我们要：大胆假设，小心求证。但是，我发现，好多人只做到了大胆假设，在定位 BUG 时，大胆假设了一个问题，然后在定位过程中就把这个大胆假设的问题当成了真正的问题，结果就是在定位 BUG 的道路上越走越迷糊……</p>
+<p>每次说到这个的时候，大家普遍反馈：道理是这个道理，理论我们也都懂呀，但是就是做不到呀，怎么办呢？</p>
 <p>“鉴于往事，有资于治道”。</p>
-<p>为了能够让大家有比较真实的体验，我准备将自己工作中遇到的类似的问题进行梳理。在梳理的过程中，由于各种原因，我无法将原始问题涉及到的内容原样呈现，我需要对原始的问题进行一定的抽象。但是，对问题抽象并不会对问题进行大规模的修改，力求做到尽量保证问题的原样呈现。</p>
+<p>为了能够让大家有比较真实的体验，我准备将自己工作中遇到的类似的问题进行梳理。在梳理的过程中，由于各种原因，我无法将原始问题涉及到的内容原样呈现，我需要对原始的问题进行一定的抽象。但是，对问题抽象并不会对问题的原貌和本质进行修改，并力求做到尽量保证问题的原样呈现。</p>
 <h2 id="为什么容器不能暴露服务的uri呢？">为什么容器不能暴露服务的URI呢？</h2>
+<h4 id="问题背景">问题背景</h4>
+<p>我们的 CI/CD 服务类似 <a target="_blank" rel="noopener" href="https://docs.github.com/en/actions">GitHub Actions</a>，当然和 GitHub Actions 的差异非常大（例如整个任务的编排机制、容器的底层机制、容器的托管机制……），但是使用起来是类似的。</p>
+<p><img src="/2021/09/16/Define-The-Problem-Rightly-Before-Solve-It/actions-workflow.svg" alt></p>
+<p>每当有对应的事件发生时（例如代码提交、代码合并等），就会触发一些列的自动化任务，例如代码编译、代码扫描、运行单元测试……。在执行这些自动化任务的时候，会首先分配一个容器（类似 <a target="_blank" rel="noopener" href="https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners">GitHub-hosted runners</a>），然后在该容器中执行在平台上配置好的任务。</p>
+<p><img src="/2021/09/16/Define-The-Problem-Rightly-Before-Solve-It/workflow.gif" alt></p>
+<p>有一天，我们团队需要一个功能：<strong>开放容器中部署的 HTTP 服务，以便其他的容器可以通过 URL 来访问这个 HTTP 服务，因为这样的话就可以避免这个 HTTP 服务的多次部署（部署一次，然后供其他的多个任务来使用），从而提升效率。</strong></p>
+<p>我安排了一个同事来解决这个问题。同事告诉我说，<strong>从平台的配置上看，是有暴露容器PORT的功能的，但是这个功能目前没有实现，所以需要推动平台方实现这个功能。</strong></p>
+<h4 id="问题的变化">问题的变化</h4>
+<p>不知道大家发现没有，到目前为止，这个案例中的问题已经发生了变化。问题从<code>在其他容器中访问另外容器中的 HTTP 服务</code> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>  </mtext><mo>⟹</mo><mtext>  </mtext></mrow><annotation encoding="application/x-tex">\implies</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.549em;vertical-align:-0.024em;"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span></span></span> <code>CI/CD 平台方需要提供暴露容器 PORT 的能力</code>。</p>
+<p>这个问题的转化看起来是多么的自然而又正常。接下来，为了实现我们的目标，我们和平台方组织了一个技术讨论会，专门讨论平台方何时可以实现<strong>暴露容器 PORT</strong>的功能。</p>
+<p>经过和平台方的讨论，因为涉及到端口分配、端口冲突等端口管理问题，<strong>暴露容器 PORT</strong>这个功能短时间内无法实现。</p>
+<p>讨论之后，我们发现，我们需要的功能看起来是无法实现了。不是吗？</p>
+<h4 id="回归最原始的问题">回归最原始的问题</h4>
+<p>在技术讨论的最后，我请教了平台方技术同学我们那个最原始的问题：如果我们想要在其他容器中访问另外容器中的 HTTP 服务，有什么可行的方案吗？</p>
+<p>直到这个时候，我们才知道，原来我们容器中使用的 PORT 实际上就是物理机上的 PORT。我们可以直接时候用所分配的容器的 IP 和容器中启动的 HTTP 服务的端口来直接访问这个容器内的服务。</p>
+<p>这时，我的同事说，之前用 <code>ifconfig</code> 命令拿到的 IP 和容器中启动的 HTTP 服务的 PORT 测试过，是没办法访问容器内的服务的。</p>
+<p>到这里，我想我大概知道问题究竟出在哪里了。<code>ifconfig</code> 获取的是宿主机的网卡 IP 地址，而对于服务器而言，一般会有多个网卡，因此该命令会得到多个 IP 地址。而对于容器的 IP 地址，我们需要使用特定的指令才能够拿到正确的容器 IP。</p>
+<p>最后，我们按照平台方的技术同学提供的方法完美的实现了我们所要的功能。</p>
+<h4 id="从这个案例中-发现了什么？">从这个案例中，发现了什么？</h4>
 <h2 id="nginx-为什么会自动抢占某个被释放的端口？">Nginx 为什么会自动抢占某个被释放的端口？</h2>
 <p><img src="/waiting.gif" alt></p>
 <p>如果您也有类似的案例，可以给本文提交 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io/issues/314">ISSUE 评论</a>，也可以在 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io/discussions/317">讨论区</a> 留下您的案例，还可以在下方的评论处留下您的案例，我也会将这些案例增加到文章之中。</p>
