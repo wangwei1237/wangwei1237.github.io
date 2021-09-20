@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.7k</span>
+            <span class="post-count">3.1k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6 分钟</span>
+            <span class="post-count">11 分钟</span>
         </span>
     </span>
 </div>
@@ -112,7 +112,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>多年以前，我阅读了一本至今都让我受益匪浅的书：《你的灯亮着吗？》。在接下来的工作中，我总会按照书中的内容来训练自己解决工作中遇到的问题。作为一名测试开发工程师，在定位 BUG时，我甚至也会用到该书中介绍的问题解决思维模式。在这本书的第一章《这是谁的问题》中提到：</p>
+  <p>多年以前，我阅读了一本至今都让我受益匪浅的书：《你的灯亮着吗？》。工作中，我总会按照书中的内容来训练自己解决工作中遇到的问题。作为一名测试开发工程师，在定位 BUG 时，我也会用到该书中介绍的问题解决思维模式。</p>
 <div class="douban-card-block">
 	<a class="douban-card" target="_blank" rel="noopener" href="https://book.douban.com/subject/1135754">
 		<div class="douban-card-bgimg" style="background-image: url('https://images.weserv.nl/?url=https://img9.doubanio.com/view/subject/s/public/s1104704.jpg');"></div>
@@ -192,6 +192,7 @@
 		margin-top: 4px;
 	}
 </style>
+<p>在这本书的第一章「这是谁的问题」中提到：</p>
 <blockquote>
 <p>初出茅庐的问题解决者总是在还没有定义好问题的时候就仓促的给出解决方案。迫于外界环境的压力，经验丰富的问题解决者有时也耐不住性子。在这种情况下，尽管他们能找到很多方法来解决问题，但是不一定对症。</p>
 </blockquote>
@@ -203,7 +204,7 @@
 <p>每次说到这个的时候，大家普遍反馈：道理是这个道理，理论我们也都懂呀，但是就是做不到呀，怎么办呢？</p>
 <p>“鉴于往事，有资于治道”。</p>
 <p>为了能够让大家有比较真实的体验，我准备将自己工作中遇到的类似的问题进行梳理。在梳理的过程中，由于各种原因，我无法将原始问题涉及到的内容原样呈现，我需要对原始的问题进行一定的抽象。但是，对问题抽象并不会对问题的原貌和本质进行修改，并力求做到尽量保证问题的原样呈现。</p>
-<h2 id="为什么容器不能暴露服务的uri呢？">为什么容器不能暴露服务的URI呢？</h2>
+<h2 id="1-为什么容器不能暴露服务的uri呢？">1. 为什么容器不能暴露服务的URI呢？</h2>
 <h4 id="问题背景">问题背景</h4>
 <p>我们的 CI/CD 服务类似 <a target="_blank" rel="noopener" href="https://docs.github.com/en/actions">GitHub Actions</a>，当然和 GitHub Actions 的差异非常大（例如整个任务的编排机制、容器的底层机制、容器的托管机制……），但是使用起来是类似的。</p>
 <p><img src="/2021/09/16/Define-The-Problem-Rightly-Before-Solve-It/actions-workflow.svg" alt></p>
@@ -223,8 +224,41 @@
 <p>到这里，我想我大概知道问题究竟出在哪里了。<code>ifconfig</code> 获取的是宿主机的网卡 IP 地址，而对于服务器而言，一般会有多个网卡，因此该命令会得到多个 IP 地址。而对于容器的 IP 地址，我们需要使用特定的指令才能够拿到正确的容器 IP。</p>
 <p>最后，我们按照平台方的技术同学提供的方法完美的实现了我们所要的功能。</p>
 <h4 id="从这个案例中-发现了什么？">从这个案例中，发现了什么？</h4>
-<h2 id="nginx-为什么会自动抢占某个被释放的端口？">Nginx 为什么会自动抢占某个被释放的端口？</h2>
-<p><img src="/waiting.gif" alt></p>
+<ul>
+<li><code>错把假设当证据</code>。在定位 BUG，尤其是一些比较复杂的 BUG，往往需要提出各种假设，并通过逻辑推理、寻找数据证据对其进行检验，然后再根据检验的结果提出新的假设，再对这些新假设逐一验证，不断迭代这个过程以逐步靠近 BUG 的真相。但是，提出假设时，可能已经忘了那仅仅是个假设而已，便在这个假设的基础上展开分析，最后得到一个所谓的“结论”。我的同事一开始利用 <code>ifconfig</code> 获取到的 IP 无法访问到容器内部的 HTTP 服务就得到了错误的结论，而这个结论实际上是源自使用了错误命令的一个假设而已。</li>
+<li><code>给专业的人提供解决方案</code>。在一个错误的假设上，我们给平台方提出了一个解决方案。很多时候，这种解决方案可能会实现，但是更多的时候，这种解决方案大概率没法实现。但是，我们忽略了，解决方案不是问题，只是我们以为是个问题而已。这在平台方帮助我们解决真正的问题时会带来很大的干扰。我们不应该<strong>给专业的人提供解决方案</strong>，而应该<strong>给出原始问题描述，向专业人士寻求解决方案</strong>。</li>
+</ul>
+<h2 id="2-nginx-为什么会自动抢占某个被释放的端口？">2. Nginx 为什么会自动抢占某个被释放的端口？</h2>
+<h4 id="问题背景">问题背景</h4>
+<p>我个人对 Nginx 比较了解，在工作中也解决了很多业务中遇到的 Nginx 的线上问题。</p>
+<p>有一天，一个同事兴致冲冲的来找我，说：</p>
+<blockquote>
+<p>17哥，我发现了一个 Nginx 的特殊功能——Nginx 会自动抢占某个被释放的端口。</p>
+</blockquote>
+<p>我之前阅读 Nginx 源码的时候，未曾发现 Nginx 有这个特殊功能，也未曾记得 Nginx 的官方文档有这个特殊功能描述，并且我不认为类似 Nginx 这类的软件，应该具备这样的能力。所以我对同事的这个<em>有趣的发现</em>提出了质疑。</p>
+<p>接下来，同事兴高采烈的给我演示了这个有趣的特性。原始的演示当时没有录制，所以，我在自己的电脑上对当时的演示进行了还原，具体如下图所示。</p>
+<p><img src="/2021/09/16/Define-The-Problem-Rightly-Before-Solve-It/nginx.gif" alt></p>
+<blockquote>
+<p><strong>说明1</strong>：整个的演示过程从 启动 Nginx 开始。<br>
+<strong>说明2</strong>：当时演示的时候，并没有使用 <code>watch</code> 命令，仅仅使用了 <code>lsof</code> 命令。为了避免过多的手工操作，我在这里使用了 <code>watch</code> 命令。</p>
+</blockquote>
+<h4 id="这个有趣的演示有什么问题？">这个有趣的演示有什么问题？</h4>
+<p>看完同事的演示，确实发生了 <strong>Nginx自动抢占被释放的9003端口</strong>的事情，看着演示，我陷入了深思。然后，我多次执行了 <code>lsof</code> 命令，来观察端口的占用信息。</p>
+<p>我发现了一个奇怪的现象，这个现象大家观察演示图中的左上角的 <code>watch</code> 命令的结果也能发现：9003 端口的 Nginx 的 PID（进程号）在不断的发生变化。这说明 Nginx 进程在不断的重启。然后，我查看了 Nginx 的日志，发现了如下的信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 5315#0: exiting</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 5313#0: gracefully shutting down</span><br><span class="line">2021/09/20 10:41:34 [notice] 5313#0: exiting</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 20 (SIGCHLD) received from 5315</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: cache loader process 5315 exited with code 0</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: cache manager process 5314 exited with code 0</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 20 (SIGCHLD) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received from 5321</span><br><span class="line">2021/09/20 10:41:34 [notice] 5313#0: exit</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received from 5313</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received from 5313</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 20 (SIGCHLD) received from 5313</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: worker process 5313 exited with code 0</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br></pre></td></tr></table></figure>
+<p>直到这个时候我们才发现，原来同事说的有趣的特性是 Nginx 不断的 reload 进程导致的。在 Nginx reload 时，会加载最新的配置，然后按照最新的配置启动新的 worker 进程并处理新的请求。于是，就发生了同事所说的 Nginx 的有趣的特性。</p>
+<h4 id="回归问题的本质">回归问题的本质</h4>
+<p>于是，经过排查，我们把一个假设转变成了假设背后的问题：<code>Nginx 为什么会自动抢占被释放的端口？</code> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>  </mtext><mo>⟹</mo><mtext>  </mtext></mrow><annotation encoding="application/x-tex">\implies</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.549em;vertical-align:-0.024em;"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span></span></span> <code>Nginx 为什么会不停的 reload？</code>。</p>
+<p>因为找不到编译这个 Nginx 的源代码了，所以没办法确定是否是在源码层面进行了修改。</p>
+<p>为了查清这个问题：</p>
+<ul>
+<li>我首先查看了 crontab 任务，发现机器上并没有配置类似的定时任务。</li>
+<li>然后，我查看了 Nginx 加载的所有 lua 插件代码，同样也没有发现有类似的代码。</li>
+<li>然后在 Nginx 信号处理的相关代码块进行的 GDB 单步调试，同样没有发现类似代码。</li>
+</ul>
+<p>查了 1 天多也没查到为什么这个 Nginx 会不停的 reload。因为还有其他事情，这个问题也就搁置了起来。</p>
+<p>后来，过了很长时间，同事告诉我说，在机器的某个目录下，发现了一个每隔 1 秒就 reload 那个 Nginx 的脚本。直到这个时候，整个事情才变得非常清晰。</p>
+<h2 id="案例征集">案例征集</h2>
 <p>如果您也有类似的案例，可以给本文提交 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io/issues/314">ISSUE 评论</a>，也可以在 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io/discussions/317">讨论区</a> 留下您的案例，还可以在下方的评论处留下您的案例，我也会将这些案例增加到文章之中。</p>
  
       <!-- reward -->
@@ -295,7 +329,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="tag">方法论</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="tag">方法论</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D/" rel="tag">问题定位</a></li></ul>
 
     </footer>
   </div>
