@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>4. Introducing the Kubernetes API Objects · Kubernetes实战（第二版）</title>
+        <title>9.1 Setting the command, arguments, and environment variables · Kubernetes实战（第二版）</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -65,10 +65,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="Getting_familiar_with_the_Kubernetes_API.html" />
+    <link rel="next" href="Using_a_config_map_to_decouple_configuration_from_the_pod.html" />
     
     
-    <link rel="prev" href="Summary_3.html" />
+    <link rel="prev" href="Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.html" />
     
 
     </head>
@@ -366,7 +366,7 @@
         
         
     
-        <li class="chapter active" data-level="4.1" data-path="Introducing_the_Kubernetes_API_Objects.html">
+        <li class="chapter " data-level="4.1" data-path="Introducing_the_Kubernetes_API_Objects.html">
             
                 <a href="Introducing_the_Kubernetes_API_Objects.html">
             
@@ -813,7 +813,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="4.6.1" data-path="Setting_the_command_arguments_and_environment_variables.html">
+        <li class="chapter active" data-level="4.6.1" data-path="Setting_the_command_arguments_and_environment_variables.html">
             
                 <a href="Setting_the_command_arguments_and_environment_variables.html">
             
@@ -874,7 +874,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >4. Introducing the Kubernetes API Objects</a>
+        <a href=".." >9.1 Setting the command, arguments, and environment variables</a>
     </h1>
 </div>
 
@@ -889,18 +889,170 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="4-introducing-the-kubernetes-api-objects">4. Introducing the Kubernetes API objects</h1>
-<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>This chapter covers</p>
-<ul>
-<li>Managing a Kubernetes cluster and the applications it hosts via its API</li>
-<li>Understanding the structure of Kubernetes API objects</li>
-<li>Retrieving and understanding an object&#x2019;s YAML or JSON manifest</li>
-<li>Inspecting the status of cluster nodes via Node objects</li>
-<li>Inspecting cluster events through Event objects</li>
-</ul>
+                                <h1 id="91-setting-the-command-arguments-and-environment-variables">9.1 Setting the command, arguments, and environment variables</h1>
+<p>Like regular applications, containerized applications can be configured using command-line arguments, environment variables, and files.</p>
+<p>You learned that the command that is executed when a container starts is typically defined in the container image. The command is configured in the container&#x2019;s Dockerfile using the ENTRYPOINT directive, while the arguments are typically specified using the CMD directive. Environment variables can also be specified using the the ENV directive in the Dockerfile. If the application is configured using configuration files, these can be added to the container image using the COPY directive. You&#x2019;ve seen several examples of this in the previous chapters.</p>
+<p>Let&#x2019;s take the kiada application and make it configurable via command-line arguments and environment variables. The previous versions of the application all listen on port 8080. This will now be configurable via the --listen-port command line argument. Also, the application will read the initial status message from the environment variable INITIAL_STATUS_MESSAGE. Instead of just returning the hostname, the application now also returns the pod name and IP address, as well as the name of the cluster node on which it is running. The application obtains this information through environment variables. You can find the updated code in the book&#x2019;s code repository. The container image for this new version is available at docker.io/luksa/kiada:0.4.</p>
+<p>The updated Dockerfile, which you can also find in the code repository, is shown in the following listing.</p>
+<p>Listing 9.1 A sample Dockerfile using several application configuration methods</p>
+<pre><code>FROM node:12
+COPY app.js /app.js
+COPY html/ /html
+
+ENV INITIAL_STATUS_MESSAGE=&quot;This is the default status message&quot;
+
+ENTRYPOINT [&quot;node&quot;, &quot;app.js&quot;]
+CMD [&quot;--listen-port&quot;, &quot;8080&quot;]
+</code></pre><p>Hardcoding the configuration into the container image is the same as hardcoding it into the application source code. This is not ideal because you must rebuild the image every time you change the configuration. Also, you should never include sensitive configuration data such as security credentials or encryption keys in the container image because anyone who has access to it can easily extract them.</p>
+<p>Instead, it&#x2019;s much safer to store these files in a volume that you mount in the container. As you learned in the previous chapter, one way to do this is to store the files in a persistent volume. Another way is to use an emptyDir volume and an init container that fetches the files from secure storage and writes them to the volume. You should know how to do this if you&#x2019;ve read the previous chapters, but there&#x2019;s a better way. In this chapter, you&#x2019;ll learn how to use special volume types to achieve the same result without using init containers. But first, let&#x2019;s learn how to change the command, arguments, and environment variables without recreating the container image.</p>
+<h2 id="911-setting-the-command-and-arguments">9.1.1 Setting the command and arguments</h2>
+<p>When creating a container image, the command and its arguments are specified using the ENTRYPOINT and CMD directives in the Dockerfile. Since both directives accept array values, you can specify both the command and its arguments with one of these directives or split them between the two. When the container is executed, the two arrays are concatenated to produce the full command.</p>
+<p>Kubernetes provides two fields that are analogous to Docker&#x2019;s ENTRYPOINT and CMD directives. The two fields are called command and args, respectively. You specify these fields in the container definition in your pod manifest. As with Docker, the two fields accept array values, and the resulting command executed in the container is derived by concatenating the two arrays.</p>
+<p>Figure 9.1 Overriding the command and arguments in the pod manifest
+<img src="../images/9.1.png" alt=""></p>
+<p>Normally, you use the ENTRYPOINT directive to specify the bare command, and the CMD directive to specify the arguments. This allows you to override the arguments in the pod manifest without having to specify the command again. If you want to override the command, you can still do so. And you can do it without overriding the arguments.</p>
+<p>The following table shows the equivalent pod manifest field for each of the two Dockerfile directives.</p>
+<p>Table 9.1 Specifying the command and arguments in the Dockerfile vs the pod manifest</p>
+<table>
+<thead>
+<tr>
+<th>Dockerfile</th>
+<th>Pod manifest</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ENTRYPOINT</td>
+<td>command</td>
+<td>The executable file that runs in the container. This may contain arguments in addition to the executable.</td>
+</tr>
+<tr>
+<td>CMD</td>
+<td>args</td>
+<td>Additional arguments passed to the command specified with the ENTRYPOINT directive or the command field.</td>
+</tr>
+</tbody>
+</table>
+<p>Let&#x2019;s look at two examples of setting the command and args fields.</p>
+<h4 id="setting-the-command">Setting the command</h4>
+<p>Imagine you want to run the Kiada application with CPU and heap profiling enabled. With Node.JS, you can enable profiling by passing the --cpu-prof and --heap-prof arguments to the node command. Instead of modifying the Dockerfile and rebuilding the image, you can do this by modifying the pod manifest, as shown in the following listing.</p>
+<p>Listing 9.2 A container definition with the command specified</p>
+<pre><code>kind: Pod
+spec:
+  containers:
+  - name: kiada
+    image: luksa/kiada:0.4
+    command: [&quot;node&quot;, &quot;--cpu-prof&quot;, &quot;--heap-prof&quot;, &quot;app.js&quot;]
+</code></pre><p>When you deploy the pod in the listing, the node --cpu-prof --heap-prof app.js command is run instead of the default command specified in the Dockerfile, which is node app.js.</p>
+<p>As you can see in the listing, the command field, just like its Dockerfile counterpart, accepts an array of strings representing the command to be executed. The array notation used in the listing is great when the array contains only a few elements, but becomes difficult to read as the number of elements increases. In this case, you&#x2019;re better off using the following notation:</p>
+<pre><code>command:
+    - node
+    - --cpu-prof
+    - --heap-prof
+    - app.js
+</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
+<p>Values that the YAML parser might interpret as something other than a string must be enclosed in quotes. This includes numeric values such as 1234, and Boolean values such as true and false. Some other special strings must also be quoted, otherwise they would also be interpreted as Boolean or other types. These include the values true, false, yes, no, on, off, y, n, t, f, null, and others.</p>
 </div></div></p>
-<p>The previous chapter introduced three fundamental objects that make up a deployed application. You created a Deployment object that spawned multiple Pod objects representing individual instances of your application and exposed them to the world by creating a Service object that deployed a load balancer in front of them.</p>
-<p>The chapters in the second part of this book explain these and other object types in detail. In this chapter, the common features of Kubernetes objects are presented using the example of Node and Event objects.</p>
+<h4 id="setting-command-arguments">Setting command arguments</h4>
+<p>Command line arguments can be overridden with the args field, as shown in the following listing.</p>
+<p>Listing 9.3 A container definition with the args fields set</p>
+<pre><code>kind: Pod
+spec:
+  containers:
+  - name: kiada
+    image: luksa/kiada:0.4
+    args: [&quot;--listen-port&quot;, &quot;9090&quot;]
+</code></pre><p>The pod manifest in the listing overrides the default --listen-port 8080 arguments set in the Dockerfile with --listen-port 9090. When you deploy this pod, the full command that runs in the container is node app.js --listen-port 9090. The command is a concatenation of the ENTRYPOINT in the Dockerfile and the args field in the pod manifest.</p>
+<h2 id="912-setting-environment-variables-in-a-container">9.1.2 Setting environment variables in a container</h2>
+<p>Containerized applications are often configured using environment variables. Just like the command and arguments, you can set environment variables for each of the pod&#x2019;s containers, as shown in figure 9.2.</p>
+<p>Figure 9.2 Environment variables are set per container.
+<img src="../images/9.2.png" alt=""></p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>As I write this, environment variables can only be set for each container individually. It isn&#x2019;t possible to set a global set of environment variables for the entire pod and have them inherited by all its containers.</p>
+</div></div></p>
+<p>You can set an environment variable to a literal value, have it reference another environment variable, or obtain the value from an external source. Let&#x2019;s see how.</p>
+<h4 id="setting-a-literal-value-to-an-environment-variable">Setting a literal value to an environment variable</h4>
+<p>Version 0.4 of the Kiada application displays the name of the pod, which it reads from the environment variable POD_NAME. It also allows you to set the status message using the environment variable INITIAL_STATUS_MESSAGE. Let&#x2019;s set these two variables in the pod manifest.</p>
+<p>To set the environment variable, you could add the ENV directive to the Dockerfile and rebuild the image, but the faster way is to add the env field to the container definition in the pod manifest, as I&#x2019;ve done in the file pod.kiada.env-value.yaml shown in the following listing.</p>
+<p>Listing 9.4 Setting environment variables in the pod manifest</p>
+<pre><code>kind: Pod
+metadata:
+  name: kiada
+spec:
+  containers:
+  - name: kiada
+    image: luksa/kiada:0.4
+    env:
+    - name: POD_NAME
+      value: kiada
+    - name: INITIAL_STATUS_MESSAGE
+      value: This status message is set in the pod spec.
+    ...
+</code></pre><p>As you can see in the listing, the env field takes an array of values. Each entry in the array specifies the name of the environment variable and its value.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>Since environment variables values must be strings, you must enclose values that aren&#x2019;t strings in quotes to prevent the YAML parser from treating them as anything other than a string. As explained in section 9.1.1, this also applies to strings such as yes, no, true, false, and so on.</p>
+</div></div></p>
+<p>When you deploy the pod in the listing and send an HTTP request to the application, you should see the pod name and status message that you specified using environment variables. You can also run the following command to examine the environment variables in the container. You&#x2019;ll find the two environment variables in the following output:</p>
+<pre><code>$ kubectl exec kiada -- env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=kiada
+NODE_VERSION=12.19.1
+YARN_VERSION=1.22.5
+POD_NAME=kiada
+INITIAL_STATUS_MESSAGE=This status message is set in the pod spec.
+KUBERNETES_SERVICE_HOST=10.96.0.1
+...
+KUBERNETES_SERVICE_PORT=443
+</code></pre><p>As you can see, there are a few other variables set in the container. They come from different sources - some are defined in the container image, some are added by Kubernetes, and the rest come from elsewhere. While there is no way to know where each of the variables comes from, you&#x2019;ll learn to recognize some of them. For example, the ones added by Kubernetes relate to the Service object, which is covered in chapter 11. To determine where the rest come from, you can inspect the pod manifest and the Dockerfile of the container image.</p>
+<h4 id="using-variable-references-in-environment-variable-values">Using variable references in environment variable values</h4>
+<p>In the previous example, you set a fixed value for the environment variable INITIAL_STATUS_MESSAGE, but you can also reference other environment variables in the value by using the syntax $(VAR_NAME).</p>
+<p>For example, you can reference the variable POD_NAME within the status message variable as shown in the following listing, which shows part of the file pod.kiada.env-value-ref.yaml.</p>
+<p>Listing 9.5 Referring to an environment variable in another variable</p>
+<pre><code>env:
+- name: POD_NAME
+  value: kiada
+- name: INITIAL_STATUS_MESSAGE
+  value: My name is $(POD_NAME). I run NodeJS version $(NODE_VERSION).
+</code></pre><p>Notice that one of the references points to the environment variable POD_NAME defined above, whereas the other points to the variable NODE_VERSION set in the container image. You saw this variable when you ran the env command in the container earlier. When you deploy the pod, the status message it returns is the following:</p>
+<pre><code>My name is kiada. I run NodeJS version $(NODE_VERSION).
+</code></pre><p>As you can see, the reference to NODE_VERSION isn&#x2019;t resolved. This is because you can only use the $(VAR_NAME) syntax to refer to variables defined in the same manifest. The referenced variable must be defined before the variable that references it. Since NODE_VERSION is defined in the NodeJS image&#x2019;s Dockerfile and not in the pod manifest, it can&#x2019;t be resolved.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>If a variable reference can&#x2019;t be resolved, the reference string remains unchanged.</p>
+</div></div></p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>When you want a variable to contain the literal string $(VAR_NAME) and don&#x2019;t want Kubernetes to resolve it, use a double dollar sign as in $${VAR_NAME). Kubernetes will remove one of the dollar signs and skip resolving the variable.</p>
+</div></div></p>
+<h4 id="using-variable-references-in-the-command-and-arguments">Using variable references in the command and arguments</h4>
+<p>You can refer to environment variables defined in the manifest not only in other variables, but also in the command and args fields you learned about in the previous section. For example, the file pod.kiada.env-value-ref-in-args.yaml defines an environment variable named LISTEN_PORT and references it in the args field. The following listing shows the relevant part of this file.</p>
+<p>Listing 9.6 Referring to an environment variable in the args field</p>
+<pre><code>spec:
+  containers:
+  - name: kiada
+    image: luksa/kiada:0.4
+    args:
+    - --listen-port
+    - $(LISTEN_PORT)
+    env:
+    - name: LISTEN_PORT
+      value: &quot;8080&quot;
+</code></pre><p>This isn&#x2019;t the best example, since there&#x2019;s no good reason to use a variable reference instead of just specifying the port number directly. But later you&#x2019;ll learn how to get the environment variable value from an external source. You can then use a reference as shown in the listing to inject that value into the container&#x2019;s command or arguments.</p>
+<h4 id="referring-to-environment-variables-that-arent-in-the-manifest">Referring to environment variables that aren&#x2019;t in the manifest</h4>
+<p>Just like using references in environment variables, you can only use the $(VAR_NAME) syntax in the command and args fields to reference variables that are defined in the pod manifest. You can&#x2019;t reference environment variables defined in the container image, for example.</p>
+<p>However, you can use a different approach. If you run the command through a shell, you can have the shell resolve the variable. If you are using the bash shell, you can do this by referring to the variable using the syntax $VAR_NAME or ${VAR_NAME} instead of $(VAR_NAME).</p>
+<p>For example, the command in the following listing correctly prints the value of the HOSTNAME environment variable even though it&#x2019;s not defined in the pod manifest but is initialized by the operating system. You can find this example in the file pod.env-var-references-in-shell.yaml.</p>
+<p>Listing 9.7 Referring to environment variables in a shell command</p>
+<pre><code>containers:
+- name: main
+  image: alpine
+  command:
+  - sh
+  - -c
+  - &apos;echo &quot;Hostname is $HOSTNAME.&quot;; sleep infinity&apos;
+</code></pre><p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>SETTING THE POD&#x2019;S FULLY QUALIFIED DOMAIN NAME</p>
+<p>While we&#x2019;re on the subject of the pod&#x2019;s hostname, this is a good time to explain that the pod&#x2019;s hostname and subdomain are configurable in the pod manifest. By default, the hostname is the same as the pod&#x2019;s name, but you can override it using the hostname field in the pod&#x2019;s spec. You can also set the subdomain field so that the fully qualified domain name (FQDN) of the pod is as follows: <hostname>.<subdomain>.<pod namespace="">.svc.<cluster domain=""></cluster></pod></subdomain></hostname></p>
+<p>This is only the internal FQDN of the pod. It isn&#x2019;t resolvable via DNS without additional steps, which are explained in chapter 11. You can find a sample pod that specifies a custom hostname for the pod in the file pod.kiada.hostname.yaml.</p>
+</div></div></p>
 
                                 
                                 </section>
@@ -928,12 +1080,12 @@
 
             
                 
-                <a href="Summary_3.html" class="navigation navigation-prev " aria-label="Previous page: 3.4 Summary">
+                <a href="Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.html" class="navigation navigation-prev " aria-label="Previous page: 9. Configuring applications using ConfigMaps, Secrets, and the Downward API">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="Getting_familiar_with_the_Kubernetes_API.html" class="navigation navigation-next " aria-label="Next page: 4.1 Getting familiar with the Kubernetes API">
+                <a href="Using_a_config_map_to_decouple_configuration_from_the_pod.html" class="navigation navigation-next " aria-label="Next page: 9.2 Using a config map to decouple configuration from the pod">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -944,7 +1096,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"4. Introducing the Kubernetes API Objects","level":"4.1","depth":1,"next":{"title":"4.1 Getting familiar with the Kubernetes API","level":"4.1.1","depth":2,"path":"docs/Getting_familiar_with_the_Kubernetes_API.md","ref":"docs/Getting_familiar_with_the_Kubernetes_API.md","articles":[]},"previous":{"title":"3.4 Summary","level":"3.3.4","depth":2,"path":"docs/Summary_3.md","ref":"docs/Summary_3.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Introducing_the_Kubernetes_API_Objects.md","mtime":"2021-10-12T08:41:23.566Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-10-12T08:41:54.966Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"9.1 Setting the command, arguments, and environment variables","level":"4.6.1","depth":2,"next":{"title":"9.2 Using a config map to decouple configuration from the pod","level":"4.6.2","depth":2,"path":"docs/Using_a_config_map_to_decouple_configuration_from_the_pod.md","ref":"docs/Using_a_config_map_to_decouple_configuration_from_the_pod.md","articles":[]},"previous":{"title":"9. Configuring applications using ConfigMaps, Secrets, and the Downward API","level":"4.6","depth":1,"path":"docs/Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.md","ref":"docs/Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.md","articles":[{"title":"9.1 Setting the command, arguments, and environment variables","level":"4.6.1","depth":2,"path":"docs/Setting_the_command_arguments_and_environment_variables.md","ref":"docs/Setting_the_command_arguments_and_environment_variables.md","articles":[]},{"title":"9.2 Using a config map to decouple configuration from the pod","level":"4.6.2","depth":2,"path":"docs/Using_a_config_map_to_decouple_configuration_from_the_pod.md","ref":"docs/Using_a_config_map_to_decouple_configuration_from_the_pod.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Setting_the_command_arguments_and_environment_variables.md","mtime":"2021-10-12T08:41:23.566Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-10-12T08:41:54.966Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
