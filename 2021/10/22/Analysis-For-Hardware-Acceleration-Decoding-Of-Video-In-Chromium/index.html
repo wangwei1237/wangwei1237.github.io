@@ -13,7 +13,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>视频技术 |  17哥</title>
+      <title>Chrome浏览器中的视频解码硬件加速 |  17哥</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -56,333 +56,185 @@
       
     <main class="content on">
       <section class="outer">
-  
-  <ul class="ads">
+  <article
+  id="post-Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
     
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Chrome浏览器中的视频解码硬件加速
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/" class="article-date">
+  <time datetime="2021-10-22T14:04:29.000Z" itemprop="datePublished">2021-10-22</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">130</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">1 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/1.png" alt></p>
+<p>从 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Google_Chrome_version_history">Google Chrome version history</a> 可以知道，2011 年 3 月 发布的 10.0.648 版本的 Chrome 浏览器就已经支持视频的硬件加速能力。从 <a target="_blank" rel="noopener" href="https://www.reddit.com/r/linux/comments/l112mr/hardware_video_acceleration_now_available_in/">chromium/chrome 88 开始，视频的硬件加速已经成为默认配置</a>。</p>
+<p>即便如此，因为视频的硬件解码需要 GPU 的特殊支持，而目前的视频编解码标准又比较丰富，我们如何判断 Chrome 在解码视频的时候是否启用了硬件加速呢？</p>
+<span id="more"></span>
+<h2 id="chrome-gpu">chrome://gpu</h2>
+<h2 id="chrome-flags">chrome://flags</h2>
+<h2 id="chrome-media-internals">chrome://media-internals</h2>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
         <li>
-            <a href="https://wangwei1237.github.io/monolith-to-microservices/">
-                <img src="https://wangwei1237.github.io/2020/08/19/monolith-to-microservices/cover.png" width="150" alt="从单体应用到微服务架构（中文版）">
-            </a>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
         </li>
-    
-        <li>
-            <a href="https://wangwei1237.github.io/shares/GraphQL_in_Action.pdf">
-                <img src="https://wangwei1237.github.io/books/index/Buna-GraphQL.png" width="150" alt="GraphQL in Action">
-            </a>
-        </li>
-    
-</ul>
-  
-  
-  <article class="articles">
-    
-    
-    <h1 class="page-type-title">视频技术</h1>
-    
-    
-  
-  
-  
-  
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2021" class="archive-year">2021</a>
+      </ul>
     </div>
-    <div class="archives">
-      
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/" class="archive-article-date">
-  <time datetime="2021-10-22T14:04:29.000Z" itemprop="datePublished">10/22</time>
-</a>
+    
+    <footer class="article-footer">
        
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/"
-    >Chrome浏览器中的视频解码硬件加速</a> 
-</h2>
- 
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
 
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/09/09/Draw-Circle-Frame-Number-for-Each-Secnod-Using-FFmpeg/" class="archive-article-date">
-  <time datetime="2021-09-09T12:10:18.000Z" itemprop="datePublished">09/09</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/09/09/Draw-Circle-Frame-Number-for-Each-Secnod-Using-FFmpeg/"
-    >用 FFMpeg 把以秒为周期的帧序号信息写入到视频</a> 
-</h2>
- 
-
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/07/27/The-History-of-the-Video-Codec-Improvement/" class="archive-article-date">
-  <time datetime="2021-07-27T19:33:59.000Z" itemprop="datePublished">07/27</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/07/27/The-History-of-the-Video-Codec-Improvement/"
-    >视频压缩标准发展简史</a> 
-</h2>
- 
-
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/" class="archive-article-date">
-  <time datetime="2021-04-27T16:21:49.000Z" itemprop="datePublished">04/27</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/"
-    >FFmpeg中基于深度学习模型的目标检测</a> 
-</h2>
- 
-
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/01/26/HDR-introduction/" class="archive-article-date">
-  <time datetime="2021-01-26T15:37:44.000Z" itemprop="datePublished">01/26</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/01/26/HDR-introduction/"
-    >HDR技术导论</a> 
-</h2>
- 
-
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/" class="archive-article-date">
-  <time datetime="2021-01-19T14:10:38.000Z" itemprop="datePublished">01/19</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/"
-    >FFmpeg解码API以及在解码过程中存在的丢帧问题</a> 
-</h2>
- 
-
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-  
-  
-  
-  </div>
-  </div>
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2020" class="archive-year">2020</a>
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/" alt="微信分享二维码">
     </div>
-    <div class="archives">
-      
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/" class="archive-article-date">
-  <time datetime="2020-10-29T19:54:11.000Z" itemprop="datePublished">10/29</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/"
-    >一场关于FLV是否要支持HEVC的争论</a> 
-</h2>
- 
+</div>
 
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Chrome-Video-Decode/" rel="tag">Chrome Video Decode</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GPU/" rel="tag">GPU</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A1%AC%E4%BB%B6%E5%8A%A0%E9%80%9F/" rel="tag">硬件加速</a></li></ul>
+
+    </footer>
   </div>
 
+   
+  <nav class="article-nav">
     
     
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/" class="archive-article-date">
-  <time datetime="2020-04-09T12:33:36.000Z" itemprop="datePublished">04/09</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/"
-    >使用Wireshark分析SRT直播流</a> 
-</h2>
- 
-
-    </header>
+      <a href="/2021/09/16/Define-The-Problem-Rightly-Before-Solve-It/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">在解决问题之前首先要正确的定义问题</div>
+      </a>
     
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/" class="archive-article-date">
-  <time datetime="2020-04-08T09:23:19.000Z" itemprop="datePublished">04/08</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2020/04/08/ffmpeg-compiled-in-macOS-Catalina-runs-crash/"
-    >macOS Catalina的strip版本异常导致编译的FFmpeg运行被kill</a> 
-</h2>
- 
-
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2020/03/03/digital-video-concept/" class="archive-article-date">
-  <time datetime="2020-03-03T10:20:19.000Z" itemprop="datePublished">03/03</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2020/03/03/digital-video-concept/"
-    >数字视频基本概念</a> 
-</h2>
- 
-
-    </header>
-    
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
-      
-    </div>
-  </div>
-  
-  
-
-  
-  <nav class="page-nav">
-    
-    <span class="page-number current">1</span><a class="page-number" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/page/2/">2</a><a class="extend next" rel="next" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/page/2/">下一页</a>
   </nav>
+
   
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '7bf1e91eaff35fd004dc',
+    clientSecret: 'd151c7bc85d544dafe2c0de75e3a174623229a3a',
+    repo: 'wangwei1237.github.io',
+    owner: 'wangwei1237',
+    admin: ['wangwei1237'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+     
+</article>
+
 </section>
       <footer class="footer">
   <div class="outer">
@@ -506,6 +358,22 @@
 <script src="/js/lazyload.min.js"></script>
 
 <!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
 <link
