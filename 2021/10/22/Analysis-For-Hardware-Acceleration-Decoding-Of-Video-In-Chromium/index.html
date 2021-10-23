@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">130</span>
+            <span class="post-count">1.9k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">9 分钟</span>
         </span>
     </span>
 </div>
@@ -116,9 +116,395 @@
 <p>从 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Google_Chrome_version_history">Google Chrome version history</a> 可以知道，2011 年 3 月 发布的 10.0.648 版本的 Chrome 浏览器就已经支持视频的硬件加速能力。从 <a target="_blank" rel="noopener" href="https://www.reddit.com/r/linux/comments/l112mr/hardware_video_acceleration_now_available_in/">chromium/chrome 88 开始，视频的硬件加速已经成为默认配置</a>。</p>
 <p>即便如此，因为视频的硬件解码需要 GPU 的特殊支持，而目前的视频编解码标准又比较丰富，我们如何判断 Chrome 在解码视频的时候是否启用了硬件加速呢？</p>
 <span id="more"></span>
-<h2 id="chrome-gpu">chrome://gpu</h2>
-<h2 id="chrome-flags">chrome://flags</h2>
-<h2 id="chrome-media-internals">chrome://media-internals</h2>
+<h2 id="1-chrome-gpu">1. chrome://gpu</h2>
+<p>首先，利用 <code>chrome://gpu</code> 来获取相关的 GPU 信息，这里获取的信息非常丰富，我们可以从这些信息中来判断 Chrome 是否支持特定场景的 GPU 加速。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">在这部分信息中，我们需要特别关注如下几部分的信息：
+</p><ul>
+<li>Graphics Feature Status</li>
+<li>Driver Information</li>
+<li>Display(s) Information</li>
+<li>Video Acceleration Information</li>
+</ul>
+</div>
+<h4 id="graphics-feature-status">Graphics Feature Status</h4>
+<p><strong>Graphics Feature Status</strong> 反映了 GPU 对 Chrome 中的不同的能力的支持，对于我的 MacBook Pro (13-inch, 2017) 上的 Chrome 94 而言，可以得到如下的结果：</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">Graphics Feature Status
+</p><ul>
+<li>Canvas: Hardware accelerated</li>
+<li>Compositing: Hardware accelerated</li>
+<li>Metal: Disabled</li>
+<li>Multiple Raster Threads: Enabled</li>
+<li>Out-of-process Rasterization: Hardware accelerated</li>
+<li>OpenGL: Enabled</li>
+<li>Rasterization: Hardware accelerated</li>
+<li>Skia Renderer: Enabled</li>
+<li>Video Decode: Hardware accelerated</li>
+<li>WebGL: Hardware accelerated</li>
+<li>WebGL2: Hardware accelerated</li>
+</ul>
+</div>
+<p>从中可以看出，对于 <strong>视频解码</strong> 而言，Chrome 启用了 GPU 的硬件加速。当然我们还能从如上的信息中获取更多内容，例如 WebGL 是否有 GPU 支持，GPU 的硬件加速是采用的 <a target="_blank" rel="noopener" href="https://www.opengl.org/">OpenGL</a> 还是 <a target="_blank" rel="noopener" href="https://developer.apple.com/cn/metal/">Metal</a>，……</p>
+<h4 id="video-acceleration-information">Video Acceleration Information</h4>
+<p><strong>Video Acceleration Information</strong> 显示了 Chrome 支持的硬件编解码的编解码器类型以及相关编解码器的 profile。从中我们可以判断，对于某种编解码器而言，Chrome 是否支持硬编解码。该信息大致如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decoding(VideoDecoder)</td>
+<td></td>
+</tr>
+<tr>
+<td>Decode h264 baseline</td>
+<td>16x16 to 4096x4096 pixels</td>
+</tr>
+<tr>
+<td>……</td>
+<td>……</td>
+</tr>
+<tr>
+<td>Encoding</td>
+<td></td>
+</tr>
+<tr>
+<td>Encode h264 baseline</td>
+<td>0x0 to 4096x2160 pixels, and/or 30.000 fps</td>
+</tr>
+<tr>
+<td>……</td>
+<td>……</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-chrome-flags">2. chrome://flags</h2>
+<p>根据 <code>chrome://gpu</code> 提供的信息，我们可以判断我们所使用的 Chrome 在视频编解码时的硬件支持能力。但是，需要注意的是，具备硬件编解码能力，不代表 Chrome 就可以硬件编解码。如果没有开启这些能力，自然是无法利用 Chrome 提供的这些能力的。</p>
+<p>因此，我们接下来需要判断，Chrome 是否开启了硬件编解码加速的能力，此时，我们可以使用 <code>chrome://flags</code> 来获取我们需要的信息。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition info"><p class="admonition-title">chrome://flags
+</p><p><a target="_blank" rel="noopener" href="https://beebom.com/chrome-flags-guide-to-enhance-web-browsing/"><strong>chrome://flags</strong> 是一组实验性功能和设置</a>，它们隐藏在 Chrome 中，供开发人员使用。这些实验性功能包括 Google 正在开发、但尚未为普通用户启用的功能。<strong>chrome://flags</strong> 可以提升我们的浏览体验，还可以让我们使用那些新的、开发中的功能。</p>
+</div>
+<p>在 <strong>chrome://flags</strong> 中，我们可以得到如下的信息：</p>
+<p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/2.png" alt></p>
+<p>从图中的信息，我们可以知道，对于当前的 Chrome 浏览器而言，Chrome 开启了视频的编解码硬件加速能力。</p>
+<h2 id="3-chrome-media-internals">3. chrome://media-internals</h2>
+<p>如上所述，对于播放的视频，根据视频属性以及 <code>chrome://gpu</code> 和 <code>chrome://flags</code> 提供的信息，我们可以大致判断出在播放该视频时，Chrome 是否使用了硬件解码。</p>
+<p>但是，我们要时刻提醒自己，目前为止我们的判断还仅仅是一种猜测而言，要想确切的判断 Chrome 是否使用了硬件解码，就需要获取 Chrome 播放视频时使用的解码器。此时，就该用到 <code>chrome://media-internals</code> 工具啦。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition info"><p class="admonition-title">chrome://media-internals 
+</p><p><a target="_blank" rel="noopener" href="https://www.chromium.org/audio-video/media-internals"><strong>chrome://media-internals</strong></a> 是一个研究 Chrome 音频/视频内部堆栈结构的工具。目前，<strong>chrome://media-internals</strong> 可以显示如下信息：</p>
+<ul>
+<li>从媒体堆栈中挖掘有关正在使用的媒体播放器的所有内容，包括已缓冲数据、视频属性、事件之间的测量时间和事件日志。</li>
+<li>当前音频流的状态和音量，这些信息不会与特定的 tab 关联。</li>
+<li>缓存活动信息，包括对媒体缓存的读取和写入。</li>
+</ul>
+</div>
+<p>待续》》》</p>
  
       <!-- reward -->
       
