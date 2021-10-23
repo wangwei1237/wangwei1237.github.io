@@ -302,7 +302,7 @@
     margin-bottom: 0 !important;
   }
   </style>
-<div class="admonition info"><p class="admonition-title">chrome://flags
+<div class="admonition note"><p class="admonition-title">chrome://flags
 </p><p><a href="https://beebom.com/chrome-flags-guide-to-enhance-web-browsing/"><strong>chrome://flags</strong> 是一组实验性功能和设置</a>，它们隐藏在 Chrome 中，供开发人员使用。这些实验性功能包括 Google 正在开发、但尚未为普通用户启用的功能。<strong>chrome://flags</strong> 可以提升我们的浏览体验，还可以让我们使用那些新的、开发中的功能。</p>
 </div>
 <p>在 <strong>chrome://flags</strong> 中，我们可以得到如下的信息：</p>
@@ -387,7 +387,7 @@
     margin-bottom: 0 !important;
   }
   </style>
-<div class="admonition info"><p class="admonition-title">chrome://media-internals 
+<div class="admonition note"><p class="admonition-title">chrome://media-internals 
 </p><p><a href="https://www.chromium.org/audio-video/media-internals"><strong>chrome://media-internals</strong></a> 是一个研究 Chrome 音频/视频内部堆栈结构的工具。目前，<strong>chrome://media-internals</strong> 可以显示如下信息：</p>
 <ul>
 <li>从媒体堆栈中挖掘有关正在使用的媒体播放器的所有内容，包括已缓冲数据、视频属性、事件之间的测量时间和事件日志。</li>
@@ -395,7 +395,56 @@
 <li>缓存活动信息，包括对媒体缓存的读取和写入。</li>
 </ul>
 </div>
-<p>待续》》》</p>
+<p>我们可以用 Chrome 浏览器播放 <a href="https://www.bilibili.com/video/BV1jh411n7d7?spm_id_from=333.6.0.0">B 站视频上的视频</a>，然后使用 <strong>chrome://media-internals</strong> 工具进行分析，如下图所示：</p>
+<p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/3.png" alt></p>
+<p>如上图所示，媒体播放器的所有信息都会以列表的形式展现，同时列表中的每一项都会展现该项对应的播放状态。因为视频正在播放中，因此我们选择状态为 <code>kPlay</code> 的项目来查看对应的媒体播放器的信息。<strong>Player Properties</strong> 信息展示了媒体播放器的详细属性，例如：</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>……</td>
+<td>……</td>
+</tr>
+<tr>
+<td>kVideoDecoderName</td>
+<td>VDAVideoDecoder</td>
+</tr>
+<tr>
+<td>kVideoTracks</td>
+<td>[{“alpha mode”:“is_opaque”,“codec”:“h264”,“coded size”:“1920x1080”,“color space”:&quot;{primaries:BT709, transfer:BT709, matrix:BT709, range:LIMITED}&quot;,“encryption scheme”:“Unencrypted”,“has extra data”:false,“hdr metadata”:“unset”,“natural size”:“1920x1080”,“orientation”:“0°”,“profile”:“h264 high”,“visible rect”:“0,0 1920x1080”}]</td>
+</tr>
+</tbody>
+</table>
+<p>根据 <a href="https://chromium.googlesource.com/chromium/src/+/39e7de240b63c0103078624d09130c4a990920d2/media/gpu/ipc/service/vda_video_decoder.h">VDAVideoDecoder</a> 的源码可以知道，VDAVideoDecoder 解码器是通过 MojoVideoDecoder 而运行于 GPU，因此我们可以确定，该 h264 编码的视频在播放时使用的是硬件解码。</p>
+<p>使用 Chrome 播放一个 8K 视频，然后使用 <strong>chrome://media-internals</strong> 工具进行分析，可以得到如下信息：</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>……</td>
+<td>……</td>
+</tr>
+<tr>
+<td>kVideoDecoderName</td>
+<td>Dav1dVideoDecoder</td>
+</tr>
+<tr>
+<td>kVideoTracks</td>
+<td>[{“alpha mode”:“is_opaque”,“codec”:“av1”,“coded size”:“7680x4320”,“color space”:&quot;{primaries:BT709, transfer:BT709, matrix:BT709, range:LIMITED}&quot;,“encryption scheme”:“Unencrypted”,“has extra data”:false,“hdr metadata”:“unset”,“natural size”:“7680x4320”,“orientation”:“0°”,“profile”:“av1 profile main”,“visible rect”:“0,0 7680x4320”}]</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://www.videolan.org/projects/dav1d.html">dav1d 解码器</a> 是一个跨平台的开源 AV1 解码器，因此，对于该 8K 视频而言，Chrome 在播放时使用的是 CPU 解码。</p>
 ]]></content>
       <categories>
         <category>视频技术</category>
