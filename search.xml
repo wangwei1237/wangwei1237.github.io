@@ -21,7 +21,111 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">time_base: 1&#x2F;2000</span><br><span class="line">framerate: 0&#x2F;0</span><br><span class="line">avg_framerate: 0&#x2F;0</span><br></pre></td></tr></table></figure>
 <p><em>r2d(ic-&gt;streams[video_stream]-&gt;avg_frame_rate)</em> 的结果为 0，所以 OpenCV 采用了 <em>1.0 / r2d(ic-&gt;streams[video_stream]-&gt;codec-&gt;time_base)</em> 来计算该视频的 fps。而 <em>ic-&gt;streams[video_stream]-&gt;codec-&gt;time_base = 1/2000</em>，因此，最终得到的 fps 是 2000。</p>
 <p>也就是说，AVStream-&gt;codec-&gt;time_base 的值导致了 OpenCV 得到一个看起来是错误的 fps。那么，AVStream-&gt;codec-&gt;time_base 为什么是这个数呢？FFMpeg 是怎么计算这个字段的呢？</p>
-<h2 id="ffmpeg-如何计算avstream-codec-time-base">FFMpeg 如何计算AVStream-&gt;codec-&gt;time_base</h2>
+<h2 id="ffmpeg-如何计算-avcodeccontext-time-base">FFMpeg 如何计算 AVCodecContext.time_base</h2>
+<p>AVStream-&gt;codec-&gt;time_base 是 AVCodecContext 中定义的 time_base，根据 <a href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/avcodec.h">libavcodec/avcodec.h</a> 中的定义，该字段的解释如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * This is the fundamental unit of time (in seconds) in terms</span></span><br><span class="line"><span class="comment">  * of which frame timestamps are represented. For fixed-fps content,</span></span><br><span class="line"><span class="comment">  * timebase should be 1/framerate and timestamp increments should be</span></span><br><span class="line"><span class="comment">  * identically 1.</span></span><br><span class="line"><span class="comment">  * This often, but not always is the inverse of the frame rate or field rate</span></span><br><span class="line"><span class="comment">  * for video. 1/time_base is not the average frame rate if the frame rate is not</span></span><br><span class="line"><span class="comment">  * constant.</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * Like containers, elementary streams also can store timestamps, 1/time_base</span></span><br><span class="line"><span class="comment">  * is the unit in which these timestamps are specified.</span></span><br><span class="line"><span class="comment">  * As example of such codec time base see ISO/IEC 14496-2:2001(E)</span></span><br><span class="line"><span class="comment">  * vop_time_increment_resolution and fixed_vop_rate</span></span><br><span class="line"><span class="comment">  * (fixed_vop_rate == 0 implies that it is different from the framerate)</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * - encoding: MUST be set by user.</span></span><br><span class="line"><span class="comment">  * - decoding: the use of this field for decoding is deprecated.</span></span><br><span class="line"><span class="comment">  *             Use framerate instead.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">AVRational time_base;</span><br></pre></td></tr></table></figure>
+<p>从中可以看出，对于解码而言，time_base 已经被废弃，需要使用 framerate 来替换 time_base。并且，对于固定帧率而言，time_base = 1/framerate，但是，并非总是如此。</p>
+<p>利用 <a href="https://github.com/shi-yan/H264Naked">H264Naked</a> 对 test.ts 对应的 H264 码流进行分析，我们得到SPS.Vui 信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">timing_info_present_flag :1</span><br><span class="line">num_units_in_tick :1</span><br><span class="line">time_scale :2000</span><br><span class="line">fixed_frame_rate_flag :0</span><br></pre></td></tr></table></figure>
+<p>从中可以看到，test.ts 是非固定帧率视频。从 <a href="https://github.com/wangwei1237/wangwei1237.github.io_src/blob/master/source/_posts/Why-OpenCV-Get-the-Wrong-FPS/test_time_base.cpp">test_time_base.cpp</a> 的结果看，test.ts 视频中，framerate = 0/0，而 time_base = 1/2000。难道，对于非固定帧率视频而言，time_base 和 framerate 之间没有关联？如果存在关联，那又是怎样的运算才能产生这种结果？这个 time_base 究竟是怎么计算的呢？究竟和 framerate 有没有关系呢？一连串的问题随之而来……</p>
+<p>源码面前，了无秘密。接下来，带着这个问题，我们来一起分析一下 FFMpeg 究竟是如何处理 time_base 的。</p>
+<h2 id="avformat-find-stream-info">avformat_find_stream_info</h2>
+<p>在 FFMpeg 中，<code>avformat_find_stream_info()</code> 会对 <code>ic-&gt;streams[video_stream]-&gt;codec</code> 进行初始化，因此，我们可以从 <code>avformat_find_stream_info()</code> 开始分析。</p>
+<p>从 <a href="https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/avformat.h">libavformat/avformat.h</a> 中，可以得知<code>avformat_open_input()</code>会打开视频流，从中读取相关的信息，然后存储在<code>AVFormatContext</code>中，但是有时候，此处获取的信息并不完整，因此需要调用<code>avformat_find_stream_info()</code>来获取更多的信息。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">* @section lavf_decoding_open Opening a media file</span><br><span class="line">* The minimum information required to open a file is its URL, which</span><br><span class="line">* is passed to avformat_open_input(), as in the following code:</span><br><span class="line">* @code</span><br><span class="line">* <span class="keyword">const</span> <span class="keyword">char</span>    *url = <span class="string">&quot;file:in.mp3&quot;</span>;</span><br><span class="line">* AVFormatContext *s = <span class="literal">NULL</span>;</span><br><span class="line">* <span class="keyword">int</span> ret = avformat_open_input(&amp;s, url, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">* <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">*     <span class="built_in">abort</span>();</span><br><span class="line">* @endcode</span><br><span class="line">* The above code attempts to allocate an AVFormatContext, open the</span><br><span class="line">* specified file (autodetecting the format) and read the header, exporting the</span><br><span class="line">* information stored there into s. Some formats <span class="keyword">do</span> <span class="keyword">not</span> have a header <span class="keyword">or</span> <span class="keyword">do</span> <span class="keyword">not</span></span><br><span class="line">* store enough information there, so it is recommended that you call the</span><br><span class="line">* avformat_find_stream_info() function which tries to read <span class="keyword">and</span> decode a few</span><br><span class="line">* frames to find missing information.</span><br></pre></td></tr></table></figure>
+<p>需要注意的是：<code>avformat_find_stream_info()</code> 会尝试通过解码部分视频帧来获取需要的信息。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Read packets of a media file to get stream information. This</span></span><br><span class="line"><span class="comment"> * is useful for file formats with no headers such as MPEG. This</span></span><br><span class="line"><span class="comment"> * function also computes the real framerate in case of MPEG-2 repeat</span></span><br><span class="line"><span class="comment"> * frame mode.</span></span><br><span class="line"><span class="comment"> * The logical file position is not changed by this function;</span></span><br><span class="line"><span class="comment"> * examined packets may be buffered for later processing.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param ic media file handle</span></span><br><span class="line"><span class="comment"> * @param options  If non-NULL, an ic.nb_streams long array of pointers to</span></span><br><span class="line"><span class="comment"> *                 dictionaries, where i-th member contains options for</span></span><br><span class="line"><span class="comment"> *                 codec corresponding to i-th stream.</span></span><br><span class="line"><span class="comment"> *                 On return each dictionary will be filled with options that were not found.</span></span><br><span class="line"><span class="comment"> * @return &gt;=0 if OK, AVERROR_xxx on error</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @note this function isn&#x27;t guaranteed to open all the codecs, so</span></span><br><span class="line"><span class="comment"> *       options being non-empty at return is a perfectly normal behavior.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @todo Let the user decide somehow what information is needed so that</span></span><br><span class="line"><span class="comment"> *       we do not waste time getting stuff the user does not need.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">avformat_find_stream_info</span><span class="params">(AVFormatContext *ic, AVDictionary **options)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>avformat_find_stream_info()</code> 的整体逻辑大致如下图所示，其中特别需要关注图中所示的 7 个步骤：<br>
+<img src="/2021/11/26/Why-OpenCV-Get-the-Wrong-FPS/2.png" alt></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">avformat_find_stream_info() 的几个重要步骤
+</p><ul>
+<li><strong>STEP 1</strong>. 设置线程数，避免 H264 多线程解码时没有把 SPS/PPS 信息提取到 extradata 的问题。</li>
+<li><strong>STEP 2</strong>. 设置 AVStream *st，st 会在后续的函数调用中一直透到 try_decode_frame()。</li>
+<li><strong>STEP 4</strong>. 设置 AVCodecContext *avctx 为透传的 st-&gt;internal-&gt;avctx，在后续的解码函数调用中，一直透传的就是这个 avctx，因此，从这里开始的执行流程，FFMpeg 使用的全部都是 st-&gt;internal-&gt;avctx，而不是st-&gt;codec，这里要特别的注意。此处同时会设置解码的线程数，其目的和 <em>STEP 1</em>是一致的。</li>
+<li><strong>STEP 5</strong>. 因为之前设置了解码线程数为 1，因此此处会调用 ret = avctx-&gt;codec-&gt;decode(avctx, frame, &amp;got_frame, pkt) 来解码并计算 avctx-&gt;framerate。注意，此处的 avctx 实际上是透传而来的 st-&gt;internal-&gt;avctx。这里先假定解码之后我们拿到了 framerate，具体的解码过程以及计算framerate 的逻辑我们在后续的章节继续介绍。</li>
+<li><strong>STEP 6</strong>. 根据解码器得到的 framerate 信息来计算 avctx-&gt;time_base，注意此处实际上是 st-&gt;internal-&gt;avctx-&gt;time_base。</li>
+<li><strong>STEP 7</strong>. 这一步可谓是“瞒天过海，明修栈道暗度陈仓”，这一步为了解决 API 的前向兼容，做了一个替换，把st-&gt;internal-&gt;avctx-&gt;time_base 赋值给了 st-&gt;codec-&gt;time_base，而把 st-&gt;avg_frame_rate 赋值给了 st-&gt;codec-&gt;framerate。</li>
+</ul>
+</div>
+<p>正是如上所示的 <em>STEP 7</em> 导致了 <a href="https://github.com/wangwei1237/wangwei1237.github.io_src/blob/master/source/_posts/Why-OpenCV-Get-the-Wrong-FPS/test_time_base.cpp">test_time_base.cpp</a> 的结果：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">st-&gt;codec-&gt;framerate: 0&#x2F;0</span><br><span class="line">st-&gt;codec-&gt;time_base: 1&#x2F;2000</span><br></pre></td></tr></table></figure>
+<h2 id="ff-h264-decoder">ff_h264_decoder</h2>
 ]]></content>
       <categories>
         <category>视频技术</category>
