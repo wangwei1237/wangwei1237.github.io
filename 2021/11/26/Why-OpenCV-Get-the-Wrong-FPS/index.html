@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.9k</span>
+            <span class="post-count">3k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">9 分钟</span>
+            <span class="post-count">15 分钟</span>
         </span>
     </span>
 </div>
@@ -141,7 +141,7 @@
 <p>AVStream-&gt;codec-&gt;time_base 是 AVCodecContext 中定义的 time_base，根据 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/avcodec.h">libavcodec/avcodec.h</a> 中的定义，该字段的解释如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * This is the fundamental unit of time (in seconds) in terms</span></span><br><span class="line"><span class="comment">  * of which frame timestamps are represented. For fixed-fps content,</span></span><br><span class="line"><span class="comment">  * timebase should be 1/framerate and timestamp increments should be</span></span><br><span class="line"><span class="comment">  * identically 1.</span></span><br><span class="line"><span class="comment">  * This often, but not always is the inverse of the frame rate or field rate</span></span><br><span class="line"><span class="comment">  * for video. 1/time_base is not the average frame rate if the frame rate is not</span></span><br><span class="line"><span class="comment">  * constant.</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * Like containers, elementary streams also can store timestamps, 1/time_base</span></span><br><span class="line"><span class="comment">  * is the unit in which these timestamps are specified.</span></span><br><span class="line"><span class="comment">  * As example of such codec time base see ISO/IEC 14496-2:2001(E)</span></span><br><span class="line"><span class="comment">  * vop_time_increment_resolution and fixed_vop_rate</span></span><br><span class="line"><span class="comment">  * (fixed_vop_rate == 0 implies that it is different from the framerate)</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * - encoding: MUST be set by user.</span></span><br><span class="line"><span class="comment">  * - decoding: the use of this field for decoding is deprecated.</span></span><br><span class="line"><span class="comment">  *             Use framerate instead.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">AVRational time_base;</span><br></pre></td></tr></table></figure>
 <p>从中可以看出，对于解码而言，time_base 已经被废弃，需要使用 framerate 来替换 time_base。并且，对于固定帧率而言，time_base = 1/framerate，但是，并非总是如此。</p>
-<p>利用 <a target="_blank" rel="noopener" href="https://github.com/shi-yan/H264Naked">H264Naked</a> 对 test.ts 对应的 H264 码流进行分析，我们得到SPS.Vui 信息：</p>
+<p>利用 <a target="_blank" rel="noopener" href="https://github.com/shi-yan/H264Naked">H264Naked</a> 对 test.ts 对应的 H264 码流进行分析，我们得到 <a name="sps">SPS.Vui</a> 信息：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">timing_info_present_flag :1</span><br><span class="line">num_units_in_tick :1</span><br><span class="line">time_scale :2000</span><br><span class="line">fixed_frame_rate_flag :0</span><br></pre></td></tr></table></figure>
 <p>从中可以看到，test.ts 是非固定帧率视频。从 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io_src/blob/master/source/_posts/Why-OpenCV-Get-the-Wrong-FPS/test_time_base.cpp">test_time_base.cpp</a> 的结果看，test.ts 视频中，framerate = 0/0，而 time_base = 1/2000。难道，对于非固定帧率视频而言，time_base 和 framerate 之间没有关联？如果存在关联，那又是怎样的运算才能产生这种结果？这个 time_base 究竟是怎么计算的呢？究竟和 framerate 有没有关系呢？一连串的问题随之而来……</p>
 <p>源码面前，了无秘密。接下来，带着这个问题，我们来一起分析一下 FFMpeg 究竟是如何处理 time_base 的。</p>
@@ -233,15 +233,202 @@
 </p><ul>
 <li><strong>STEP 1</strong>. 设置线程数，避免 H264 多线程解码时没有把 SPS/PPS 信息提取到 extradata 的问题。</li>
 <li><strong>STEP 2</strong>. 设置 AVStream *st，st 会在后续的函数调用中一直透到 try_decode_frame()。</li>
-<li><strong>STEP 4</strong>. 设置 AVCodecContext *avctx 为透传的 st-&gt;internal-&gt;avctx，在后续的解码函数调用中，一直透传的就是这个 avctx，因此，从这里开始的执行流程，FFMpeg 使用的全部都是 st-&gt;internal-&gt;avctx，而不是st-&gt;codec，这里要特别的注意。此处同时会设置解码的线程数，其目的和 <em>STEP 1</em>是一致的。</li>
-<li><strong>STEP 5</strong>. 因为之前设置了解码线程数为 1，因此此处会调用 ret = avctx-&gt;codec-&gt;decode(avctx, frame, &amp;got_frame, pkt) 来解码并计算 avctx-&gt;framerate。注意，此处的 avctx 实际上是透传而来的 st-&gt;internal-&gt;avctx。这里先假定解码之后我们拿到了 framerate，具体的解码过程以及计算framerate 的逻辑我们在后续的章节继续介绍。</li>
-<li><strong>STEP 6</strong>. 根据解码器得到的 framerate 信息来计算 avctx-&gt;time_base，注意此处实际上是 st-&gt;internal-&gt;avctx-&gt;time_base。</li>
-<li><strong>STEP 7</strong>. 这一步可谓是“瞒天过海，明修栈道暗度陈仓”，这一步为了解决 API 的前向兼容，做了一个替换，把st-&gt;internal-&gt;avctx-&gt;time_base 赋值给了 st-&gt;codec-&gt;time_base，而把 st-&gt;avg_frame_rate 赋值给了 st-&gt;codec-&gt;framerate。</li>
+<li><a name="step4"><strong>STEP 4</strong></a>. 设置 AVCodecContext *avctx 为透传的 st-&gt;internal-&gt;avctx，在后续的解码函数调用中，一直透传的就是这个 avctx，因此，从这里开始的执行流程，FFMpeg 使用的全部都是 st-&gt;internal-&gt;avctx，而不是st-&gt;codec，这里要特别的注意。此处同时会设置解码的线程数，其目的和 <em>STEP 1</em>是一致的。</li>
+<li><a name="step5"><strong>STEP 5</strong></a>. 因为之前设置了解码线程数为 1，因此此处会调用 ret = avctx-&gt;codec-&gt;decode(avctx, frame, &amp;got_frame, pkt) 来解码并计算 avctx-&gt;framerate。注意，此处的 avctx 实际上是透传而来的 st-&gt;internal-&gt;avctx。这里先假定解码之后我们拿到了 framerate，具体的解码过程以及计算framerate 的逻辑我们在后续的章节继续介绍。</li>
+<li><a name="step6"><strong>STEP 6</strong></a>. 根据解码器得到的 framerate 信息来计算 avctx-&gt;time_base，注意此处实际上是 st-&gt;internal-&gt;avctx-&gt;time_base。
+根据 <a href="#framerate">下文 framerate 的计算</a>可知，此处 framerate = {1000, 1}。
+根据 <a href="#ticks_per_frame">AVCodecContext.ticks_per_frame</a> 可知，ticks_per_frame = 2。
+因此，此处 avctx-&gt;time_base = {1, 2000}：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">avctx-&gt;time_base = av_inv_q(av_mul_q({1000, 1}, {2, 1})) = {1, 2000}</span><br></pre></td></tr></table></figure></li>
+<li><strong>STEP 7</strong>. 这一步可谓是“瞒天过海，明修栈道暗度陈仓”，这一步为了解决 API 的前向兼容，做了一个替换，把st-&gt;internal-&gt;avctx-&gt;time_base 赋值给了 st-&gt;codec-&gt;time_base，而把 st-&gt;avg_frame_rate 赋值给了 st-&gt;codec-&gt;framerate。因此：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">st-&gt;codec-&gt;time_base = {1, 2000}</span><br><span class="line">st-&gt;codec-&gt;framerate = {0, 0}</span><br></pre></td></tr></table></figure>
+而st-&gt;codec-&gt;time_base 的计算和 st-&gt;codec-&gt;framerate 之间没有任何关系，而是和 st-&gt;internal-&gt;avctx-&gt;framerate 有关，本质而言，是和如下数据有关：sps.vui.time_scale，sps.vui.num_units_in_tick，st-&gt;avctx-&gt;ticks_per_frame。</li>
 </ul>
 </div>
 <p>正是如上所示的 <em>STEP 7</em> 导致了 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io_src/blob/master/source/_posts/Why-OpenCV-Get-the-Wrong-FPS/test_time_base.cpp">test_time_base.cpp</a> 的结果：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">st-&gt;codec-&gt;framerate: 0&#x2F;0</span><br><span class="line">st-&gt;codec-&gt;time_base: 1&#x2F;2000</span><br></pre></td></tr></table></figure>
 <h2 id="ff-h264-decoder">ff_h264_decoder</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/decode.c">libavcodec/decode.c</a> 中的 <code>decode_simple_internal()</code> 中会调用对应的解码器来进行解码（<a href="#step5">STPE 5</a>）。而正如前所示，test.ts 为 H264 编码的视频流，因此，此处会调用 H264 解码器来进行解码。在 FFMpeg 中，H264 解码器位于 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/h264dec.c">libavcodec/h264dec.c</a> 中定义的 <code>const AVCodec ff_h264_decoder</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> AVCodec ff_h264_decoder = &#123;</span><br><span class="line">    .name                  = <span class="string">&quot;h264&quot;</span>,</span><br><span class="line">    .type                  = AVMEDIA_TYPE_VIDEO,</span><br><span class="line">    .id                    = AV_CODEC_ID_H264,</span><br><span class="line">    .priv_data_size        = <span class="keyword">sizeof</span>(H264Context),</span><br><span class="line">    .init                  = h264_decode_init,</span><br><span class="line">    .close                 = h264_decode_end,</span><br><span class="line">    .decode                = h264_decode_frame,</span><br><span class="line">    ......</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在上文图中的 <a href="#step5">STPE 5</a> 中，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ret = avctx-&gt;codec-&gt;decode(avctx, frame, &amp;got_frame, pkt);</span><br></pre></td></tr></table></figure>
+<p>实际调用的就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ff_h264_decoder-&gt;h264_decode_frame(avctx, frame, &amp;got_frame, pkt);</span><br></pre></td></tr></table></figure>
+<p>而此处的 avctx 也就是 try_decode_frame() 中的透传下来的 st-&gt;internal-&gt;avctx，即上文图中的 <a href="#step4">STEP 4</a>。</p>
+<h2 id="h264-decode-frame">h264_decode_frame</h2>
+<p><code>h264_decode_frame()</code> 的整体逻辑如下图所示：</p>
+<p><img src="/2021/11/26/Why-OpenCV-Get-the-Wrong-FPS/3.png" alt></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title"><a name="ticks_per_frame">AVCodecContext.ticks_per_frame</a>
+</p><p>后面会用到 <code>ticks_per_frame</code> 来计算 framerate，当然在 <a href="#step6">STEP 6</a> 中计算 <code>time_base</code> 的时候也用到了该值，因此，有必要做一下特殊说明。在 H264 解码器中，<code>ticks_per_frame</code> 的值为 2，具体的取值可以从如下几处得知：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/avcodec.h">libavcodec/avcodec.h</a> 中的字段说明：
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * For some codecs, the time base is closer to the field rate than the frame rate.</span></span><br><span class="line"><span class="comment"> * Most notably, H.264 and MPEG-2 specify time_base as half of frame duration</span></span><br><span class="line"><span class="comment"> * if no telecine is used ...</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Set to time_base ticks per frame. Default 1, e.g., H.264/MPEG-2 set it to 2.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">int</span> ticks_per_frame;</span><br></pre></td></tr></table></figure></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/h264dec.c">libavcodec/h264dec.c</a> 中的 <code>h264_decode_init()</code>：
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">avctx-&gt;ticks_per_frame = <span class="number">2</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</div>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">h264_decode_frame() 的几个重要步骤
+</p><ul>
+<li>STEP 1. 根据整体的计算流程可知，此处的 <code>h</code> 实际上就是 <code>avformat_find_stream_info()</code> 中的 <code>st-&gt;internal-&gt;avctx-&gt;priv_data</code>。<code>h</code> 会一直透传到之后的所有流程，这个务必要注意。</li>
+<li>STEP 2. 此处会首先获取到 <code>sps</code> 的相关信息，以备后续的计算使用，我们可以再次看一下 <a href="#sps">test.ts sps</a> 的相关信息。
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">timing_info_present_flag :1</span><br><span class="line">num_units_in_tick :1</span><br><span class="line">time_scale :2000</span><br><span class="line">fixed_frame_rate_flag :0</span><br></pre></td></tr></table></figure></li>
+<li>STEP 3. 根据 <code>sps</code> 的相关信息计算 framerate，在上文的 <a href="#step6">STEP 6</a> 中计算 <code>time_base</code> 用到的 <code>framerate</code> 就是在此处计算的。因为 <code>timing_info_present_flag = 1</code>，因此会执行计算 <a name="framerate"><code>framerate</code></a> 的逻辑：
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">avctx-&gt;framerate.den = sps-&gt;num_units_in_tick * h-&gt;avctx-&gt;ticks_per_frame = <span class="number">1</span> * <span class="number">2</span> = <span class="number">2</span></span><br><span class="line">avctx-&gt;framerate.num = sps-&gt;time_scale = <span class="number">2000</span></span><br><span class="line">avctx-&gt;framerate = (AVRational){<span class="number">1000</span>, <span class="number">1</span>}</span><br></pre></td></tr></table></figure>
+因此，<code>st-&gt;internal-&gt;avctx-&gt;framerate = &#123;1000, 1&#125;</code>。</li>
+</ul>
+</div>
  
       <!-- reward -->
       
