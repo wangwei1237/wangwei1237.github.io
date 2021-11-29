@@ -228,6 +228,7 @@
 <p>从如上的分析可以知道：
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line">avctx-&gt;framerate = <span class="number">1</span> / (avctx-&gt;time_base * avctx-&gt;ticks_per_frame)</span><br></pre></td></tr></table></figure>
 因此，当 <strong>st-&gt;avg_frame_rate = 0</strong> 时，<a href="#opencv-framerate">OpenCV 计算 fps 的逻辑</a> 是错误的。</p>
+<p>在 H265 中，<strong>ticks_per_frame = 1</strong>，因此对于 H265 的编码，OpenCV 是没有这个问题的。可以使用 <a href="https://www.dektec.com/products/applications/Zond/">Zond 265</a> 工具来分析一个 H265 的视频码流，然后对照 OpenCV 以及 FFMpeg 的结果来验证。</p>
 </div>
 <p>同时，正是如上所示的 <em><a href="#step7">STEP 7</a></em> 中的移花接木导致了 <a href="https://github.com/wangwei1237/wangwei1237.github.io_src/blob/master/source/_posts/Why-OpenCV-Get-the-Wrong-FPS/test_time_base.cpp">test_time_base.cpp</a> 的结果：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">st-&gt;codec-&gt;framerate: 0&#x2F;0</span><br><span class="line">st-&gt;codec-&gt;time_base: 1&#x2F;2000</span><br></pre></td></tr></table></figure>
