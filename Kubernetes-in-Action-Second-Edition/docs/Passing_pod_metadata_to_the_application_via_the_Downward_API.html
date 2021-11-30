@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>1.3 Introducing Kubernetes into your organization · Kubernetes实战（第二版）</title>
+        <title>9.4 Passing pod metadata to the application via the Downward API · Kubernetes实战（第二版）</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -65,10 +65,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="Summary_1.html" />
+    <link rel="next" href="Using_projected_volumes_to_combine_volumes_into_one.html" />
     
     
-    <link rel="prev" href="Understanding_Kubernetes.html" />
+    <link rel="prev" href="Using_Secrets_to_pass_sensitive_data_to_containers.html" />
     
 
     </head>
@@ -186,7 +186,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="3.1.3" data-path="Introducing_Kubernetes_into_your_organization.html">
+        <li class="chapter " data-level="3.1.3" data-path="Introducing_Kubernetes_into_your_organization.html">
             
                 <a href="Introducing_Kubernetes_into_your_organization.html">
             
@@ -852,7 +852,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.6.4" data-path="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
+        <li class="chapter active" data-level="4.6.4" data-path="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
             
                 <a href="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
             
@@ -926,7 +926,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >1.3 Introducing Kubernetes into your organization</a>
+        <a href=".." >9.4 Passing pod metadata to the application via the Downward API</a>
     </h1>
 </div>
 
@@ -941,57 +941,137 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="13-introducing-kubernetes-into-your-organization">1.3 Introducing Kubernetes into your organization</h1>
-<p>To close this chapter, let&#x2019;s see what options are available to you if you decide to introduce Kubernetes in your own IT environment.</p>
-<h2 id="running-kubernetes-on-premises-and-in-the-cloud">Running Kubernetes on-premises and in the cloud</h2>
-<p>If you want to run your applications on Kubernetes, you have to decide whether you want to run them locally, in your organization&#x2019;s own infrastructure (on-premises) or with one of the major cloud providers, or perhaps both - in a hybrid cloud solution.</p>
-<h3 id="running-kubernetes-on-premises">Running Kubernetes on-premises</h3>
-<p>Running Kubernetes on your own infrastructure may be your only option if regulations require you to run applications on site. This usually means that you&#x2019;ll have to manage Kubernetes yourself, but we&#x2019;ll come to that later.</p>
-<p>Kubernetes can run directly on your bare-metal machines or in virtual machines running in your data center. In either case, you won&#x2019;t be able to scale your cluster as easily as when you run it in virtual machines provided by a cloud provider.</p>
-<h3 id="deploying-kubernetes-in-the-cloud">Deploying Kubernetes in the cloud</h3>
-<p>If you have no on-premises infrastructure, you have no choice but to run Kubernetes in the cloud. This has the advantage that you can scale your cluster at any time at short notice if required. As mentioned earlier, Kubernetes itself can ask the cloud provider to provision additional virtual machines when the current size of the cluster is no longer sufficient to run all the applications you want to deploy.</p>
-<p>When the number of workloads decreases and some worker nodes are left without running workloads, Kubernetes can ask the cloud provider to destroy the virtual machines of these nodes to reduce your operational costs. This elasticity of the cluster is certainly one of the main benefits of running Kubernetes in the cloud.</p>
-<h3 id="using-a-hybrid-cloud-solution">Using a hybrid cloud solution</h3>
-<p>A more complex option is to run Kubernetes on-premises, but also allow it to spill over into the cloud. It&#x2019;s possible to configure Kubernetes to provision additional nodes in the cloud if you exceed the capacity of your own data center. This way, you get the best of both worlds. Most of the time, your applications run locally without the cost of virtual machine rental, but in short periods of peak load that may occur only a few times a year, your applications can handle the extra load by using the additional resources in the cloud.</p>
-<p>If your use-case requires it, you can also run a Kubernetes cluster across multiple cloud providers or a combination of any of the options mentioned. This can be done using a single control plane or one control plane in each location.</p>
-<h2 id="to-manage-or-not-to-manage-kubernetes-yourself">To manage or not to manage Kubernetes yourself</h2>
-<p>If you are considering introducing Kubernetes in your organization, the most important question you need to answer is whether you&#x2019;ll manage Kubernetes yourself or use a Kubernetes-as-a-Service type offering where someone else manages it for you.</p>
-<h3 id="managing-kubernetes-yourself">Managing Kubernetes yourself</h3>
-<p>If you already run applications on-premises and have enough hardware to run a production-ready Kubernetes cluster, your first instinct is probably to deploy and manage it yourself. If you ask anyone in the Kubernetes community if this is a good idea, you&#x2019;ll usually get a very definite &#x201C;no&#x201D;.</p>
-<p>Figure 1.14 was a very simplified representation of what happens in a Kubernetes cluster when you deploy an application. Even that figure should have scared you. Kubernetes brings with it an enormous amount of additional complexity. Anyone who wants to run a Kubernetes cluster must be intimately familiar with its inner workings.</p>
-<p>The management of production-ready Kubernetes clusters is a multi-billion-dollar industry. Before you decide to manage one yourself, it&#x2019;s essential that you consult with engineers who have already done it to learn about the issues most teams run into. If you don&#x2019;t, you may be setting yourself up for failure. On the other hand, trying out Kubernetes for non-production use-cases or using a managed Kubernetes cluster is much less problematic.</p>
-<h3 id="using-a-managed-kubernetes-cluster-in-the-cloud">Using a managed Kubernetes cluster in the cloud</h3>
-<p>Using Kubernetes is ten times easier than managing it. Most major cloud providers now offer Kubernetes-as-a-Service. They take care of managing Kubernetes and its components while you simply use the Kubernetes API like any of the other APIs the cloud provider offers.</p>
-<p>The top managed Kubernetes offerings include the following:</p>
-<ul>
-<li>Google Kubernetes Engine (GKE)</li>
-<li>Azure Kubernetes Service (AKS)</li>
-<li>Amazon Elastic Kubernetes Service (EKS)</li>
-<li>IBM Cloud Kubernetes Service</li>
-<li>Red Hat OpenShift Online and Dedicated</li>
-<li>VMware Cloud PKS</li>
-<li>Alibaba Cloud Container Service for Kubernetes (ACK)</li>
-</ul>
-<p>The first half of this book focuses on just using Kubernetes. You&#x2019;ll run the exercises in a local development cluster and on a managed GKE cluster, as I find it&#x2019;s the easiest to use and offers the best user experience. The second part of the book gives you a solid foundation for managing Kubernetes, but to truly master it, you&#x2019;ll need to gain additional experience.</p>
-<h2 id="using-vanilla-or-extended-kubernetes">Using vanilla or extended Kubernetes</h2>
-<p>The final question is whether to use a vanilla open-source version of Kubernetes or an extended, enterprise-quality Kubernetes product.</p>
-<h3 id="using-a-vanilla-version-of-kubernetes">Using a vanilla version of Kubernetes</h3>
-<p>The open-source version of Kubernetes is maintained by the community and represents the cutting edge of Kubernetes development. This also means that it may not be as stable as the other options. It may also lack good security defaults. Deploying the vanilla version requires a lot of fine tuning to set everything up for production use.</p>
-<h3 id="using-enterprise-grade-kubernetes-distributions">Using enterprise-grade Kubernetes distributions</h3>
-<p>A better option for using Kubernetes in production is to use an enterprise-quality Kubernetes distribution such as OpenShift or Rancher. In addition to the increased security and performance provided by better defaults, they offer additional object types in addition to those provided in the upstream Kubernetes API. For example, vanilla Kubernetes does not contain object types that represent cluster users, whereas commercial distributions do. They also provide additional software tools for deploying and managing well-known third-party applications on Kubernetes.</p>
-<p>Of course, extending and hardening Kubernetes takes time, so these commercial Kubernetes distributions usually lag one or two versions behind the upstream version of Kubernetes. It&#x2019;s not as bad as it sounds. The benefits usually outweigh the disadvantages.</p>
-<h2 id="should-you-even-use-kubernetes">Should you even use Kubernetes?</h2>
-<p>I hope this chapter has made you excited about Kubernetes and you can&#x2019;t wait to squeeze it into your IT stack. But to close this chapter properly, we need to say a word or two about when introducing Kubernetes is not a good idea.</p>
-<h3 id="do-your-workloads-require-automated-management">Do your workloads require automated management?</h3>
-<p>The first thing you need to be honest about is whether you need to automate the management of your applications at all. If your application is a large monolith, you definitely don&#x2019;t need Kubernetes.</p>
-<p>Even if you deploy microservices, using Kubernetes may not be the best option, especially if the number of your microservices is very small. It&#x2019;s difficult to provide an exact number when the scales tip over, since other factors also influence the decision. But if your system consists of less than five microservices, throwing Kubernetes into the mix is probably not a good idea. If your system has more than twenty microservices, you will most likely benefit from the integration of Kubernetes. If the number of your microservices falls somewhere in between, other factors, such as the ones described next, should be considered.</p>
-<h3 id="can-you-afford-to-invest-your-engineers-time-into-learning-kubernetes">Can you afford to invest your engineers&#x2019; time into learning Kubernetes?</h3>
-<p>Kubernetes is designed to allow applications to run without them knowing that they are running in Kubernetes. While the applications themselves don&#x2019;t need to be modified to run in Kubernetes, development engineers will inevitably spend a lot of time learning how to use Kubernetes, even though the operators are the only ones that actually need that knowledge.</p>
-<p>It would be hard to tell your teams that you&#x2019;re switching to Kubernetes and expect only the operations team to start exploring it. Developers like shiny new things. At the time of writing, Kubernetes is still a very shiny thing.</p>
-<h3 id="are-you-prepared-for-increased-costs-in-the-interim">Are you prepared for increased costs in the interim?</h3>
-<p>While Kubernetes reduces long-term operational costs, introducing Kubernetes in your organization initially involves increased costs for training, hiring new engineers, building and purchasing new tools and possibly additional hardware. Kubernetes requires additional computing resources in addition to the resources that the applications use.</p>
-<h3 id="dont-believe-the-hype">Don&#x2019;t believe the hype</h3>
-<p>Although Kubernetes has been around for several years at the time of writing this book, I can&#x2019;t say that the hype phase is over. The initial excitement has just begun to calm down, but many engineers may still be unable to make rational decisions about whether the integration of Kubernetes is as necessary as it seems.</p>
+                                <h1 id="94-passing-pod-metadata-to-the-application-via-the-downward-api">9.4 Passing pod metadata to the application via the Downward API</h1>
+<p>So far in this chapter, you&#x2019;ve learned how to pass configuration data to your application. But that data was always static. The values were known before you deployed the pod, and if you deployed multiple pod instances, they would all use the same values.</p>
+<p>But what about data that isn&#x2019;t known until the pod is created and scheduled to a cluster node, such as the IP of the pod, the name of the cluster node, or even the name of the pod itself? And what about data that is already specified elsewhere in the pod manifest, such as the amount of CPU and memory that is allocated to the container? Good engineers never want to repeat themselves.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>You&#x2019;ll learn how to specify the container&#x2019;s CPU and memory limits in chapter 20.</p>
+</div></div></p>
+<h2 id="941-introducing-the-downward-api">9.4.1 Introducing the Downward API</h2>
+<p>In the remaining chapters of the book, you&#x2019;ll learn about many additional configuration options that you can set in your pods. There are cases where you need to pass the same information to your application. You could repeat this information when defining the container&#x2019;s environment variable, but a better option is to use what&#x2019;s called the Kubernetes Downward API, which allows you to expose pod and container metadata via environment variables or files.</p>
+<h4 id="understanding-what-the-downward-api-is">Understanding what the Downward API is</h4>
+<p>The Downward API isn&#x2019;t a REST endpoint that your app needs to call to get the data. It&#x2019;s simply a way to inject values from the pod&#x2019;s metadata, spec, or status fields down into the container. Hence the name. An illustration of the Downward API is shown in the following figure.</p>
+<p>Figure 9.7 The Downward API exposes pod metadata through environment variables or files.</p>
+<p><img src="../images/9.7.png" alt=""></p>
+<p>As you can see, this is no different from setting environment variables or projecting files from config maps and secrets, except that the values come from the pod object itself.</p>
+<h4 id="understanding-how-the-metadata-is-injected">Understanding how the metadata is injected</h4>
+<p>Earlier in the chapter, you learned that you initialize environment variables from external sources using the valueFrom field. To get the value from a config map, use the configMapKeyRef field, and to get it from a secret, use secretKeyRef. To instead use the Downward API to source the value from the pod object itself, use either the fieldRef or the resourceFieldRef field, depending on what information you want to inject. The former is used to refer to the pod&#x2019;s general metadata, whereas the latter is used to refer to the container&#x2019;s compute resource constraints.</p>
+<p>Alternatively, you can project the pod&#x2019;s metadata as files into the container&#x2019;s filesystem by adding a downwardAPI volume to the pod, just as you&#x2019;d add a configMap or secret volume. You&#x2019;ll learn how to do this soon, but first let&#x2019;s see what information you can inject.</p>
+<h4 id="understanding-what-metadata-can-be-injected">Understanding what metadata can be injected</h4>
+<p>You can&#x2019;t use the Downward API to inject any field from the pod object. Only certain fields are supported. The following table shows the fields you can inject via fieldRef, and whether they can only be exposed via environment variables, files, or both.</p>
+<p>Table 9.5 Downward API fields injected via the fieldRef field
+|Field|Description|Allowed in env|Allowed in volume|
+|metadata.name||The pod&#x2019;s name.|Yes|Yes|
+|metadata.namespace|The pod&#x2019;s namespace.|Yes|Yes|
+|metadata.uid|The pod&#x2019;s UID.|Yes|Yes|
+|metadata.labels|All the pod&#x2019;s labels, one label per line, formatted as key=&#x201D;value&#x201D;.|No|Yes|
+|metadata.labels[&apos;key&apos;]|The value of the specified label.|Yes|Yes|
+|metadata.annotations|All the pod&#x2019;s annotations, one per line, formatted as key=&#x201D;value&#x201D;.|No|Yes|
+|metadata.annotations[&apos;key&apos;]|The value of the specified annotation.|Yes|Yes|
+|spec.nodeName|The name of the worker node the pod runs on.|Yes|No|
+|spec.serviceAccountName|The name of the pod&#x2019;s service account.|Yes|No|
+|status.podIP|The pod&#x2019;s IP address.|Yes|No|
+|status.hostIP|The worker node&#x2019;s IP address.|Yes|No|</p>
+<p>You may not know most of these fields yet, but you will in the remaining chapters of this book. As you can see, some fields can only be injected into environment variables, whereas others can only be projected into files. Some allow doing both.</p>
+<p>Information about the container&#x2019;s computational resource constraints is injected via the resourceFieldRef field. They can all be injected into environment variables and via a downwardAPI volume. The following table lists them.</p>
+<p>Table 9.6 Downward API resource fields injected via the resourceFieldRef field
+|Resource field|Description|Allowed in env|Allowed in vol|
+|requests.cpu|The container&#x2019;s CPU request.|Yes|Yes|
+|requests.memory|The container&#x2019;s memory request.|Yes|Yes|
+|requests.ephemeral-storage|The container&#x2019;s ephemeral storage request.|Yes|Yes|
+|limits.cpu|The container&#x2019;s CPU limit.|Yes|Yes|
+|limits.memory|The container&#x2019;s memory limit.|Yes|Yes|
+|limits.ephemeral-storage|The container&#x2019;s ephemeral storage limit.|Yes|Yes|</p>
+<p>You&#x2019;ll learn what resource requests and limits are in chapter 20, which explains how to constrain the compute resources available to a container.</p>
+<p>The book&#x2019;s code repository contains the file pod.downward-api-test.yaml, which defines a pod that uses the Downward API to inject each supported field into both environment variables and files. You can deploy the pod and then look in its container log to see what was injected.</p>
+<p>A practical example of using the Downward API in the Kiada application is presented next.</p>
+<h2 id="942-injecting-pod-metadata-into-environment-variables">9.4.2 Injecting pod metadata into environment variables</h2>
+<p>At the beginning of this chapter, a new version of the Kiada application was introduced. The application now includes the pod and node names and their IP addresses in the HTTP response. You&#x2019;ll make this information available to the application through the Downward API.</p>
+<h4 id="injecting-pod-object-fields">Injecting pod object fields</h4>
+<p>The application expects the pod&#x2019;s name and IP, as well as the node name and IP, to be passed to it via the environment variables POD_NAME, POD_IP, NODE_NAME, and NODE_IP, respectively. The following listing uses the Downward API to set them.</p>
+<p>Listing 9.19 Using the Downward API in environment variables: kiada-1.2.yaml</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: kiada-ssl
+spec:
+  ...
+  containers:
+  - name: kiada
+    image: luksa/kiada:0.4
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: NODE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+    - name: NODE_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    ports:
+    ...
+</code></pre><p>After you create this pod, you can examine its log using kubectl logs. The application prints the values of the three environment variables at startup. You can also send a request to the application and you should get a response like the following:</p>
+<pre><code class="lang-shell">Request processed by Kiada 0.4 running in pod &quot;kiada-ssl&quot; on node &quot;kind-worker&quot;. 
+Pod hostname: kiada-ssl; Pod IP: 10.244.2.15; Node IP: 172.18.0.4. Client IP: ::ffff:127.0.0.1.
+</code></pre>
+<p>Compare the values in the response with the field values in the YAML definition of the Pod object by running the command kubectl get po kiada-ssl -o yaml. Alternatively, you can compare them with the output of the following commands:</p>
+<pre><code class="lang-shell">$ kubectl get po kiada-ssl -o wide
+NAME    READY   STATUS    RESTARTS   AGE     IP            NODE         ...
+kiada   1/1     Running   0          7m41s   10.244.2.15   kind-worker  ... 
+
+$ kubectl get node kind-worker -o wide
+NAME          STATUS   ROLES    AGE   VERSION   INTERNAL-IP   ...  
+kind-worker   Ready    &lt;none&gt;   26h   v1.19.1   172.18.0.4    ...
+</code></pre>
+<p>You can also inspect the container&#x2019;s environment by running kubectl exec kiada-ssl -- env.</p>
+<h4 id="injecting-container-resource-fields">Injecting container resource fields</h4>
+<p>Even if you haven&#x2019;t yet learned how to constrain the compute resources available to a container, let&#x2019;s take a quick look at how to pass those constraints to the application when it needs them.</p>
+<p>Chapter 20 explains how to set the number of CPU cores and the amount of memory a container may consume. These settings are called CPU and memory resource limits. Kubernetes ensures that the container can&#x2019;t use more than the allocated amount.</p>
+<p>Some applications need to know how much CPU time and memory they have been given to run optimally within the given constraints. That&#x2019;s another thing the Downward API is for. The following listing shows how to expose the CPU and memory limits in environment variables.</p>
+<p>Listing 9.20 Pod with a downwardAPI volume: downward-api-volume.yaml</p>
+<pre><code>env:
+    - name: MAX_CPU_CORES
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.cpu
+    - name: MAX_MEMORY_KB
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.memory
+          divisor: 1k
+</code></pre><p>To inject container resource fields, the field resourceFieldRef is used. The resource field specifies the resource value that is injected.</p>
+<p>Each resourceFieldRef can also specify a divisor. It specifies which unit to use for the value. In the listing, the divisor is set to 1k. This means that the memory limit value is divided by 1000 and the result is then stored in the environment variable. So, the memory limit value in the environment variable will use kilobytes as the unit. If you don&#x2019;t specify a divisor, as is the case in the MAX_CPU_CORES variable definition in the listing, the value defaults to 1.</p>
+<p>The divisor for memory limits/requests can be 1 (byte), 1k (kilobyte) or 1Ki (kibibyte), 1M (megabyte) or 1Mi (mebibyte), and so on. The default divisor for CPU is 1, which is a whole core, but you can also set it to 1m, which is a milli core or a thousandth of a core.</p>
+<p>Because environment variables are defined within a container definition, the resource constraints of the enclosing container are used by default. In cases where a container needs to know the resource limits of another container in the pod, you can specify the name of the other container using the containerName field within resourceFieldRef.</p>
+<h2 id="943-using-a-downwardapi-volume-to-expose-pod-metadata-as-files">9.4.3 Using a downwardAPI volume to expose pod metadata as files</h2>
+<p>As with config maps and secrets, pod metadata can also be projected as files into the container&#x2019;s filesystem using the downwardAPI volume type.</p>
+<p>Suppose you want to expose the name of the pod in the /pod-metadata/pod-name file inside the container. The following listing shows the volume and volumeMount definitions you&#x2019;d add to the pod.</p>
+<p>Listing 9.21 Injecting pod metadata into the container&#x2019;s filesystem</p>
+<pre><code>...
+  volumes:
+  - name: pod-meta
+    downwardAPI:
+      items:
+      - path: pod-name.txt
+        fieldRef:
+          fieldPath: metadata.name
+  containers:
+  - name: foo
+    ...
+    volumeMounts:
+    - name: pod-meta
+      mountPath: /pod-metadata
+</code></pre><p>The pod manifest in the listing contains a single volume of type downwardAPI. The volume definition contains a single file named pod-name.txt, which contains the name of the pod read from the metadata.name field of the pod object. This volume is mounted in the container&#x2019;s filesystem at /pod-metadata.</p>
+<p>As with environment variables, each item in a downwardAPI volume definition uses either fieldRef to refer to the pod object&#x2019;s fields, or resourceFieldRef to refer to the container&#x2019;s resource fields. For resource fields, the containerName field must be specified because volumes are defined at the pod level and it isn&#x2019;t obvious which container&#x2019;s resources are being referenced. As with environment variables, a divisor can be specified to convert the value into the expected unit.</p>
+<p>As with configMap and secret volumes, you can set the default file permissions using the defaultMode field or per-file using the mode field, as explained earlier.</p>
 
                                 
                                 </section>
@@ -1019,12 +1099,12 @@
 
             
                 
-                <a href="Understanding_Kubernetes.html" class="navigation navigation-prev " aria-label="Previous page: 1.2 Understanding Kubernetes">
+                <a href="Using_Secrets_to_pass_sensitive_data_to_containers.html" class="navigation navigation-prev " aria-label="Previous page: 9.3 Using Secrets to pass sensitive data to containers">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="Summary_1.html" class="navigation navigation-next " aria-label="Next page: 1.4 Summary">
+                <a href="Using_projected_volumes_to_combine_volumes_into_one.html" class="navigation navigation-next " aria-label="Next page: 9.5 Using projected volumes to combine volumes into one">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -1035,7 +1115,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"1.3 Introducing Kubernetes into your organization","level":"3.1.3","depth":2,"next":{"title":"1.4 Summary","level":"3.1.4","depth":2,"path":"docs/Summary_1.md","ref":"docs/Summary_1.md","articles":[]},"previous":{"title":"1.2 Understanding Kubernetes","level":"3.1.2","depth":2,"path":"docs/Understanding_Kubernetes.md","ref":"docs/Understanding_Kubernetes.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Introducing_Kubernetes_into_your_organization.md","mtime":"2021-11-30T13:15:59.308Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-11-30T13:16:37.814Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"9.4 Passing pod metadata to the application via the Downward API","level":"4.6.4","depth":2,"next":{"title":"9.5 Using projected volumes to combine volumes into one","level":"4.6.5","depth":2,"path":"docs/Using_projected_volumes_to_combine_volumes_into_one.md","ref":"docs/Using_projected_volumes_to_combine_volumes_into_one.md","articles":[]},"previous":{"title":"9.3 Using Secrets to pass sensitive data to containers","level":"4.6.3","depth":2,"path":"docs/Using_Secrets_to_pass_sensitive_data_to_containers.md","ref":"docs/Using_Secrets_to_pass_sensitive_data_to_containers.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Passing_pod_metadata_to_the_application_via_the_Downward_API.md","mtime":"2021-11-30T13:15:59.312Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-11-30T13:16:37.814Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
