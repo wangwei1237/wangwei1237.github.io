@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>如何正确的评测视频画质 |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-How-to-Assess-the-Video-Quality-Correctly"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  如何正确的评测视频画质
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/" class="article-date">
+  <time datetime="2022-05-09T15:31:15.000Z" itemprop="datePublished">2022-05-09</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/IVQA/">IVQA</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">15 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p><img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/1.png" alt></p>
+<p>作为视频业务，经常需要：</p>
+<ul>
+<li>对比不同的视频，从而确定哪个视频的画质更好，以便可以为用户带来更好的体验。</li>
+<li>对比不同编码参数生成的视频，以便确定在哪些配置下产生的视频能带来最好的体验。</li>
+<li>对比不同产品的视频画质，以便做到知彼知己，并在对比之中带来较好的用户体验。</li>
+</ul>
+<span id="more"></span>
+<p>总之，需要回答一个问题：究竟哪个是画质最好的视频？本文将从影响画质的因素、为什么要不断提升视频画质、画质评测的重要性、如何正确的评测视频画质、自研的画质评测系统——灵镜来介绍我们如何利用灵镜来客观、置信、高效的评测视频画质，进而提升用户体验。</p>
+<h2 id="影响画质的因素是什么？">影响画质的因素是什么？</h2>
+<p>当我们提及“视频”时，一般指得均是“数字视频”。视觉信号经过记录、压缩<br>
+、存储才能产生我们所说的“视频”<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。同时，由于 HVS(HVS, human visual system，人类视觉系统) 的特点，在视频记录、压缩、存储的过程中，我们可以在视觉质量损失和视频数据压缩之间做出权衡，而不影响视觉质量<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。</p>
+<p>一般而言，影响视频画质的因素主要有以下几点：</p>
+<ul>
+<li>分辨率：图像中的像素数量，在特定尺寸下，分辨率越高，像素越多，显示的细节则更精细。<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></li>
+<li>帧率：一秒内显示的图像数量，电影的帧率一般是 24fps，标准电视的帧率通常是 30fps。<sup class="footnote-ref"><a href="#fn3" id="fnref3:1">[3:1]</a></sup></li>
+<li>亮度：可以显示的图像照明强度的范围，人眼能感知到的亮度范围在 10W 尼特左右。</li>
+<li>位深：每个像素可以显示的颜色数量，位深度越大，可显示的颜色越多，从而渐变更平滑、更自然。<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup></li>
+<li>色域：色域是某个特定的色彩的子集，用以表示可以显示的所有颜色的范围。色域一般使用 CIE 1931 色度图上的面积来表示，CIE 1931 曲线的边缘代表可见光光谱颜色的范围。<sup class="footnote-ref"><a href="#fn4" id="fnref4:1">[4:1]</a></sup></li>
+<li>码率：编码每秒视频需要的 bit 数量称之为码率（bitrate）。在一定条件下，码率会影响视频的质量，码率越低，压缩率越大，画质相对越差。当然，并非码率越高画质越好，在很多情况下，更高的码率带来的往往却只是带宽的浪费。<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup></li>
+</ul>
+<h2 id="为什么要提升画质？">为什么要提升画质？</h2>
+<p>我们经常认为：改善影响视频画质的诸多因素，提升视频的画质，就会提升用户体验，进而会提升产品的相关用户指标。因此，本着以终为始的原则，我们要不断提升视频画质。</p>
+<p>然而，事实确实如此吗？我们是否想过如下的问题：</p>
+<ul>
+<li>用户视频观看时长的增加或降低是视频画质的波动导致的吗？</li>
+<li>用户在观看视频时，是视频内容的影响力更大还是视频画质的影响力更大？</li>
+<li>为什么《西游记》的画质比较粗糙，却能循环播放 30 多年，并创造出万人空巷的奇迹？</li>
+<li>当提升了分辨率、帧率等因素后，画质变好了，但是这同时也意味着需要消耗的带宽、算力、电量等必然会增加。在手机耗电量与画质、播放流畅度与画质之间，用户会选择画质优先吗？</li>
+<li>提升视频的分辨率和帧率还意味着带宽成本的增加，例如 4K 视频比 1080P 视频的带宽成本要高 3~4 倍。那么，对于流媒体服务商而言，如果对如上的几个问题还存疑的话，为什么要提升画质呢？</li>
+</ul>
+<p>2020年，华纳兄弟与皮克斯等公司的双盲测实验发现，多数消费者其实并无法分辨 8K 与 4K 的区别。<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup></p>
+<p>看起来，画质提升的必要性并不强烈。既然如此，为什么还要提升视频画质呢？为什么整个视频行业都在为了视频画质的提升而不断努力呢？</p>
+<ol>
+<li>显示设备的分辨率不断升级。例如，<a target="_blank" rel="noopener" href="https://consumer.huawei.com/cn/phones/mate40-pro/specs/">HUAWEI Mate 40 Pro</a> 的屏幕分辨率就达到了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>K</mi><mo stretchy="false">(</mo><mn>2772</mn><mo>×</mo><mn>1344</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">2K(2772 \times 1344)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">2</span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mopen">(</span><span class="mord">2</span><span class="mord">7</span><span class="mord">7</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord">3</span><span class="mord">4</span><span class="mord">4</span><span class="mclose">)</span></span></span></span> 标准。对于电视而言，8K 电视目前也成为了趋势。如果视频本身的分辨率依然停留在 480P 时代，那么在高分辨率的屏幕上观看时，就会出现比较明显的马赛克效应。</li>
+<li>视频采集设备不断升级。例如，<a target="_blank" rel="noopener" href="https://www.apple.com.cn/iphone-13-pro/specs/">iPhone 13 Pro</a> 可以支持 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mi>K</mi><mtext>，</mtext><mn>60</mn><mtext> </mtext><mi>f</mi><mi>p</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">4K，60\ fps</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">4</span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mord cjk_fallback">，</span><span class="mord">6</span><span class="mord">0</span><span class="mspace"> </span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">p</span><span class="mord mathdefault">s</span></span></span></span> 的视频拍摄，即便是 Android 的千元机档位 <a target="_blank" rel="noopener" href="https://www.vivo.com/vivo/param/y53s">VIVO Y53S</a>，视频的最低拍摄分辨率也达到了 720P。在这种情况下，如果视频消费端的分辨率还停留在较低分辨率（例如 480P），那就会带来拍摄预览和回放观看体验严重不一致的问题。</li>
+<li>视频编解码算法不断升级<sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup>。有多大的硬件资源，就会产生多复杂的软件产品。不断进化的编解码算法为更高画质的应用提供了底层支撑。当具备了制造飞机的技术时，就不会满足与只制造自行车。</li>
+<li>不断丰富的消费级应用和玩法需要更高的画质。根据国家广电总局发布的<a target="_blank" rel="noopener" href="http://www.nrta.gov.cn/module/download/downfile.jsp?classid=0&amp;filename=cf359da741ac4bdba25f4b77b9cfc160.pdf">《5G 高新视频——VR 视频技术白皮书(2020) 》</a> ，用于 VR 视频节目制作与交换中的视频，建议目前最低使用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>7680</mn><mo>×</mo><mn>3840</mn></mrow><annotation encoding="application/x-tex">7680\times3840</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">7</span><span class="mord">6</span><span class="mord">8</span><span class="mord">0</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">8</span><span class="mord">4</span><span class="mord">0</span></span></span></span> 像素数。尤其是在元宇宙之中，要感知到色声香味触法，太差的画质是无法达到要求的。</li>
+<li>不断增加的竞对产品。此时，视频画质的基线水平取决于处在该行业中的竞对产品。并且，视频画质已经成为一种对外宣传的有效手段，例如 B 站的 4K/120帧 视频，西瓜的 4K 高清修复技术……这无形之中就会形成一种用户对视频画质的预期，当产品的画质如果低于这种预期的时候，用户体验就会降低。当然，更高的画质依赖更高性能的设备和更高的带宽。但是我们需要明白：同样能得 100 分，能力只能到 100 分 和 卷面只有 100 分之间的差距是非常大的。</li>
+</ol>
+<h2 id="为什么评测视频画质如此重要？">为什么评测视频画质如此重要？</h2>
+<p>如前所述，众多原因推动视频画质不断提升。然而，没有度量就无法改进，没有度量也就无法评测画质是否有提升、提升的程度如何。另外，在工作中，需要通过评估视频画质来确定流媒体系统的整体要求、对比竞品提供的服务、确定端到端的视频质量等。</p>
+<p>视频画质评估如同度量衡一般，构成视频画质提升以及编解码器改进的基石。</p>
+<h4 id="主观评估">主观评估</h4>
+<p>评测视频画质的显而易见的方式就是征求用户的意见，这也就是我们所说的：主观评估。但是，主观评估具备如下的问题：</p>
+<ul>
+<li>主观评估是一个繁琐的、非自动化的过程，不可能利用主观评估来评测每个视频。</li>
+<li>不同的个体对相同的视频画质感知不同，因此主观评估的结果会随评估者的不同而出现波动。</li>
+</ul>
+<h4 id="客观评估">客观评估</h4>
+<p>即便如此，主观评估仍然是一种有价值的方法，并且可以为客观视频画质评估算法提供数据支撑，例如 <a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf">VMAF</a> 就是利用算法指标对主观评估建模的结果。利用算法来评估视频的画质我们称之为：客观评估。</p>
+<h4 id="主-客评估之间的关系">主、客评估之间的关系</h4>
+<p>需要注意的是，在视频画质评估领域，虽然算法可以快速、高效、自动的评测视频画质，但是算法也仅仅是对主观评估结果的拟合、预测。也就是说，客观评估算法必须与主观评估之间保持感知上的一致性。</p>
+<p>正因为如此，在实际工作中，客观算法一般用以衡量大盘数据，而对于视频编解码器的调整、编解码参数的优化等效果评估，还是会以主观评估为主。<a target="_blank" rel="noopener" href="http://www.compression.ru/video/codec_comparison/index_en.html">MSU Video Codecs Comparisons</a> 大赛中，主观打分的结果也是一项重要的指标，例如 <a target="_blank" rel="noopener" href="http://www.compression.ru/video/codec_comparison/hevc_2019/#subjective_report">HEVC/AV1 2019</a> 的比赛结果。作为工程师，我们总想着用算法、模型来解决一切问题，然而，我们必须要意识到，并不是所有的问题都可以用算法、模型来解决的。还记得《谁动了我的奶酪》中的“哼哼”吗？</p>
+<p>视频画质主、客观评估算法这里不再过多介绍，更详细的信息可以参考<a href="https://wangwei1237.github.io/digital_video_concepts/docs/4_0_VideoQualityMetrics.html">《数字视频概念，方法和测量指标》的 视频质量指标</a> 这一章。</p>
+<h2 id="影响评测置信度的因素有哪些？">影响评测置信度的因素有哪些？</h2>
+<p>主观评估是画质提升的基石，如何才能保证主观评估结果的客观性、置信度是视频画质评测的核心问题。</p>
+<p>为了保证主观评估的置信度，ITU-T 第 9 研究组（SG9, study group 9）提出了若干建议作为主观评估方法，例如 <a target="_blank" rel="noopener" href="https://www.itu.int/rec/R-REC-BT.500/en">ITU-R BT.500</a>。更详细的标准和规范可以参考 <a href="https://wangwei1237.github.io/shares/vqs.pdf">视频质量主观评估方法和规范</a>，此处不再一一列举。</p>
+<p>在工作中，我们发现：不按照标准和规范执行，主观评估的结果肯定是不置信的。但是，有了标准和规范，按照标准和规范来执行主观画质评测，主观评估的结果就置信了吗？</p>
+<p>在工作中，我们发现，并非如此。标准提供了建议，但是具体执行却受限于各种因素，这些受限的因素会影响最终的结果置信度。</p>
+<p>一个看起来非常简单的事情（不就是找人来打个分吗），实际上却并不简单。</p>
+<h4 id="评测样本的问题">评测样本的问题</h4>
+<p>视频样本本身对视频画质主观评估的结果会产生非常大的影响，实际评测过程中，遇到的样本相关的问题主要有如下几种：</p>
+<ol>
+<li>评测视频时间较长，场景变化较大。这种情况下，用户可能没有耐心看完整个视频，或者跳跃性的观看视频，导致在评测过程中忽略部分信息而而导致最终结果置信度较差。</li>
+<li>评测的视频中存在产品 logo。视频中的 logo 会对用户的主观评测带来额外的信息干扰，进而干扰到最终的评测结果。实际评测过程中，我们也观察到视频中的 logo 确实会影响用户的主观打分。<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16517338315179.jpg" alt></li>
+<li>评测视频的场景覆盖率较低，或者只覆盖了部分产品场景。例如只选取了风景、人物等场景的视频，而缺失了运动类，知识类等场景的视频。</li>
+</ol>
+<h4 id="评测工具的问题">评测工具的问题</h4>
+<ol>
+<li>视频缩放带来的误差。为了能够同时对比两个视频，一般而言，评测工具会同时播放待评估的两个视频来让用户主观打分。但是，如下图所示，当视频分辨率比较大时（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1080</mn><mo>×</mo><mn>1920</mn></mrow><annotation encoding="application/x-tex">1080 \times 1920</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">8</span><span class="mord">0</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">9</span><span class="mord">2</span><span class="mord">0</span></span></span></span>），这种方式就会导致视频显示区域的缩放，进而导致视频中画质较差的地方因为视频显示区域的缩放而隐藏。<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16517351583684.jpg" alt></li>
+<li>视频重叠带来的误差。为了解决上一个问题，评估工具会增加如下图所示的重叠样式来避免缩放带来的误差问题，同时也希望重叠方式能够更直接的对比出视频间的差异。<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16517375976060.jpg" alt><br>
+但是，在实际评估中，我们发现这种看起来比较好的方式因为存在视频画面的阶段，也会导致主观评估结果的不置信。用户在评估过程中，需要不停的拖动画面的分割线，来观察视频不同区域的画质差异。并且对于 ROI 编码的视频而言，用一个视频的区域 A 和另一个视频的区域 B 做对比，本身就非常不合理。</li>
+<li>视频运动带来的误差。和图片不同，视频是一个在时间上连续变化的帧序列。而这种视频本身的运动和变化会在一定程度上隐藏视频中某些帧的某些区域的画质问题。这也就是我们常说的 HVS 的运动掩蔽效应。为了避免这种误差，尤其是对于编解码算法的研发人员，往往希望能够对视频进行逐帧对比，以发现潜在的隐藏风险。虽然诸如 QuickTime、VLC等播放器提供了单帧播放能力，但是评测工具却较少提供单帧对比的能力。</li>
+<li>忽略播放设备的差异带来的误差。工作中，我们不止一次的发现用 PC 的评估工具来评估移动设备的播放效果的场景。利用标准和规范指导下的工具得到了一个结果，却忽视了不同设备下显示效果的差异，最终导致这个本来应该置信的结果变得非常不置信。尤其是对于 HDR<sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup> 视频而言，设备的差异性会体现的更加明显。</li>
+</ol>
+<h4 id="评测者的认知差异">评测者的认知差异</h4>
+<ul>
+<li>评测者的惯性认知带来的误差。对于固定顺序出现的对比评估，我们发现评测者总是会根据前面几对样本的结果来对后面的结果进行预测，然后按照预测的结果来打分，而不是完全按照自己个主观感知来打分。这种预测的惯性认知会给评估带来非常大的干扰和误差。</li>
+<li>评测者的关注焦点不同带来的误差。不同的评测者对同一画面的关注点不同而带来的评估结果波动较大的问题在实际评估工作中经常出现。如下图所示的视频，用户从背景、前景、亮度、美妆等不同角度来评估时，给出的打分也不相同。<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16517403263280.jpg" alt></li>
+</ul>
+<h2 id="画质评测利器-灵镜">画质评测利器——灵镜</h2>
+<p>历时 2 年多，经历近 500+ 主观评估，1000+ 评估样本，1000+ 评测人员（专家和普通用户），趟过一个又一个的坑，利用技术解决实际评测中遇到的一个又一个的不置信因素，逐步建成了目前较为置信的视频画质评估系统——灵镜。</p>
+<p>灵镜基于 ITU 标准，依托自研的 10+ 项专利技术，在不断实践的基础之上而形成的一款支持多端（PC，Android，iOS）评测的视频画质评测服务。</p>
+<p><img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16517546841705.png" alt></p>
+<p>同时灵镜还提供视频画质评估的一站式服务，涵盖了：从视频生产至视频消费的全链路画质评估，画质、成本等全方位的评测以及解析。</p>
+<p><img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16520635610845.jpg" alt></p>
+<p>在评测方式上，灵镜支持PC、Android、iOS设备上的横屏、竖屏视频的以下 4 种评测方式：</p>
+<ol>
+<li>
+<p>单屏评测<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16517999977033.jpg" alt></p>
+</li>
+<li>
+<p>同屏重叠评测（同时支持 DCR 和 CCR 两种评估模式，并且为了保证置信度，采用视频同区域对比的方式进行同屏重叠对比，可以滑动视频区域来选择不同区域的视频进行对比）<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16518006317482.jpg" alt></p>
+</li>
+<li>
+<p>专家评测<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16518012927012.jpg" alt></p>
+</li>
+<li>
+<p>同屏评测<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/16518013761932.jpg" alt></p>
+</li>
+</ol>
+<p>除此之外，灵镜还提供了：</p>
+<ul>
+<li>摄像头 Mock 能力，实现用指定视频替换摄像头的采集数据</li>
+<li>画质客观评估能力，例如 VMAF，PSNR，SSIM等，对于 PSNR，灵镜还提供了空间可视化能力，以便进行更客观的评测<br>
+<img src="/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/o1.gif" alt></li>
+<li>视频属性计算能力，例如 SITI，码率，帧率，分辨率等</li>
+<li>视频处理&amp;检测能力，例如 静态帧检测，单色帧检测，音画同步检测，异常视频构造等</li>
+</ul>
+<p>接下来，我们还将继续完善灵镜的能力：</p>
+<ul>
+<li>单帧对比评测能力</li>
+<li>HDR 评测体系</li>
+<li>8K，120帧 的高分辨率、高帧率评测体系</li>
+<li>美颜、美妆等评测体系</li>
+<li>……</li>
+</ul>
+<p>所有的努力，只为让灵镜更置信、更专业、更高效，只为让灵镜成为视频评测的首选工具。为你，千千万万遍。</p>
+<h3 id="灵镜-灵镜-快告诉我-哪个是画质最好的视频？"><code>灵镜，灵镜，快告诉我，哪个是画质最好的视频？</code></h3>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="https://wangwei1237.github.io/digital_video_concepts/docs/1_1_TheKeyConcepts.html">https://wangwei1237.github.io/digital_video_concepts/docs/1_1_TheKeyConcepts.html</a>. <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="https://wangwei1237.github.io/digital_video_concepts/docs/2_2_0_TheHumanVisualSystem.html">https://wangwei1237.github.io/digital_video_concepts/docs/2_2_0_TheHumanVisualSystem.html</a>. <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="https://wangwei1237.github.io/2020/02/28/Introduction-to-digital-video-technology/">https://wangwei1237.github.io/2020/02/28/Introduction-to-digital-video-technology/</a>. <a href="#fnref3" class="footnote-backref">↩︎</a> <a href="#fnref3:1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p><a href="https://wangwei1237.github.io/shares/hdr-field-guide-final-web.pdf">https://wangwei1237.github.io/shares/hdr-field-guide-final-web.pdf</a>. <a href="#fnref4" class="footnote-backref">↩︎</a> <a href="#fnref4:1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://filmora.wondershare.com/video-editing-tips/what-is-video-bitrate.html">https://filmora.wondershare.com/video-editing-tips/what-is-video-bitrate.html</a>. <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.techhive.com/article/578376/8k-vs-4k-tvs-most-consumers-cannot-tell-the-difference.html">https://www.techhive.com/article/578376/8k-vs-4k-tvs-most-consumers-cannot-tell-the-difference.html</a>. <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a href="https://wangwei1237.github.io/2021/07/27/The-History-of-the-Video-Codec-Improvement/">https://wangwei1237.github.io/2021/07/27/The-History-of-the-Video-Codec-Improvement/</a>. <a href="#fnref7" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn8" class="footnote-item"><p><a href="https://wangwei1237.github.io/2021/01/26/HDR-introduction/">https://wangwei1237.github.io/2021/01/26/HDR-introduction/</a>. <a href="#fnref8" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2022/05/09/How-to-Assess-the-Video-Quality-Correctly/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%BB%E8%B4%A8%E8%AF%84%E6%B5%8B/" rel="tag">画质评测</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%86%E9%A2%91%E8%AF%84%E6%B5%8B/" rel="tag">视频评测</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2022/03/11/Understanding-Rate-Control-Modes/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">视频编码中的码率控制模式</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '7bf1e91eaff35fd004dc',
+    clientSecret: 'd151c7bc85d544dafe2c0de75e3a174623229a3a',
+    repo: 'wangwei1237.github.io',
+    owner: 'wangwei1237',
+    admin: ['wangwei1237'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2022
+        <i class="ri-heart-fill heart_icon"></i> wangwei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
+        
+    
+ 
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
