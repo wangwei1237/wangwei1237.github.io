@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">8</span>
+            <span class="post-count">1.4k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">7 分钟</span>
         </span>
     </span>
 </div>
@@ -112,8 +112,325 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="vlookup">VLOOKUP</h2>
+  <p><img src="/2022/05/18/Tips-for-Analyzing-data-with-excel/1.jpeg" alt></p>
+<p>因为工作原因，最近经常要分析一些数据，这些数据的格式不规范，并且数据量级不大——大概在 1W 左右。</p>
+<p>一开始，我是不屑于使用 Excel 来处理的，总想着写个程序来完成处理。后来，我发现，我的想法是多么的愚蠢，因为我发现，Excel 简直是太强大了，完全满足了我的各种需要。还好我及时纠正了自己愚蠢的想法，否则我现在还在忙个不停的调试自己的那些代码。</p>
+<p>本文把自己使用 Excel 进行数据分析过程中学习到的小技巧进行了梳理总结。</p>
+<span id="more"></span>
+<h2 id="数据说明">数据说明</h2>
+<p>在我的分析中，数据格式如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>score1</th>
+<th>score2</th>
+<th>……</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>2.32</td>
+<td>3.56</td>
+<td>6.78</td>
+</tr>
+<tr>
+<td>2</td>
+<td>3.22</td>
+<td>6.56</td>
+<td>8.23</td>
+</tr>
+<tr>
+<td>3</td>
+<td>6.98</td>
+<td>8.12</td>
+<td>3.78</td>
+</tr>
+<tr>
+<td>4</td>
+<td>4.56</td>
+<td>7.35</td>
+<td>6.53</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5.78</td>
+<td>2.34</td>
+<td>9.12</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>其中，ID 代表我的分析对象中的某个样本，每个样本都会请求不同的服务对其进行打分，因而会得到如下图所示的表格文件。</p>
+<p><img src="/2022/05/18/Tips-for-Analyzing-data-with-excel/2.jpg" alt></p>
+<p>在上图的 Excel 中，每个 Sheet 的数据为不同服务返回的打分数据。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">注意
+</p><p>不同服务返回的打分中，可能会存在样本的丢失。例如 Sheet2 中就缺少 ID=10 的数据打分。</p>
+<p>在分析中，这种数据缺失是完全随机的。</p>
+</div>
+<h2 id="vlookup">VLOOKUP</h2>
+<p>为了分析方便，需要把 Sheet1 和 Sheet2 的数据按照 ID 进行聚合。这个时候，使用 VLOOKUP 就可以非常方便的完成这个工作。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title"><a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/vlookup-function-0bbc8083-26fe-4963-8ab8-93a18ad188a1">VLOOKUP</a> 
+</p><p>Use VLOOKUP when you need to find things in a table or a range by row. For example, look up a price of an automotive part by the part number, or find an employee name based on their employee ID.</p>
+<p>=VLOOKUP(What you want to look up, where you want to look for it, the column number in the range containing the value to return, return an Approximate or Exact match – indicated as 1/TRUE, or 0/FALSE).</p>
+</div>
+<p>因此，我们用如下的代码就可以实现按照 ID 合并两个 Sheet 的数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x3D;VLOOKUP(A1,Sheet2!A:B,2,0)</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/05/18/Tips-for-Analyzing-data-with-excel/3.jpg" alt></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title"><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/microsoft-365/blog/2011/08/17/making-sense-of-dollar-signs-in-excel/">注意单元格的引用方式</a>
+</p><ul>
+<li>相对引用，如：A1，B1，公式复制到另一个位置时行和列都要变</li>
+<li>绝对引用，如：$A$1，$B$1，公式复制到另一个位置时行和列都不变</li>
+<li>混合引用，如：$A1，$B1，$A1此时公式复制到另一个位置时行要变，列不变</li>
+</ul>
+</div>
 <h2 id="数据透视表">数据透视表</h2>
+<p>如果希望分析 score1 的不同区间（例如[1, 10],[11, 20]）下，score2 分数各整数区间的个数，也即：</p>
+<ul>
+<li>scroe1 属于 [1, 10]</li>
+<li>score2 属于 [1,2], [2,3], [3,4], …的样本个数</li>
+</ul>
+<p>此时使用数据透视表就非常方便了。</p>
+<ul>
+<li>首先，我们选中需要进行数据分析的数据。<br>
+<img src="/2022/05/18/Tips-for-Analyzing-data-with-excel/4.jpg" alt></li>
+<li>然后，按照如下图视频所示的方式进行数据分析。<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=939365062&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+</li>
+</ul>
 <h2 id="excel-宏">Excel 宏</h2>
  
       <!-- reward -->
