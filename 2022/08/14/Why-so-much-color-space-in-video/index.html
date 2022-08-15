@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.2k</span>
+            <span class="post-count">2.5k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">9 分钟</span>
+            <span class="post-count">10 分钟</span>
         </span>
     </span>
 </div>
@@ -113,11 +113,11 @@
     <div class="article-entry" itemprop="articleBody">
        
   <p><img src="/2022/08/14/Why-so-much-color-space-in-video/1.jpeg" alt></p>
-<p>在视频处理中，我们经常会用到不同的色彩空间：RGB，YUV，HSL……。为什么需要这么多的色彩空间呢？</p>
+<p>在视频处理中，我们经常会用到不同的色彩空间：<code>非线性RGB</code>，<code>线性 RGB</code>，<code>YUV</code>，<code>XYZ</code>……为什么需要这么多的色彩空间呢？为什么在 FFMpeg 中会有 <code>color_space</code>，<code>color_transfer</code>，<code>color_primaries</code> 等一系列的颜色属性呢？这些术语之间究竟隐藏着什么秘密？</p>
 <span id="more"></span>
 <h2 id="相机系统-采集">相机系统–采集</h2>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/2.png" alt></p>
-<p>如上图所示，在相机系统中，外部世界的光信息（光子，photons）通过透镜或其他光学器件聚焦之后达到相机的图像传感器（<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Charge-coupled_device">CCD</a> 或者 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Active-pixel_sensor">CMOS</a>）。[^1]</p>
+<p>如上图所示，在相机系统中，外部世界的光信息（光子，photons）通过透镜或其他光学器件聚焦之后达到相机的图像传感器（<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Charge-coupled_device">CCD</a> 或者 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Active-pixel_sensor">CMOS</a>）。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <ul>
 <li>图像传感器可以将一个入射光子（photon）转换为对应的一个电子（electron）。</li>
 <li>在曝光时间内，图像传感器对转换的电子进行电荷积累。</li>
@@ -204,12 +204,12 @@
 </p><p>ADC 转换之后的数字信号的取值范围受限于 ADC 设备。对于 8-bits 的 ADC 而言，数字信号的取值范围为 [0, 2^8-1]，因此，对于每一个像素而言，会用 [0, 255] 之间的整数来进行编码。</p>
 </div>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/3.jpeg" alt></p>
-<p>ADC 转换的数字信号的数值是一个线性编码的过程，这意味着如果将图像传感器上的光量增加 1 倍，则 ADC 转换之后对应的数值也会增加 1 倍。这是一个非常有用的特性：无论是增加物理世界的光量，还是增加 ADC 转换之后的数值，对图片而言，都会带来相同的效果。线性编码意味着我们所处理的数据和光发射的强度成正比关系。[^2]</p>
-<p>由数码相机中的 CMOS 传感器产生并写入原始文件（Raw File）的数据是线性的。与普通照片相比，线性数据通常看起来非常暗且对比度较低。[^3]</p>
+<p>ADC 转换的数字信号的数值是一个线性编码的过程，这意味着如果将图像传感器上的光量增加 1 倍，则 ADC 转换之后对应的数值也会增加 1 倍。这是一个非常有用的特性：无论是增加物理世界的光量，还是增加 ADC 转换之后的数值，对图片而言，都会带来相同的效果。线性编码意味着我们所处理的数据和光发射的强度成正比关系。<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
+<p>由数码相机中的 CMOS 传感器产生并写入原始文件（Raw File）的数据是线性的。与普通照片相比，线性数据通常看起来非常暗且对比度较低。<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/4.jpg" alt></p>
 <p>在 iPhone 手机中，可以通过设置相机来拍摄 <a target="_blank" rel="noopener" href="https://support.apple.com/zh-cn/HT211965">Apple ProRAW</a> 格式的照片。</p>
 <h4 id="线性vs非线性数据">线性VS非线性数据</h4>
-<p>实际上，研究表明，人类视觉系统是以对数函数的方式来感知光亮度。这意味着，人眼会提高暗部的敏感度，降低高光部分的敏感度。[^4]</p>
+<p>实际上，研究表明，人类视觉系统是以对数函数的方式来感知光亮度。这意味着，人眼会提高暗部的敏感度，降低高光部分的敏感度。<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup></p>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/5.png" alt></p>
 <p>从数学角度看，感知光强度和测量光强度之间存在一个近似的平方关系，具体如下式所示。</p>
 <p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>近似感知亮度</mtext><mo>=</mo><msqrt><mtext>测量亮度</mtext></msqrt></mrow><annotation encoding="application/x-tex">近似感知亮度 = \sqrt{测量亮度}
@@ -321,9 +321,9 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p>将 RGB颜色模型，转换成 YUV 模型后，接下来会采用某种视频编解码算法（例如，H265, VP9）对获取的数据进行视频编码，最终得到编码时候的视频文件（此处忽略了音频的采集编码以及合流的操作）。</p>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/7.png" alt></p>
 <h2 id="视频播放">视频播放</h2>
-<p>对于大部分显示设备，例如CRT显示器、LCD、OLED，屏幕上的每个像素都是通过驱动三个非常靠近但仍然分开的小型 RGB 光源而构建的。[^6] 因此，显示屏（监视器，电视机，屏幕等等）仅使用 RGB 模型，并以不同的方式来组织，并显示最终的图像。[^7]</p>
+<p>对于大部分显示设备，例如CRT显示器、LCD、OLED，屏幕上的每个像素都是通过驱动三个非常靠近但仍然分开的小型 RGB 光源而构建的。<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup> 因此，显示屏（监视器，电视机，屏幕等等）仅使用 RGB 模型，并以不同的方式来组织，并显示最终的图像。<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup></p>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/8.jpeg" alt></p>
-<p>而不同的显示设备采用的 RGB 的色域并不一定相同，因此，RGB 是一种设备依赖型的颜色模型。[^8]在 Mac 电脑上，可以通过显示器配置来选择显示器支持不同的 RGB 色域。</p>
+<p>而不同的显示设备采用的 RGB 的色域并不一定相同，因此，RGB 是一种设备依赖型的颜色模型。<sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup>在 Mac 电脑上，可以通过显示器配置来选择显示器支持不同的 RGB 色域。</p>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/10.jpg" alt></p>
 <h4 id="显示设备和相机的色域一致">显示设备和相机的色域一致</h4>
 <p>如果编码视频和播放视频的显示器采用的 RGB 色域是一致的，比如都是 sRGB，此时的播放过程相对比较简单。视频解码之后，得到 YUV 数据，然后根据标准将 YUV 数据转换成非线性的 sRGB 数据，然后显示器根据 sRGB 数据显示图像即可。</p>
@@ -331,23 +331,54 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <h4 id="显示设备和相机的色域不一致">显示设备和相机的色域不一致</h4>
 <p>当显示设备支持的色域从 sRGB 变为 Rec. 2020 时，如果直接显示 sRGB 色域下的数据，则会导致比较严重的颜色失真。</p>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/12.png" alt></p>
-<p>此时，就需要在不同的色域空间进行 RGB 数据的转换，这也就是我们所说的 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Color_management">色彩管理</a>。色彩管理会对图像进行色彩管理以适配当前设备环境下的颜色效果，从而保证同一张图片在不同输入、输出、显示设备上都呈现出最好的颜色。[^9]</p>
+<p>此时，就需要在不同的色域空间进行 RGB 数据的转换，这也就是我们所说的 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Color_management">色彩管理</a>。色彩管理会对图像进行色彩管理以适配当前设备环境下的颜色效果，从而保证同一张图片在不同输入、输出、显示设备上都呈现出最好的颜色。<sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup></p>
 <p>色彩转换需要在某个线性空间下进行操作，并且操作过程需要保持设备的独立性。因此，不同的 RGB 色域空间是不能直接进行转换的，需要一个设备无关、线性的颜色模型作为中转才能实现其转换。</p>
 <p>而 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/CIE_1931_color_space">XYZ(CIE 1931 XYZ color space)</a> 具备设备无关、线性操作的特性。sRGB-&gt;RGB(Rec. 2020)的转换过程如下所示：</p>
 <p><img src="/2022/08/14/Why-so-much-color-space-in-video/13.png" alt></p>
 <p>因此，对于拍摄设备和显示设备的色域不同时，视频的播放增加了颜色管理的过程。<br>
 <img src="/2022/08/14/Why-so-much-color-space-in-video/14.png" alt></p>
 <h2 id="ffmpeg如何处理这些变换">FFMpeg如何处理这些变换</h2>
+<p>类似的，在视频转码中，如果我们希望对原视频进行色域的变换，那么我们也会经历类似的操作。例如从 BT. 601 转码为 BT. 709。<sup class="footnote-ref"><a href="#fn9" id="fnref9">[9]</a></sup></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/15.png" alt></p>
+<p>在如上的变换中，涉及到 3 个颜色空间的转换，分别是：</p>
+<ol>
+<li>YUV 和 RGB 之间的转换</li>
+<li>线性 RGB 和非线性 RGB 之间的转换</li>
+<li>线性 RGB 和 XYZ 之间的转换</li>
+</ol>
+<p>在 FFMpeg 中，所有的这些转换参数都保存在 <a target="_blank" rel="noopener" href="https://ffmpeg.org/doxygen/trunk/structAVFrame.html">AVFrame</a> 结构中<sup class="footnote-ref"><a href="#fn10" id="fnref10">[10]</a></sup>：</p>
+<ul>
+<li>AVFrame-&gt;<a target="_blank" rel="noopener" href="https://ffmpeg.org/doxygen/trunk/structAVFrame.html#a9262c231f1f64869439b4fe587fe1710">colorspace</a> 中保存了 YUV/RGB 的转换矩阵</li>
+<li>AVFrame-&gt;<a target="_blank" rel="noopener" href="https://ffmpeg.org/doxygen/trunk/structAVFrame.html#ab09abb126e3922bc1d010cf044087939">color_trc</a> 中保存了线性 RGB 和非线性 RGB 之间的转换函数（transformation characteristics）。</li>
+<li>AVFrame-&gt;<a href="color_primaries">color_primaries</a> 中保存了 RGB/XYZ 的转换矩阵</li>
+</ul>
+<p>正是通过不同的颜色模型和不同的变换，才得以让我们实现：在不同输入、输出、显示设备上都呈现出最好的颜色。</p>
 <h2 id="参考文献">参考文献</h2>
-<p>[1]: <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/158502818">https://zhuanlan.zhihu.com/p/158502818</a><br>
-[2]: <a target="_blank" rel="noopener" href="https://discuss.pixls.us/t/what-does-linear-rgb-mean/16584">https://discuss.pixls.us/t/what-does-linear-rgb-mean/16584</a><br>
-[3]: <a target="_blank" rel="noopener" href="https://www.astropix.com/html/astrophotography/how.html">https://www.astropix.com/html/astrophotography/how.html</a><br>
-[4]: <a target="_blank" rel="noopener" href="https://www.pathwaylighting.com/products/downloads/brochure/technical_materials_1466797044_Linear+vs+Logarithmic+Dimming+White+Paper.pdf">Linear vs. Logarithmic Dimming—A White Paper</a><br>
-[5]: <a target="_blank" rel="noopener" href="https://trac.ffmpeg.org/wiki/colorspace">https://trac.ffmpeg.org/wiki/colorspace</a><br>
-[6]: <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/RGB_color_model">https://en.wikipedia.org/wiki/RGB_color_model</a><br>
-[7]: <a href="https://wangwei1237.github.io/2020/02/28/Introduction-to-digital-video-technology/">https://wangwei1237.github.io/2020/02/28/Introduction-to-digital-video-technology/</a><br>
-[8]: <a target="_blank" rel="noopener" href="https://www.spiedigitallibrary.org/ebooks/PM/Computational-Color-Technology/eISBN-9780819481085/10.1117/3.660835">Computational Color Technology</a><br>
-[9]: <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43194305/article/details/107944264">https://blog.csdn.net/weixin_43194305/article/details/107944264</a></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/158502818">https://zhuanlan.zhihu.com/p/158502818</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://discuss.pixls.us/t/what-does-linear-rgb-mean/16584">https://discuss.pixls.us/t/what-does-linear-rgb-mean/16584</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.astropix.com/html/astrophotography/how.html">https://www.astropix.com/html/astrophotography/how.html</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.pathwaylighting.com/products/downloads/brochure/technical_materials_1466797044_Linear+vs+Logarithmic+Dimming+White+Paper.pdf">Linear vs. Logarithmic Dimming—A White Paper</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/RGB_color_model">https://en.wikipedia.org/wiki/RGB_color_model</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a href="https://wangwei1237.github.io/2020/02/28/Introduction-to-digital-video-technology/">https://wangwei1237.github.io/2020/02/28/Introduction-to-digital-video-technology/</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.spiedigitallibrary.org/ebooks/PM/Computational-Color-Technology/eISBN-9780819481085/10.1117/3.660835">Computational Color Technology</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn8" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43194305/article/details/107944264">https://blog.csdn.net/weixin_43194305/article/details/107944264</a> <a href="#fnref8" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn9" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://medium.com/invideo-io/talking-about-colorspaces-and-ffmpeg-f6d0b037cc2f">https://medium.com/invideo-io/talking-about-colorspaces-and-ffmpeg-f6d0b037cc2f</a> <a href="#fnref9" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn10" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://trac.ffmpeg.org/wiki/colorspace">https://trac.ffmpeg.org/wiki/colorspace</a> <a href="#fnref10" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
  
       <!-- reward -->
       
@@ -417,7 +448,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4/" rel="tag">颜色空间</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFMpeg-colorspace/" rel="tag">FFMpeg colorspace</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RGB/" rel="tag">RGB</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XYZ/" rel="tag">XYZ</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linear-RGB/" rel="tag">linear RGB</a></li></ul>
 
     </footer>
   </div>
