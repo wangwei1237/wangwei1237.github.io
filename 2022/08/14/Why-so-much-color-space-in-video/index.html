@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.5k</span>
+            <span class="post-count">2.7k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">10 分钟</span>
+            <span class="post-count">11 分钟</span>
         </span>
     </span>
 </div>
@@ -352,6 +352,20 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <li>AVFrame-&gt;<a target="_blank" rel="noopener" href="https://ffmpeg.org/doxygen/trunk/structAVFrame.html#ab09abb126e3922bc1d010cf044087939">color_trc</a> 中保存了线性 RGB 和非线性 RGB 之间的转换函数（transformation characteristics）。</li>
 <li>AVFrame-&gt;<a href="color_primaries">color_primaries</a> 中保存了 RGB/XYZ 的转换矩阵</li>
 </ul>
+<p>如果用 <code>ffprobe</code> 命令解析视频文件，则：</p>
+<ul>
+<li>color_space 字段对应 YUV/RGB 的转换矩阵</li>
+<li>color_transfer 字段对应线性 RGB 和非线性 RGB 之间的转换函数</li>
+<li>color_primaries 字段对应 RGB/XYZ 的转换矩阵</li>
+</ul>
+<p>在 <code>MediaInfo</code> 中，</p>
+<ul>
+<li>Matrix coefficients 字段对应 YUV/RGB 的转换矩阵</li>
+<li>Transfer characteristic 字段对应线性 RGB 和非线性 RGB 之间的转换函数</li>
+<li>Color primaries 字段对应 RGB/XYZ 的转换矩阵</li>
+</ul>
+<p>除了如上的参数外，AVFrame-&gt;<a target="_blank" rel="noopener" href="https://ffmpeg.org/doxygen/trunk/pixfmt_8h.html#a3da0bf691418bc22c4bcbe6583ad589a">range</a> 还用来存储视频中对应像素的每个分量的取值范围。在 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/a78f136f3fa039fd7ad664fd6e6e976f1448c68b/libavfilter/vf_setparams.c">vf_setparams.c</a> 中也作了相关的定义说明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;limited&quot;,                      NULL,   0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_MPEG&#125;,         0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;tv&quot;,                           NULL,   0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_MPEG&#125;,         0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;mpeg&quot;,                         NULL,   0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_MPEG&#125;,         0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;full&quot;,                         NULL,   0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_JPEG&#125;,         0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;pc&quot;,                           NULL,   0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_JPEG&#125;,         0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;jpeg&quot;,                         NULL,   0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_JPEG&#125;,         0, 0, FLAGS, &quot;range&quot;&#125;,</span><br></pre></td></tr></table></figure>
 <p>正是通过不同的颜色模型和不同的变换，才得以让我们实现：在不同输入、输出、显示设备上都呈现出最好的颜色。</p>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
