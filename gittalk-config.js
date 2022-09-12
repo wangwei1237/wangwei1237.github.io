@@ -27,7 +27,8 @@
         "owner": "wangwei1237",
         "admin": ["wangwei1237"],
         "id": id, 
-        "distractionFreeMode": false
+        "distractionFreeMode": false,
+        //"proxy": "https://cors-server-ecru.vercel.app/github_access_token/https://github.com/login/oauth/access_token"
     });
 
     gitalk.render("gitalk-container");
