@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.8k</span>
+            <span class="post-count">2.2k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6 分钟</span>
+            <span class="post-count">8 分钟</span>
         </span>
     </span>
 </div>
@@ -249,6 +249,16 @@
 <p>关于色温在不同场景下的运用，可以参考如下的视频。</p>
 <div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=248829829&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
 <h3 id="通过后处理修改色温">通过后处理修改色温</h3>
+<p>当然，现在很多软件可以对照片或者视频的色温进行后处理。但是可以后处理调整色温，并不意味着，前期的灯光以及相机的白平衡设置是不重要的。如果前期灯光乱七八糟，那么后续怎么调整都显得无能为力。</p>
+<p>例如，对于婚纱摄影而言，在拍摄时，可以对人物的脸部加上暖色补光灯。这种情况下，如果后期对人物的脸部进行白平衡调整，那天空就会因为色温的后期调整而变成深蓝色。类似的，如果拍摄时给人物脸部补冷色光，那么当按照脸部调整白平衡之后，环境就会变成暖色。除非后期把用不同色温照射的部分单独创建图层单独调整色温，否则无论后期怎么调整，都不会得到令人满意的结果。</p>
+<p>后处理调整色温主要是通过色温来调整RGB各通道的颜色值来实现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kelvin_table = &#123;</span><br><span class="line">    <span class="number">1000</span>: (<span class="number">255</span>, <span class="number">56</span>, <span class="number">0</span>),</span><br><span class="line">    <span class="number">1100</span>: (<span class="number">255</span>, <span class="number">71</span>, <span class="number">0</span>),</span><br><span class="line">    ...</span><br><span class="line">    <span class="number">12000</span>: (<span class="number">195</span>, <span class="number">209</span>, <span class="number">255</span>),</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">image   = Image.<span class="built_in">open</span>(image_file)</span><br><span class="line">r, g, b = kelvin_table[color_temperature]</span><br><span class="line">color_matrix = (r / <span class="number">255.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, </span><br><span class="line">                <span class="number">0.0</span>, g / <span class="number">255.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, </span><br><span class="line">                <span class="number">0.0</span>, <span class="number">0.0</span>, b / <span class="number">255.0</span>, <span class="number">0.0</span>)</span><br><span class="line">new_image = image.convert(<span class="string">&#x27;RGB&#x27;</span>, color_matrix)</span><br></pre></td></tr></table></figure>
+<p>其中，代码中的 <code>kelvin_table</code> 可以从 <a target="_blank" rel="noopener" href="http://www.vendian.org/mncharity/dir3/blackbody/UnstableURLs/bbr_color.html">Blackbody color datafile</a> 获取。</p>
+<p>利用这种方式对图片的色温进行调整（1000K~12000K），可以得到如下的效果：</p>
+<p><img src="/2022/12/03/introduction-to-color-temperature/4.jpg" alt></p>
+<h3 id="色温对视觉信息的影响">色温对视觉信息的影响</h3>
+<p>通过下图的色温调整可以看到，色温的调整会简介的影响图像的色调、饱和度、亮度、色彩度等信息，从而影响视觉效果。</p>
+<p><img src="/2022/12/03/introduction-to-color-temperature/5.jpg" alt></p>
  
       <!-- reward -->
       
