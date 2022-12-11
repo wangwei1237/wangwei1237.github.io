@@ -1,0 +1,1574 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>13.1 Introducing ReplicaSets · Kubernetes实战（第二版）</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="wangwei17">
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-page-toc-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-hints/plugin-hints.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Updating_a_ReplicaSet.html" />
+    
+    
+    <link rel="prev" href="Replicating_Pods_with_ReplicaSets.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+    
+        
+        <li>
+            <a href="https://wangwei1237.gitee.io/" target="_blank" class="custom-link">17哥的个人网站</a>
+        </li>
+    
+    
+
+    
+    <li class="divider"></li>
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    前言
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Welcome</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="Welcome.html">
+            
+                <a href="Welcome.html">
+            
+                    
+                    Welcome
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part 1: First Time On a Boat: Introduction to Kubernetes</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="Introducing_Kubernetes_0.html">
+            
+                <a href="Introducing_Kubernetes_0.html">
+            
+                    
+                    1 Introducing Kubernetes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.1.1" data-path="Introducing_Kubernetes_1.html">
+            
+                <a href="Introducing_Kubernetes_1.html">
+            
+                    
+                    1.1 Introducing Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.2" data-path="Understanding_Kubernetes.html">
+            
+                <a href="Understanding_Kubernetes.html">
+            
+                    
+                    1.2 Understanding Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.3" data-path="Introducing_Kubernetes_into_your_organization.html">
+            
+                <a href="Introducing_Kubernetes_into_your_organization.html">
+            
+                    
+                    1.3 Introducing Kubernetes into your organization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.4" data-path="Summary_1.html">
+            
+                <a href="Summary_1.html">
+            
+                    
+                    1.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="Understanding_containers.html">
+            
+                <a href="Understanding_containers.html">
+            
+                    
+                    2 Understanding containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="Introducing_containers.html">
+            
+                <a href="Introducing_containers.html">
+            
+                    
+                    2.1 Introducing containers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="Exploring_containers_hands-on.html">
+            
+                <a href="Exploring_containers_hands-on.html">
+            
+                    
+                    2.2 Exploring containers hands-on
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="Understanding_what_makes_containers_possible.html">
+            
+                <a href="Understanding_what_makes_containers_possible.html">
+            
+                    
+                    2.3 Understanding what makes containers possible
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.4" data-path="Summary_2.html">
+            
+                <a href="Summary_2.html">
+            
+                    
+                    2.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="Deploying_your_first_application.html">
+            
+                <a href="Deploying_your_first_application.html">
+            
+                    
+                    3 DEPLOYING YOUR FIRST APPLICATION
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="Deploying_a_Kubernetes_cluster.html">
+            
+                <a href="Deploying_a_Kubernetes_cluster.html">
+            
+                    
+                    3.1 Deploying a Kubernetes cluster
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="Interacting_with_Kubernetes.html">
+            
+                <a href="Interacting_with_Kubernetes.html">
+            
+                    
+                    3.2 Interacting with Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="Running_your_first_application_on_Kubernetes.html">
+            
+                <a href="Running_your_first_application_on_Kubernetes.html">
+            
+                    
+                    3.3  Running your first application on Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.4" data-path="Summary_3.html">
+            
+                <a href="Summary_3.html">
+            
+                    
+                    3.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part 2: Learning the Ropes: Kubernetes API Objects</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="Introducing_the_Kubernetes_API_Objects.html">
+            
+                <a href="Introducing_the_Kubernetes_API_Objects.html">
+            
+                    
+                    4. Introducing the Kubernetes API Objects
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1.1" data-path="Getting_familiar_with_the_Kubernetes_API.html">
+            
+                <a href="Getting_familiar_with_the_Kubernetes_API.html">
+            
+                    
+                    4.1 Getting familiar with the Kubernetes API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.2" data-path="Examining_an_objects_individual_properties.html">
+            
+                <a href="Examining_an_objects_individual_properties.html">
+            
+                    
+                    4.2 Examining an object’s individual properties
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.3" data-path="Observing_cluster_events_via_Event_objects.html">
+            
+                <a href="Observing_cluster_events_via_Event_objects.html">
+            
+                    
+                    4.3 Observing cluster events via Event objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.4" data-path="Summary_4.html">
+            
+                <a href="Summary_4.html">
+            
+                    
+                    4.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="Running_applications_in_Pods.html">
+            
+                <a href="Running_applications_in_Pods.html">
+            
+                    
+                    5. Running applications in Pods
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="Understanding_pods.html">
+            
+                <a href="Understanding_pods.html">
+            
+                    
+                    5.1  Understanding pods
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="Creating_pods_from_YAML_or_JSON_files.html">
+            
+                <a href="Creating_pods_from_YAML_or_JSON_files.html">
+            
+                    
+                    5.2 Creating pods from YAML or JSON files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="Interacting_with_the_application_and_the_pod.html">
+            
+                <a href="Interacting_with_the_application_and_the_pod.html">
+            
+                    
+                    5.3 Interacting with the application and the pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.4" data-path="Running_multiple_containers_in_a_pod.html">
+            
+                <a href="Running_multiple_containers_in_a_pod.html">
+            
+                    
+                    5.4 Running multiple containers in a pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.5" data-path="Running_additional_containers_at_pod_startup.html">
+            
+                <a href="Running_additional_containers_at_pod_startup.html">
+            
+                    
+                    5.5 Running additional containers at pod startup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.6" data-path="Deleting_pods_and_other_objects.html">
+            
+                <a href="Deleting_pods_and_other_objects.html">
+            
+                    
+                    5.6 Deleting pods and other objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.7" data-path="Summary_5.html">
+            
+                <a href="Summary_5.html">
+            
+                    
+                    5.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="Managing_the_lifecycle_of_the_Pods_containers.html">
+            
+                <a href="Managing_the_lifecycle_of_the_Pods_containers.html">
+            
+                    
+                    6. Managing the lifecycle of the Pod’s containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="Understanding_the_pods_status.html">
+            
+                <a href="Understanding_the_pods_status.html">
+            
+                    
+                    6.1 Understanding the pod's status
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="Keeping_containers_healthy.html">
+            
+                <a href="Keeping_containers_healthy.html">
+            
+                    
+                    6.2 Keeping containers healthy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="Executing_actions_at_container_startup_and_shutdown.html">
+            
+                <a href="Executing_actions_at_container_startup_and_shutdown.html">
+            
+                    
+                    6.3 Executing actions at container start-up and shutdown
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="Understanding_the_pod_lifecycle.html">
+            
+                <a href="Understanding_the_pod_lifecycle.html">
+            
+                    
+                    6.4 Understanding the pod lifecycle
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.5" data-path="Summary_6.html">
+            
+                <a href="Summary_6.html">
+            
+                    
+                    6.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="Mounting_storage_volumes_into_the_Pods_containers.html">
+            
+                <a href="Mounting_storage_volumes_into_the_Pods_containers.html">
+            
+                    
+                    7. Mounting storage volumes into the Pod’s containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.4.1" data-path="Introducing_volumes.html">
+            
+                <a href="Introducing_volumes.html">
+            
+                    
+                    7.1 Introducing volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.2" data-path="Using_volumes.html">
+            
+                <a href="Using_volumes.html">
+            
+                    
+                    7.2 Using volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.3" data-path="Integrating_external_storage_into_pods.html">
+            
+                <a href="Integrating_external_storage_into_pods.html">
+            
+                    
+                    7.3 Integrating external storage into pods
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.4" data-path="Accessing_files_on_the_worker_nodes_filesystem.html">
+            
+                <a href="Accessing_files_on_the_worker_nodes_filesystem.html">
+            
+                    
+                    7.4 Accessing files on the worker node’s filesystem
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.5" data-path="Summary_7.html">
+            
+                <a href="Summary_7.html">
+            
+                    
+                    7.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="Persisting_application_data_with_PersistentVolumes.html">
+            
+                <a href="Persisting_application_data_with_PersistentVolumes.html">
+            
+                    
+                    8. Persisting application data with PersistentVolumes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.5.1" data-path="Decoupling_pods_from_the_underlying_storage_technology.html">
+            
+                <a href="Decoupling_pods_from_the_underlying_storage_technology.html">
+            
+                    
+                    8.1 Decoupling pods from the underlying storage technology
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.2" data-path="Creating_persistent_volumes_and_claims.html">
+            
+                <a href="Creating_persistent_volumes_and_claims.html">
+            
+                    
+                    8.2 Creating persistent volumes and claims
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.3" data-path="Dynamic_provisioning_of_persistent_volumes.html">
+            
+                <a href="Dynamic_provisioning_of_persistent_volumes.html">
+            
+                    
+                    8.3 Dynamic provisioning of persistent volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.4" data-path="Nodelocal_persistent_volumes.html">
+            
+                <a href="Nodelocal_persistent_volumes.html">
+            
+                    
+                    8.4 Node-local persistent volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.5" data-path="Summary_8.html">
+            
+                <a href="Summary_8.html">
+            
+                    
+                    8.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.html">
+            
+                <a href="Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.html">
+            
+                    
+                    9. Configuring applications using ConfigMaps, Secrets, and the Downward API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.6.1" data-path="Setting_the_command_arguments_and_environment_variables.html">
+            
+                <a href="Setting_the_command_arguments_and_environment_variables.html">
+            
+                    
+                    9.1 Setting the command, arguments, and environment variables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.2" data-path="Using_a_config_map_to_decouple_configuration_from_the_pod.html">
+            
+                <a href="Using_a_config_map_to_decouple_configuration_from_the_pod.html">
+            
+                    
+                    9.2 Using a config map to decouple configuration from the pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.3" data-path="Using_Secrets_to_pass_sensitive_data_to_containers.html">
+            
+                <a href="Using_Secrets_to_pass_sensitive_data_to_containers.html">
+            
+                    
+                    9.3 Using Secrets to pass sensitive data to containers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.4" data-path="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
+            
+                <a href="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
+            
+                    
+                    9.4 Passing pod metadata to the application via the Downward API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.5" data-path="Using_projected_volumes_to_combine_volumes_into_one.html">
+            
+                <a href="Using_projected_volumes_to_combine_volumes_into_one.html">
+            
+                    
+                    9.5 Using projected volumes to combine volumes into one
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.6" data-path="Summary_9.html">
+            
+                <a href="Summary_9.html">
+            
+                    
+                    9.6 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="Organizing_objects_using_Namespaces_labels.html">
+            
+                <a href="Organizing_objects_using_Namespaces_labels.html">
+            
+                    
+                    10. Organizing objects using Namespaces, labels, and selectors
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.7.1" data-path="Organizing_objects_into_Namespaces.html">
+            
+                <a href="Organizing_objects_into_Namespaces.html">
+            
+                    
+                    10.1 Organizing objects into Namespaces
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.2" data-path="Organizing_pods_with_labels.html">
+            
+                <a href="Organizing_pods_with_labels.html">
+            
+                    
+                    10.2 Organizing pods with labels
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.3" data-path="Filtering_Objects_With_Label_Selectors.html">
+            
+                <a href="Filtering_Objects_With_Label_Selectors.html">
+            
+                    
+                    10.3 Filtering objects with label selectors.md
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.4" data-path="Annotating_objects.html">
+            
+                <a href="Annotating_objects.html">
+            
+                    
+                    10.4 Annotating objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.5" data-path="Summary_10.html">
+            
+                <a href="Summary_10.html">
+            
+                    
+                    10.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="Exposing_Pods_with_Services.html">
+            
+                <a href="Exposing_Pods_with_Services.html">
+            
+                    
+                    11. Exposing Pods with Services
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.8.1" data-path="Exposing_pods_via_services.html">
+            
+                <a href="Exposing_pods_via_services.html">
+            
+                    
+                    11.1 Exposing pods via services
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.2" data-path="Exposing_services_externally.html">
+            
+                <a href="Exposing_services_externally.html">
+            
+                    
+                    11.2 Exposing services externally
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.3" data-path="Managing_service_endpoints.html">
+            
+                <a href="Managing_service_endpoints.html">
+            
+                    
+                    11.3 Managing service endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.4" data-path="Understanding_DNS_records for_Service_objects.html">
+            
+                <a href="Understanding_DNS_records for_Service_objects.html">
+            
+                    
+                    11.4 Understanding DNS records for Service objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.5" data-path="Configuring_services_to_route_traffic_to_nearby_endpoints.html">
+            
+                <a href="Configuring_services_to_route_traffic_to_nearby_endpoints.html">
+            
+                    
+                    11.5 Configuring services to route traffic to nearby endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.6" data-path="Managing_the_inclusion_of_a_pod_in_service_endpoints.html">
+            
+                <a href="Managing_the_inclusion_of_a_pod_in_service_endpoints.html">
+            
+                    
+                    11.6 Managing the inclusion of a pod in service endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.7" data-path="Summary_11.html">
+            
+                <a href="Summary_11.html">
+            
+                    
+                    11.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9" data-path="Exposing_Services_with_Ingress.html">
+            
+                <a href="Exposing_Services_with_Ingress.html">
+            
+                    
+                    12. Exposing Services with Ingress
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.9.1" data-path="Introducing_Ingresses.html">
+            
+                <a href="Introducing_Ingresses.html">
+            
+                    
+                    12.1 Introducing Ingresses
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.2" data-path="Creating_and_using_Ingress_objects.html">
+            
+                <a href="Creating_and_using_Ingress_objects.html">
+            
+                    
+                    12.2 Creating and using Ingress objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.3" data-path="Configuring_TLS_for_an_Ingress.html">
+            
+                <a href="Configuring_TLS_for_an_Ingress.html">
+            
+                    
+                    12.3 Configuring TLS for an Ingress
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.4" data-path="Additional_Ingress_configuration_options.html">
+            
+                <a href="Additional_Ingress_configuration_options.html">
+            
+                    
+                    12.4 Additional Ingress configuration options
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.5" data-path="Using_multiple_ingress_controllers.html">
+            
+                <a href="Using_multiple_ingress_controllers.html">
+            
+                    
+                    12.5 Using multiple ingress controllers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.6" data-path="Using_custom_resources_instead_of_services_as_backends.html">
+            
+                <a href="Using_custom_resources_instead_of_services_as_backends.html">
+            
+                    
+                    12.6 Using custom resources instead of services as backends
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.7" data-path="Summary_12.html">
+            
+                <a href="Summary_12.html">
+            
+                    
+                    12.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10" data-path="Replicating_Pods_with_ReplicaSets.html">
+            
+                <a href="Replicating_Pods_with_ReplicaSets.html">
+            
+                    
+                    13 Replicating Pods with ReplicaSets
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="4.10.1" data-path="Introducing_ReplicaSets.html">
+            
+                <a href="Introducing_ReplicaSets.html">
+            
+                    
+                    13.1 Introducing ReplicaSets
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.2" data-path="Updating_a_ReplicaSet.html">
+            
+                <a href="Updating_a_ReplicaSet.html">
+            
+                    
+                    13.2 Updating a ReplicaSet
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.3" data-path="Understanding_the_operation_of_the_ReplicaSet_controller.html">
+            
+                <a href="Understanding_the_operation_of_the_ReplicaSet_controller.html">
+            
+                    
+                    13.3 Understanding the operation of the ReplicaSet controller
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.4" data-path="Deleting_a_ReplicaSet.html">
+            
+                <a href="Deleting_a_ReplicaSet.html">
+            
+                    
+                    13.4 Deleting a ReplicaSet
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.5" data-path="Summary_13.html">
+            
+                <a href="Summary_13.html">
+            
+                    
+                    13.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >13.1 Introducing ReplicaSets</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="131-introducing-replicasets">13.1 Introducing ReplicaSets</h1>
+<p>A ReplicaSet represents a group of Pod replicas (exact copies of a Pod). Instead of creating Pods one by one, you can create a ReplicaSet object in which you specify a Pod template and the desired number of replicas, and then have Kubernetes create the Pods, as shown in the following figure.</p>
+<p>Figure 13.1 ReplicaSets in a nutshell</p>
+<p><img src="../images/13.1.png" alt=""></p>
+<p>The ReplicaSet allows you to manage the Pods as a single unit, but that&#x2019;s about it. If you want to expose these Pods as one, you still need a Service object. As you can see in the following figure, each set of Pods that provides a particular service usually needs both a ReplicaSet and a Service object.</p>
+<p>Figure 13.2 The relationship between Services, ReplicaSets, and Pods.</p>
+<p><img src="../images/13.2.png" alt=""></p>
+<p>And just as with Services, the ReplicaSet&#x2019;s label selector and Pod labels determine which Pods belong to the ReplicaSet. As shown in the following figure, a ReplicaSet only cares about the Pods that match its label selector and ignores the rest.</p>
+<p>Figure 13.3 A ReplicaSet only cares about Pods that match its label selector</p>
+<p><img src="../images/13.3.png" alt=""></p>
+<p>Based on the information so far, you might think that you only use a ReplicaSet if you want to create multiple copies of a Pod, but that&#x2019;s not the case. Even if you only need to create a single Pod, it&#x2019;s better to do it through a ReplicaSet than to create it directly, because the ReplicaSet ensures that the Pod is always there to do its job.</p>
+<p>Imagine creating a Pod directly for an important service, and then the node running the Pod fails when you&#x2019;re not there. Your service is down until you recreate the Pod. If you&#x2019;d deployed the Pod via a ReplicaSet, it would automatically recreate the Pod. It&#x2019;s clearly better to create Pods via a ReplicaSet than directly.</p>
+<p>However, as useful as ReplicaSets can be, they don&#x2019;t provide everything you need to run a workload long-term. At some point, you&#x2019;ll want to upgrade the workload to a newer version, and that&#x2019;s where ReplicaSets fall short. For this reason, applications are typically deployed not through ReplicaSets, but through Deployments that let you update them declaratively. This begs the question of why you need to learn about ReplicaSets if you&#x2019;re not going to use them. The reason is that most of the functionality that a Deployment provides is provided by the ReplicaSets that Kubernetes creates underneath it. Deployments take care of updates, but everything else is handled by the underlying ReplicaSets. Therefore, it&#x2019;s important to understand what they do and how.</p>
+<h2 id="1311-creating-a-replicaset">13.1.1 Creating a ReplicaSet</h2>
+<p>Let&#x2019;s start by creating the ReplicaSet object for the Kiada service. The service currently runs in three Pods that you created directly from three separate Pod manifests, which you&#x2019;ll now replace with a single ReplicaSet manifest. Before you create the manifest, let&#x2019;s look at what fields you need to specify in the <code>spec</code> section.</p>
+<h4 id="introducing-the-replicaset-spec">Introducing the ReplicaSet spec</h4>
+<p>A ReplicaSet is a relatively simple object. The following table explains the three key fields you specify in the ReplicaSet&#x2019;s spec section.</p>
+<p>Table 13.1 The main fields in the ReplicaSet specification
+|Field name|Description|
+|---|---|
+|replicas|The desired number of replicas. When you create the ReplicaSet object, Kubernetes creates this many Pods from the Pod template. It keeps this number of Pods until you delete the ReplicaSet.|
+|selector|The label selector contains either a map of labels in the matchLabels subfield or a list of label selector requirements in the matchExpressions subfield. Pods that match the label selector are considered part of this ReplicaSet.|
+|template|The Pod template for the ReplicaSet&#x2019;s Pods. When a new Pod needs to be created, the object is created using this template.|</p>
+<p>The <code>selector</code> and <code>template</code> fields are required, but you can omit the <code>replicas</code> field. If you do, a single replica is created.</p>
+<h4 id="creating-a-replicaset-object-manifest">Creating a ReplicaSet object manifest</h4>
+<p>Create a ReplicaSet object manifest for the Kiada Pods. The following listing shows what it looks like. You can find the manifest in the file <code>rs.kiada.yaml</code>.</p>
+<p>Listing 13.1 The kiada ReplicaSet object manifest</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> apps/v1
+<span class="hljs-attr">kind:</span> ReplicaSet
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> kiada
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  replicas:</span> <span class="hljs-number">5</span>
+<span class="hljs-attr">  selector:</span>
+<span class="hljs-attr">    matchLabels:</span>
+<span class="hljs-attr">      app:</span> kiada
+<span class="hljs-attr">      rel:</span> stable
+<span class="hljs-attr">  template:</span>
+<span class="hljs-attr">    metadata:</span>
+<span class="hljs-attr">      labels:</span>
+<span class="hljs-attr">        app:</span> kiada
+<span class="hljs-attr">        rel:</span> stable
+<span class="hljs-attr">    spec:</span>
+<span class="hljs-attr">      containers:</span>
+<span class="hljs-attr">      - name:</span> kiada
+<span class="hljs-attr">        image:</span> luksa/kiada:<span class="hljs-number">0.5</span>
+        ...
+<span class="hljs-attr">      volumes:</span>
+<span class="hljs-bullet">      -</span> ...
+</code></pre>
+<p>ReplicaSets are part of the <code>apps</code> API group, version <code>v1</code>. As explained in the previous table, the <code>replicas</code> field specifies that this ReplicaSet should create three copies of the Pod using the template in the <code>template</code> field.</p>
+<p>You&#x2019;ll notice that the <code>labels</code> in the Pod template match those in the <code>selector</code> field. If they don&#x2019;t, the Kubernetes API will reject the ReplicaSet because the Pods created with the template won&#x2019;t count against the desired number of replicas, which would result in the creation of an infinite number of Pods.</p>
+<p>Did you notice that there&#x2019;s no Pod name in the template? That&#x2019;s because the Pod names are generated from the ReplicaSet name.</p>
+<p>The rest of the template exactly matches the manifests of the kiada Pods you created in the previous chapters. To create the ReplicaSet, you use the <code>kubectl apply</code> command that you&#x2019;ve used many times before. The command is as follows:</p>
+<pre><code class="lang-shell">$ kubectl apply -f rs.kiada.yaml
+replicaset.apps/kiada created
+</code></pre>
+<h2 id="1312-inspecting-a-replicaset-and-its-pods">13.1.2 Inspecting a ReplicaSet and its Pods</h2>
+<p>To display basic information about the ReplicaSet you just created, use the <code>kubectl get</code> command like so:</p>
+<pre><code class="lang-shell">$ kubectl get rs kiada
+NAME    DESIRED   CURRENT   READY   AGE
+kiada   5         5         5       1m
+</code></pre>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>The shorthand for replicaset is rs.</p>
+</div></div></p>
+<p>The output of the command shows the desired number of replicas, the current number of replicas, and the number of replicas that are considered ready as reported by their readiness probes. This information is read from the <code>replicas</code>, <code>fullyLabeledReplicas</code>, and <code>readyReplicas</code> status fields of the ReplicaSet object, respectively. Another status field called <code>availableReplicas</code> indicates how many replicas are available, but its value isn&#x2019;t displayed by the <code>kubectl get</code> command.</p>
+<p>If you run the <code>kubectl get replicasets</code> command with the <code>-o wide</code> option, some additional very useful information is displayed. Run the following command to find out what:</p>
+<pre><code class="lang-shell">$ kubectl get rs -o wide
+NAME    ...   CONTAINERS    IMAGES                                     SELECTOR
+kiada ... kiada,envoy luksa/kiada:0.5,envoyproxy/envoy:v1.14.1 app=kiada,rel=stable
+</code></pre>
+<p>In addition to the columns displayed previously, this expanded output shows not only the label selector, but also the container names and images used in the Pod template. Considering how important this information is, it&#x2019;s surprising that it&#x2019;s not displayed when listing the Pods with <code>kubectl get pods</code>.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
+<p>To see container and image names, list ReplicaSets with the <code>-o wide</code> option instead of trying to get this information from the Pods.</p>
+</div></div></p>
+<p>To see all the information about a ReplicaSet, use the <code>kubectl describe</code> command:</p>
+<pre><code class="lang-shell">$ kubectl describe rs kiada
+</code></pre>
+<p>The output shows the label selector used in the ReplicaSet, the number of Pods and their status, and the full template used to create those Pods.</p>
+<h4 id="listing-the-pods-in-a-replicaset">Listing the Pods in a ReplicaSet</h4>
+<p>Kubectl doesn&#x2019;t provide a direct way to list the Pods in a ReplicaSet, but you can take the ReplicaSet&#x2019;s label selector and use it in the <code>kubectl get pods</code> command as follows:</p>
+<pre><code class="lang-shell">$ kubectl get po -l app=kiada,rel=stable
+NAME          READY   STATUS    RESTARTS   AGE
+kiada-001     2/2     Running   0          12m
+kiada-002     2/2     Running   0          12m
+kiada-003     2/2     Running   0          12m
+kiada-86wzp   2/2     Running   0          8s
+kiada-k9hn2   2/2     Running   0          8s
+</code></pre>
+<p>Before you created the ReplicaSet, you had three kiada Pods from the previous chapters and now you have five, which is the desired number of replicas defined in the ReplicaSet. The labels of the three existing Pods matched the ReplicaSet&#x2019;s label selector and were adopted by the ReplicaSet. Two additional Pods were created to ensure that the number of Pods in the set matched the desired number of replicas.</p>
+<h4 id="understanding-how-pods-in-a-replicaset-are-named">Understanding how Pods in a ReplicaSet are named</h4>
+<p>As you can see, the names of the two new Pods contain five random alphanumeric characters instead of continuing the sequence of numbers you used in your Pod names. It&#x2019;s typical for Kubernetes to assign random names to the objects it creates.</p>
+<p>There&#x2019;s even a special <code>metadata</code> field that lets you create objects without giving the full name. Instead of the <code>name</code> field, you specify the name prefix in the <code>generateName</code> field. You first used this field in chapter 8, when you ran the <code>kubectl create</code> command several times to create multiple copies of a Pod and give each a unique name. The same approach is used when Kubernetes creates Pods for a ReplicaSet.</p>
+<p>When Kubernetes creates Pods for a ReplicaSet, it sets the <code>generateName</code> field to match the ReplicaSet name. The Kubernetes API server then generates the full name and puts it in the <code>name</code> field. To see this, select one of the two additional Pods that were created and check its metadata section as follows:</p>
+<pre><code class="lang-shell">$ kubectl get po kiada-86wzp -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: kiada-
+  labels:
+    ...
+  name: kiada-86wzp
+  ...
+</code></pre>
+<p>In the case of ReplicaSet Pods, giving the Pods random names makes sense because these Pods are exact copies of each other and therefore fungible. There&#x2019;s also no concept of order between these Pods, so the use of sequential numbers is nonsensical. Even though the Pod names look reasonable now, imagine what happens if you delete some of them. If you delete them out of order, the numbers are no longer consecutive. However, for stateful workloads, it may make sense to number the Pods sequentially. That&#x2019;s what happens when you use a StatefulSet object to create the Pods. You&#x2019;ll learn more about StatefulSets in chapter 16.</p>
+<h4 id="displaying-the-logs-of-the-replicasets-pods">Displaying the logs of the ReplicaSet&apos;s Pods</h4>
+<p>The random names of ReplicaSet Pods make them somewhat difficult to work with. For example, to view the logs of one of these Pods, it&apos;s relatively tedious to type the name of the Pod when you run the <code>kubectl logs</code> command. If the ReplicaSet contains only a single Pod, entering the full name seems unnecessary. Fortunately, in this case, you can print the Pod&apos;s logs as follows:</p>
+<pre><code class="lang-shell">$ kubectl logs rs/kiada -c kiada
+</code></pre>
+<p>So instead of specifying the Pod name, you type <code>rs/kiada</code>, where <code>rs</code> is the abbreviation for ReplicaSet and <code>kiada</code> is the name of the ReplicaSet object. The <code>-c kiada</code> option tells <code>kubectl</code> to print the log of the <code>kiada</code> container. You need to use this option only if the Pod has more than one container. If the ReplicaSet has multiple Pods, as in your case, only the logs of one of the Pods will be displayed.</p>
+<p>If you want to see the logs of all the Pods, you can run the <code>kubectl logs</code> command with a label selector instead. For example, to stream the logs of the <code>envoy</code> containers in all kiada Pods, run the following command:</p>
+<pre><code class="lang-shell">$ kubect logs -l app=kiada -c envoy
+</code></pre>
+<p>To display the logs of all containers, use the <code>--all-containers</code> option instead of specifying the container name. Of course, if you&#x2019;re displaying the logs of multiple Pods or containers, you can&apos;t tell where each line came from. Use the <code>--prefix</code> option to prefix each log line with the name of the Pod and container it came from, like this:</p>
+<pre><code class="lang-shell">$ kubectl logs -l app=kiada --all-containers --prefix
+</code></pre>
+<p>Viewing logs from multiple Pods is very useful when traffic is split between Pods and you want to view every request received, regardless of which Pod handled it. For example, try streaming the logs with the following command:</p>
+<pre><code class="lang-shell">$ kubectl logs -l app=kiada -c kiada --prefix -f
+</code></pre>
+<p>Now open the application in your web browser or with <code>curl</code>. Use the Ingress, LoadBalancer, or NodePort service as explained in the previous two chapters.</p>
+<h2 id="1313-understanding-pod-ownership">13.1.3 Understanding Pod ownership</h2>
+<p>Kubernetes created the two new Pods from the template you specified in the ReplicaSet object. They&#x2019;re owned and controlled by the ReplicaSet, just like the three Pods you created manually. You can see this when you use the <code>kubectl describe</code> command to inspect the Pods. For example, check the <code>kiada-001</code> Pod as follows:</p>
+<pre><code class="lang-shell">$ kubectl describe po kiada-001
+Name:         kiada-001
+Namespace:    kiada
+...
+Controlled By:  ReplicaSet/kiada
+...
+</code></pre>
+<p>The <code>kubectl describe</code> command gets this information from the <code>metadata</code> section of the Pod&#x2019;s manifest. Let&#x2019;s take a closer look. Run the following command:</p>
+<pre><code class="lang-shell">$ kubectl get po kiada-001 -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: kiada
+    rel: stable
+  name: kiada-001
+  namespace: kiada
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: kiada
+    uid: 8e19d9b3-bbf1-4830-b0b4-da81dd0e6e22
+  resourceVersion: &quot;527511&quot;
+  uid: d87afa5c-297d-4ccb-bb0a-9eb48670673f
+spec:
+  ...
+</code></pre>
+<p>The <code>metadata</code> section in an object manifest sometimes contains the <code>ownerReferences</code> field, which contains references to the owner(s) of the object. This field can contain multiple owners, but most objects have only a single owner, just like the <code>kiada-001</code> Pod. In the case of this Pod, the <code>kiada</code> ReplicaSet is the owner, and the Pod is the so-called dependent.</p>
+<p>Kubernetes has a garbage collector that automatically deletes dependent objects when their owner is deleted. If an object has multiple owners, the object is deleted when all its owners are gone. If you delete the ReplicaSet object that owns the <code>kiada-001</code> and the other Pods, the garbage collector would also delete the Pods.</p>
+<p>An owner reference can also indicate which owner is the controller of the object. The <code>kiada-001</code> Pod is controlled by the <code>kiada</code> ReplicaSet, as indicated by the <code>controller: true</code> line in the manifest. This means that you should no longer control the three Pods directly, but through the ReplicaSet object.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Replicating_Pods_with_ReplicaSets.html" class="navigation navigation-prev " aria-label="Previous page: 13 Replicating Pods with ReplicaSets">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Updating_a_ReplicaSet.html" class="navigation navigation-next " aria-label="Next page: 13.2 Updating a ReplicaSet">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"13.1 Introducing ReplicaSets","level":"4.10.1","depth":2,"next":{"title":"13.2 Updating a ReplicaSet","level":"4.10.2","depth":2,"path":"docs/Updating_a_ReplicaSet.md","ref":"docs/Updating_a_ReplicaSet.md","articles":[]},"previous":{"title":"13 Replicating Pods with ReplicaSets","level":"4.10","depth":1,"path":"docs/Replicating_Pods_with_ReplicaSets.md","ref":"docs/Replicating_Pods_with_ReplicaSets.md","articles":[{"title":"13.1 Introducing ReplicaSets","level":"4.10.1","depth":2,"path":"docs/Introducing_ReplicaSets.md","ref":"docs/Introducing_ReplicaSets.md","articles":[]},{"title":"13.2 Updating a ReplicaSet","level":"4.10.2","depth":2,"path":"docs/Updating_a_ReplicaSet.md","ref":"docs/Updating_a_ReplicaSet.md","articles":[]},{"title":"13.3 Understanding the operation of the ReplicaSet controller","level":"4.10.3","depth":2,"path":"docs/Understanding_the_operation_of_the_ReplicaSet_controller.md","ref":"docs/Understanding_the_operation_of_the_ReplicaSet_controller.md","articles":[]},{"title":"13.4 Deleting a ReplicaSet","level":"4.10.4","depth":2,"path":"docs/Deleting_a_ReplicaSet.md","ref":"docs/Deleting_a_ReplicaSet.md","articles":[]},{"title":"13.5 Summary","level":"4.10.5","depth":2,"path":"docs/Summary_13.md","ref":"docs/Summary_13.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Introducing_ReplicaSets.md","mtime":"2022-12-11T09:18:02.644Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-12-11T09:18:29.169Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-page-toc-button/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-cnzz/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

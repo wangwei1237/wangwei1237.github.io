@@ -1,0 +1,1494 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>12.5 Using multiple ingress controllers · Kubernetes实战（第二版）</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="wangwei17">
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-page-toc-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-hints/plugin-hints.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Using_custom_resources_instead_of_services_as_backends.html" />
+    
+    
+    <link rel="prev" href="Additional_Ingress_configuration_options.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+    
+        
+        <li>
+            <a href="https://wangwei1237.gitee.io/" target="_blank" class="custom-link">17哥的个人网站</a>
+        </li>
+    
+    
+
+    
+    <li class="divider"></li>
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    前言
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Welcome</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="Welcome.html">
+            
+                <a href="Welcome.html">
+            
+                    
+                    Welcome
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part 1: First Time On a Boat: Introduction to Kubernetes</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="Introducing_Kubernetes_0.html">
+            
+                <a href="Introducing_Kubernetes_0.html">
+            
+                    
+                    1 Introducing Kubernetes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.1.1" data-path="Introducing_Kubernetes_1.html">
+            
+                <a href="Introducing_Kubernetes_1.html">
+            
+                    
+                    1.1 Introducing Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.2" data-path="Understanding_Kubernetes.html">
+            
+                <a href="Understanding_Kubernetes.html">
+            
+                    
+                    1.2 Understanding Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.3" data-path="Introducing_Kubernetes_into_your_organization.html">
+            
+                <a href="Introducing_Kubernetes_into_your_organization.html">
+            
+                    
+                    1.3 Introducing Kubernetes into your organization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.4" data-path="Summary_1.html">
+            
+                <a href="Summary_1.html">
+            
+                    
+                    1.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="Understanding_containers.html">
+            
+                <a href="Understanding_containers.html">
+            
+                    
+                    2 Understanding containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="Introducing_containers.html">
+            
+                <a href="Introducing_containers.html">
+            
+                    
+                    2.1 Introducing containers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="Exploring_containers_hands-on.html">
+            
+                <a href="Exploring_containers_hands-on.html">
+            
+                    
+                    2.2 Exploring containers hands-on
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="Understanding_what_makes_containers_possible.html">
+            
+                <a href="Understanding_what_makes_containers_possible.html">
+            
+                    
+                    2.3 Understanding what makes containers possible
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.4" data-path="Summary_2.html">
+            
+                <a href="Summary_2.html">
+            
+                    
+                    2.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="Deploying_your_first_application.html">
+            
+                <a href="Deploying_your_first_application.html">
+            
+                    
+                    3 DEPLOYING YOUR FIRST APPLICATION
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="Deploying_a_Kubernetes_cluster.html">
+            
+                <a href="Deploying_a_Kubernetes_cluster.html">
+            
+                    
+                    3.1 Deploying a Kubernetes cluster
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="Interacting_with_Kubernetes.html">
+            
+                <a href="Interacting_with_Kubernetes.html">
+            
+                    
+                    3.2 Interacting with Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="Running_your_first_application_on_Kubernetes.html">
+            
+                <a href="Running_your_first_application_on_Kubernetes.html">
+            
+                    
+                    3.3  Running your first application on Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.4" data-path="Summary_3.html">
+            
+                <a href="Summary_3.html">
+            
+                    
+                    3.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part 2: Learning the Ropes: Kubernetes API Objects</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="Introducing_the_Kubernetes_API_Objects.html">
+            
+                <a href="Introducing_the_Kubernetes_API_Objects.html">
+            
+                    
+                    4. Introducing the Kubernetes API Objects
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1.1" data-path="Getting_familiar_with_the_Kubernetes_API.html">
+            
+                <a href="Getting_familiar_with_the_Kubernetes_API.html">
+            
+                    
+                    4.1 Getting familiar with the Kubernetes API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.2" data-path="Examining_an_objects_individual_properties.html">
+            
+                <a href="Examining_an_objects_individual_properties.html">
+            
+                    
+                    4.2 Examining an object’s individual properties
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.3" data-path="Observing_cluster_events_via_Event_objects.html">
+            
+                <a href="Observing_cluster_events_via_Event_objects.html">
+            
+                    
+                    4.3 Observing cluster events via Event objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.4" data-path="Summary_4.html">
+            
+                <a href="Summary_4.html">
+            
+                    
+                    4.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="Running_applications_in_Pods.html">
+            
+                <a href="Running_applications_in_Pods.html">
+            
+                    
+                    5. Running applications in Pods
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="Understanding_pods.html">
+            
+                <a href="Understanding_pods.html">
+            
+                    
+                    5.1  Understanding pods
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="Creating_pods_from_YAML_or_JSON_files.html">
+            
+                <a href="Creating_pods_from_YAML_or_JSON_files.html">
+            
+                    
+                    5.2 Creating pods from YAML or JSON files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="Interacting_with_the_application_and_the_pod.html">
+            
+                <a href="Interacting_with_the_application_and_the_pod.html">
+            
+                    
+                    5.3 Interacting with the application and the pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.4" data-path="Running_multiple_containers_in_a_pod.html">
+            
+                <a href="Running_multiple_containers_in_a_pod.html">
+            
+                    
+                    5.4 Running multiple containers in a pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.5" data-path="Running_additional_containers_at_pod_startup.html">
+            
+                <a href="Running_additional_containers_at_pod_startup.html">
+            
+                    
+                    5.5 Running additional containers at pod startup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.6" data-path="Deleting_pods_and_other_objects.html">
+            
+                <a href="Deleting_pods_and_other_objects.html">
+            
+                    
+                    5.6 Deleting pods and other objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.7" data-path="Summary_5.html">
+            
+                <a href="Summary_5.html">
+            
+                    
+                    5.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="Managing_the_lifecycle_of_the_Pods_containers.html">
+            
+                <a href="Managing_the_lifecycle_of_the_Pods_containers.html">
+            
+                    
+                    6. Managing the lifecycle of the Pod’s containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="Understanding_the_pods_status.html">
+            
+                <a href="Understanding_the_pods_status.html">
+            
+                    
+                    6.1 Understanding the pod's status
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="Keeping_containers_healthy.html">
+            
+                <a href="Keeping_containers_healthy.html">
+            
+                    
+                    6.2 Keeping containers healthy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="Executing_actions_at_container_startup_and_shutdown.html">
+            
+                <a href="Executing_actions_at_container_startup_and_shutdown.html">
+            
+                    
+                    6.3 Executing actions at container start-up and shutdown
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="Understanding_the_pod_lifecycle.html">
+            
+                <a href="Understanding_the_pod_lifecycle.html">
+            
+                    
+                    6.4 Understanding the pod lifecycle
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.5" data-path="Summary_6.html">
+            
+                <a href="Summary_6.html">
+            
+                    
+                    6.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="Mounting_storage_volumes_into_the_Pods_containers.html">
+            
+                <a href="Mounting_storage_volumes_into_the_Pods_containers.html">
+            
+                    
+                    7. Mounting storage volumes into the Pod’s containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.4.1" data-path="Introducing_volumes.html">
+            
+                <a href="Introducing_volumes.html">
+            
+                    
+                    7.1 Introducing volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.2" data-path="Using_volumes.html">
+            
+                <a href="Using_volumes.html">
+            
+                    
+                    7.2 Using volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.3" data-path="Integrating_external_storage_into_pods.html">
+            
+                <a href="Integrating_external_storage_into_pods.html">
+            
+                    
+                    7.3 Integrating external storage into pods
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.4" data-path="Accessing_files_on_the_worker_nodes_filesystem.html">
+            
+                <a href="Accessing_files_on_the_worker_nodes_filesystem.html">
+            
+                    
+                    7.4 Accessing files on the worker node’s filesystem
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.5" data-path="Summary_7.html">
+            
+                <a href="Summary_7.html">
+            
+                    
+                    7.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="Persisting_application_data_with_PersistentVolumes.html">
+            
+                <a href="Persisting_application_data_with_PersistentVolumes.html">
+            
+                    
+                    8. Persisting application data with PersistentVolumes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.5.1" data-path="Decoupling_pods_from_the_underlying_storage_technology.html">
+            
+                <a href="Decoupling_pods_from_the_underlying_storage_technology.html">
+            
+                    
+                    8.1 Decoupling pods from the underlying storage technology
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.2" data-path="Creating_persistent_volumes_and_claims.html">
+            
+                <a href="Creating_persistent_volumes_and_claims.html">
+            
+                    
+                    8.2 Creating persistent volumes and claims
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.3" data-path="Dynamic_provisioning_of_persistent_volumes.html">
+            
+                <a href="Dynamic_provisioning_of_persistent_volumes.html">
+            
+                    
+                    8.3 Dynamic provisioning of persistent volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.4" data-path="Nodelocal_persistent_volumes.html">
+            
+                <a href="Nodelocal_persistent_volumes.html">
+            
+                    
+                    8.4 Node-local persistent volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.5" data-path="Summary_8.html">
+            
+                <a href="Summary_8.html">
+            
+                    
+                    8.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.html">
+            
+                <a href="Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.html">
+            
+                    
+                    9. Configuring applications using ConfigMaps, Secrets, and the Downward API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.6.1" data-path="Setting_the_command_arguments_and_environment_variables.html">
+            
+                <a href="Setting_the_command_arguments_and_environment_variables.html">
+            
+                    
+                    9.1 Setting the command, arguments, and environment variables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.2" data-path="Using_a_config_map_to_decouple_configuration_from_the_pod.html">
+            
+                <a href="Using_a_config_map_to_decouple_configuration_from_the_pod.html">
+            
+                    
+                    9.2 Using a config map to decouple configuration from the pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.3" data-path="Using_Secrets_to_pass_sensitive_data_to_containers.html">
+            
+                <a href="Using_Secrets_to_pass_sensitive_data_to_containers.html">
+            
+                    
+                    9.3 Using Secrets to pass sensitive data to containers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.4" data-path="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
+            
+                <a href="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
+            
+                    
+                    9.4 Passing pod metadata to the application via the Downward API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.5" data-path="Using_projected_volumes_to_combine_volumes_into_one.html">
+            
+                <a href="Using_projected_volumes_to_combine_volumes_into_one.html">
+            
+                    
+                    9.5 Using projected volumes to combine volumes into one
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.6" data-path="Summary_9.html">
+            
+                <a href="Summary_9.html">
+            
+                    
+                    9.6 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="Organizing_objects_using_Namespaces_labels.html">
+            
+                <a href="Organizing_objects_using_Namespaces_labels.html">
+            
+                    
+                    10. Organizing objects using Namespaces, labels, and selectors
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.7.1" data-path="Organizing_objects_into_Namespaces.html">
+            
+                <a href="Organizing_objects_into_Namespaces.html">
+            
+                    
+                    10.1 Organizing objects into Namespaces
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.2" data-path="Organizing_pods_with_labels.html">
+            
+                <a href="Organizing_pods_with_labels.html">
+            
+                    
+                    10.2 Organizing pods with labels
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.3" data-path="Filtering_Objects_With_Label_Selectors.html">
+            
+                <a href="Filtering_Objects_With_Label_Selectors.html">
+            
+                    
+                    10.3 Filtering objects with label selectors.md
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.4" data-path="Annotating_objects.html">
+            
+                <a href="Annotating_objects.html">
+            
+                    
+                    10.4 Annotating objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.5" data-path="Summary_10.html">
+            
+                <a href="Summary_10.html">
+            
+                    
+                    10.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="Exposing_Pods_with_Services.html">
+            
+                <a href="Exposing_Pods_with_Services.html">
+            
+                    
+                    11. Exposing Pods with Services
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.8.1" data-path="Exposing_pods_via_services.html">
+            
+                <a href="Exposing_pods_via_services.html">
+            
+                    
+                    11.1 Exposing pods via services
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.2" data-path="Exposing_services_externally.html">
+            
+                <a href="Exposing_services_externally.html">
+            
+                    
+                    11.2 Exposing services externally
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.3" data-path="Managing_service_endpoints.html">
+            
+                <a href="Managing_service_endpoints.html">
+            
+                    
+                    11.3 Managing service endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.4" data-path="Understanding_DNS_records for_Service_objects.html">
+            
+                <a href="Understanding_DNS_records for_Service_objects.html">
+            
+                    
+                    11.4 Understanding DNS records for Service objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.5" data-path="Configuring_services_to_route_traffic_to_nearby_endpoints.html">
+            
+                <a href="Configuring_services_to_route_traffic_to_nearby_endpoints.html">
+            
+                    
+                    11.5 Configuring services to route traffic to nearby endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.6" data-path="Managing_the_inclusion_of_a_pod_in_service_endpoints.html">
+            
+                <a href="Managing_the_inclusion_of_a_pod_in_service_endpoints.html">
+            
+                    
+                    11.6 Managing the inclusion of a pod in service endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.7" data-path="Summary_11.html">
+            
+                <a href="Summary_11.html">
+            
+                    
+                    11.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9" data-path="Exposing_Services_with_Ingress.html">
+            
+                <a href="Exposing_Services_with_Ingress.html">
+            
+                    
+                    12. Exposing Services with Ingress
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.9.1" data-path="Introducing_Ingresses.html">
+            
+                <a href="Introducing_Ingresses.html">
+            
+                    
+                    12.1 Introducing Ingresses
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.2" data-path="Creating_and_using_Ingress_objects.html">
+            
+                <a href="Creating_and_using_Ingress_objects.html">
+            
+                    
+                    12.2 Creating and using Ingress objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.3" data-path="Configuring_TLS_for_an_Ingress.html">
+            
+                <a href="Configuring_TLS_for_an_Ingress.html">
+            
+                    
+                    12.3 Configuring TLS for an Ingress
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.4" data-path="Additional_Ingress_configuration_options.html">
+            
+                <a href="Additional_Ingress_configuration_options.html">
+            
+                    
+                    12.4 Additional Ingress configuration options
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.9.5" data-path="Using_multiple_ingress_controllers.html">
+            
+                <a href="Using_multiple_ingress_controllers.html">
+            
+                    
+                    12.5 Using multiple ingress controllers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.6" data-path="Using_custom_resources_instead_of_services_as_backends.html">
+            
+                <a href="Using_custom_resources_instead_of_services_as_backends.html">
+            
+                    
+                    12.6 Using custom resources instead of services as backends
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.7" data-path="Summary_12.html">
+            
+                <a href="Summary_12.html">
+            
+                    
+                    12.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10" data-path="Replicating_Pods_with_ReplicaSets.html">
+            
+                <a href="Replicating_Pods_with_ReplicaSets.html">
+            
+                    
+                    13 Replicating Pods with ReplicaSets
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.10.1" data-path="Introducing_ReplicaSets.html">
+            
+                <a href="Introducing_ReplicaSets.html">
+            
+                    
+                    13.1 Introducing ReplicaSets
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.2" data-path="Updating_a_ReplicaSet.html">
+            
+                <a href="Updating_a_ReplicaSet.html">
+            
+                    
+                    13.2 Updating a ReplicaSet
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.3" data-path="Understanding_the_operation_of_the_ReplicaSet_controller.html">
+            
+                <a href="Understanding_the_operation_of_the_ReplicaSet_controller.html">
+            
+                    
+                    13.3 Understanding the operation of the ReplicaSet controller
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.4" data-path="Deleting_a_ReplicaSet.html">
+            
+                <a href="Deleting_a_ReplicaSet.html">
+            
+                    
+                    13.4 Deleting a ReplicaSet
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.5" data-path="Summary_13.html">
+            
+                <a href="Summary_13.html">
+            
+                    
+                    13.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >12.5 Using multiple ingress controllers</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="125-using-multiple-ingress-controllers">12.5 Using multiple ingress controllers</h1>
+<p>Since different ingress implementations provide different additional functionality, you may want to install multiple ingress controllers in a cluster. In this case, each Ingress object needs to indicate which ingress controller should process it. Originally, this was accomplished by specifying the controller name in the <code>kubernetes.io/ingress.class</code> annotation of the Ingress object. This method is now deprecated, but some controllers still use it.</p>
+<p>Instead of using the annotation, the correct way to specify the controller to use is through IngressClass objects. One or more IngressClass objects are usually created when you install an ingress controller.</p>
+<p>When you create an Ingress object, you specify the ingress class by specifying the name of the IngressClass object in the Ingress object&#x2019;s <code>spec</code> field. Each IngressClass specifies the name of the controller and optional parameters. Thus, the class you reference in your Ingress object determines which ingress proxy is provisioned and how it&#x2019;s configured. As you can see in the next figure, different Ingress objects can reference different IngressClasses, which in turn reference different ingress controllers.</p>
+<p>Figure 12.9 The relationship between Ingresses, IngressClasses, and Ingress controllers</p>
+<p><img src="../images/12.9.png" alt=""></p>
+<h2 id="1251-introducing-the-ingressclass-object-kind">12.5.1 Introducing the IngressClass object kind</h2>
+<p>If the Nginx ingress controller is running in your cluster, an IngressClass object named <code>nginx</code> was created when you installed the controller. If other ingress controllers are deployed in your cluster, you may also find other IngressClasses.</p>
+<h4 id="finding-ingressclasses-in-your-cluster">Finding IngressClasses in your cluster</h4>
+<p>To see which ingress classes your cluster offers, you can list them with <code>kubectl get</code>:</p>
+<pre><code class="lang-shell">$ kubectl get ingressclasses
+NAME    CONTROLLER             PARAMETERS   AGE
+nginx   k8s.io/ingress-nginx   &lt;none&gt;       10h
+</code></pre>
+<p>The output of the command shows that a single IngressClass named <code>nginx</code> exists in the cluster. Ingresses that use this class are processed by the <code>k8s.io/ingress-nginx</code> controller. You can also see that this class doesn&#x2019;t specify any controller parameters.</p>
+<h4 id="inspecting-the-yaml-manifest-of-an-ingressclass-object">Inspecting the YAML manifest of an IngressClass object</h4>
+<p>Let&#x2019;s take a closer look at the <code>nginx</code> IngressClass object by examining its YAML definition:</p>
+<pre><code class="lang-shell">$ kubectl get ingressclasses nginx -o yaml
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: nginx
+spec:
+  controller: k8s.io/ingress-nginx
+</code></pre>
+<p>As you can see, this IngressClass object specifies nothing more than the name of the controller. Later you&#x2019;ll see how you can also add parameters for the controller to the object.</p>
+<h2 id="1252-specifying-the-ingressclass-in-the-ingress-object">12.5.2 Specifying the IngressClass in the Ingress object</h2>
+<p>When you create an Ingress object, you can specify the class of the ingress using the <code>ingressClassName</code> field in the <code>spec</code> section of the Ingress object, as in the following listing.</p>
+<p>Listing 12.12 Ingress object referencing a specific IngressClass</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> networking.k8s.io/v1
+<span class="hljs-attr">kind:</span> Ingress
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> kiada
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  ingressClassName:</span> nginx
+<span class="hljs-attr">  rules:</span>
+  ...
+</code></pre>
+<p>The Ingress object in the listing indicates that its class should be <code>nginx</code>. Since this IngressClass specifies <code>k8s.io/ingress-nginx</code> as the controller, the Ingress from this listing is processed by the Nginx ingress controller.</p>
+<h4 id="setting-the-default-ingressclass">Setting the default IngressClass</h4>
+<p>If multiple ingress controllers are installed in the cluster, there should be multiple IngressClass objects. If an Ingress object doesn&#x2019;t specify the class, Kubernetes applies the default IngressClass, marked as such by setting the <code>ingressclass.kubernetes.io/is-default-class</code> annotation to <code>&quot;true&quot;</code>.</p>
+<h2 id="1253-adding-parameters-to-an-ingressclass">12.5.3 Adding parameters to an IngressClass</h2>
+<p>In addition to using IngressClasses to specify which ingress controller to use for a particular Ingress object, IngressClasses can also be used with a single ingress controller if it can provide different ingress flavors. This is achieved by specifying different parameters in each IngressClass.</p>
+<h4 id="specifying-parameters-in-the-ingressclass-object">Specifying parameters in the IngressClass object</h4>
+<p>The IngressClass object doesn&#x2019;t provide any fields for you to set the parameters within the object itself, as each ingress controller has its own specifics and would require a different set of fields. Instead, the custom configuration of an IngressClass is typically stored in a separate custom Kubernetes object type that&#x2019;s specific to each ingress controller implementation. You create an instance of this custom object type and reference it in the IngressClass object.</p>
+<p>For example, AWS provides an object with kind <code>IngressClassParams</code> in API group <code>elbv2.k8s.aws</code>, version <code>v1beta1</code>. To configure the parameters in an IngressClass object, you reference the IngressClassParams object instance as shown in the following listing.</p>
+<p>Listing 12.13 Referring to a custom parameters object in the IngressClass</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> networking.k8s.io/v1
+<span class="hljs-attr">kind:</span> IngressClass
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> custom-ingress-class
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  controller:</span> ingress.k8s.aws/alb
+<span class="hljs-attr">  parameters:</span>
+<span class="hljs-attr">    apiGroup:</span> elbv2.k8s.aws
+<span class="hljs-attr">    kind:</span> IngressClassParams
+<span class="hljs-attr">    name:</span> custom-ingress-params
+</code></pre>
+<p>In the listing, the IngressClassParams object instance that contains the parameters for this IngressClass is named <code>custom-ingress-params</code>. The object <code>kind</code> and <code>apiGroup</code> are also specified.</p>
+<h4 id="example-of-a-custom-api-object-type-used-to-hold-parameters-for-the-ingressclass">Example of a custom API object type used to hold parameters for the IngressClass</h4>
+<p>The following listing shows an example of an IngressClassParams object.</p>
+<p>Listing 12.14 Example IngressClassParams object manifest</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> elbv2.k8s.aws/v1beta1
+<span class="hljs-attr">kind:</span> IngressClassParams
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> custom-ingress-params
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  scheme:</span> internal
+<span class="hljs-attr">  ipAddressType:</span> dualstack
+<span class="hljs-attr">  tags:</span>
+<span class="hljs-attr">  - key:</span> org
+<span class="hljs-attr">    value:</span> my-org
+</code></pre>
+<p>With the IngressClass and IngressClassParams objects in place, cluster users can create Ingress objects with the <code>ingressClassName</code> set to <code>custom-ingress-class</code>. The objects are processed by the <code>ingress.k8s.aws/alb</code> controller (the AWS Load Balancer controller). The controller reads the parameters from the IngressClassParams object and uses them to configure the load balancer.</p>
+<p>Kubernetes doesn&#x2019;t care about the contents of the IngressClassParams object. They&#x2019;re only used by the ingress controller. Since each implementation uses its own object type, you should refer to the controller&#x2019;s documentation or use <code>kubectl explain</code> to learn more about each type.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Additional_Ingress_configuration_options.html" class="navigation navigation-prev " aria-label="Previous page: 12.4 Additional Ingress configuration options">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Using_custom_resources_instead_of_services_as_backends.html" class="navigation navigation-next " aria-label="Next page: 12.6 Using custom resources instead of services as backends">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"12.5 Using multiple ingress controllers","level":"4.9.5","depth":2,"next":{"title":"12.6 Using custom resources instead of services as backends","level":"4.9.6","depth":2,"path":"docs/Using_custom_resources_instead_of_services_as_backends.md","ref":"docs/Using_custom_resources_instead_of_services_as_backends.md","articles":[]},"previous":{"title":"12.4 Additional Ingress configuration options","level":"4.9.4","depth":2,"path":"docs/Additional_Ingress_configuration_options.md","ref":"docs/Additional_Ingress_configuration_options.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Using_multiple_ingress_controllers.md","mtime":"2022-12-11T09:18:02.648Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-12-11T09:18:29.169Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-page-toc-button/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-cnzz/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
