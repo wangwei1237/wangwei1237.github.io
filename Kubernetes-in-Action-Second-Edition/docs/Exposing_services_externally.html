@@ -1532,13 +1532,38 @@ kiada   LoadBalancer   10.96.226.212   172.18.255.200   80:30080/TCP,443:30443/T
 <p>Adding support for LoadBalancer services is optional. You can always use the node ports directly. The load balancer is just an additional layer.</p>
 <h4 id="tweaking-loadbalancer-services">Tweaking LoadBalancer services</h4>
 <p>LoadBalancer services are easy to create. You just set the type to LoadBalancer. However, if you need more control over the load balancer, you can configure it with the additional fields in the Service object&#x2019;s spec explained in the following table.</p>
-<p>Table 11.2 Fields in the service spec that you can use to configure LoadBalancer services
-| Field | Field type | Description |
-| --- | --- | --- |
-| loadBalancerClass | string | If the cluster supports multiple classes of load balancers, you can specify which one to use for this service. The possible values depend on the load balancer controllers installed in the cluster. |
-| loadBalancerIP | string | If supported by the cloud provider, this field can be used to specify the desired IP for the load balancer. |
-| loadBalancerSourceRanges | []string | Restricts the client IPs that are allowed to access the service through the load balancer. Not supported by all load balancer controllers. |
-| allocateLoadBalancerNodePorts | boolean | Specifies whether to allocate node ports for this <code>LoadBalancer</code>-type service. Some load balancer implementations can forward traffic to pods without relying on node ports. |</p>
+<p>Table 11.2 Fields in the service spec that you can use to configure LoadBalancer services</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Field type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>loadBalancerClass</td>
+<td>string</td>
+<td>If the cluster supports multiple classes of load balancers, you can specify which one to use for this service. The possible values depend on the load balancer controllers installed in the cluster.</td>
+</tr>
+<tr>
+<td>loadBalancerIP</td>
+<td>string</td>
+<td>If supported by the cloud provider, this field can be used to specify the desired IP for the load balancer.</td>
+</tr>
+<tr>
+<td>loadBalancerSourceRanges</td>
+<td>[]string</td>
+<td>Restricts the client IPs that are allowed to access the service through the load balancer. Not supported by all load balancer controllers.</td>
+</tr>
+<tr>
+<td>allocateLoadBalancerNodePorts</td>
+<td>boolean</td>
+<td>Specifies whether to allocate node ports for this <code>LoadBalancer</code>-type service. Some load balancer implementations can forward traffic to pods without relying on node ports.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="1123-configuring-the-external-traffic-policy-for-a-service">11.2.3 Configuring the external traffic policy for a service</h2>
 <p>You&#x2019;ve already learned that when an external client connects to a service through the node port, either directly or through the load balancer, the connection may be forwarded to a pod that&#x2019;s on a different node than the one that received the connection. In this case, an additional network hop must be made to reach the pod. This results in increased latency.</p>
 <p>Also, as mentioned earlier, when forwarding the connection from one node to another in this manner, the source IP must be replaced with the IP of the node that originally received the connection. This obscures the IP address of the client. Thus, the application running in the pod can&#x2019;t see where the connection is coming from. For example, a web server running in a pod can&#x2019;t record the true client IP in its access log.</p>
@@ -1597,7 +1622,7 @@ kiada   LoadBalancer   10.96.226.212   172.18.255.200   80:30080/TCP,443:30443/T
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"11.2 Exposing services externally","level":"4.8.2","depth":2,"next":{"title":"11.3 Managing service endpoints","level":"4.8.3","depth":2,"path":"docs/Managing_service_endpoints.md","ref":"docs/Managing_service_endpoints.md","articles":[]},"previous":{"title":"11.1 Exposing pods via services","level":"4.8.1","depth":2,"path":"docs/Exposing_pods_via_services.md","ref":"docs/Exposing_pods_via_services.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Exposing_services_externally.md","mtime":"2022-12-12T02:48:59.754Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-12-12T02:49:27.967Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"11.2 Exposing services externally","level":"4.8.2","depth":2,"next":{"title":"11.3 Managing service endpoints","level":"4.8.3","depth":2,"path":"docs/Managing_service_endpoints.md","ref":"docs/Managing_service_endpoints.md","articles":[]},"previous":{"title":"11.1 Exposing pods via services","level":"4.8.1","depth":2,"path":"docs/Exposing_pods_via_services.md","ref":"docs/Exposing_pods_via_services.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Exposing_services_externally.md","mtime":"2022-12-13T02:10:35.913Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-12-13T02:11:03.353Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
