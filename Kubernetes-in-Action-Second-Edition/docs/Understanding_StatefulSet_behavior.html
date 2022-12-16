@@ -1,0 +1,1964 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>15.2 Understanding StatefulSet behavior · Kubernetes实战（第二版）</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="wangwei17">
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-page-toc-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-hints/plugin-hints.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Updating_a_StatefulSet.html" />
+    
+    
+    <link rel="prev" href="Introducing_StatefulSets.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+    
+        
+        <li>
+            <a href="https://wangwei1237.gitee.io/" target="_blank" class="custom-link">17哥的个人网站</a>
+        </li>
+    
+    
+
+    
+    <li class="divider"></li>
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    前言
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Welcome</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="Welcome.html">
+            
+                <a href="Welcome.html">
+            
+                    
+                    Welcome
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part 1: First Time On a Boat: Introduction to Kubernetes</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="Introducing_Kubernetes_0.html">
+            
+                <a href="Introducing_Kubernetes_0.html">
+            
+                    
+                    1 Introducing Kubernetes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.1.1" data-path="Introducing_Kubernetes_1.html">
+            
+                <a href="Introducing_Kubernetes_1.html">
+            
+                    
+                    1.1 Introducing Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.2" data-path="Understanding_Kubernetes.html">
+            
+                <a href="Understanding_Kubernetes.html">
+            
+                    
+                    1.2 Understanding Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.3" data-path="Introducing_Kubernetes_into_your_organization.html">
+            
+                <a href="Introducing_Kubernetes_into_your_organization.html">
+            
+                    
+                    1.3 Introducing Kubernetes into your organization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.4" data-path="Summary_1.html">
+            
+                <a href="Summary_1.html">
+            
+                    
+                    1.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="Understanding_containers.html">
+            
+                <a href="Understanding_containers.html">
+            
+                    
+                    2 Understanding containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="Introducing_containers.html">
+            
+                <a href="Introducing_containers.html">
+            
+                    
+                    2.1 Introducing containers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="Exploring_containers_hands-on.html">
+            
+                <a href="Exploring_containers_hands-on.html">
+            
+                    
+                    2.2 Exploring containers hands-on
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="Understanding_what_makes_containers_possible.html">
+            
+                <a href="Understanding_what_makes_containers_possible.html">
+            
+                    
+                    2.3 Understanding what makes containers possible
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.4" data-path="Summary_2.html">
+            
+                <a href="Summary_2.html">
+            
+                    
+                    2.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="Deploying_your_first_application.html">
+            
+                <a href="Deploying_your_first_application.html">
+            
+                    
+                    3 DEPLOYING YOUR FIRST APPLICATION
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="Deploying_a_Kubernetes_cluster.html">
+            
+                <a href="Deploying_a_Kubernetes_cluster.html">
+            
+                    
+                    3.1 Deploying a Kubernetes cluster
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="Interacting_with_Kubernetes.html">
+            
+                <a href="Interacting_with_Kubernetes.html">
+            
+                    
+                    3.2 Interacting with Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="Running_your_first_application_on_Kubernetes.html">
+            
+                <a href="Running_your_first_application_on_Kubernetes.html">
+            
+                    
+                    3.3  Running your first application on Kubernetes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.4" data-path="Summary_3.html">
+            
+                <a href="Summary_3.html">
+            
+                    
+                    3.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part 2: Learning the Ropes: Kubernetes API Objects</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="Introducing_the_Kubernetes_API_Objects.html">
+            
+                <a href="Introducing_the_Kubernetes_API_Objects.html">
+            
+                    
+                    4. Introducing the Kubernetes API Objects
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1.1" data-path="Getting_familiar_with_the_Kubernetes_API.html">
+            
+                <a href="Getting_familiar_with_the_Kubernetes_API.html">
+            
+                    
+                    4.1 Getting familiar with the Kubernetes API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.2" data-path="Examining_an_objects_individual_properties.html">
+            
+                <a href="Examining_an_objects_individual_properties.html">
+            
+                    
+                    4.2 Examining an object’s individual properties
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.3" data-path="Observing_cluster_events_via_Event_objects.html">
+            
+                <a href="Observing_cluster_events_via_Event_objects.html">
+            
+                    
+                    4.3 Observing cluster events via Event objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.4" data-path="Summary_4.html">
+            
+                <a href="Summary_4.html">
+            
+                    
+                    4.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="Running_applications_in_Pods.html">
+            
+                <a href="Running_applications_in_Pods.html">
+            
+                    
+                    5. Running applications in Pods
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="Understanding_pods.html">
+            
+                <a href="Understanding_pods.html">
+            
+                    
+                    5.1  Understanding pods
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="Creating_pods_from_YAML_or_JSON_files.html">
+            
+                <a href="Creating_pods_from_YAML_or_JSON_files.html">
+            
+                    
+                    5.2 Creating pods from YAML or JSON files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="Interacting_with_the_application_and_the_pod.html">
+            
+                <a href="Interacting_with_the_application_and_the_pod.html">
+            
+                    
+                    5.3 Interacting with the application and the pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.4" data-path="Running_multiple_containers_in_a_pod.html">
+            
+                <a href="Running_multiple_containers_in_a_pod.html">
+            
+                    
+                    5.4 Running multiple containers in a pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.5" data-path="Running_additional_containers_at_pod_startup.html">
+            
+                <a href="Running_additional_containers_at_pod_startup.html">
+            
+                    
+                    5.5 Running additional containers at pod startup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.6" data-path="Deleting_pods_and_other_objects.html">
+            
+                <a href="Deleting_pods_and_other_objects.html">
+            
+                    
+                    5.6 Deleting pods and other objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.7" data-path="Summary_5.html">
+            
+                <a href="Summary_5.html">
+            
+                    
+                    5.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="Managing_the_lifecycle_of_the_Pods_containers.html">
+            
+                <a href="Managing_the_lifecycle_of_the_Pods_containers.html">
+            
+                    
+                    6. Managing the lifecycle of the Pod’s containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="Understanding_the_pods_status.html">
+            
+                <a href="Understanding_the_pods_status.html">
+            
+                    
+                    6.1 Understanding the pod's status
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="Keeping_containers_healthy.html">
+            
+                <a href="Keeping_containers_healthy.html">
+            
+                    
+                    6.2 Keeping containers healthy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="Executing_actions_at_container_startup_and_shutdown.html">
+            
+                <a href="Executing_actions_at_container_startup_and_shutdown.html">
+            
+                    
+                    6.3 Executing actions at container start-up and shutdown
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="Understanding_the_pod_lifecycle.html">
+            
+                <a href="Understanding_the_pod_lifecycle.html">
+            
+                    
+                    6.4 Understanding the pod lifecycle
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.5" data-path="Summary_6.html">
+            
+                <a href="Summary_6.html">
+            
+                    
+                    6.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="Mounting_storage_volumes_into_the_Pods_containers.html">
+            
+                <a href="Mounting_storage_volumes_into_the_Pods_containers.html">
+            
+                    
+                    7. Mounting storage volumes into the Pod’s containers
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.4.1" data-path="Introducing_volumes.html">
+            
+                <a href="Introducing_volumes.html">
+            
+                    
+                    7.1 Introducing volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.2" data-path="Using_volumes.html">
+            
+                <a href="Using_volumes.html">
+            
+                    
+                    7.2 Using volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.3" data-path="Integrating_external_storage_into_pods.html">
+            
+                <a href="Integrating_external_storage_into_pods.html">
+            
+                    
+                    7.3 Integrating external storage into pods
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.4" data-path="Accessing_files_on_the_worker_nodes_filesystem.html">
+            
+                <a href="Accessing_files_on_the_worker_nodes_filesystem.html">
+            
+                    
+                    7.4 Accessing files on the worker node’s filesystem
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.5" data-path="Summary_7.html">
+            
+                <a href="Summary_7.html">
+            
+                    
+                    7.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="Persisting_application_data_with_PersistentVolumes.html">
+            
+                <a href="Persisting_application_data_with_PersistentVolumes.html">
+            
+                    
+                    8. Persisting application data with PersistentVolumes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.5.1" data-path="Decoupling_pods_from_the_underlying_storage_technology.html">
+            
+                <a href="Decoupling_pods_from_the_underlying_storage_technology.html">
+            
+                    
+                    8.1 Decoupling pods from the underlying storage technology
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.2" data-path="Creating_persistent_volumes_and_claims.html">
+            
+                <a href="Creating_persistent_volumes_and_claims.html">
+            
+                    
+                    8.2 Creating persistent volumes and claims
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.3" data-path="Dynamic_provisioning_of_persistent_volumes.html">
+            
+                <a href="Dynamic_provisioning_of_persistent_volumes.html">
+            
+                    
+                    8.3 Dynamic provisioning of persistent volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.4" data-path="Nodelocal_persistent_volumes.html">
+            
+                <a href="Nodelocal_persistent_volumes.html">
+            
+                    
+                    8.4 Node-local persistent volumes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.5" data-path="Summary_8.html">
+            
+                <a href="Summary_8.html">
+            
+                    
+                    8.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.html">
+            
+                <a href="Configuring_applications_using_ConfigMaps_Secrets_and_the_Downward_API.html">
+            
+                    
+                    9. Configuring applications using ConfigMaps, Secrets, and the Downward API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.6.1" data-path="Setting_the_command_arguments_and_environment_variables.html">
+            
+                <a href="Setting_the_command_arguments_and_environment_variables.html">
+            
+                    
+                    9.1 Setting the command, arguments, and environment variables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.2" data-path="Using_a_config_map_to_decouple_configuration_from_the_pod.html">
+            
+                <a href="Using_a_config_map_to_decouple_configuration_from_the_pod.html">
+            
+                    
+                    9.2 Using a config map to decouple configuration from the pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.3" data-path="Using_Secrets_to_pass_sensitive_data_to_containers.html">
+            
+                <a href="Using_Secrets_to_pass_sensitive_data_to_containers.html">
+            
+                    
+                    9.3 Using Secrets to pass sensitive data to containers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.4" data-path="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
+            
+                <a href="Passing_pod_metadata_to_the_application_via_the_Downward_API.html">
+            
+                    
+                    9.4 Passing pod metadata to the application via the Downward API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.5" data-path="Using_projected_volumes_to_combine_volumes_into_one.html">
+            
+                <a href="Using_projected_volumes_to_combine_volumes_into_one.html">
+            
+                    
+                    9.5 Using projected volumes to combine volumes into one
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.6" data-path="Summary_9.html">
+            
+                <a href="Summary_9.html">
+            
+                    
+                    9.6 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="Organizing_objects_using_Namespaces_labels.html">
+            
+                <a href="Organizing_objects_using_Namespaces_labels.html">
+            
+                    
+                    10. Organizing objects using Namespaces, labels, and selectors
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.7.1" data-path="Organizing_objects_into_Namespaces.html">
+            
+                <a href="Organizing_objects_into_Namespaces.html">
+            
+                    
+                    10.1 Organizing objects into Namespaces
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.2" data-path="Organizing_pods_with_labels.html">
+            
+                <a href="Organizing_pods_with_labels.html">
+            
+                    
+                    10.2 Organizing pods with labels
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.3" data-path="Filtering_Objects_With_Label_Selectors.html">
+            
+                <a href="Filtering_Objects_With_Label_Selectors.html">
+            
+                    
+                    10.3 Filtering objects with label selectors.md
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.4" data-path="Annotating_objects.html">
+            
+                <a href="Annotating_objects.html">
+            
+                    
+                    10.4 Annotating objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7.5" data-path="Summary_10.html">
+            
+                <a href="Summary_10.html">
+            
+                    
+                    10.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="Exposing_Pods_with_Services.html">
+            
+                <a href="Exposing_Pods_with_Services.html">
+            
+                    
+                    11. Exposing Pods with Services
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.8.1" data-path="Exposing_pods_via_services.html">
+            
+                <a href="Exposing_pods_via_services.html">
+            
+                    
+                    11.1 Exposing pods via services
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.2" data-path="Exposing_services_externally.html">
+            
+                <a href="Exposing_services_externally.html">
+            
+                    
+                    11.2 Exposing services externally
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.3" data-path="Managing_service_endpoints.html">
+            
+                <a href="Managing_service_endpoints.html">
+            
+                    
+                    11.3 Managing service endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.4" data-path="Understanding_DNS_records_for_Service_objects.html">
+            
+                <a href="Understanding_DNS_records_for_Service_objects.html">
+            
+                    
+                    11.4 Understanding DNS records for Service objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.5" data-path="Configuring_services_to_route_traffic_to_nearby_endpoints.html">
+            
+                <a href="Configuring_services_to_route_traffic_to_nearby_endpoints.html">
+            
+                    
+                    11.5 Configuring services to route traffic to nearby endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.6" data-path="Managing_the_inclusion_of_a_pod_in_service_endpoints.html">
+            
+                <a href="Managing_the_inclusion_of_a_pod_in_service_endpoints.html">
+            
+                    
+                    11.6 Managing the inclusion of a pod in service endpoints
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8.7" data-path="Summary_11.html">
+            
+                <a href="Summary_11.html">
+            
+                    
+                    11.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9" data-path="Exposing_Services_with_Ingress.html">
+            
+                <a href="Exposing_Services_with_Ingress.html">
+            
+                    
+                    12. Exposing Services with Ingress
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.9.1" data-path="Introducing_Ingresses.html">
+            
+                <a href="Introducing_Ingresses.html">
+            
+                    
+                    12.1 Introducing Ingresses
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.2" data-path="Creating_and_using_Ingress_objects.html">
+            
+                <a href="Creating_and_using_Ingress_objects.html">
+            
+                    
+                    12.2 Creating and using Ingress objects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.3" data-path="Configuring_TLS_for_an_Ingress.html">
+            
+                <a href="Configuring_TLS_for_an_Ingress.html">
+            
+                    
+                    12.3 Configuring TLS for an Ingress
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.4" data-path="Additional_Ingress_configuration_options.html">
+            
+                <a href="Additional_Ingress_configuration_options.html">
+            
+                    
+                    12.4 Additional Ingress configuration options
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.5" data-path="Using_multiple_ingress_controllers.html">
+            
+                <a href="Using_multiple_ingress_controllers.html">
+            
+                    
+                    12.5 Using multiple ingress controllers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.6" data-path="Using_custom_resources_instead_of_services_as_backends.html">
+            
+                <a href="Using_custom_resources_instead_of_services_as_backends.html">
+            
+                    
+                    12.6 Using custom resources instead of services as backends
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9.7" data-path="Summary_12.html">
+            
+                <a href="Summary_12.html">
+            
+                    
+                    12.7 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10" data-path="Replicating_Pods_with_ReplicaSets.html">
+            
+                <a href="Replicating_Pods_with_ReplicaSets.html">
+            
+                    
+                    13 Replicating Pods with ReplicaSets
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.10.1" data-path="Introducing_ReplicaSets.html">
+            
+                <a href="Introducing_ReplicaSets.html">
+            
+                    
+                    13.1 Introducing ReplicaSets
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.2" data-path="Updating_a_ReplicaSet.html">
+            
+                <a href="Updating_a_ReplicaSet.html">
+            
+                    
+                    13.2 Updating a ReplicaSet
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.3" data-path="Understanding_the_operation_of_the_ReplicaSet_controller.html">
+            
+                <a href="Understanding_the_operation_of_the_ReplicaSet_controller.html">
+            
+                    
+                    13.3 Understanding the operation of the ReplicaSet controller
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.4" data-path="Deleting_a_ReplicaSet.html">
+            
+                <a href="Deleting_a_ReplicaSet.html">
+            
+                    
+                    13.4 Deleting a ReplicaSet
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10.5" data-path="Summary_13.html">
+            
+                <a href="Summary_13.html">
+            
+                    
+                    13.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.11" data-path="Managing_Pods_with_Deployments.html">
+            
+                <a href="Managing_Pods_with_Deployments.html">
+            
+                    
+                    14 Managing Pods with Deployments
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.11.1" data-path="Introducing_Deployments.html">
+            
+                <a href="Introducing_Deployments.html">
+            
+                    
+                    14.1 Introducing Deployments
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.11.2" data-path="Updating_a_Deployment.html">
+            
+                <a href="Updating_a_Deployment.html">
+            
+                    
+                    14.2 Updating a Deployment
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.11.3" data-path="Implementing_other_deployment_strategies.html">
+            
+                <a href="Implementing_other_deployment_strategies.html">
+            
+                    
+                    14.3 Implementing other deployment strategies
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.11.4" data-path="Summary_14.html">
+            
+                <a href="Summary_14.html">
+            
+                    
+                    14.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.12" data-path="Deploying_stateful_workloads_with_StatefulSets.html">
+            
+                <a href="Deploying_stateful_workloads_with_StatefulSets.html">
+            
+                    
+                    15 Deploying stateful workloads with StatefulSets
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.12.1" data-path="Introducing_StatefulSets.html">
+            
+                <a href="Introducing_StatefulSets.html">
+            
+                    
+                    15.1 IntroducingStatefulSets
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.12.2" data-path="Understanding_StatefulSet_behavior.html">
+            
+                <a href="Understanding_StatefulSet_behavior.html">
+            
+                    
+                    15.2 Understanding StatefulSet behavior
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.12.3" data-path="Updating_a_StatefulSet.html">
+            
+                <a href="Updating_a_StatefulSet.html">
+            
+                    
+                    15.3 Updating a StatefulSet
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.12.4" data-path="Managing_stateful_applications_with_Kubernetes_Operators.html">
+            
+                <a href="Managing_stateful_applications_with_Kubernetes_Operators.html">
+            
+                    
+                    15.4 Managing stateful applications with Kubernetes Operators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.12.5" data-path="Summary_15.html">
+            
+                <a href="Summary_15.html">
+            
+                    
+                    15.5 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.13" data-path="Deploying_node_agents_and_daemons_with_DaemonSets.html">
+            
+                <a href="Deploying_node_agents_and_daemons_with_DaemonSets.html">
+            
+                    
+                    16 Deploying node agents and daemons with DaemonSets
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.13.1" data-path="Introducing_DaemonSets.html">
+            
+                <a href="Introducing_DaemonSets.html">
+            
+                    
+                    16.1 Introducing DaemonSets
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.13.2" data-path="Special_features_in_Pods_running_node_agents_and_daemons.html">
+            
+                <a href="Special_features_in_Pods_running_node_agents_and_daemons.html">
+            
+                    
+                    16.2 Special features in Pods running node agents and daemons
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.13.3" data-path="Communicating_with_the_local_daemon_Pod.html">
+            
+                <a href="Communicating_with_the_local_daemon_Pod.html">
+            
+                    
+                    16.3  Communicating with the local daemon Pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.13.4" data-path="Summary_16.html">
+            
+                <a href="Summary_16.html">
+            
+                    
+                    16.4 Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >15.2 Understanding StatefulSet behavior</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h2 id="152-understanding-statefulset-behavior">15.2 Understanding StatefulSet behavior</h2>
+<p>In the previous section, you created the StatefulSet and saw how the controller created the Pods. You used the cluster DNS records that were created for the headless Service to import data into the MongoDB replica set. Now you&#x2019;ll put the StatefulSet to the test and learn about its behavior. First, you&#x2019;ll see how it handles missing Pods and node failures.</p>
+<h3 id="1521-understanding-how-a-statefulset-replaces-missing-pods">15.2.1 Understanding how a StatefulSet replaces missing Pods</h3>
+<p>Unlike the Pods created by a ReplicaSet, the Pods of a StatefulSet are named differently and each has its own PersistentVolumeClaim (or set of PersistentVolumeClaims if the StatefulSet contains multiple claim templates). As mentioned in the introduction, if a StatefulSet Pod is deleted and replaced by the controller with a new instance, the replica retains the same identity and is associated with the same PersistentVolumeClaim. Try deleting the <code>quiz-1</code> Pod as follows:</p>
+<pre><code class="lang-shell">$ kubectl delete po quiz-1
+pod &quot;quiz-1&quot; deleted
+
+The pod that&#x2019;s created in its place has the same name, as you can see here:
+</code></pre>
+<pre><code class="lang-shell">$ kubectl get po -l app=quiz
+NAME     READY   STATUS    RESTARTS   AGE
+quiz-0   2/2     Running   0          94m
+quiz-1   2/2     Running   0          5s
+quiz-2   2/2     Running   0          94m
+</code></pre>
+<p>The IP address of the new Pod might be different, but that doesn&#x2019;t matter because the DNS records have been updated to point to the new address. Clients using the Pod&#x2019;s hostname to communicate with it won&#x2019;t notice any difference.</p>
+<p>In general, this new Pod can be scheduled to any cluster node if the PersistentVolume bound to the PersistentVolumeClaim represents a network-attached volume and not a local volume. If the volume is local to the node, the Pod is always scheduled to this node.</p>
+<p>Like the ReplicaSet controller, its StatefulSet counterpart ensures that there are always the desired number of Pods configured in the <code>replicas</code> field. However, there&#x2019;s an important difference in the guarantees that a StatefulSet provides compared to a ReplicaSet. This difference is explained next.</p>
+<h3 id="1522-understanding-how-a-statefulset-handles-node-failures">15.2.2 Understanding how a StatefulSet handles node failures</h3>
+<p>StatefulSets provide much stricter concurrent Pod execution guarantees than ReplicaSets. This affects how the StatefulSet controller handles node failures and should therefore be explained first.</p>
+<h4 id="understanding-the-at-most-one-semantics-of-statefulsets">Understanding the at-most-one semantics of StatefulSets</h4>
+<p>A StatefulSet guarantees at-most-one semantics for its Pods. Since two Pods with the same name can&#x2019;t be in the same namespace at the same time, the ordinal-based naming scheme of StatefulSets is sufficient to prevent two Pods with the same identity from running at the same time.</p>
+<p>Remember what happens when you run a group of Pods via a ReplicaSet and one of the nodes stops reporting to the Kubernetes control plane? A few minutes later, the ReplicaSet controller determines that the node and the Pods are gone and creates replacement Pods that run on the remaining nodes, even though the Pods on the original node may still be running. If the StatefulSet controller also replaces the Pods in this scenario, you&#x2019;d have two replicas with the same identity running concurrently. Let&#x2019;s see if that happens.</p>
+<h4 id="disconnecting-a-node-from-the-network">Disconnecting a node from the network</h4>
+<p>As in the chapter 13, you&#x2019;ll cause the network interface of one of the nodes to fail. You can try this exercise if your cluster has more than one node. Find the name of the node running the <code>quiz-1</code> Pod. Suppose it&#x2019;s the node <code>kind-worker2</code>. If you use a kind-provisioned cluster, turn off the node&#x2019;s network interface as follows:</p>
+<pre><code class="lang-shell">$ docker exec kind-worker2 ip link set eth0 down
+</code></pre>
+<p>If you&#x2019;re using a GKE cluster, use the following command to connect to the node:</p>
+<pre><code class="lang-shell">$ gcloud compute ssh gke-kiada-default-pool-35644f7e-300l
+</code></pre>
+<p>Run the following command on the node to shut down its network interface:</p>
+<pre><code class="lang-shell">$ sudo ifconfig eth0 down
+</code></pre>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>Shutting down the network interface will hang the <code>ssh</code> session. You can end the session by pressing Enter followed by &#x201C;~.&#x201D; (tilde and dot, without the quotes).</p>
+</div></div></p>
+<p>Because the node&#x2019;s network interface is down, the Kubelet running on the node can no longer contact the Kubernetes API server and tell it that the node and all its Pods are still running. The Kubernetes control plane soon marks the node as <code>NotReady</code>, as seen here:</p>
+<pre><code class="lang-shell">$ kubectl get nodes
+NAME                 STATUS     ROLES                  AGE   VERSION
+kind-control-plane   Ready      control-plane,master   10h   v1.23.4
+kind-worker          Ready      &lt;none&gt;                 10h   v1.23.4
+kind-worker2         NotReady   &lt;none&gt;                 10h   v1.23.4
+</code></pre>
+<p>After a few minutes, the status of the <code>quiz-1</code> Pod that was running on this node changes to <code>Terminating</code>, as you can see in the Pod list:</p>
+<pre><code class="lang-shell">$ kubectl get pods -l app=quiz
+NAME     READY   STATUS        RESTARTS   AGE
+quiz-0   2/2     Running       0          12m
+quiz-1   2/2     Terminating   0          7m39s
+quiz-2   2/2     Running       0          12m
+</code></pre>
+<p>When you inspect the Pod with the <code>kubectl describe</code> command, you see a <code>Warning</code> event with the message <code>&#x201C;Node is not ready&#x201D;</code> as shown here:</p>
+<pre><code class="lang-shell">$ kubectl describe po quiz-1
+...
+Events:
+  Type     Reason                   Age   From                     Message
+  ----     ------                   ----  ----                     -------
+  Warning  NodeNotReady             11m   node-controller          Node is not ready
+</code></pre>
+<h4 id="understanding-why-the-statefulset-controller-doesnt-replace-the-pod">Understanding why the StatefulSet controller doesn&#x2019;t replace the Pod</h4>
+<p>At this point I&#x2019;d like to point out that the Pod&#x2019;s containers are still running. The node isn&#x2019;t down, it only lost network connectivity. The same thing happens if the Kubelet process running on the node fails, but the containers keep running.</p>
+<p>This is an important fact because it explains why the StatefulSet controller shouldn&#x2019;t delete and recreate the Pod. If the StatefulSet controller deletes and recreates the Pod while the Kubelet is down, the new Pod would be scheduled to another node and the Pod&#x2019;s containers would start. There would then be two instances of the same workload running with the same identity. That&#x2019;s why the StatefulSet controller doesn&#x2019;t do that.</p>
+<h4 id="manually-deleting-the-pod">Manually deleting the Pod</h4>
+<p>If you want the Pod to be recreated elsewhere, manual intervention is required. A cluster operator must confirm that the node has indeed failed and manually delete the Pod object. However, the Pod object is already marked for deletion, as indicated by its status, which shows the Pod as <code>Terminating</code>. Deleting the Pod with the usual <code>kubectl delete pod</code> command has no effect.</p>
+<p>The Kubernetes control plane waits for the Kubelet to report that the Pod&#x2019;s containers have terminated. Only then is the deletion of the Pod object complete. However, since the Kubelet responsible for this Pod isn&#x2019;t working, this never happens. To delete the Pod without waiting for confirmation, you must delete it as follows:</p>
+<pre><code class="lang-shell">$ kubectl delete pod quiz-1 --force --grace-period 0
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod &quot;quiz-0&quot; force deleted
+</code></pre>
+<p>Note the warning that the Pod&#x2019;s containers may keep running. That&#x2019;s the reason why you must make sure that the node has really failed before deleting the Pod in this way.</p>
+<h4 id="recreating-the-pod">Recreating the Pod</h4>
+<p>After you delete the Pod, it&#x2019;s replaced by the StatefulSet controller, but the Pod may not start. There are two possible scenarios. Which one occurs depends on whether the replica&#x2019;s PersistentVolume is a local volume, as in kind, or a network-attached volume, as in GKE.</p>
+<p>If the PersistentVolume is a local volume on the failed node, the Pod can&#x2019;t be scheduled and its <code>STATUS</code> remains <code>Pending</code>, as shown here:</p>
+<pre><code class="lang-shell">$ kubectl get pod quiz-1 -o wide
+NAME     READY   STATUS    RESTARTS   AGE     IP       NODE     NOMINATED NODE   
+quiz-1   0/2     Pending   0          2m38s   &lt;none&gt;   &lt;none&gt;   &lt;none&gt;
+</code></pre>
+<p>The Pod&#x2019;s events show why the Pod can&#x2019;t be scheduled. Use the <code>kubectl describe</code> command to display them as follows.</p>
+<pre><code class="lang-shell">$ kubectl describe pod quiz-1
+...
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Warning  FailedScheduling  21s   default-scheduler  0/3 nodes are available:
+1 node had taint {node-role.kubernetes.io/master: }, that the pod didn&apos;t tolerate,
+1 node had taint {node.kubernetes.io/unreachable: }, that the pod didn&apos;t tolerate,
+1 node had volume node affinity conflict.
+</code></pre>
+<p>The event message mentions taints, which you&#x2019;ll learn about in chapter 23. Without going into detail here, I&#x2019;ll just say that the Pod can&#x2019;t be scheduled to any of the three nodes because one node is a control plane node, another node is unreachable (duh, you just made it so), but the most important part of the warning message is the part about the affinity conflict. The new <code>quiz-1</code> Pod can only be scheduled to the same node as the previous Pod instance, because that&#x2019;s where its volume is located. And since this node isn&#x2019;t reachable, the Pod can&#x2019;t be scheduled.</p>
+<p>If you&#x2019;re running this exercise on GKE or other cluster that uses network-attached volumes, the Pod will be scheduled to another node but may not be able to run if the volume can&#x2019;t be detached from the failed node and attached to that other node. In this case, the <code>STATUS</code> of the Pod is as follows:</p>
+<p>$ kubectl get pod quiz-1 -o wide
+NAME     READY   STATUS              RESTARTS   AGE   IP        NODE<br>quiz-1   0/2     ContainerCreating   0          38s   1.2.3.4   gke-kiada-...</p>
+<p>The Pod&#x2019;s events indicate that the PersistentVolume can&#x2019;t be detached. Use <code>kubectl describe</code> as follows to display them:</p>
+<pre><code class="lang-shell">$ kubectl describe pod quiz-1
+...
+Events:
+  Type     Reason              Age   From                     Message
+  ----     ------              ----  ----                     -------
+Warning FailedAttachVolume 77s attachdetach-controller Multi-Attach error for volume &quot;pvc-8d9ec7e7-bc51-497c-8879-2ae7c3eb2fd2&quot; Volume is already exclusively attached to one node and can&apos;t be attached to another
+</code></pre>
+<h4 id="deleting-the-persistentvolumeclaim-to-get-the-new-pod-to-run">Deleting the PersistentVolumeClaim to get the new Pod to run</h4>
+<p>What do you do if the Pod can&#x2019;t be attached to the same volume? If the workload running in the Pod can rebuild its data from scratch, for example by replicating the data from the other replicas, you can delete the PersistentVolumeClaim so that a new one can be created and bound to a new PersistentVolume. However, since the StatefulSet controller only creates the PersistentVolumeClaims when it creates the Pod, you must also delete the Pod object. You can delete both objects as follows:</p>
+<pre><code class="lang-shell">$ kubectl delete pvc/db-data-quiz-1 pod/quiz-1
+persistentvolumeclaim &quot;db-data-quiz-1&quot; deleted
+pod &quot;quiz-1&quot; deleted
+</code></pre>
+<p>A new PersistentVolumeClaim and a new Pod are created. The PersistentVolume bound to the claim is empty, but MongoDB replicates the data automatically.</p>
+<h4 id="fixing-the-node">Fixing the node</h4>
+<p>Of course, you can save yourself all that trouble if you can fix the node. If you&#x2019;re running this example on GKE, the system does it automatically by restarting the node a few minutes after it goes offline. To restore the node when using the kind tool, run the following commands:</p>
+<pre><code class="lang-shell">$ docker exec kind-worker2 ip link set eth0 up
+$ docker exec kind-worker2 ip route add default via 172.18.0.1
+</code></pre>
+<p>When the node is back online, the deletion of the Pod is complete, and the new <code>quiz-1</code> Pod is created. In a kind cluster, the Pod is scheduled to the same node because the volume is local.</p>
+<h4 id="1523-scaling-a-statefulset">15.2.3 Scaling a StatefulSet</h4>
+<p>Just like ReplicaSets and Deployments, you can also scale StatefulSets. When you scale up a StatefulSet, the controller creates both a new Pod and a new PersistentVolumeClaim. But what happens when you scale it down? Are the PersistentVolumeClaims deleted along with the Pods?</p>
+<h4 id="scaling-down">Scaling down</h4>
+<p>To scale a StatefulSet, you can use the <code>kubectl scale</code> command or change the value of the <code>replicas</code> field in the manifest of the StatefulSet object. Using the first approach, scale the <code>quiz</code> StatefulSet down to a single replica as follows:</p>
+<pre><code class="lang-shell">$ kubectl scale sts quiz --replicas 1
+statefulset.apps/quiz scaled
+</code></pre>
+<p>As expected, two Pods are now in the process of termination:</p>
+<pre><code class="lang-shell">$ kubectl get pods -l app=quiz
+NAME     READY   STATUS        RESTARTS   AGE
+quiz-0   2/2     Running       0          1h
+quiz-1   2/2     Terminating   0          14m
+quiz-2   2/2     Terminating   0          1h
+</code></pre>
+<p>Unlike ReplicaSets, when you scale down a StatefulSet, the Pod with the highest ordinal number is deleted first. You scaled down the <code>quiz</code> StatefulSet from three replicas to one, so the two Pods with the highest ordinal numbers, <code>quiz-2</code> and <code>quiz-1</code>, were deleted. This scaling method ensures that the ordinal numbers of the Pods always start at zero and end at a number less than the number of replicas.</p>
+<p>But what happens to the PersistentVolumeClaims? List them as follows:</p>
+<pre><code class="lang-shell">$ kubectl get pvc -l app=quiz
+NAME STATUS VOLUME CAPACITY ACCESS MODES STORAGECLASS AGE
+db-data-quiz-0   Bound    pvc...1bf8ccaf   1Gi        RWO            standard       1h
+db-data-quiz-1   Bound    pvc...c8f860c2   1Gi        RWO            standard       1h
+db-data-quiz-2   Bound    pvc...2cc494d6   1Gi        RWO            standard       1h
+</code></pre>
+<p>Unlike Pods, their PersistentVolumeClaims are preserved. This is because deleting a claim would cause the bound PersistentVolume to be recycled or deleted, resulting in data loss. Retaining PersistentVolumeClaims is the default behavior, but you can configure the StatefulSet to delete them via the <code>persistentVolumeClaimRetentionPolicy</code> field, as you&#x2019;ll learn later. The other option is to delete the claims manually.</p>
+<p>It&#x2019;s worth noting that if you scale the <code>quiz</code> StatefulSet to just one replica, the <code>quiz</code> Service is no longer available, but this has nothing to do with Kubernetes. It&#x2019;s because you configured the MongoDB replica set with three replicas, so at least two replicas are needed to have quorum. A single replica has no quorum and therefore must deny both reads and writes. This causes the readiness probe in the <code>quiz-api</code> container to fail, which in turn causes the Pod to be removed from the Service and the Service to be left with no Endpoints. To confirm, list the Endpoints as follows:</p>
+<pre><code class="lang-shell">$ kubectl get endpoints -l app=quiz
+NAME        ENDPOINTS          AGE
+quiz                           1h
+quiz-pods   10.244.1.9:27017   1h
+</code></pre>
+<p>After you scale down the StatefulSet, you need to reconfigure the MongoDB replica set to work with the new number of replicas, but that&#x2019;s beyond the scope of this book. Instead, let&#x2019;s scale the StatefulSet back up to get the quorum again.</p>
+<h4 id="scaling-up">Scaling up</h4>
+<p>Since PersistentVolumeClaims are preserved when you scale down a StatefulSet, they can be reattached when you scale back up, as shown in the following figure. Each Pod is associated with the same PersistentVolumeClaim as before, based on the Pod&#x2019;s ordinal number.</p>
+<h4 id="figure-156-statefulsets-dont-delete-persistentvolumeclaims-when-scaling-down-then-they-reattach-them-when-scaling-back-up">Figure 15.6 StatefulSets don&#x2019;t delete PersistentVolumeClaims when scaling down; then they reattach them when scaling back up.</h4>
+<p><img src="../images/15.6.png" alt=""></p>
+<p>Scale the <code>quiz</code> StatefulSet back up to three replicas as follows:</p>
+<pre><code class="lang-shell">$ kubectl scale sts quiz --replicas 3
+statefulset.apps/quiz scaled
+</code></pre>
+<p>Now check each Pod to see if it&#x2019;s associated with the correct PersistentVolumeClaim. The quorum is restored, all Pods are ready, and the Service is available again. Use your web browser to confirm.</p>
+<p>Now scale the StatefulSet to five replicas. The controller creates two additional Pods and PersistentVolumeClaims, but the Pods aren&#x2019;t ready. Confirm this as follows:</p>
+<pre><code class="lang-shell">$ kubectl get pods quiz-3 quiz-4
+NAME     READY   STATUS    RESTARTS   AGE
+quiz-3   1/2     Running   0          4m55s
+quiz-4   1/2     Running   0          4m55s
+</code></pre>
+<p>As you can see, only one of the two containers is ready in each replica. There&#x2019;s nothing wrong with these replicas except that they haven&#x2019;t been added to the MongoDB replica set. You could add them by reconfiguring the replica set, but that&#x2019;s beyond the scope of this book, as mentioned earlier.</p>
+<p>You&#x2019;re probably starting to realize that managing stateful applications in Kubernetes involves more than just creating and managing a StatefulSet object. That&#x2019;s why you usually use a Kubernetes Operator for this, as explained in the last part of this chapter.</p>
+<p>Before I conclude this section on StatefulSet scaling, I want to point out one more thing. The <code>quiz</code> Pods are exposed by two Services: the regular <code>quiz</code> Service, which addresses only Pods that are ready, and the headless <code>quiz-pods</code> Service, which includes all Pods, regardless of their readiness status. The kiada Pods connect to the <code>quiz</code> Service, and therefore all the requests sent to the Service are successful, as the requests are forwarded only to the three healthy Pods.</p>
+<p>Instead of adding the <code>quiz-pods</code> Service, you could&#x2019;ve made the <code>quiz</code> Service headless, but then you&#x2019;d have had to choose whether or not the Service should publish the addresses of unready Pods. From the clients&#x2019; point of view, Pods that aren&#x2019;t ready shouldn&#x2019;t be part of the Service. From MongoDB&#x2019;s perspective, all Pods must be included because that&#x2019;s how the replicas find each other. Using two Services solves this problem. For this reason, it&#x2019;s common for a StatefulSet to be associated with both a regular Service and a headless Service.</p>
+<h4 id="1524-changing-the-persistentvolumeclaim-retention-policy">15.2.4 Changing the PersistentVolumeClaim retention policy</h4>
+<p>In the previous section, you learned that StatefulSets preserve the PersistentVolumeClaims by default when you scale them down. However, if the workload managed by the StatefulSet never requires data to be preserved, you can configure the StatefulSet to automatically delete the PersistentVolumeClaim by setting the <code>persistentVolumeClaimRetentionPolicy</code> field. In this field, you specify the retention policy to be used during scaledown and when the StatefulSet is deleted.</p>
+<p>For example, to configure the <code>quiz</code> StatefulSet to delete the PersistentVolumeClaims when the StatefulSet is scaled but retain them when it&#x2019;s deleted, you must set the policy as shown in the following listing, which shows part of the <code>sts.quiz.pvcRetentionPolicy.yaml</code> manifest file.</p>
+<pre><code class="lang-shell">Listing 15.4 Configuring the PersistentVolumeClaim retention policy in a StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: quiz
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenScaled: Delete
+    whenDeleted: Retain
+  ...
+</code></pre>
+<p>The whenScaled and whenDeleted fields are self-explanatory. Each field can either have the value <code>Retain</code>, which is the default, or <code>Delete</code>. Apply this manifest file using <code>kubectl apply</code> to change the PersistentVolumeClaim retention policy in the <code>quiz</code> StatefulSet as follows:</p>
+<pre><code class="lang-shell">$ kubectl apply -f sts.quiz.pvcRetentionPolicy.yaml
+</code></pre>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>At the time of writing, this is still an alpha-level feature. For the policy to be honored by the StatefulSet controller, you must enable the feature gate <code>StatefulSetAutoDeletePVC</code> when you create the cluster. To do this in the kind tool, use the <code>create-kind-cluster.sh</code> and <code>kind-multi-node.yaml</code> files in the Chapter15/ directory in the book&#x2019;s code archive.</p>
+</div></div></p>
+<h4 id="scaling-the-statefulset">Scaling the StatefulSet</h4>
+<p>The <code>whenScaled</code> policy in the <code>quiz</code> StatefulSet is now set to <code>Delete</code>. Scale the StatefulSet to three replicas, to remove the two unhealthy Pods and their PersistentVolumeClaims.</p>
+<pre><code class="lang-shell">$ kubectl scale sts quiz --replicas 3
+statefulset.apps/quiz scaled
+</code></pre>
+<p>List the PersistentVolumeClaims to confirm that there are only three left.</p>
+<h4 id="deleting-the-statefulset">Deleting the StatefulSet</h4>
+<p>Now let&#x2019;s see if the <code>whenDeleted</code> policy is followed. Your aim is to delete the Pods, but not the PersistentVolumeClaims. You&#x2019;ve already set the <code>whenDeleted</code> policy to <code>Retain</code>, so you can delete the StatefulSet as follows:</p>
+<pre><code class="lang-shell">$ kubectl delete sts quiz
+statefulset.apps &quot;quiz&quot; deleted
+</code></pre>
+<p>List the PersistentVolumeClaims to confirm that all three are present. The MongoDB data files are therefore preserved.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>If you want to delete a StatefulSet but keep the Pods and the PersistentVolumeClaims, you can use the --cascade=orphan option. In this case, the PersistentVolumeClaims will be preserved even if the retention policy is set to Delete.</p>
+</div></div></p>
+<h4 id="ensuring-data-is-never-lost">Ensuring data is never lost</h4>
+<p>To conclude this section, I want to caution you against setting either retention policy to <code>Delete</code>. Consider the example just shown. You set the <code>whenDeleted</code> policy to <code>Retain</code> so that the data is preserved if the StatefulSet is accidentally deleted, but since the <code>whenScaled</code> policy is set to <code>Delete</code>, the data would still be lost if the StatefulSet is scaled to zero before it&#x2019;s deleted.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>TIP</p>
+<p>Set the <code>persistentVolumeClaimRetentionPolicy</code> to <code>Delete</code> only if the data stored in the PersistentVolumes associated with the StatefulSet is retained elsewhere or doesn&#x2019;t need to be retained. You can always delete the PersistentVolumeClaims manually. Another way to ensure data retention is to set the <code>reclaimPolicy</code> in the StorageClass referenced in the PersistentVolumeClaim template to <code>Retain</code>.</p>
+</div></div></p>
+<h3 id="1525-using-the-orderedready-pod-management-policy">15.2.5 Using the OrderedReady Pod management policy</h3>
+<p>Working with the <code>quiz</code> StatefulSet has been easy. However, you may recall that in the StatefulSet manifest, you set the <code>podManagementPolicy</code> field to <code>Parallel</code>, which instructs the controller to create all Pods at the same time rather then one at a time. While MongoDB has no problem starting all replicas simultaneously, some stateful workloads do.</p>
+<h4 id="introducing-the-two-pod-management-policies">Introducing the two Pod management policies</h4>
+<p>When StatefulSets were introduced, the Pod management policy wasn&#x2019;t configurable, and the controller always deployed the Pods sequentially. To maintain backward compatibility, this way of working had to be maintained when this field was introduced. Therefore, the default <code>podManagementPolicy</code> is <code>OrderedReady</code>, but you can relax the StatefulSet ordering guarantees by changing the policy to <code>Parallel</code>. The following figure shows how Pods are created and deleted over time with each policy.</p>
+<h4 id="figure-157-comparison-between-the-orderedready-and-parallel-pod-management-policy">Figure 15.7 Comparison between the OrderedReady and Parallel Pod management policy</h4>
+<p><img src="../images/15.7.png" alt=""></p>
+<p>The following table explains the differences between the two policies in more detail.</p>
+<h4 id="table-151-the-supported-podmanagementpolicy-values">Table 15.1 The supported podManagementPolicy values</h4>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OrderedReady</td>
+<td>Pods are created one at a time in ascending order. After creating each Pod, the controller waits until the Pod is ready before creating the next Pod. The same process is used when scaling up and replacing Pods when they&#x2019;re deleted or their nodes fail. When scaling down, the Pods are deleted in reverse order. The controller waits until each deleted Pod is finished before deleting the next one.</td>
+</tr>
+<tr>
+<td>Parallel</td>
+<td>All Pods are created and deleted at the same time. The controller doesn&#x2019;t wait for individual Pods to be ready.</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>OrderedReady</code> policy is convenient when the workload requires that each replica be fully started before the next one is created and/or fully shut down before the next replica is asked to quit. However, this policy has its drawbacks. Let&#x2019;s look at what happens when we use it in the <code>quiz</code> StatefulSet.</p>
+<h4 id="understanding-the-drawbacks-of-the-orderedready-pod-management-policy">Understanding the drawbacks of the OrderedReady Pod management policy</h4>
+<p>Recreate the StatefulSet by applying the manifest file <code>sts.quiz.orderedReady.yaml</code> with the <code>podManagementPolicy</code> set to <code>OrderedReady</code>, as shown in the following listing:</p>
+<h4 id="listing-155-specifying-the-podmanagementpolicy-in-the-statefulset">Listing 15.5 Specifying the podManagementPolicy in the StatefulSet</h4>
+<pre><code class="lang-shell">apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: quiz
+spec:
+  podManagementPolicy: OrderedReady
+  minReadySeconds: 10
+  serviceName: quiz-pods
+  replicas: 3
+  ...
+</code></pre>
+<p>In addition to setting the podManagementPolicy, the minReadySeconds field is also set to 10 so you can better see the effects of the OrderedReady policy. This field has the same role as in a Deployment, but is used not only for StatefulSet updates, but also when the StatefulSet is scaled.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>At the time of writing, the podManagementPolicy field is immutable. If you want to change the policy of an existing StatefulSet, you must delete and recreate it, like you just did. You can use the --cascade=orphan option to prevent Pods from being deleted during this operation.</p>
+</div></div></p>
+<p>Observe the <code>quiz</code> Pods with the <code>--watch</code> option to see how they&#x2019;re created. Run the <code>kubectl get</code> command as follows:</p>
+<pre><code class="lang-shell">$ kubectl get pods -l app=quiz --watch
+NAME     READY   STATUS    RESTARTS   AGE
+quiz-0   1/2     Running   0          22s
+</code></pre>
+<p>As you may recall from the previous chapters, the <code>--watch</code> option tells <code>kubectl</code> to watch for changes to the specified objects. The command first lists the objects and then waits. When the state of an existing object is updated or a new object appears, the command prints the updated information about the object.</p>
+<p><div class="alert alert-info hints-alert"><div class="hints-icon"><i class="fa fa-info-circle"></i></div><div class="hints-container"><p>NOTE</p>
+<p>When you run <code>kubectl</code> with the <code>--watch</code> option, it uses the same API mechanism that controllers use to wait for changes to the objects they&#x2019;re observing.</p>
+</div></div></p>
+<p>You&#x2019;ll be surprised to see that only a single replica is created when you recreate the StatefulSet with the <code>OrderedReady</code> policy, even though the StatefulSet is configured with three replicas. The next Pod, <code>quiz-1</code>, doesn&#x2019;t show up no matter how long you wait. The reason is that the <code>quiz-api</code> container in Pod <code>quiz-0</code> never becomes ready, as was the case when you scaled the StatefulSet to a single replica. Since the first Pod is never ready, the controller never creates the next Pod. It can&#x2019;t do that because of the configured policy.</p>
+<p>As before, the <code>quiz-api</code> container isn&#x2019;t ready because the MongoDB instance running alongside it doesn&#x2019;t have quorum. Since the readiness probe defined in the <code>quiz-api</code> container depends on the availability of MongoDB, which needs at least two Pods for quorum, and since the StatefulSet controller doesn&#x2019;t start the next Pod until the first one&#x2019;s ready, the StatefulSet is now stuck in a deadlock.</p>
+<p>One could argue that the readiness probe in the <code>quiz-api</code> container shouldn&#x2019;t depend on MongoDB. This is debatable, but perhaps the problem lies in the use of the <code>OrderedReady</code> policy. Let&#x2019;s stick with this policy anyway, since you&#x2019;ve already seen how the Parallel policy behaves. Instead, let&#x2019;s reconfigure the readiness probe to call the root URI rather than the <code>/healthz/ready</code> endpoint. This way, the probe only checks if the HTTP server is running in the <code>quiz-api</code> container, without connecting to MongoDB.</p>
+<h4 id="updating-a-stuck-statefulset-with-the-orderedready-policy">Updating a stuck StatefulSet with the OrderedReady policy</h4>
+<p>Use the <code>kubectl edit sts quiz</code> command to change the path in the readiness probe definition, or use the <code>kubectl apply</code> command to apply the updated manifest file <code>sts.quiz.orderedReady.readinessProbe.yaml</code>. The following listing shows how the readiness probe should be configured:</p>
+<pre><code class="lang-shell">Listing 15.6 Setting the readiness probe in the quiz-api container
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: quiz
+spec:
+  ...
+  template:
+    ...
+    spec:
+      containers:
+      - name: quiz-api
+        ...
+        readinessProbe:
+          httpGet:
+            port: 8080
+            path: /
+            scheme: HTTP
+      ...
+</code></pre>
+<p>After you update the Pod template in the StatefulSet, you expect the <code>quiz-0</code> Pod to be deleted and recreated with the new Pod template, right? List the Pods as follows to check if this happens.</p>
+<pre><code class="lang-shell">$ kubectl get pods -l app=quiz
+NAME     READY   STATUS    RESTARTS   AGE
+quiz-0   1/2     Running   0          5m
+</code></pre>
+<p>As you can see from the age of the Pod, it&#x2019;s still the same Pod. Why hasn&#x2019;t the Pod been updated? When you update the Pod template in a ReplicaSet or Deployment, the Pods are deleted and recreated, so why not here?</p>
+<p>The reason for this is probably the biggest drawback of using StatefulSets with the default Pod management policy <code>OrderedReady</code>. When you use this policy, the StatefulSet does nothing until the Pod is ready. If your StatefulSet gets into the same state as shown here, you&#x2019;ll have to manually delete the unhealthy Pod.</p>
+<p>Now delete the <code>quiz-0</code> Pod and watch the StatefulSet controller create the three pods one by one as follows:</p>
+<pre><code class="lang-shell">$ kubectl get pods -l app=quiz --watch
+NAME     READY   STATUS              RESTARTS   AGE
+quiz-0   0/2     Terminating         0          20m
+quiz-0   0/2     Pending             0          0s
+quiz-0   0/2     ContainerCreating   0          0s
+quiz-0   1/2     Running             0          3s
+quiz-0   2/2     Running             0          3s
+quiz-1   0/2     Pending             0          0s
+quiz-1   0/2     ContainerCreating   0          0s
+quiz-1   2/2     Running             0          3s
+quiz-2   0/2     Pending             0          0s
+quiz-2   0/2     ContainerCreating   0          1s
+quiz-2   2/2     Running             0          4s
+</code></pre>
+<p>As you can see, the Pods are created in ascending order, one at a time. You can see that Pod <code>quiz-1</code> isn&#x2019;t created until both containers in Pod <code>quiz-0</code> are ready. What you can&#x2019;t see is that because of the <code>minReadySeconds</code> setting, the controller waits an additional 10 seconds before creating Pod <code>quiz-1</code>. Similarly, Pod <code>quiz-2</code> is created 10 seconds after the containers in Pod <code>quiz-1</code> are ready. During the entire process, at most one Pod was being started. For some workloads, this is necessary to avoid race conditions.</p>
+<h4 id="scaling-a-statefulset-with-the-orderedready-policy">Scaling a StatefulSet with the OrderedReady policy</h4>
+<h4 id="blocked-scale-downs">Blocked scale-downs</h4>
+<p>Another feature of the <code>OrderedReady</code> Pod management policy is that the controller blocks the scale-down operation if not all replicas are ready. To see this for yourself, create a new StatefulSet by applying the manifest file <code>sts.demo-ordered.yaml</code>. This StatefulSet deploys three replicas using the <code>OrderedReady</code> policy. After the Pods are created, fail the readiness probe in the Pod <code>demo-ordered-0</code> by running the following command:</p>
+<pre><code class="lang-shell">$ kubectl exec demo-ordered-0 -- rm /tmp/ready
+</code></pre>
+<p>Running this command removes the <code>/tmp/ready</code> file that the readiness probe checks for. The probe is successful if the file exists. After you run this command, the <code>demo-ordered-0</code> Pod is no longer ready. Now scale the StatefulSet to two replicas as follows:</p>
+<pre><code class="lang-shell">$ kubectl scale sts demo-ordered --replicas 2
+statefulset.apps/demo-ordered scaled
+</code></pre>
+<p>If you list the pods with the <code>app=demo-ordered</code> label selector, you&#x2019;ll see that the StatefulSet controller does nothing. Unfortunately, the controller doesn&#x2019;t generate any Events or update the status of the StatefulSet object to tell you why it didn&#x2019;t perform the scale-down.</p>
+<p>The controller completes the scale operation when the Pod is ready. You can make the readiness probe of the demo-ordered-0 Pod succeed by recreating the <code>/tmp/ready</code> file as follows:</p>
+<pre><code class="lang-shell">$ kubectl exec demo-ordered-0 -- touch /tmp/ready
+</code></pre>
+<p>I suggest you investigate the behavior of this StatefulSet further and compare it to the StatefulSet in the manifest file <code>sts.demo-parallel.yaml</code>, which uses the <code>Parallel</code> Pod management policy. Use the <code>rm</code> and <code>touch</code> commands as shown to affect the outcome of the readiness probe in different replicas and see how it affects the two StatefulSets.</p>
+<h4 id="ordered-removal-of-pods-when-deleting-the-statefulset">Ordered removal of Pods when deleting the StatefulSet</h4>
+<p>The <code>OrderedReady</code> Pod management policy affects the initial rollout of StatefulSet Pods, their scaling, and how Pods are replaced when a node fails. However, the policy doesn&#x2019;t apply when you delete the StatefulSet. If you want to terminate the Pods in order, you should first scale the StatefulSet to zero, wait until the last Pod finishes, and only then delete the StatefulSet.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Introducing_StatefulSets.html" class="navigation navigation-prev " aria-label="Previous page: 15.1 IntroducingStatefulSets">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Updating_a_StatefulSet.html" class="navigation navigation-next " aria-label="Next page: 15.3 Updating a StatefulSet">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"15.2 Understanding StatefulSet behavior","level":"4.12.2","depth":2,"next":{"title":"15.3 Updating a StatefulSet","level":"4.12.3","depth":2,"path":"docs/Updating_a_StatefulSet.md","ref":"docs/Updating_a_StatefulSet.md","articles":[]},"previous":{"title":"15.1 IntroducingStatefulSets","level":"4.12.1","depth":2,"path":"docs/Introducing_StatefulSets.md","ref":"docs/Introducing_StatefulSets.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Understanding_StatefulSet_behavior.md","mtime":"2022-12-16T10:22:16.124Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-12-16T10:22:51.557Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-page-toc-button/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-cnzz/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
