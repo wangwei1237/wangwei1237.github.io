@@ -2257,7 +2257,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>与运气竞争</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>【美】克莱顿·克里斯坦森</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2018-5</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>7.8</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.0</span></div>
 		</div>
 	</a>
 </div>
@@ -3673,7 +3673,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>你的灯亮着吗?</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]DonaldC.Gause</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2003-1</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.0</span></div>
 		</div>
 	</a>
 </div>
@@ -5097,7 +5097,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>起源</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]大卫·克里斯蒂安</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2019-4-10</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>7.7</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>7.8</span></div>
 		</div>
 	</a>
 </div>
@@ -6198,7 +6198,7 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 </li>
 </ul>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line">attribute_deprecated</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">avcodec_decode_audio4</span><span class="params">(AVCodecContext *avctx, AVFrame *frame,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> *got_frame_ptr, <span class="keyword">const</span> AVPacket *avpkt)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>在我们的工具中，我们采用了新的解码API：<code>avcodec_send_packet()</code>和<code>avcodec_receive_frame()</code>，实现视频帧的解码，并将解码后的数据转成YUV数据。具体的代码片段如下，<a href="https://wangwei1237.gitee.io/2021/01/19/FFmpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_1.cpp">点击可查看完整测试代码</a>。</p>
+<p>在我们的工具中，我们采用了新的解码API：<code>avcodec_send_packet()</code>和<code>avcodec_receive_frame()</code>，实现视频帧的解码，并将解码后的数据转成YUV数据。具体的代码片段如下，<a href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_1.cpp">点击可查看完整测试代码</a>。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">process_frame</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//decode operation.</span></span><br><span class="line"><span class="keyword">while</span> (!<span class="built_in">av_read_frame</span>(fmt_ctx, pkt)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (pkt-&gt;stream_index != video_stream_idx) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                         frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        i++;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">av_packet_unref</span>(pkt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>从代码可以看出，<code>i</code>是解码帧的总数，但是我们运行之后发现，一个252帧的视频，最终只得到了248帧。</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> frame count: 248</span></span><br></pre></td></tr></table></figure>
@@ -6206,7 +6206,7 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 <p>为了加深对解码API的了解，以便能查出问题原因，我们查阅了<a href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/avcodec.h">FFmpeg的代码</a>，从代码的注释中，我们发现了问题：<strong>我们没有遵循API的使用规范，同时FFmpeg在注释中也说明了为什么会出现我们遇到的问题</strong>。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * ... </span></span><br><span class="line"><span class="comment">  * At the beginning of decoding or encoding, the codec might accept multiple</span></span><br><span class="line"><span class="comment">  * input frames/packets without returning a frame, until its internal buffers</span></span><br><span class="line"><span class="comment">  * are filled. This situation is handled transparently if you follow the steps</span></span><br><span class="line"><span class="comment">  * outlined above.</span></span><br><span class="line"><span class="comment">  * </span></span><br><span class="line"><span class="comment">  * End of stream situations. These require &quot;flushing&quot; (aka draining) the codec,</span></span><br><span class="line"><span class="comment">  * as the codec might buffer multiple frames or packets internally for</span></span><br><span class="line"><span class="comment">  * performance or out of necessity (consider B-frames).</span></span><br><span class="line"><span class="comment">  * ...</span></span><br><span class="line"><span class="comment">  */</span></span><br></pre></td></tr></table></figure>
 <p>也就是说，为了提升性能或出于其他的考虑，解码器会在内部缓存多个<code>frames</code>/<code>packets</code>。因此，当流结束的时候，需要对解码器执行<code>flushing</code>操作，以便获取解码器缓存的<code>frames</code>/<code>packets</code>。</p>
-<p>我们的工具中，在流结束之后，并没有执行<code>flushing</code>操作，因此就出现了解码过程丢帧的现象。按照FFmpeg的指导，我们补充了如下的逻辑，以便获取解码器中缓存的帧，<a href="https://wangwei1237.gitee.io/2021/01/19/FFmpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_2.cpp">点击可查看完整测试代码</a>。</p>
+<p>我们的工具中，在流结束之后，并没有执行<code>flushing</code>操作，因此就出现了解码过程丢帧的现象。按照FFmpeg的指导，我们补充了如下的逻辑，以便获取解码器中缓存的帧，<a href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_2.cpp">点击可查看完整测试代码</a>。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Flush remaining frames that are cached in the decoder</span></span><br><span class="line"><span class="keyword">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">av_init_packet</span>(pkt);</span><br><span class="line">pkt-&gt;data = <span class="literal">NULL</span>;</span><br><span class="line">pkt-&gt;size = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                     frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    i++;</span><br><span class="line">    packet_new = <span class="number">1</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>再次运行，我们发现，丢帧问题消失了。</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> frame count: 252</span></span><br></pre></td></tr></table></figure>
@@ -6282,7 +6282,7 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 			<div class="douban-card-item"><span>书名: </span><strong>不拘一格</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]里德·哈斯廷斯</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2021-1-1</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>8.2</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
 		</div>
 	</a>
 </div>
