@@ -1787,16 +1787,45 @@ Events:
 </tbody>
 </table>
 <p>Of course, these values can appear in different time fields and together they define the exact times at which this schedule is triggered. The following table shows examples of different schedules and their explanations.</p>
-<p>Table 17.4 Cron examples
-| Schedule | Explanation |
-| --- | --- |
-| <em> </em> <em> </em> <em> | Every minute (at every minute of every hour, regardless of month, day of the month, or day of the week). |
-| 15 </em> <em> </em> <em> | 15 </em> <em> </em> <em> |
-| 0 0 </em> 1-3 <em> | Every day at midnight, but only from January to March. |
-| \</em>\/5 18 <em> </em> <em> | Every five minutes between 18:00 (6 PM) and 18:59 (6:59 PM). |
-| </em> <em> 7 5 </em> | Every minute on May 7. |
-| 0,30 3 7 5 <em> | At 3:00AM and 3:30AM on May 7. |
-| 0 0 </em> * 1-5 | At 0:00 AM every weekday (Monday through Friday). |</p>
+<p>Table 17.4 Cron examples</p>
+<table>
+<thead>
+<tr>
+<th>Schedule</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em> </em> <em> </em> *</td>
+<td>Every minute (at every minute of every hour, regardless of month, day of the month, or day of the week).</td>
+</tr>
+<tr>
+<td>15 <em> </em> <em> </em></td>
+<td>15 <em> </em> <em> </em></td>
+</tr>
+<tr>
+<td>0 0 <em> 1-3 </em></td>
+<td>Every day at midnight, but only from January to March.</td>
+</tr>
+<tr>
+<td>*\/5 18 <em> </em> *</td>
+<td>Every five minutes between 18:00 (6 PM) and 18:59 (6:59 PM).</td>
+</tr>
+<tr>
+<td><em> </em> 7 5 *</td>
+<td>Every minute on May 7.</td>
+</tr>
+<tr>
+<td>0,30 3 7 5 *</td>
+<td>At 3:00AM and 3:30AM on May 7.</td>
+</tr>
+<tr>
+<td>0 0 <em> </em> 1-5</td>
+<td>At 0:00 AM every weekday (Monday through Friday).</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p>WARNING</p>
 <p>A CronJob creates a new Job when all fields in the crontab match the current date and time, except for the Day of month and Day of week fields. The CronJob will run if either of these fields match. You might expect the schedule &#x201C;<em> </em> 13 * 5&#x201D; to only trigger on Friday the 13th, but it&#x2019;ll trigger on every 13th of the Month as well as every Friday.</p>
@@ -1875,12 +1904,29 @@ aggregate-responses-every-minute   * * * * *   True      2        5s            
 <p>Figure 17.12 Comparing the behavior of the three CronJob concurrency policies
 <img src="../images/17.12.png" alt=""></p>
 <p>For easier reference, the supported concurrency policies are also explained in the following table.</p>
-<p>Table 17.5 Supported concurrency policies
-| Value | Description |
-| --- | --- |
-| Allow | Multiple Jobs are allowed to run at the same time. This is the default setting. |
-| Forbid | Concurrent runs are prohibited. If the previous run is still active when a new run is to be scheduled, the CronJob controller records a JobAlreadyActive event and skips creating a new Job. |
-| Replace | The active Job is canceled and replaced by a new one. The CronJob controller cancels the active Job by deleting the Job object. The Job controller then deletes the Pods, but they&#x2019;re allowed to terminate gracefully. This means that two Jobs are still running at the same time, but one of them is being terminated. |</p>
+<p>Table 17.5 Supported concurrency policies</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Allow</td>
+<td>Multiple Jobs are allowed to run at the same time. This is the default setting.</td>
+</tr>
+<tr>
+<td>Forbid</td>
+<td>Concurrent runs are prohibited. If the previous run is still active when a new run is to be scheduled, the CronJob controller records a JobAlreadyActive event and skips creating a new Job.</td>
+</tr>
+<tr>
+<td>Replace</td>
+<td>The active Job is canceled and replaced by a new one. The CronJob controller cancels the active Job by deleting the Job object. The Job controller then deletes the Pods, but they&#x2019;re allowed to terminate gracefully. This means that two Jobs are still running at the same time, but one of them is being terminated.</td>
+</tr>
+</tbody>
+</table>
 <p>If you want to see how the concurrency policy affects the execution of CronJob, you can try deploying the CronJobs in the following manifest files:</p>
 <ul>
 <li>cj.concurrency-allow.yaml,</li>
@@ -1944,7 +1990,7 @@ cronjob.batch &quot;aggregate-responses-every-minute&quot; deleted
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"17.2 Scheduling Jobs with CronJobs","level":"4.14.2","depth":2,"next":{"title":"17.3 Summary","level":"4.14.3","depth":2,"path":"docs/Summary_17.md","ref":"docs/Summary_17.md","articles":[]},"previous":{"title":"17.1 Running tasks with the Job resource","level":"4.14.1","depth":2,"path":"docs/Running_tasks_with_the_Job_resource.md","ref":"docs/Running_tasks_with_the_Job_resource.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Scheduling_Jobs_with_CronJobs.md","mtime":"2023-03-06T05:11:05.018Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-03-06T05:11:32.866Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"17.2 Scheduling Jobs with CronJobs","level":"4.14.2","depth":2,"next":{"title":"17.3 Summary","level":"4.14.3","depth":2,"path":"docs/Summary_17.md","ref":"docs/Summary_17.md","articles":[]},"previous":{"title":"17.1 Running tasks with the Job resource","level":"4.14.1","depth":2,"path":"docs/Running_tasks_with_the_Job_resource.md","ref":"docs/Running_tasks_with_the_Job_resource.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Scheduling_Jobs_with_CronJobs.md","mtime":"2023-03-11T11:03:42.744Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-03-11T11:04:15.053Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

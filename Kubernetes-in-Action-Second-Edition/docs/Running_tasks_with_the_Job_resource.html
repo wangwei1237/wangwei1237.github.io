@@ -1861,16 +1861,53 @@ job.batch &quot;demo-suspend&quot; deleted
 <p><img src="../images/17.3.png" alt=""></p>
 <p>As shown in the figure, the Job controller first creates two Pods and waits until one of them completes. In the figure, Pod 2 is the first to finish. The controller immediately creates the next Pod (Pod 3), bringing the number of running Pods back to two. The controller repeats this process until five Pods complete successfully.</p>
 <p>The following table explains the behavior for different examples of <em>completions</em> and <em>parallelism</em>.</p>
-<p>Table 17.1 Completions and parallelism combinations
-| Completions | Parallelism | Job behavior | 
-| --- | --- | --- |
-| Not set | Not set | A single Pod is created. Same as when completions and parallelism is 1.
-| 1 | 1 | A single Pod is created. If the Pod completes successfully, the Job is complete. If the Pod is deleted before completing, it&#x2019;s replaced by a new Pod. |
-| 2 | 5 | Only three Pods are created. The same as if parallelism was 2. |
-| 5 | 2 | Two Pods are created initially. When one of them completes, the third Pod is created. There are again two Pods running. When one of the two completes, the fourth Pod is created. There are again two Pods running. When another one completes, the fifth and last Pod is created. |
-| 5 | 5 | Five Pods run simultaneously. If one of them is deleted before it completes, a replacement is created. The Job is complete when five Pods complete successfully. |
-| 5 | Not set | Five Pods are created sequentially. A new Pod is created only when the previous Pod completes (or fails). |
-| Not set | 5 | Five Pods are created simultaneously, but only one needs to complete successfully for the Job to complete. |</p>
+<p>Table 17.1 Completions and parallelism combinations</p>
+<table>
+<thead>
+<tr>
+<th>Completions</th>
+<th>Parallelism</th>
+<th>Job behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Not set</td>
+<td>Not set</td>
+<td>A single Pod is created. Same as when completions and parallelism is 1.</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>A single Pod is created. If the Pod completes successfully, the Job is complete. If the Pod is deleted before completing, it&#x2019;s replaced by a new Pod.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>5</td>
+<td>Only three Pods are created. The same as if parallelism was 2.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>2</td>
+<td>Two Pods are created initially. When one of them completes, the third Pod is created. There are again two Pods running. When one of the two completes, the fourth Pod is created. There are again two Pods running. When another one completes, the fifth and last Pod is created.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5</td>
+<td>Five Pods run simultaneously. If one of them is deleted before it completes, a replacement is created. The Job is complete when five Pods complete successfully.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Not set</td>
+<td>Five Pods are created sequentially. A new Pod is created only when the previous Pod completes (or fails).</td>
+</tr>
+<tr>
+<td>Not set</td>
+<td>5</td>
+<td>Five Pods are created simultaneously, but only one needs to complete successfully for the Job to complete.</td>
+</tr>
+</tbody>
+</table>
 <p>In the <em>generate-responses</em> Job that you&#x2019;re about to create, the number of <em>completions</em> is set to 5 and <em>parallelism</em> is set to 2, so at most two Pods will run in parallel. The Job isn&#x2019;t complete until five Pods complete successfully. The total number of Pods may end up being higher if some of the Pods fail. More on this in the next section.</p>
 <p><strong>Running the Job</strong>
 Use <em>kubectl apply</em> to create the Job by applying the manifest file <em>job.generate-responses.yaml</em>. List the Pods while running the Job as follows:</p>
@@ -2032,12 +2069,25 @@ Events:
 <h2 id="1714-parameterizing-pods-in-a-job">17.1.4 Parameterizing Pods in a Job</h2>
 <p>Until now, the tasks you performed in each Job were identical to each other. For example, the Pods in the generate-responses Job all did the same thing: they inserted a series of responses into the database. But what if you want to run a series of related tasks that aren&#x2019;t identical? Maybe you want each Pod to process only a subset of the data? That&#x2019;s where the Job&#x2019;s <em>completionMode</em> field comes in.</p>
 <p>At the time of writing, two completion modes are supported: Indexed and NonIndexed. The Jobs you created so far in this chapter were NonIndexed, as this is the default mode. All Pods created by such a Job are indistinguishable from each other. However, if you set the Job&#x2019;s <em>completionMode</em> to Indexed, each Pod is given an index number that you can use to distinguish the Pods. This allows each Pod to perform only a portion of the entire task. See the following table for a comparison between the two completion modes.</p>
-<p>Table 17.2 Supported Job completion modes
-| Value | Description |
-| --- | --- |
-| NonIndexed | The Job is considered complete when the number of successfully completed Pods created by this Job equals the value of the <em>spec.completions</em> field in the Job manifest. All Pods are equal to each other. This is the default mode. |
-| Indexed | Each Pod is given a completion index (starting at <em>0</em>) to distinguish the Pods from each other. The Job is considered complete when there is one successfully completed Pod for each index. If a Pod with a particular index fails, the Job controller creates a new Pod with the same index.</p>
-<p>The completion index assigned to each Pod is specified in the Pod annotation <em>batch.kubernetes.io/job-completion-index</em> and in the <em>JOB_COMPLETION_INDEX</em> environment variable in the Pod&#x2019;s containers. |</p>
+<p>Table 17.2 Supported Job completion modes</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NonIndexed</td>
+<td>The Job is considered complete when the number of successfully completed Pods created by this Job equals the value of the <em>spec.completions</em> field in the Job manifest. All Pods are equal to each other. This is the default mode.</td>
+</tr>
+<tr>
+<td>Indexed</td>
+<td>Each Pod is given a completion index (starting at <em>0</em>) to distinguish the Pods from each other. The Job is considered complete when there is one successfully completed Pod for each index. If a Pod with a particular index fails, the Job controller creates a new Pod with the same index. The completion index assigned to each Pod is specified in the Pod annotation <em>batch.kubernetes.io/job-completion-index</em> and in the <em>JOB_COMPLETION_INDEX</em> environment variable in the Pod&#x2019;s containers.</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p>NOTE</p>
 <p>In the future, Kubernetes may support additional modes for Job processing, either through the built-in Job controller or through additional controllers.</p>
@@ -2507,7 +2557,7 @@ PING comm-demo-0.demo-service (10.244.2.71): 56 data bytes
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"17.1 Running tasks with the Job resource","level":"4.14.1","depth":2,"next":{"title":"17.2 Scheduling Jobs with CronJobs","level":"4.14.2","depth":2,"path":"docs/Scheduling_Jobs_with_CronJobs.md","ref":"docs/Scheduling_Jobs_with_CronJobs.md","articles":[]},"previous":{"title":"17 Running finite workloads with Jobs and CronJobs","level":"4.14","depth":1,"path":"docs/Running_finite_workloads_with_Jobs_and_CronJobss.md","ref":"docs/Running_finite_workloads_with_Jobs_and_CronJobss.md","articles":[{"title":"17.1 Running tasks with the Job resource","level":"4.14.1","depth":2,"path":"docs/Running_tasks_with_the_Job_resource.md","ref":"docs/Running_tasks_with_the_Job_resource.md","articles":[]},{"title":"17.2 Scheduling Jobs with CronJobs","level":"4.14.2","depth":2,"path":"docs/Scheduling_Jobs_with_CronJobs.md","ref":"docs/Scheduling_Jobs_with_CronJobs.md","articles":[]},{"title":"17.3 Summary","level":"4.14.3","depth":2,"path":"docs/Summary_17.md","ref":"docs/Summary_17.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Running_tasks_with_the_Job_resource.md","mtime":"2023-03-06T05:11:05.018Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-03-06T05:11:32.866Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"17.1 Running tasks with the Job resource","level":"4.14.1","depth":2,"next":{"title":"17.2 Scheduling Jobs with CronJobs","level":"4.14.2","depth":2,"path":"docs/Scheduling_Jobs_with_CronJobs.md","ref":"docs/Scheduling_Jobs_with_CronJobs.md","articles":[]},"previous":{"title":"17 Running finite workloads with Jobs and CronJobs","level":"4.14","depth":1,"path":"docs/Running_finite_workloads_with_Jobs_and_CronJobss.md","ref":"docs/Running_finite_workloads_with_Jobs_and_CronJobss.md","articles":[{"title":"17.1 Running tasks with the Job resource","level":"4.14.1","depth":2,"path":"docs/Running_tasks_with_the_Job_resource.md","ref":"docs/Running_tasks_with_the_Job_resource.md","articles":[]},{"title":"17.2 Scheduling Jobs with CronJobs","level":"4.14.2","depth":2,"path":"docs/Scheduling_Jobs_with_CronJobs.md","ref":"docs/Scheduling_Jobs_with_CronJobs.md","articles":[]},{"title":"17.3 Summary","level":"4.14.3","depth":2,"path":"docs/Summary_17.md","ref":"docs/Summary_17.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["page-toc-button","cnzz","hints","sitemap-general"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"search":{},"cnzz":{"style":"1","visible":true,"siteid":"1278605528"},"hints":{"danger":"fa fa-bug","info":"fa fa-info-circle","tip":"fa fa-sticky-note","working":"fa fa-cog fa-spin"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sitemap-general":{"prefix":"https://wangwei1237.gitee.io/kubernetes-in-action-second-edition"},"fontsettings":{"theme":"white","family":"serif","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"wangwei17","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":16,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":true},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"Kubernetes实战（第二版）","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{"17哥的个人网站":"https://wangwei1237.gitee.io/"}},"gitbook":"*","description":"Kubernetes实战（第二版）","extension":null},"file":{"path":"docs/Running_tasks_with_the_Job_resource.md","mtime":"2023-03-11T11:03:42.744Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-03-11T11:04:15.053Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
