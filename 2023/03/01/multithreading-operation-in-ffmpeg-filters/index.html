@@ -13,7 +13,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>「度知了」使用指南 |  17哥</title>
+      <title>FFMpeg滤镜中的多线程计算 |  17哥</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +57,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-duzhiliao"
+  id="post-multithreading-operation-in-ffmpeg-filters"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -68,24 +68,19 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  「度知了」使用指南
+  FFMpeg滤镜中的多线程计算
 </h1>
  
 
       
-    <div class="article-author"  style="text-align: center" >
-        作者： 严丽
-    </div>
-
-
     </header>
      
     <div class="article-meta">
-      <a href="/2023/02/13/duzhiliao/" class="article-date">
-  <time datetime="2023-02-13T16:55:08.000Z" itemprop="datePublished">2023-02-13</time>
+      <a href="/2023/03/01/multithreading-operation-in-ffmpeg-filters/" class="article-date">
+  <time datetime="2023-03-01T14:55:32.000Z" itemprop="datePublished">2023-03-01</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/IVQA/">IVQA</a>
+    <a class="article-category-link" href="/categories/%E8%A7%86%E9%A2%91%E6%8A%80%E6%9C%AF/">视频技术</a>
   </div>
   
 <div class="word_count">
@@ -93,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">843</span>
         </span>
     </span>
 
@@ -102,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
@@ -117,178 +112,108 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="画质评测利器-度知了">画质评测利器——度知了</h2>
-<p>经过 2 年多的打磨，经历近 5000+ 主观评估，400,000+ 评估样本，1000+ 评测人员（专家和普通用户），趟过一个又一个的坑，利用技术解决实际评测中遇到的一个又一个的不置信因素，高效的视频画质评估系统『度知了』终于迎来面世。</p>
-<p>度知了基于 ITU 标准，依托自研的 10+ 项专利技术，在不断实践的基础之上而形成的一款支持多端（PC，Android，iOS）评测的视频画质评测服务。</p>
+  <p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/1.png" alt></p>
+<p>在图像处理中，可以通过滤镜来实现多种多样的图像特殊效果。同样的，在视频处理中，滤镜的概念也基本相似——滤镜指的是在编码之前针对解码器解码出来的原始数据（即音视频帧）进行处理的动作。</p>
 <span id="more"></span>
-<p>本文将详细介绍自研的画质评测系统『度知了』的使用方式，以及我们如何利用度知了来客观、置信、高效地评测视频画质，进而提升用户体验。</p>
-<h2 id="评测入门">评测入门</h2>
-<p>为了提升评测结果的置信度，我们准备了一些评测样例供用户参考。这些样例均为在画质上存在显著区别的视频，尽管个体感受存在差异，但是在这些示例视频上是可以达成共识和一致结果的。<br>
-其次，我们也准备了一些指导文档，帮助用户快速入门，了解一些视频画质相关的基础知识。<br>
-<img src="/2023/02/13/duzhiliao/1-sample.png" alt></p>
-<h2 id="一-安装">一、安装</h2>
-<p>目前『度知了』已上架各大商店应用市场</p>
-<ul>
-<li>安卓端：华为应用商店、百度手机助手、小米应用商店、oppo应用商店、vivo应用商店可直接搜索『度知了』进行安装。</li>
-<li>ios端：App store搜索『度知了』进行安装。</li>
-</ul>
-<h2 id="二-创建任务">二、创建任务</h2>
-<h3 id="2-1-快捷创建">2.1 快捷创建</h3>
-<p>可以通过如下图指引三步完成APP端快捷创建一个评测任务<br>
-<img src="/2023/02/13/duzhiliao/1_createTask.png" alt></p>
-<!-- #### Step 1. 点击首页下方+号，进入创建任务页面
-#### Step 2. 如果评测任务无保密要求，点击确认创建即可
-#### Step 3. 选择模板、填写测试样本地址、选择可视范围后完成创建 -->
-<p>第三步中要填写的内容如下：</p>
-<h4 id="1-选择模板">1）选择模板</h4>
-<p>目前可选的任务模板包括：短视频主观折损对折损（如下图左）、小视频主观折损对折损（如下图右）。可根据评测样本的视频类型按需选择。<br>
-<img src="/2023/02/13/duzhiliao/2-template.png" alt></p>
-<h4 id="2-评测样本地址">2）评测样本地址</h4>
-<p>此处需要给出一个可解析的csv文件地址，csv文件内容如下表所示，第一行不进行解析，可随意填写，第二行开始每行为一组对比视频的地址，左边为参考视频地址，右边为对比视频地址。在评测时每组视频会以左右随机的顺序呈现给用户。<br>
-参考地址：<a target="_blank" rel="noopener" href="http://bj.bcebos.com/baidu-rmb-video-cover-1/2022-9/1662380786685/480P-test.csv">http://bj.bcebos.com/baidu-rmb-video-cover-1/2022-9/1662380786685/480P-test.csv</a></p>
-<!-- ![](3_csvDetail.png) -->
-<table>
-<thead>
-<tr>
-<th>url1</th>
-<th>url2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a target="_blank" rel="noopener" href="http://video1.mp4">http://video1.mp4</a></td>
-<td>http://video1_compared.mp4</td>
-</tr>
-<tr>
-<td><a target="_blank" rel="noopener" href="http://video2.mp4">http://video2.mp4</a></td>
-<td>http://video2_compared.mp4</td>
-</tr>
-<tr>
-<td><a target="_blank" rel="noopener" href="http://video3.mp4">http://video3.mp4</a></td>
-<td>http://video3_compared.mp4</td>
-</tr>
-</tbody>
-</table>
-<h4 id="3-可视范围">3）可视范围</h4>
-<p>如评测任务无保密要求，可直接选择【暂无】，点击【确认创建】按钮完成创建。<br>
-如果任务的保密要求较高，可继续通过2.2创建用户隔离的任务。</p>
-<h3 id="2-2-仅产品线内用户可见">2.2 仅产品线内用户可见</h3>
-<p>考虑到部分评测任务涉及到视频内容保密等情况，我们通过创建产品线-邀请入组的方式来保证此类任务只对组内成员开放。</p>
-<h4 id="step-1-创建产品线">Step 1. 创建产品线</h4>
-<p>选择底部导航栏中【我的】页面，创建产品线一栏中填写新业务线名称，点击【确认创建】就可以生成新的产品线并自动加入到该产品线中。同时会生成一个6位数的邀请码。<br>
-<img src="/2023/02/13/duzhiliao/5-createProduct.png" alt></p>
-<h4 id="step-2-创建包含组织的任务">Step 2. 创建包含组织的任务</h4>
-<p>按照如下图所示步骤，在【选择可视范围】一栏中选择上一步创建的产品线，点击【确认创建】即可创建出只对该产品线成员可见的任务。<br>
-<img src="/2023/02/13/duzhiliao/6-createTaskWithProduct.png" alt></p>
-<h4 id="step-3-邀请用户加入产品线">Step 3. 邀请用户加入产品线</h4>
-<p>被邀请的用户在【我的】页面【加入产品线】一栏中，输入组织邀请码，点击【确认加入】，即可加入到对应的产品线中。<br>
-<img src="/2023/02/13/duzhiliao/10-joinGroup.jpg" alt></p>
-<!-- ![](7-create.png) -->
-<h2 id="三-评测任务">三、评测任务</h2>
-<p>点击底层导航栏选择【视频评测】或【图片评测】进入评测列表页，选择目标任务进入评测任务的说明页面，该页面详细介绍了评估的注意事项、打分的标准等信息。点击【去测评】按钮，进入评测详情页，逐条打分直至本组任务评完，即完成评测。</p>
-<!-- ![](8-startTask.png) -->
-<p><img src="/2023/02/13/duzhiliao/9-startEvaluate.png" alt></p>
-<h2 id="四-结束任务及查看结果">四、结束任务及查看结果</h2>
-<p>在创建的任务中可以对用户评测结果进行计算和结果查看，点击【计算】后后台会开始统计用户的平均MOS打分，当按钮变成【查看结果】时，即可点击查看每个视频对及对应的MOS打分。<br>
-<img src="/2023/02/13/duzhiliao/11-endTask.png" alt></p>
-<p>对于对比视频B和参考视频A比较得到的 MOS 分和划分档次对应关系如下：</p>
-<table>
-<thead>
-<tr>
-<th>MOS</th>
-<th>档位</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0-39</td>
-<td>负向</td>
-</tr>
-<tr>
-<td>40-59</td>
-<td>持平</td>
-</tr>
-<tr>
-<td>60-100</td>
-<td>正向</td>
-</tr>
-</tbody>
-</table>
-<h2 id="度知了app支持的评测场景">度知了APP支持的评测场景</h2>
-<p>上面介绍了在度知了创建任务、评测、查看结果的整个流程，目前度知了已支持丰富的评测场景和完备的评测能力，具体能力如下：</p>
-<table>
-<thead>
-<tr>
-<th>能力项</th>
-<th>场景说明</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>设备&amp;终端</td>
-<td>PC、iOS、Android</td>
-<td></td>
-</tr>
-<tr>
-<td>评测标准</td>
-<td>ACR、DCR、CCR</td>
-<td>CCR 的评估支持左右视频随机混淆的能力</td>
-</tr>
-<tr>
-<td>媒体类型</td>
-<td>视频、图片</td>
-<td></td>
-</tr>
-<tr>
-<td>视频格式-1</td>
-<td>SDR、HDR</td>
-<td></td>
-</tr>
-<tr>
-<td>视频格式-2</td>
-<td>横版视频、竖版视频</td>
-<td></td>
-</tr>
-<tr>
-<td>终端显示-1</td>
-<td>横版视频16:9视窗、横版视频3:2视窗</td>
-<td>横版视频的不同视窗支持：ACR，DCR，CCR</td>
-</tr>
-<tr>
-<td>终端显示-2</td>
-<td>视频播放模式评测、视频单帧模式评测</td>
-<td></td>
-</tr>
-<tr>
-<td>终端显示-3</td>
-<td>华为鸿蒙系统视频超分能力：ACR，DCR，CCR</td>
-<td>CCR 的评估支持左右视频随机混淆的能力</td>
-</tr>
-<tr>
-<td>横版视频CCR 对比方式</td>
-<td>16:9 视窗单屏对比、3:2 视窗单屏对比、全屏左右对比、全屏左右滑动对比</td>
-<td></td>
-</tr>
-<tr>
-<td>竖版视频CCR对比方式</td>
-<td>全屏左右对比、全屏手动切换对比</td>
-<td></td>
-</tr>
-<tr>
-<td>评测方式</td>
-<td>普通用户评测、专家多维度评测</td>
-<td></td>
-</tr>
-<tr>
-<td>打分方式</td>
-<td>5级打分、资源异常打分、备注信息上报</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<!-- 短视频对比评测：
-![](4-1duanshipin.png) --> 
+<h2 id="ffmpeg-滤镜的基本概念">FFmpeg 滤镜的基本概念</h2>
+<p>FFmpeg 通过 libavfilter 库来实现滤镜的功能，并且在 FFmpeg 中，可以通过滤镜来对输入视频进行各种各样的处理。</p>
+<p>FFmpeg中，滤镜的处理位置如下图所示：</p>
+<p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/2.png" alt></p>
+<p>例如，如果我们要对一个视频从中间部分进行“镜像”操作，则可以用如下的“滤镜链”来实现：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">                [main]</span><br><span class="line">input --&gt; split ---------------------&gt; overlay --&gt; output</span><br><span class="line">            |                             ^</span><br><span class="line">            |[tmp]                  [flip]|</span><br><span class="line">            |                             |</span><br><span class="line">            +-----&gt; crop --&gt; vflip -------+</span><br></pre></td></tr></table></figure>
+<p>在这个“滤镜链”图中，利用 <code>split</code> 滤镜把输入流分离成了两路流，其中一路通过 <code>crop</code> 滤镜和 <code>vfilp</code> 滤镜的同一路级联应用，再同另外一路一起通过 <code>overlay</code> 滤镜处理的流合成并输出最终处理之后的视频。</p>
+<p>如上操作对应的 FFmpeg 命令如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i INPUT -vf &quot;split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2&quot; OUTPUT</span><br></pre></td></tr></table></figure>
+<p>更详细的 FFmpeg 滤镜的相关内容可以参考 <a target="_blank" rel="noopener" href="http://ffmpeg.org/ffmpeg-filters.html">FFmpeg Filters Documentation</a>。</p>
+<h2 id="ffmpeg-滤镜开发简介">FFmpeg 滤镜开发简介</h2>
+<p>根据 <a target="_blank" rel="noopener" href="https://trac.ffmpeg.org/wiki/FilteringGuide">FFmpeg Filtering Guide</a>，可以在 <a target="_blank" rel="noopener" href="https://wiki.multimedia.cx/index.php/FFmpeg_filter_HOWTO">FFmpeg filter HOWTO</a> 的帮助下来编写 FFmpeg 滤镜，为 FFmpeg 增加新的能力。</p>
+<p>但是，根据个人经验，在开发滤镜时，我更建议把 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/doc/writing_filters.txt">FFmpeg/doc/writing_filters.txt</a> 作为滤镜开发指南。</p>
+<h2 id="多线程滤镜开发">多线程滤镜开发</h2>
+<p>FFmpeg 滤镜会涉及到大量的计算，因此，如果可以采用多线程的方式来加速滤镜的计算，对于有效率要求的场景而言将是一大福音。</p>
+<p>根据 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/doc/writing_filters.txt">FFmpeg/doc/writing_filters.txt</a> 的说明，到目前为止，对于滤镜而言，FFmpeg 仅支持 <code>slice-级别</code>多线程（还不支持<code>帧-级别</code>多线程）。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">slice 基本概念
+</p><p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/3.jpeg" alt>
+<br> 如上图所示，在滤镜计算过程中，视频帧被分割成若干单独的 <code>slice(切片)</code>，不同的 <code>slice</code> 可以同时并行执行滤镜操作。</p>
+<p>实际上，在计算过程中，可以简单的把 <code>slice</code> 理解为由多行构成的帧数据。因此，<code>slice-级别</code> 的多线程实际上就是按行将图像拆分为多个 <code>slice</code>，然后多个 <code>slice</code> 之间并行执行滤镜计算。</p>
+</div>
+<p>待续》》》</p>
+ 
       <!-- reward -->
       
     </div>
@@ -352,12 +277,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2023/02/13/duzhiliao/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2023/03/01/multithreading-operation-in-ffmpeg-filters/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BA%A6%E7%9F%A5%E4%BA%86/" rel="tag">度知了</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%BB%E8%B4%A8%E8%AF%84%E6%B5%8B/" rel="tag">画质评测</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%86%E9%A2%91%E8%AF%84%E6%B5%8B/" rel="tag">视频评测</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFmpeg/" rel="tag">FFmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li></ul>
 
     </footer>
   </div>
@@ -365,19 +290,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/03/01/multithreading-operation-in-ffmpeg-filters/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            FFMpeg滤镜中的多线程计算
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/02/04/fitness-and-work/" class="article-nav-link">
+      <a href="/2023/02/13/duzhiliao/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">关于健身，关于工作</div>
+        <div class="article-nav-title">「度知了」使用指南</div>
       </a>
     
   </nav>

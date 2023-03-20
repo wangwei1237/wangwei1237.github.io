@@ -1,6 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>FFMpeg滤镜中的多线程计算</title>
+    <url>/2023/03/01/multithreading-operation-in-ffmpeg-filters/</url>
+    <content><![CDATA[<p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/1.png" alt></p>
+<p>在图像处理中，可以通过滤镜来实现多种多样的图像特殊效果。同样的，在视频处理中，滤镜的概念也基本相似——滤镜指的是在编码之前针对解码器解码出来的原始数据（即音视频帧）进行处理的动作。</p>
+<span id="more"></span>
+<h2 id="ffmpeg-滤镜的基本概念">FFmpeg 滤镜的基本概念</h2>
+<p>FFmpeg 通过 libavfilter 库来实现滤镜的功能，并且在 FFmpeg 中，可以通过滤镜来对输入视频进行各种各样的处理。</p>
+<p>FFmpeg中，滤镜的处理位置如下图所示：</p>
+<p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/2.png" alt></p>
+<p>例如，如果我们要对一个视频从中间部分进行“镜像”操作，则可以用如下的“滤镜链”来实现：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">                [main]</span><br><span class="line">input --&gt; split ---------------------&gt; overlay --&gt; output</span><br><span class="line">            |                             ^</span><br><span class="line">            |[tmp]                  [flip]|</span><br><span class="line">            |                             |</span><br><span class="line">            +-----&gt; crop --&gt; vflip -------+</span><br></pre></td></tr></table></figure>
+<p>在这个“滤镜链”图中，利用 <code>split</code> 滤镜把输入流分离成了两路流，其中一路通过 <code>crop</code> 滤镜和 <code>vfilp</code> 滤镜的同一路级联应用，再同另外一路一起通过 <code>overlay</code> 滤镜处理的流合成并输出最终处理之后的视频。</p>
+<p>如上操作对应的 FFmpeg 命令如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ffmpeg -i INPUT -vf &quot;split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2&quot; OUTPUT</span><br></pre></td></tr></table></figure>
+<p>更详细的 FFmpeg 滤镜的相关内容可以参考 <a href="http://ffmpeg.org/ffmpeg-filters.html">FFmpeg Filters Documentation</a>。</p>
+<h2 id="ffmpeg-滤镜开发简介">FFmpeg 滤镜开发简介</h2>
+<p>根据 <a href="https://trac.ffmpeg.org/wiki/FilteringGuide">FFmpeg Filtering Guide</a>，可以在 <a href="https://wiki.multimedia.cx/index.php/FFmpeg_filter_HOWTO">FFmpeg filter HOWTO</a> 的帮助下来编写 FFmpeg 滤镜，为 FFmpeg 增加新的能力。</p>
+<p>但是，根据个人经验，在开发滤镜时，我更建议把 <a href="https://github.com/FFmpeg/FFmpeg/blob/master/doc/writing_filters.txt">FFmpeg/doc/writing_filters.txt</a> 作为滤镜开发指南。</p>
+<h2 id="多线程滤镜开发">多线程滤镜开发</h2>
+<p>FFmpeg 滤镜会涉及到大量的计算，因此，如果可以采用多线程的方式来加速滤镜的计算，对于有效率要求的场景而言将是一大福音。</p>
+<p>根据 <a href="https://github.com/FFmpeg/FFmpeg/blob/master/doc/writing_filters.txt">FFmpeg/doc/writing_filters.txt</a> 的说明，到目前为止，对于滤镜而言，FFmpeg 仅支持 <code>slice-级别</code>多线程（还不支持<code>帧-级别</code>多线程）。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">slice 基本概念
+</p><p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/3.jpeg" alt>
+<br> 如上图所示，在滤镜计算过程中，视频帧被分割成若干单独的 <code>slice(切片)</code>，不同的 <code>slice</code> 可以同时并行执行滤镜操作。</p>
+<p>实际上，在计算过程中，可以简单的把 <code>slice</code> 理解为由多行构成的帧数据。因此，<code>slice-级别</code> 的多线程实际上就是按行将图像拆分为多个 <code>slice</code>，然后多个 <code>slice</code> 之间并行执行滤镜计算。</p>
+</div>
+<p>待续》》》</p>
+]]></content>
+      <categories>
+        <category>视频技术</category>
+      </categories>
+      <tags>
+        <tag>多线程</tag>
+        <tag>FFmpeg</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>「度知了」使用指南</title>
     <url>/2023/02/13/duzhiliao/</url>
     <content><![CDATA[<h2 id="画质评测利器-度知了">画质评测利器——度知了</h2>
@@ -5371,7 +5484,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>起源</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]大卫·克里斯蒂安</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2019-4-10</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>7.7</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>7.8</span></div>
 		</div>
 	</a>
 </div>
@@ -6556,7 +6669,7 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 			<div class="douban-card-item"><span>书名: </span><strong>不拘一格</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]里德·哈斯廷斯</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2021-1-1</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>8.2</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
 		</div>
 	</a>
 </div>
