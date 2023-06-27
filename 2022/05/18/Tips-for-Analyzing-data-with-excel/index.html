@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.2k</span>
+            <span class="post-count">2.5k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">12 分钟</span>
+            <span class="post-count">13 分钟</span>
         </span>
     </span>
 </div>
@@ -439,6 +439,31 @@
 <p>然后按照如下图所示像使用普通 Excel 函数一样使用 <code>GetAdrs</code> 就可以了。<br>
 <img src="/2022/05/18/Tips-for-Analyzing-data-with-excel/6.jpg" alt></p>
 <h2 id="字符串操作">字符串操作</h2>
+<p>当需要处理类似视频分辨率信息的数据<code>720x1280</code>时，Excel 中的字符串相关函数就派上大用途了。例如，对于如下表所示的视频数据信息中，如何从resolution列提取视频对应宽高信息？</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>URL</th>
+<th>resolution</th>
+<th>……</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>url</td>
+<td>720*1280</td>
+<td>……</td>
+</tr>
+<tr>
+<td>2</td>
+<td>url</td>
+<td>1080*1920</td>
+<td>……</td>
+</tr>
+</tbody>
+</table>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -515,8 +540,21 @@
     margin-bottom: 0 !important;
   }
   </style>
-<div class="admonition note"><p class="admonition-title">find
-</p></div>
+<div class="admonition note"><p class="admonition-title"><a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/left-leftb-functions-9203d2d2-7960-479b-84c6-1ea52b99640c">left</a>, <a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/right-rightb-functions-240267ee-9afa-4639-a02b-f19e1786cf2f">right</a>, <a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/len-lenb-functions-29236f94-cedc-429d-affd-b5e33d2c67cb">len</a>, <a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/find-findb-functions-c7912941-af2a-4bdf-a553-d0d89b0a0628">find</a>
+</p><ul>
+<li><strong>LEFT</strong> returns the first character or characters in a text string, based on the number of characters you specify.</li>
+<li><strong>RIGHT</strong> returns the last character or characters in a text string, based on the number of characters you specify.</li>
+<li><strong>LEN</strong> returns the number of characters in a text string.</li>
+<li><strong>FIND</strong> locate one text string within a second text string, and return the number of the starting position of the first text string from the first character of the second text string.</li>
+</ul>
+</div>
+<p>对于 <code>720*1280</code> 而言，<code>*</code>左边的字符构成了视频的宽度信息，而 <code>*</code> 右边的字符构成了高度信息。</p>
+<ul>
+<li>宽度信息：left(str, position(*) - 1) → <code>=LEFT(str, FIND(&quot;*&quot;, str)-1)</code></li>
+<li>高度信息：right(str, length(str) - position(*)) → <code>=RIGHT(str, LEN(str)-FIND(&quot;*&quot;,str))</code></li>
+</ul>
+<p><img src="/2022/05/18/Tips-for-Analyzing-data-with-excel/7.jpg" alt></p>
+<p>在视频中，我们一般称视频的分辨率为720P，1080P……，其实也就是宽高信息中的最小值。因此，在得到宽高信息后，我们还希望得到这个视频是720P还是1080P。</p>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -593,86 +631,24 @@
     margin-bottom: 0 !important;
   }
   </style>
-<div class="admonition note"><p class="admonition-title">value
-</p></div>
-<style>.admonition {
-    margin: 1.5625em 0;
-    padding: .6rem;
-    overflow: hidden;
-    font-size: 1.6rem;
-    page-break-inside: avoid;
-    border-left: .6rem solid #42b983;
-    border-radius: .6rem;
-    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
-    background-color: #fafafa;
-  }
-  
-  p.admonition-title {
-    position: relative;
-    margin: -.6rem -.6rem .8em -.6rem !important;
-    padding: .4rem .6rem .4rem .4rem;
-    font-weight: 700;
-    background-color:rgba(66, 185, 131, .1);
-  }
-  
-  /*
-  .admonition-title::before {
-    position: absolute;
-    top: .9rem;
-    left: 1rem;
-    width: 12px;
-    height: 12px;
-    background-color: #42b983;
-    border-radius: 50%;
-    content: ' ';
-  }
-  */
-  
-  .info>.admonition-title, .todo>.admonition-title {
-    background-color: rgba(0,184,212,.1);
-  }
-  
-  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
-    background-color: rgba(255,145,0,.1);
-  }
-  
-  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
-    background-color: rgba(255,82,82,.1);
-  }
-  
-  .admonition.info, .admonition.todo {
-    border-color: #00b8d4;
-  }
-  
-  .admonition.warning, .admonition.attention, .admonition.caution {
-    border-color: #ff9100;
-  }
-  
-  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
-    border-color: #ff5252;
-  }
-  
-  .info>.admonition-title::before, .todo>.admonition-title::before {
-    background-color: #00b8d4;
-    border-radius: 50%;
-  }
-  
-  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
-    background-color: #ff9100;
-    border-radius: 50%;
-  }
-  
-  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
-    background-color: #ff5252;;
-    border-radius: 50%;
-  }
-  
-  .admonition>:last-child {
-    margin-bottom: 0 !important;
-  }
-  </style>
-<div class="admonition note"><p class="admonition-title">left, mid, right
-</p></div>
+<div class="admonition note"><p class="admonition-title"><a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/min-function-61635d12-920f-4ce2-a70f-96f202dcc152">min</a>，<a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/value-function-257d0108-07dc-437d-ae1c-bc2d3953d8c2">value</a>
+</p><ul>
+<li><strong>MIN</strong> Returns the smallest number in a set of values.</li>
+<li><strong>VALUE</strong> Converts a text string that represents a number to a number.</li>
+</ul>
+</div>
+<p>但是，实际中，我们使用 <code>min</code> 得出的结果却是 0，如下图所示。<br>
+<img src="/2022/05/18/Tips-for-Analyzing-data-with-excel/8.jpg" alt></p>
+<p>至于原因，在 <a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/min-function-61635d12-920f-4ce2-a70f-96f202dcc152">min</a> 的 <code>Remarks</code> 部分解释的非常清楚：</p>
+<ul>
+<li>If an argument is an array or reference, only numbers in that array or reference are used. Empty cells, logical values, or <strong>text</strong> in the array or reference are ignored.</li>
+<li>If the arguments contain no numbers, MIN returns 0.</li>
+</ul>
+<p>因为我们之前通过 <code>left</code>、<code>right</code> 得到的数据是字符串类型，因此在 <code>min</code> 函数中，这些数据均被过滤，而当 <code>min</code> 函数参数中不存在数字参数时，它就返回 0。</p>
+<p>此时就需要用到 <code>value</code> 函数将字符串转成数字，如下所示：<br>
+<img src="/2022/05/18/Tips-for-Analyzing-data-with-excel/9.jpg" alt></p>
+<h2 id="总结">总结</h2>
+<p>写到这里，回头想想，觉得自己真是幸运，幸运于自己及时制止了那按耐不住的想展示一下技术的愚蠢的想法，否则我现在还在焦头烂额的调试自己的那一堆代码。当然，Excel 还有更多的、其他的强大的能力，等遇到了再继续补充吧~</p>
  
       <!-- reward -->
       
