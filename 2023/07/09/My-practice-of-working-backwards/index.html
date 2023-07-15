@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">212</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -97,13 +97,15 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">6 分钟</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
@@ -114,6 +116,130 @@
 <p>2023 年 4 月 1 日，我在 <a target="_blank" rel="noopener" href="https://bj2022.livevideostack.cn/schedule">LiveVideoStack 2022 北京站</a> 大会上，以 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/J2QGTiMOgMnZbAyI81I87Q">《百度视频质量评测的实践之路》</a> 为题介绍了团队在视频质量评测方向的思考与认知。回首向来萧瑟处，金戈铁马，苍山如海。</p>
 <p>站在后验结果的视角来审视这个过程，发现有很多的地方——尤其是“逆向工作”思路对整个事情的推动，值得进一步思考与总结。同时，最近和同事在讨论其他方向的工作思路时，我发现“逆向工作”这个词频繁的出现。再加上，近来又在读贝佐斯的 24 封“致股东信”，在 2008 年的“致股东信”中提到的“逆向倒推”深深启发了我。因此，更想对过去的这一段工作进行一番总结。</p>
 <span id="more"></span>
+<h2 id="令人-烦恼-的快乐">令人“烦恼”的快乐</h2>
+<p>时针回拨到 2019 年的夏天，那个时候，抖音、快手提供的可以使用手机拍摄视频并实时增加各种特效的功能蔚然成风。在鹏寰国际大厦的一个会议室中，有一群人正在诉说着工作中那令人“烦恼”的快乐，这群人是当时“全民小视频”测试团队的同学，他们刚刚完成了拍摄器特效功能大改版的测试。</p>
+<ul>
+<li>为了测试这次增加的“拍天空”特效，我都晒黑了……<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=253011891&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+</li>
+<li>为了测试张嘴特效，我的下巴都脱臼了……</li>
+<li>……</li>
+</ul>
+<p>我意识到我有必要做点什么来改变这种局面，然后问了一句：如何才能做到一次拍摄，次次可用？这样咱们就不用害怕晒黑和下巴脱臼啦~</p>
+<p>一时间，大家都沉默了，一是因为这确实是个好主意，二是因为这个问题超出了我们能回答的范畴。确实，在当时，我们在技术上确实没有办法做到这一点，否则我们就不会下巴脱臼了。片刻沉默之后，大家又热烈的讨论了起来，我们天马星空的想了很多方案，但是在谈到谁可以来跟进的时候，事情又开始变得非常微妙。</p>
+<p>讨论之后的工作又恢复了往日的忙碌，大家似乎都忘记了有过这样一次讨论，不过我依然兴奋不已。为了实现“一次拍摄，次次可用”的目标，我和几个志同道合的同事开启了一段难忘的时光，在这段时光里，我们疯狂汲取大量的各类新知识：</p>
+<ul>
+<li>音视频基础知识，数字视频基本概念</li>
+<li>Android 相机系统原理</li>
+<li>FFmpeg，OpenGL</li>
+<li>Xposed框架，Android逆向破解</li>
+<li>……</li>
+</ul>
+<p>令人欣喜的是，在 2019 年的国庆节前，我们还真的就实现了“用指定视频替换摄像头采集到的画面”的功能，我们称之为“摄像头 HOOK”。昨日之深渊，今日之浅谈。的确，当我们跨越种种困难实现目标之后，回头想想，整个事情好像也没有那么困难。</p>
+<p>我们将核心的思路公开到了 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/CameraHook">GitHub</a>，在 GitHub 上，我们遇到了新的朋友，基于我们的思路，我们的新朋友实现了能力更丰富的 <a target="_blank" rel="noopener" href="https://github.com/w2016561536/android_virtual_cam">虚拟摄像头项目</a>。后来，我们也基于这个核心思想，实现了：贴纸测试自动化，高精准肢体、人脸识别，高精准直播延迟测试……等技术，彻底改变了原有的工作方式，极大提升了工作效率。</p>
+<h2 id="逆向倒推">逆向倒推</h2>
+<p>在虚拟摄像头的项目上我尝到了一丝丝的甜头，我惊奇的发现，原来还可以这样解决问题，我开始重新思考这种工作方式的有趣之处：</p>
+<ul>
+<li>不以现有的技术为出发点去确定问题可以解决的程度<br>
+<img src="/2023/07/09/My-practice-of-working-backwards/2.png" alt></li>
+<li>以问题的最终解决为目标重新思考需要做何种准备<br>
+<img src="/2023/07/09/My-practice-of-working-backwards/3.png" alt></li>
+</ul>
+<p>直到最近一口气读完了亚马逊 CEO <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ZIEBKte_CNsx_VdHH2TGPg">贝佐斯的24封致股东信</a> 之后，我才意识到，原来这种思维模式就是贝佐斯在 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ejNdFv0g1Bg8_U8A1G6-tQ">2008 年致股东信</a> 中提到的“逆向倒推法”。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">逆向倒推
+</p><p>从用户需求出发的“逆向倒推法”，可与利用现有技术和能力推动商机的“技能正推法”形成鲜明对比。</p>
+<ul>
+<li>“技能正推法”的理念是：我们非常擅长 <code>X</code>，利用 <code>X</code>，我们还能做些什么呢？这的确是一种实用且有效的做法。然而，如果仅仅依靠擅长的技能，那么公司便永远不会有动力去开发新的技能，而既有的技能也终将过时淘汰。</li>
+<li>以用户为出发点进行倒推的方法，往往会要求我们锻炼新的技能并动用平时不常练到的肌肉，绝不要将迈出第一步时可能出现的不适与尴尬放在心上。</li>
+</ul>
+</div>
+<p>在 <a target="_blank" rel="noopener" href="https://book.douban.com/subject/35771946/">亚马逊逆向工作法</a> 这本书中，作者写到：</p>
+<blockquote>
+<p>自 2004 年起，亚马逊推出的所有重要产品和计划，大都具有一个共同的、非常鲜明的亚马逊特色：他们的诞生都经历过我们所说的“逆向工作”流程。</p>
+<p>“逆向工作”对公司的成功起着关键作用。“逆向工作”是一种审查想法、创造新产品的系统性方法。其关键原则是：</p>
+<ul>
+<li>首先思考客户体验</li>
+<li>然后由此反复逆向工作</li>
+<li>直到团队对要建造的产品拥有清晰的想法</li>
+</ul>
+</blockquote>
+<p>因此，当我第一次读到关于“逆向工作”的内容候，这引起了我内心深处强烈的共鸣。同时我又庆幸，自己当时能够突破自我，勇敢的闯了下去，毕竟在事情没开始之前，谁能预知自己就能解决所有的问题呢？</p>
+<h2 id="逆康威法则">逆康威法则</h2>
  
       <!-- reward -->
       
