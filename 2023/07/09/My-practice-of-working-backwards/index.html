@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.1k</span>
+            <span class="post-count">4.8k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">11 分钟</span>
+            <span class="post-count">17 分钟</span>
         </span>
     </span>
 </div>
@@ -362,12 +362,59 @@
 <blockquote>
 <p>更多的细节也可以参考另一篇文章 <a href="/2022/09/05/How-to-break-through-the-resource-limitation-and-create-the-more-value/">如何突破资源限制，创造更大的价值？</a> 以及 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/J2QGTiMOgMnZbAyI81I87Q">《百度视频质量评测的实践之路》</a>。</p>
 </blockquote>
-<p><img src="/2023/07/09/My-practice-of-working-backwards/4.png" alt></p>
 <p>基于这样的思路，我们慢慢建设并不断优化视频质量评测系统：<a href="/2023/02/13/duzhiliao/">度知了</a>。时至今日，度知了依然在各个视频业务中发挥着非常重要的作用，我们也依然在路上——今天依然是第一天。</p>
+<h2 id="基于目标的全局最优解">基于目标的全局最优解</h2>
+<p>在 Sam Newman 的 <a target="_blank" rel="noopener" href="https://samnewman.io/books/monolith-to-microservices/">Monolith To Microservices</a> 一书的第 <a href="/monolith-to-microservices/docs/Global_Versus_Local_Optimization.html">5.9节局部优化VS.全局优化</a> 中写道：</p>
+<blockquote>
+<p>假设团队对自己的本地决策负有更多的责任，团队或许会拥有他们所管理的微服务的整个生命周期，那么我们需要考虑在本地决策与更多的全局指标之间做出平衡。</p>
+<p>很难期望在微服务迁移的早期旅程中就发现这种问题，随着时间的推移，每个团队将越来越专注于自己的本地问题，并将基于本地问题来优化他们解决问题的方式。</p>
+</blockquote>
+<p>2022 年春天的时候，我们遇到了评测效率的问题。这个时候，参与到“度知了”项目中的角色也越来越多，大家也都卯足了劲儿，在各自的工作范畴内做各种优化来提升评测效率。虽然会有改善，但总也无法满足业务方越来越多的评测需求。</p>
+<p>这个时候，我们基于评测目标的全局视角对评测全流程各环节进行了详细的梳理，对不同的环节进行了归并、删减，对不同环节的时序进行了全局最优调整，最后在每个环节内部操作进行各种优化手段。在全局层面，我们增加了任务自动拆分，任务自动调度执行，结果自动聚合等能力；在算子内部，我们还通过优化算子来提升算子的计算效率……</p>
+<p>在 2022 年的夏始春余之际，“度知了”从整体服务流程上编的面貌全新了，这个时候，整体的评测效率也有了非常大的突破，我们也解决了之前存在的评测效率的问题。</p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/4.png" alt></p>
+<h4 id="结构优化时核心">结构优化时核心</h4>
+<p>如果你问我，在效率提升的过程中，做的最成功的决策是什么？我想，这个答案会是：基于目标而进行的系统结构的调整。</p>
+<p>我们现在都在讲“端到端”的优化，“端到端”的含义非常广泛：</p>
+<ul>
+<li>系统的层级架构</li>
+<li>系统的流程架构</li>
+<li>用户的全流程声明周期</li>
+<li>……</li>
+</ul>
+<p>有时候，我们确实是在做“端到端”优化，但是却是在既有的架构、流程下来进行的“端到端”优化，而这种层面的“端到端”优化，有时候收效甚微，就像我们在 2022 年春年遇到的困境那样。</p>
+<p>“逆康威法则”的本质意味着，如果要实现质的飞跃，端到端优化首要的、也最核心的首先是系统结构的调整。首先要从基于目标，从全局视角对结构进行调整，然后在深入到每个具体环节中进行局部调整，最终才会实现“端到端”的最优解。</p>
+<p>在 <a target="_blank" rel="noopener" href="https://book.douban.com/subject/11528220/">系统之美</a> 这本书中，对系统作出如下的定义：</p>
+<blockquote>
+<p>系统并不仅仅是一些事物的简单集合，而是一个由一组相互连接的要素构成的、能够实现某个<strong>目标</strong>的整体。</p>
+</blockquote>
+<p>对于实现特定<strong>目标</strong>的系统而言，要素很重要，但是连接更为重要。结构决定性质，性质决定用途，就是这个样子。同样都是由 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span></span></span></span> 原子构成，石墨和钻石的结构不同决定了其性质存在非常大的差异。</p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/7.png" alt></p>
+<blockquote>
+<p>图片中的结构模型由 <a target="_blank" rel="noopener" href="https://molview.org/">molview</a> 工具生成。</p>
+</blockquote>
+<p>当基于效率目标对“度知了”系统进行了结构调整和优化之后，我们惊奇的发现，评测效率问题不但就这样迎刃而解了，而且整个系统看起来还更加紧凑。忽然间，想起了多年以前和同事闲聊，谈到为什么系统总是出问题时的场景：</p>
+<blockquote>
+<p>我们的系统，其原型是一个“三角形”，但是随着时间的推移，用户需求变成了“水桶”。所以，这个“水桶”其实是用“三角形”不断地逼近的结果，而其本质上并不是“水桶”。无论我们在构成水桶的每块“三角形”上做任何的优化，最终还是会出现问题。</p>
+</blockquote>
 <h2 id="基于目标的拆解与整合">基于目标的拆解与整合</h2>
-<p>不知不觉，时针指向了 2022 年，这个时候，度知了已经成为规模比较大的视频质量评测服务。</p>
-<p>就这这年夏天的时候，我坐在工位开始以后验视角回顾这整个过程。我发现，这整个过程中，始终基于目标的自顶向下的拆解与自底向上将各种优化手段再次整合成为目标的正反双循环的思路，在整个度知了的成长历程上，发挥着举足轻重的作用。</p>
+<p>不知不觉，时针指向了 2022 年的秋天，北京的秋天是一年之中最美丽的季节。而此时，度知了也已经成为规模比较大的视频质量评测服务。</p>
+<p>忽然有一天，我开始以后验视角回顾这整个过程。我发现，整个过程中，始终基于目标的自顶向下的拆解与自底向上将各种优化手段再次整合成为目标的正反双循环的思路，在整个度知了的成长历程上，发挥着举足轻重的作用。</p>
 <p><img src="/2023/07/09/My-practice-of-working-backwards/5.png" alt></p>
+<p>贝佐斯在 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Q-dS6YNUcdRFqYFu4zWoDQ">2007 年致股东信</a> 中介绍 Kindle 时写道：</p>
+<blockquote>
+<p>任何事情，只要降低难度和减少阻力，便会变低开花。</p>
+</blockquote>
+<p>基于目标的自顶向下的拆解，可以使得目标难度最小化，只有这样优化才会成为可能，路径才会得以实现，否则就容易造成望而却步的窘境，尤其是当团队成员正在突破自己的认知负荷的前提下。</p>
+<p>拆解是能力，整合是控制力，当所有事情拆解完毕后，我们需要确保所有的优化最终能够整合到一个具体的产品上，这有这样，使用这个产品的门槛才会降低。当整个过程的正、反双循环打通之后，这个事情自然而然也就成功了。</p>
+<p>在整个拆、合的过程中，目标是其背后的最核心的关节点。早在 2020 年的时候，还没有明确 “视频质量评测产品化” 的目标，虽然那个时候，我们也在优化各种算法，但是最终也就是仅仅优化了而已。因此，我们始终在优化各种问题的层面转圈，最终又很难将所做的所有优化进行整合并阐述其价值。现在想想，那个时候还是很焦虑的：技术上确实有进步，但是说不清楚技术的价值。直到我们明确了目标之后，事情才变得好了起来，所有的优化都可以体现到“度知了”的产品上了。</p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/6.png" alt></p>
+<p>从问题切入有利于解决眼下的事情，而基于目标的思维，可以避免被眼下的错综纷扰而迷惑。不识庐山真面目，只缘身在此山中，这是如此。有很多的时候，从更高一层的目标出发，当前的问题可能已经不是问题了。</p>
+<blockquote>
+<p>我们已经走得太远，以至于忘记了为什么而出发。——《先知》，纪伯伦</p>
+</blockquote>
+<h2 id="试点陷阱">试点陷阱</h2>
+<h2 id="先验与后验">先验与后验</h2>
 <p><code>待续……</code></p>
  
       <!-- reward -->
@@ -438,7 +485,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="tag">方法论</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%80%86%E5%90%91%E5%80%92%E6%8E%A8/" rel="tag">逆向倒推</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%80%86%E5%BA%B7%E5%A8%81%E5%AE%9A%E5%BE%8B/" rel="tag">逆康威定律</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%95%E7%82%B9%E9%99%B7%E9%98%B1/" rel="tag">试点陷阱</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%80%86%E5%90%91%E5%80%92%E6%8E%A8/" rel="tag">逆向倒推</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%80%86%E5%BA%B7%E5%A8%81%E5%AE%9A%E5%BE%8B/" rel="tag">逆康威定律</a></li></ul>
 
     </footer>
   </div>
