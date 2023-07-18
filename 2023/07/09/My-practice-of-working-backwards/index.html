@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">4.8k</span>
+            <span class="post-count">6.2k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">17 分钟</span>
+            <span class="post-count">23 分钟</span>
         </span>
     </span>
 </div>
@@ -371,7 +371,7 @@
 </blockquote>
 <p>2022 年春天的时候，我们遇到了评测效率的问题。这个时候，参与到“度知了”项目中的角色也越来越多，大家也都卯足了劲儿，在各自的工作范畴内做各种优化来提升评测效率。虽然会有改善，但总也无法满足业务方越来越多的评测需求。</p>
 <p>这个时候，我们基于评测目标的全局视角对评测全流程各环节进行了详细的梳理，对不同的环节进行了归并、删减，对不同环节的时序进行了全局最优调整，最后在每个环节内部操作进行各种优化手段。在全局层面，我们增加了任务自动拆分，任务自动调度执行，结果自动聚合等能力；在算子内部，我们还通过优化算子来提升算子的计算效率……</p>
-<p>在 2022 年的夏始春余之际，“度知了”从整体服务流程上编的面貌全新了，这个时候，整体的评测效率也有了非常大的突破，我们也解决了之前存在的评测效率的问题。</p>
+<p>在 2022 年的夏始春余之际，“度知了”从整体服务流程上变的面貌全新了，这个时候，整体的评测效率也有了非常大的突破，我们也解决了之前存在的评测效率的问题。</p>
 <p><img src="/2023/07/09/My-practice-of-working-backwards/4.png" alt></p>
 <h4 id="结构优化是核心">结构优化是核心</h4>
 <p>如果你问我，在效率提升的过程中，做的最成功的决策是什么？我想，这个答案会是：基于目标而进行的系统结构的调整。</p>
@@ -403,7 +403,7 @@
 <p><img src="/2023/07/09/My-practice-of-working-backwards/5.png" alt></p>
 <p>贝佐斯在 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Q-dS6YNUcdRFqYFu4zWoDQ">2007 年致股东信</a> 中介绍 Kindle 时写道：</p>
 <blockquote>
-<p>任何事情，只要降低难度和减少阻力，便会变低开花。</p>
+<p>任何事情，只要降低难度和减少阻力，便会遍地开花。</p>
 </blockquote>
 <p>基于目标的自顶向下的拆解，可以使得目标难度最小化，只有这样优化才会成为可能，路径才会得以实现，否则就容易造成望而却步的窘境，尤其是当团队成员正在突破自己的认知负荷的前提下。</p>
 <p>拆解是能力，整合是控制力，当所有事情拆解完毕后，我们需要确保所有的优化最终能够整合到一个具体的产品上，这有这样，使用这个产品的门槛才会降低。当整个过程的正、反双循环打通之后，这个事情自然而然也就成功了。</p>
@@ -414,8 +414,108 @@
 <p>我们已经走得太远，以至于忘记了为什么而出发。——《先知》，纪伯伦</p>
 </blockquote>
 <h2 id="试点陷阱">试点陷阱</h2>
+<p>我们过于自信，总认为我们的优化肯定是最完美的方案；同时我们又过份的忧虑，总担心如果采用新的方案会对现有业务带来非预期的影响。</p>
+<p>我们即追求创新，又害怕承担创新可能带来的损失局面（创新总要付出代价），在自信与害怕的矛盾心理下，我们选择了一种比较折中的方案：试点。我们会现在一个小的、可控的范围内对优化进行试点，如果试点结果不好，那么这项优化就可以提前结束了；而如果试点结果很好，那接下来怎么办呢——”To do or not to do,that’s a question“。</p>
+<p>面对一个庞杂的软件系统，如果想使用更高级的语言来重构这个系统，并验证重构的效果，我们会采取怎样的路径？我们可能会先对外围不重要的模块进行重构试点，以增强我们的信心。最终，我们会发现，多年以后，这个系统最核心的 20% 的部分分，依然还在使用着更古老的语言。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">试点陷阱
+</p><p>试点一直在路上，但未全面取而代之或者引发质的变革，这种现象我称之为——试点陷阱。</p>
+</div>
+<p>关于试点陷阱，整体而言，我遇到了如下几种情况：</p>
+<ul>
+<li>从不重要的模块启动新技术的试点，导致对于系统总体而言，新技术没有体现其优势。</li>
+<li>从不重要的项目启动新技术的试点，导致对于团队而言，新技术没有发挥其优势。</li>
+<li>在系统全流程的部分流程启动新技术试点，导致对于全流程而言，新的技术没有体现其优势。</li>
+</ul>
+<p>对于数字化转型，麦肯锡的研究发现，大量制造企业在数字化转型初期的试点非常成功，但在全面推广并取得财务、运营和可持续绩效方面持续改善的过程中却困难重重，74% 的企业在启动数字化项目不久后就泥足深陷。</p>
+<p>还好在”度知了“的发展过程中，我们没有踩到”试点陷阱“。这并不是我们不想踩”试点陷阱“，而是优化的紧迫性以及资源的限制并没有给我们留下”试点“的机会，我们必须全力以赴，所有的优化必须在下次的全流程评测中得以应用，以保证最终结果的高效和置信。</p>
+<p>瞅准目标，不留后路，全力以赴，all-in，往往会有意想不到的收获。一旦我们有 Plan B，在前行的路上，一旦我们遇到风吹草动，我们就会不自然的想到 Plan B进而陷入”试点陷阱“，我们就会在纷繁错综的环境中错失机会。</p>
 <h2 id="先验与后验">先验与后验</h2>
-<p><code>待续……</code></p>
+<p>时间在悄然间流逝，年华在匆匆中而过，不经意间，时针已经悄悄指向了 2023 年，机缘巧合，我的工作范围也在不断扩大，也慢慢学会了以后验的视角来审视自己工作的技巧。</p>
+<p>最近，在刷抖音时，抖音惊喜的给推了一条介绍”运算放大器“的视频，当将”运算放大器“的输出和负输入相连的时候，产生了非常美妙的特性，而这个特性也奠定了”运算放大器“在电子世界中的地位。</p>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=314781365&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<p>忽然在想：如果将后验的认知输入到先验作为一种负反馈闭环，那么打通正向、反向双循环之后，工作的事项岂不是可以像”运算放大器“那样更有价值？</p>
+<p>于是，在最近的团队核心工作上，我和相关同学对这种先验、后验双向闭环的方式进行了实践，最终也发现确实这是一种非常有效的方式。</p>
+<p>后来想想，这种先验、后验和”逆向倒推“也有一定的相似之处，”逆向倒推“让我们开启行程，而后验会让我们在行程中不断调整步伐和方向，以使得我们可以更好的达到终点。</p>
+<p>先验是能力，后验是执行力。站在当下看未来，我们将如何行动，这需要强大的先验能力；而站在当下看过去，我们又有哪些得失，这些得失是否可以作用于未来，为我们前行做出指导，这需要强大的执行力。</p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/8.png" alt></p>
+<h2 id="总结">总结</h2>
+<p>道理纵有千千万万，实践总是一件非常难的事情。我们总也无法预知未来，因此更需要我们认准目标，以逆向工作的思路，乘着后验之风，在谨慎而又快速、不断调整的实践中创造未来，创造价值。</p>
  
       <!-- reward -->
       
