@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>有趣的 Elo 积分系统</title>
+    <url>/2023/08/12/the-interesting-elo-rating-system/</url>
+    <content><![CDATA[<p><img src="/2023/08/12/the-interesting-elo-rating-system/1.png" alt></p>
+<p>我们的 <a href="/2023/02/13/duzhiliao/">视频质量评估系统</a> 可以通过众包的形式为一组视频进行主观质量打分。如果想评估两个视频编解码器的编码效果，并确定哪个编解码器更优，则可以采用我们的系统来完成。</p>
+<span id="more"></span>
+<h2 id="众包成对打分法">众包成对打分法</h2>
+<p>我们会利用不同的编解码器对相同的视频源进行编码，并得到两个视频：A（编解码器 A 的编码视频），B（编解码器 B 的编码视频）。在评估的过程中，我们的系统会隐藏编解码器的信息，并要求众包用户对两个视频的效果进行评估，以选取效果好的视频。具体的打分如下图所示：</p>
+<p><img src="/2023/08/12/the-interesting-elo-rating-system/2.png" alt></p>
+<p>其中各选项对应的得分如下：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>5分制打分</th>
+<th>百分制打分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A 特好</td>
+<td>1</td>
+<td>0~19</td>
+</tr>
+<tr>
+<td>A 较好</td>
+<td>2</td>
+<td>20~39</td>
+</tr>
+<tr>
+<td>差不多</td>
+<td>3</td>
+<td>40~59</td>
+</tr>
+<tr>
+<td>B 较好</td>
+<td>4</td>
+<td>60~79</td>
+</tr>
+<tr>
+<td>B 特好</td>
+<td>5</td>
+<td>80~100</td>
+</tr>
+</tbody>
+</table>
+<p>对于每一个视频，我们都会邀请至少 10 个众包用户进行打分，我们会过滤不置信的打分并对剩余的打分进行 MOS 计算，然后将结果转换为百分制的打分（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>1</mn><mo separator="true">,</mo><mn>5</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1,5]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">5</span><span class="mclose">]</span></span></span></span>-&gt;<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>100</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,100]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mclose">]</span></span></span></span>）。例如，如果有5对视频，我们可能会得到如下的打分：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MOS_Scores &#x3D; [61, 55, 54, 65, 15] </span><br></pre></td></tr></table></figure>
+<p>根据实践，我们不能采用平均分的方式对两个编解码器效果进行评估，否则可能会存在偏差。以如上的打分为例，其平均打分为：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mrow><mi>M</mi><mi>O</mi><mi>S</mi><mi mathvariant="normal">_</mi><mi>S</mi><mi>c</mi><mi>o</mi><mi>r</mi><mi>e</mi><mi>s</mi></mrow></msub><mo>=</mo><mn>50</mn></mrow><annotation encoding="application/x-tex">\mu_{MOS\_Scores}=50</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.79756em;vertical-align:-0.367em;"></span><span class="mord"><span class="mord mathdefault">μ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">O</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mord mtight" style="margin-right:0.02778em;">_</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.367em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">5</span><span class="mord">0</span></span></span></span>，但是我们不能说两个编解码器的小姑是一致的。因为 B 对于 A 而言，其 GSB（Good/Same/Bad）分布为：40%/40%/20%。因此，对于我们的评估系统而言，我们一般用 GSB 的分布，而不是一个单一的分数来确定哪个编解码器更好。</p>
+<h2 id="chatbot-arena">Chatbot Arena</h2>
+<p>但是，事情发生了一些有趣的变化。</p>
+<p>最近在阅读一篇大语言模型评估的综述论文——<a href="https://arxiv.org/abs/2307.03109"><em>A Survey on Evaluation of Large Language Models</em></a>，该论文中提到了由 <a href="https://lmsys.org/">LMSYS Org</a> 发布的 Chatbot Arena 平台，Chatbot Arena 是一个基于 Elo 打分的大语言模型的基准平台（<a href="https://lmsys.org/blog/2023-05-03-arena/">Chatbot Arena: Benchmarking LLMs in the Wild with Elo Ratings</a>）。</p>
+<p>Chatbot Arena 平台通过众包的形式，采用匿名、随机的方式对不同的 LLMs（Large Language Models） 进行打分，然后基于国际象棋等竞技游戏中广泛使用的 Elo 积分系统对 LLMs 进行 Elo 积分计算，最终通过 Elo 积分对 LLMs 进行排序以确定 LLMs 的排名。</p>
+<p>Chatbot Arena 每次会随机选择两个不同的大语言模型和用户聊天，并让用户在匿名的情况下判定哪款大模型产品的表现更好一些。</p>
+<p><img src="/2023/08/12/the-interesting-elo-rating-system/3.png" alt></p>
+<p>在得到用户的匿名打分之后，Chatbot Arena 通过计算 Elo 算法来获得 LLMs 的 Elo 积分。</p>
+<p><img src="/2023/08/12/the-interesting-elo-rating-system/4.png" alt></p>
+<p>我们可以在 <a href="https://huggingface.co/spaces/lmsys/chatbot-arena-leaderboard">chatbot-arena-leaderboard 页面</a> 获取当前 Chatbot Arena 平台的 LLMs 的榜单。</p>
+<h2 id="elo-rating">Elo rating</h2>
+]]></content>
+      <categories>
+        <category>算法与数学</category>
+      </categories>
+      <tags>
+        <tag>Elo rating</tag>
+        <tag>Chatbot Arena</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>我的“逆向工作”实践</title>
     <url>/2023/07/09/My-practice-of-working-backwards/</url>
     <content><![CDATA[<p><img src="/2023/07/09/My-practice-of-working-backwards/1.png" alt></p>
@@ -773,21 +841,6 @@
       <tags>
         <tag>OpenAI</tag>
         <tag>ChatGPT</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LVS 2022（北京） 会议相关内容整理和分析</title>
-    <url>/2023/04/03/analysis-for-LVS-2022/</url>
-    <content><![CDATA[<p><img src="/2023/04/03/analysis-for-LVS-2022/1_0.jpg" alt></p>
-<span id="more"></span>
-<p>待续》》》</p>
-]]></content>
-      <categories>
-        <category>视频技术</category>
-      </categories>
-      <tags>
-        <tag>LiveVideoStack</tag>
-        <tag>LVS 2022</tag>
       </tags>
   </entry>
   <entry>
@@ -3438,7 +3491,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>与运气竞争</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>【美】克莱顿·克里斯坦森</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2018-5</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>7.9</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>7.8</span></div>
 		</div>
 	</a>
 </div>
@@ -6278,7 +6331,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>起源</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]大卫·克里斯蒂安</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2019-4-10</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>7.8</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>7.7</span></div>
 		</div>
 	</a>
 </div>
