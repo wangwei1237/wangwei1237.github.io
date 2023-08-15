@@ -70,6 +70,7 @@ class EloScore:
 
 import matplotlib.pyplot as plt
 import numpy as np
+import random as rd
 
 def eloDiffScoreDistribution():
     """
@@ -117,9 +118,104 @@ def getEloScores():
         X.append(len(X) + 1)
 
     print(eloscore.ratingA, "\t", eloscore.ratingB)
-    
+    mean_A = np.mean(A)
+    mean_B = np.mean(B)
+    std_A = np.std(A)
+    std_B = np.std(B)
+
+    plt.subplot(2, 1, 1)
     plt.scatter(X, A, marker='x', label='Codec-A')
     plt.scatter(X, B, marker='o', label='Codec-B')
+    plt.legend(loc="best")
+    plt.title('Codec-A vs Codec-B')
+
+    plt.subplot(2, 1, 2)
+    x = np.linspace(1000, 2600, 100)
+    mu = mean_A
+    sigma = std_A
+    plt.plot(x, 1/(sigma * np.sqrt(2 * np.pi)) * np.exp(- (x - mu)**2 / (2 * sigma**2)),
+        linewidth=2, color='r', label=r"A: μ=%d,σ=%d" % (mu, sigma))
+    
+    mu = mean_B
+    sigma = std_B
+    plt.plot(x, 1/(sigma * np.sqrt(2 * np.pi)) * np.exp(- (x - mu)**2 / (2 * sigma**2)),
+        linewidth=2, color='g', label=r"B: μ=%d,σ=%d" % (mu, sigma))
+    plt.legend(loc="best")
+
+def getBootstrapEloScores():
+    """
+    打断顺序计算编解码器的Elo得分，观察比赛顺序对Elo得分的影响
+    """
+    eloscore = EloScore(1500, 1500)
+    A = []
+    B = []
+    X = []
+    MOS = []
+    lines = open("MOS").readlines()
+    for m in lines:
+        m = int(m.rstrip())
+        MOS.append(m)
+
+    i = 0
+    while i < 6:
+        A = []
+        B = []
+        X = []
+        for m in MOS:
+            actualResults = eloscore.computeScoreFromMos(m)
+            eloscore.computeEloScore(actualResults)
+            A.append(eloscore.ratingA)
+            B.append(eloscore.ratingB)
+            X.append(len(X) + 1)
+
+        plt.subplot(2, 3, i + 1)
+        plt.scatter(X, A, marker='x', label='Codec-A')
+        plt.scatter(X, B, marker='o', label='Codec-B')
+        plt.legend(loc="upper left")
+
+        if i == 0:
+            plt.title('Original Sequence')
+        else:
+            plt.title("The %d Shuffle" % (i) )
+
+        i += 1
+        rd.shuffle(MOS)
+
+def getABDistribution():
+    """
+    根据视频的MOS分计算编解码器的Elo得分
+    """
+    eloscore = EloScore(1500, 1500)
+    A = []
+    B = []
+    X = []
+
+    lines = open("MOS").readlines()
+    for mos in lines:
+        mos = int(mos.rstrip())
+        actualResults = eloscore.computeScoreFromMos(mos)
+        eloscore.computeEloScore(actualResults)
+        A.append(eloscore.ratingA)
+        B.append(eloscore.ratingB)
+        X.append(len(X) + 1)
+
+    mean_A = np.mean(A)
+    mean_B = np.mean(B)
+    std_A = np.std(A)
+    std_B = np.std(B)
+
+    print(mean_A, "\t", std_A, "\t", mean_B, "\t", std_B)
+    
+    x = np.linspace(1000, 2600, 100)
+    mu = mean_A
+    sigma = std_A
+    plt.plot(x, 1/(sigma * np.sqrt(2 * np.pi)) * np.exp(- (x - mu)**2 / (2 * sigma**2)),
+        linewidth=2, color='r', label=r"A: μ=%d,σ=%d" % (mu, sigma))
+    
+    mu = mean_B
+    sigma = std_B
+    plt.plot(x, 1/(sigma * np.sqrt(2 * np.pi)) * np.exp(- (x - mu)**2 / (2 * sigma**2)),
+        linewidth=2, color='g', label=r"B: μ=%d,σ=%d" % (mu, sigma))
     plt.legend(loc="best")
     plt.title('Codec-A vs Codec-B')
 
@@ -172,7 +268,9 @@ def getNormalDistribution():
 if __name__ == "__main__":
     # eloDiffScoreDistribution()
     # eloScoreDistribution()
-    getEloScores()
+    # getEloScores()
     # getTwoNormalDistribution()
     # getNormalDistribution()
+    getBootstrapEloScores()
+    
     plt.show()
