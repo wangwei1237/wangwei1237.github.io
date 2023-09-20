@@ -1,6 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>LangChain 简介</title>
+    <url>/2023/09/20/Introduction-to-LangChain/</url>
+    <content><![CDATA[<p><img src="/2023/09/20/Introduction-to-LangChain/langchain.png" alt></p>
+<p>我们不想花更多的力气来实现和LLM交互的流程，而是更关注于业务逻辑的实现；我们也不想重复编写相似的流程代码，而是可以共享我们的成果，别人只需要键入 <code>docker pull</code> 就可以使用我们的成果……如果你有这样的想法，那么 LangChain 正是你的菜~</p>
+<span id="more"></span>
+<h2 id="langchain-的发展">LangChain 的发展</h2>
+<p>随着大型语言模型（LLM）的引入，自然语言处理已经成为互联网上的热门话题。LangChain 是一个开源 Python 框架，利用 LangChain，开发人员能够非常方便的开发基于大型语言模型的应用程序（AI 原生应用），例如：聊天机器人，摘要，生成式问答……。</p>
+<p>LangChain 虽然是一个非常年轻的框架，但又是一个发展速度非常快的框架。自从 2022 年 10 月 25 在 GitHub <a href="https://github.com/langchain-ai/langchain/commit/18aeb7201">第一次提交</a>以来，在 11 个 月的时间里，累计发布了 200 多次，累计提交 <a href="https://github.com/langchain-ai/langchain/graphs/commit-activity">4000</a> 多次代码。2023 年 3 月，ChatGPT 的 API 因升级降价大受欢迎，LangChain 的使用也随之爆炸式增长。</p>
+<p><img src="/2023/09/20/Introduction-to-LangChain/langchain_commit_counts.jpg" alt="LangChain 代码提交趋势"></p>
+<p>之后，LangChain 在没有任何收入也没有任何明显的创收计划的情况下，获得了 1000 万美元的种子轮融资和 2000-2500 万美元的 A 轮融资，估值达到 2 亿美元左右。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
+<p>作为一个年轻而又活力的框架，LangChain 正在彻底改变工业和技术，改变我们与技术的每一次互动。</p>
+<h2 id="langchain-的目标">LangChain 的目标</h2>
+<p>不同的大语言模型都有各自的优势，我们可能会用 A 模型来进行自然语言理解，然后用 B 模型进行逻辑推理并获取结果……此时，如果使用大语言模型各自提供的 API 来和模型交互，那么就会存在非常多的重复工作。</p>
+<p>虽然大语言模型有很多，但是和大语言模型的交互流程又是非常类似，如果每次和模型交互都需要重复如上的步骤，那听起来也是一件非常繁琐的事情。对于相同的提示词，我们不想每次都 <code>ctr+c</code>、<code>ctr+v</code>，这真是一件非常可怕的事情。</p>
+<p><img src="/2023/09/20/Introduction-to-LangChain/1.jpg" alt="和模型交互的流程"></p>
+<p>和 FFmpeg 对视频的处理一样，FFmpeg 提供的 <code>filtergraph</code> <sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>机制大大增强了其音视频的处理能力，奠定其在视音频领域的地位。<code>filtergraph</code> 可以将不同的音视频处理能力以链条的形式组合起来，不但简化了音视频的处理流程，更让 FFmpeg 可以实现复杂的音视频处理。</p>
+<p>同理，和 LLMs 的单次交互并不会形成什么惊人的能量，而如果可以使用类似 <code>filtergraph</code> 的机制，将与 LLMs 的多次交互整合起来，那么其所释放的能量将是无穷的。</p>
+<p>而 LangChain 就是为了解决如上的问题而产生的。LangChain 可以提供给我们的最主要的价值如下<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>：</p>
+<ul>
+<li>组件化：LangChain 对与 LLMs 交互的流程进行了统一的抽象，同时也提供了不同 LLMs 的实现。这极大的提升了我们使用 LLMs 的效率。</li>
+<li>序列化：LangChain 提供的序列化的能力，可以将<code>提示词</code>、<code>chain</code>等以文件的形式而不是以代码的形式进行存储，这样可以极大的方便我们共享 <code>提示词</code>，并对 <code>提示词</code> 进行版本管理。<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup></li>
+<li>丰富的 chains 套件：LangChain 提供了丰富、用于完成特定目的、开箱即用的 chains 套件，例如用于总结文档的 <code> StuffDocumentsChain</code> 和 <code>MapReduceDocumentsChain</code>，这些套件将会降低我们使用 LLMs 的门槛。</li>
+</ul>
+<p>更具体的， LangChain 可以在如下的 6 大方向上给我们提供非常大的便利：</p>
+<ol>
+<li><strong>LLMs &amp; Prompt</strong>：LangChain 提供了目前市面上几乎所有 LLM 的通用接口，同时还提供了 <code>提示词</code> 的管理和优化能力，同时也提供了非常多的相关适用工具，以方便开发人员利用 LangChain 与 LLMs 进行交互。</li>
+<li><strong>Chains</strong>：LangChain 把 <code>提示词</code>、<code>大语言模型</code>、<code>结果解析</code> 封装成 <code>Chain</code>，并提供标准的接口，以便允许不同的 <code>Chain</code> 形成交互序列，为 AI 原生应用提供了端到端的 <code>Chain</code>。</li>
+<li><strong>Data Augemented Generation</strong><sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>：<code>数据增强生成式</code> 是一种解决预训练语料数据无法及时更新而带来的回答内容陈旧的方式。LangChain 提供了支持 <code>数据增强生成式</code> 的 <code>Chain</code>，在使用时，这些 <code>Chain</code> 会首先与外部数据源进行交互以获得对应数据，然后再利用获得的数据与 <code>LLMs</code> 进行交互。典型的应用场景如：基于特定数据源的问答机器人。</li>
+<li><strong>Agent</strong>：对于一个任务，<code>代理</code> 主要涉及让 <code>LLMs</code> 来对任务进行拆分、执行该行动、并观察执行结果，<code>代理</code> 会重复执行这个过程，直到该任务完成为止。LangChain 为 <code>代理</code> 提供了标准接口，可供选择的代理，以及一些端到端的 <code>代理</code> 的示例。</li>
+<li><strong>Memory</strong>：<code>内存</code> 指的是 chain 或 agent 调用之间的状态持久化。LangChain 为 <code>内存</code> 提供了标准接口，并提供了一系列的 <code>内存</code> 实现。</li>
+<li><strong>Evaluation</strong>：LangChain 还提供了非常多的评估能力以允许我们可以更方便的对 <code>LLMs</code> 进行评估。</li>
+</ol>
+<h2 id="langchain-的基本概念">LangChain 的基本概念</h2>
+<p>使用 LLMs 和使用电脑一样，需要一些基本的架构体系。LangChain 把整体架构体系分为两部分：输入/输出系统，大语言模型。其中，输入部分为 <code>Prompt</code> 相关组件，输出为 <code>Output Parser</code> 相关组件。具体如下：</p>
+<p><img src="/2023/09/20/Introduction-to-LangChain/langchain_io.png" alt="LangChain I/O"></p>
+<p>LangChain 提供了与 LLMs 交互的通用构件：</p>
+<ul>
+<li><code>Prompts</code>：提示词模版，提示词动态选择，提示词序列化。</li>
+<li><code>LLMs</code>：与 LLM 交互的通用接口。</li>
+<li><code>Output Parsers</code>：对模型的输出信息进行解析，以输出符合特定格式的响应。</li>
+</ul>
+<p><img src="/2023/09/20/Introduction-to-LangChain/langchain_io_example.jpeg" alt="LangChain I/O 示例"></p>
+<h3 id="prompt-templates">Prompt Templates</h3>
+<p>提示词模版为不同的提示词提供预定义格式。就好像目前超市售卖的洗净切好、配好相关配菜源材料的预制菜一样，提示词模版可以简化我们和 LLMs 交互的效率。</p>
+<p>模版会包含：指令，少量的样本示例，相关的上下文信息。LLMs 会分为 <code>大语言模型</code> 和 <code>聊天模型</code> 两种类型，因此，LangChain 提供了两种类型的提示词模版：<code>prompt template</code>、<code>chat prompt template</code>。</p>
+<ul>
+<li><code>prompt template</code>：提供字符串格式的提示词。</li>
+<li><code>chat prompt template</code>：提示聊天消息格式的提示词。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain <span class="keyword">import</span> PromptTemplate</span><br><span class="line"></span><br><span class="line">prompt_template = PromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;请以轻松欢快的语气写一篇描写 &#123;topic&#125; 的文章，字数不超过 &#123;count&#125; 字。&quot;</span></span><br><span class="line">)</span><br><span class="line">res = prompt_template.<span class="built_in">format</span>(topic=<span class="string">&quot;北京的秋天&quot;</span>, count=<span class="string">&quot;100&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"><span class="comment"># 请以轻松欢快的语气写一篇描写 北京的秋天 的文章，字数不超过 100 字。</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"></span><br><span class="line">template = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;system&quot;</span>, <span class="string">&quot;你是一个能力非凡的人工智能机器人，你的名字是 &#123;name&#125;。&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;human&quot;</span>, <span class="string">&quot;你好！&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;ai&quot;</span>, <span class="string">&quot;你好~&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;human&quot;</span>, <span class="string">&quot;&#123;user_input&#125;&quot;</span>),</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">messages = template.format_messages(</span><br><span class="line">    name=<span class="string">&quot;小明&quot;</span>,</span><br><span class="line">    user_input=<span class="string">&quot;你是谁？&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(messages)</span><br><span class="line"><span class="comment"># [SystemMessage(content=&#x27;你是一个能力非凡的人工智能机器人，你的名字是 小明。&#x27;, </span></span><br><span class="line"><span class="comment">#                additional_kwargs=&#123;&#125;), </span></span><br><span class="line"><span class="comment"># HumanMessage(content=&#x27;你好！&#x27;, additional_kwargs=&#123;&#125;, example=False), </span></span><br><span class="line"><span class="comment"># AIMessage(content=&#x27;你好~&#x27;, additional_kwargs=&#123;&#125;, example=False), </span></span><br><span class="line"><span class="comment"># HumanMessage(content=&#x27;你是谁？&#x27;, additional_kwargs=&#123;&#125;, example=False)]</span></span><br></pre></td></tr></table></figure>
+<h3 id="llms">LLMs</h3>
+<p>LangChain 提供了两种模型的通用接口：</p>
+<ul>
+<li><code>LLMs</code>：模型以字符串格式的提示词作为输入，并返回字符串格式的结果。</li>
+<li><code>Chat models</code>：其背后也是由某种 LLM 来支撑，但是以聊天消息列表格式的提示词作为输入，并返回聊天消息格式的结果。</li>
+</ul>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">LLM 和 聊天模式的区别
+</p><p>LLM 和 聊天模式 之间的区别虽然很微妙，但是却完全不同。</p>
+<p>LangChain 中的 LLM 指的是纯文本 I/O 的模型，其包装的 API 将字符串提示作为输入，并输出字符串。OpenAI 的 GPT-3 就是 LLM。</p>
+<p>聊天模型通常由 LLM 支持，但专门针对对话进行了调整，其 API 采用聊天消息列表作为输入，而不是单个字符串。通常，这些消息都标有角色（例如，“System”，“AI”，“Human”）。聊天模型会返回一条 AI 聊天消息作为输出。OpenAI 的 GPT-4，Anthropic 的 Claude，百度的 Ernie 都是聊天模型。</p>
+</div>
+<p>在 LangChain 中，LLM 和 聊天模式两者都实现了 <code>BaseLanguageModel</code> 接口，因此一般情况下，这两种模型可以混用。例如，两种模型都实现了常见的方法 <code>predict()</code> 和 <code>predict_messages()</code>。<code>predict()</code> 接受字符串并返回字符串，<code>predict_messages()</code> 接受消息并返回消息。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OpenAI</span>(<span class="params">BaseOpenAI</span>):</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseOpenAI</span>(<span class="params">BaseLLM</span>):</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseLLM</span>(<span class="params">BaseLanguageModel[<span class="built_in">str</span>], ABC</span>):</span></span><br><span class="line">    <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ErnieBotChat</span>(<span class="params">BaseChatModel</span>):</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseChatModel</span>(<span class="params">BaseLanguageModel[BaseMessageChunk], ABC</span>):</span></span><br><span class="line">    <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p>接下来，我们将 <code>Prompt</code> 和 <code>LLM</code> 整合起来，实现和大语言模型交互。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain <span class="keyword">import</span> PromptTemplate</span><br><span class="line"><span class="keyword">from</span> langchain.llms <span class="keyword">import</span> OpenAI</span><br><span class="line"></span><br><span class="line">prompt_template = PromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;请以轻松欢快的语气写一篇描写 &#123;topic&#125; 的文章，字数不超过 &#123;count&#125; 字。&quot;</span></span><br><span class="line">)</span><br><span class="line">llm = OpenAI()</span><br><span class="line"></span><br><span class="line">prompt = prompt_template.<span class="built_in">format</span>(topic=<span class="string">&quot;北京的秋天&quot;</span>, count=<span class="string">&quot;100&quot;</span>)</span><br><span class="line">res = llm.predict(prompt)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 秋天来到了北京，一片金黄色的枫叶，漫山遍野。</span></span><br><span class="line"><span class="comment"># 湖面上的微风，吹起柔和的秋意，空气中弥漫着淡淡的枫香。</span></span><br><span class="line"><span class="comment"># 这时，每一个角落都洋溢着秋日的温馨，令人心旷神怡。</span></span><br><span class="line"><span class="comment"># 古老的长城上披着红叶，熙熙攘攘的人群中，也多了几分热闹与欢畅，这就是北京的秋天</span></span><br></pre></td></tr></table></figure>
+<p>由于文心聊天模型对 <code>message</code> 角色和条数有限制<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup> <sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup>，因此我们需要对 <code>提示词</code> 做一些修改。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ErnieBotChat</span><br><span class="line"><span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"></span><br><span class="line">template = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;你是一个能力非凡的人工智能机器人，你的名字是 &#123;name&#125;。&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;你好~&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;&#123;user_input&#125;&quot;</span>),</span><br><span class="line">])</span><br><span class="line">chat = ErnieBotChat()</span><br><span class="line"></span><br><span class="line">messages = template.format_messages(</span><br><span class="line">    name=<span class="string">&quot;小明&quot;</span>,</span><br><span class="line">    user_input=<span class="string">&quot;你是谁？&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">res = chat.predict_messages(messages)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"><span class="comment"># content=&#x27;我是你的新朋友小明，一个拥有先进人工智能技术的人工智能机器人。&#x27; </span></span><br><span class="line"><span class="comment"># additional_kwargs=&#123;&#125; example=False</span></span><br></pre></td></tr></table></figure>
+<h3 id="output-parsers">Output Parsers</h3>
+<p>大语言模型一般会输出文本内容作为响应，当然更高级的大语言模型（例如文心大模型）还可以输出图片、视频作为响应。但是，很多时候，我们希望可以获得更结构化的信息，而不仅仅是回复一串字符串文本。</p>
+<p>我们可以使用 <code>提示词工程</code> 来提示 LLMs 输出特定的格式，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ErnieBotChat</span><br><span class="line"><span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"></span><br><span class="line">template = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;你是一个能力非凡的人工智能机器人，你的名字是 &#123;name&#125;。&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;你好~&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;&#123;user_input&#125;&quot;</span>),</span><br><span class="line">])</span><br><span class="line">chat = ErnieBotChat()</span><br><span class="line"></span><br><span class="line">messages = template.format_messages(</span><br><span class="line">    name=<span class="string">&quot;小明&quot;</span>,</span><br><span class="line">    user_input=<span class="string">&quot;请给出 10 个表示快乐的成语，并输出为 JSON 格式&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">res = chat.predict_messages(messages)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"></span><br><span class="line"><span class="comment"># content=&#x27;```json\n[\n    &quot;乐不可支&quot;,</span></span><br><span class="line"><span class="comment">#                    \n    &quot;喜从天降&quot;,</span></span><br><span class="line"><span class="comment">#                    \n    &quot;笑逐颜开&quot;,</span></span><br><span class="line"><span class="comment">#                    \n    &quot;手舞足蹈&quot;,</span></span><br><span class="line"><span class="comment">#                     ......</span></span><br><span class="line"><span class="comment">#                    \n    &quot;弹冠相庆&quot;\n]\n```&#x27; </span></span><br><span class="line"><span class="comment"># additional_kwargs=&#123;&#125; example=False</span></span><br></pre></td></tr></table></figure>
+<p>但是，使用 LangChain 提供的 <code>Output Parsers</code> 能力，会更加的方便。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ErnieBotChat</span><br><span class="line"><span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"><span class="keyword">from</span> langchain.output_parsers <span class="keyword">import</span> CommaSeparatedListOutputParser</span><br><span class="line"></span><br><span class="line">template = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;你是一个能力非凡的人工智能机器人，你的名字是 &#123;name&#125;。&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;你好~&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;&#123;user_input&#125;&quot;</span>),</span><br><span class="line">])</span><br><span class="line">chat = ErnieBotChat()</span><br><span class="line"></span><br><span class="line">messages = template.format_messages(</span><br><span class="line">    name=<span class="string">&quot;小明&quot;</span>,</span><br><span class="line">    user_input=<span class="string">&quot;请仅给5个表示快乐的成语并以 , 分隔，除了成语外不要输出任何其他内容&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">res = chat.predict_messages(messages)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"><span class="comment"># content=&#x27;欢呼雀跃，手舞足蹈，笑逐颜开，心花怒放，喜笑颜开&#x27; additional_kwargs=&#123;&#125; example=False</span></span><br><span class="line"></span><br><span class="line">output_parser = CommaSeparatedListOutputParser()</span><br><span class="line">res =  output_parser.parse(res.content.replace(<span class="string">&#x27;，&#x27;</span>, <span class="string">&#x27;, &#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"><span class="comment"># [&#x27;欢呼雀跃&#x27;, &#x27;手舞足蹈&#x27;, &#x27;笑逐颜开&#x27;, &#x27;心花怒放&#x27;, &#x27;喜笑颜开&#x27;]</span></span><br></pre></td></tr></table></figure>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">warning</p><p>由于文心大模型的指令遵循能力还有进一步提升的空间，因此这里的演示可能需要进行一些额外的操作，例如需要对模型返回的内容进行一些简单的字符串替换。</p>
+</div>
+<h3 id="llmchain">LLMChain</h3>
+<p>虽然一台独立的计算机也能实现很强大的功能，但是通过网络将更多的计算机链接起来，可能发挥出更大的性能。同样的，单独使用 LLMs 已经可以实现强大的功能，但是如果可以将更多次的交互有效的链接起来，则能发挥 LLMs 更大的能量。为了实现这个目标，LangChain 提供了 <code>Chain</code> 的概念，以实现对不同组件的一系列调用。</p>
+<p>在 LangChain 中，<code>提示词</code>、<code>LLM</code>、<code>输出解析</code> 这三者构成了 <code>Chain</code>，而不同的 <code>Chain</code> 则可以通过一定的方式链接起来，以实现强大的功能。具体如下所示。</p>
+<p><img src="/2023/09/20/Introduction-to-LangChain/chain.png" alt="LangChain 中 Chain 的概念"></p>
+<p>利用 <code>Chain</code> 的概念，我们可以对之前的代码进行重构，</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ErnieBotChat</span><br><span class="line"><span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"><span class="keyword">from</span> langchain.output_parsers <span class="keyword">import</span> CommaSeparatedListOutputParser</span><br><span class="line"><span class="keyword">from</span> langchain.chains <span class="keyword">import</span> LLMChain</span><br><span class="line"></span><br><span class="line">template = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;你是一个能力非凡的人工智能机器人，你的名字是 &#123;name&#125;。&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;你好~&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;&#123;user_input&#125;&quot;</span>),</span><br><span class="line">])</span><br><span class="line">chat = ErnieBotChat()</span><br><span class="line"></span><br><span class="line">chain =  LLMChain(llm=chat, prompt=template, output_parser=CommaSeparatedListOutputParser())</span><br><span class="line"></span><br><span class="line">res =  chain.run(name=<span class="string">&quot;小明&quot;</span>, user_input=<span class="string">&quot;请仅给5个表示快乐的成语并以 , 分隔，除了成语外不要输出任何其他内容&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"><span class="comment"># [&#x27;以下是五个表示快乐的成语：\n\n1. 喜出望外\n2. 乐不可支\n3. 心花怒放\n4. 满心欢喜\n5. 手舞足蹈&#x27;]</span></span><br></pre></td></tr></table></figure>
+<h2 id="langchain-的学习资料">LangChain 的学习资料</h2>
+<ul>
+<li>LangChain 官方文档：<a href="https://python.langchain.com/docs/get_started">https://python.langchain.com/docs/get_started</a></li>
+<li>LangChain 的典型应用场景：<a href="https://python.langchain.com/docs/use_cases">https://python.langchain.com/docs/use_cases</a></li>
+<li>LangChain 目前集成的能力：<a href="https://python.langchain.com/docs/integrations">https://python.langchain.com/docs/integrations</a></li>
+<li>LangChain AI Handbook：<a href="https://www.pinecone.io/learn/series/langchain/">https://www.pinecone.io/learn/series/langchain/</a></li>
+<li>LangChain Dart：<a href="https://langchaindart.com/#/">https://langchaindart.com/#/</a></li>
+<li>百度智能云千帆大模型平台：<a href="https://cloud.baidu.com/product/wenxinworkshop">https://cloud.baidu.com/product/wenxinworkshop</a></li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="https://ecosystem.lafrenchtech.com/companies/langchain">LangChain 估值</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="https://ffmpeg.org/ffmpeg-filters.html">FFmpeg Filters Documentation</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="https://python.langchain.com/docs/get_started/introduction">LangChain Introdction</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p><a href="https://python.langchain.com/docs/modules/model_io/prompts/prompt_templates/prompt_serialization">Prompt Serialization</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p><a href="https://www.datacamp.com/tutorial/complete-guide-data-augmentation">A Complete Guide to Data Augmentation</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a href="https://cloud.baidu.com/doc/WENXINWORKSHOP/s/4lilb2lpf">ERNIE-Bot-turbo</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a href="https://cloud.baidu.com/product/wenxinworkshop">百度智能云千帆大模型平台</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+]]></content>
+      <categories>
+        <category>LLM</category>
+      </categories>
+      <tags>
+        <tag>LangChain</tag>
+        <tag>OpenAI</tag>
+        <tag>Ernie</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>有趣的 Elo 积分系统</title>
     <url>/2023/08/12/the-interesting-elo-rating-system/</url>
     <content><![CDATA[<p><img src="/2023/08/12/the-interesting-elo-rating-system/1.png" alt></p>
@@ -963,7 +1238,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </section>
 ]]></content>
       <categories>
-        <category>文化</category>
+        <category>LLM</category>
       </categories>
       <tags>
         <tag>OpenAI</tag>
@@ -3618,7 +3893,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>与运气竞争</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>【美】克莱顿·克里斯坦森</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2018-5</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>7.9</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>7.8</span></div>
 		</div>
 	</a>
 </div>
