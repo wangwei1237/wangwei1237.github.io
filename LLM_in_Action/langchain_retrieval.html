@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Large Language Model in Action - 7&nbsp; LangChain Retrieval</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./langchain_function_call.html" rel="next">
+<link href="./langchain_serialization.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_retrieval.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">LangChain Retrieval</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Large Language Model in Action</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/wangwei1237/LLM_in_Action" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">序言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">LLMs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./embedding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Embedding</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./hallucination.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">幻觉</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./RAG_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Retrieval Augmented Generation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./agent_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Agent</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">LangChain</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./langchain_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">LangChain 简介</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./langchain_serialization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">LangChain 序列化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./langchain_retrieval.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">LangChain Retrieval</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./langchain_function_call.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">LangChain 函数调用</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./langchain_agent_react.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">LangChain ReAct Agent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./langchain_agent_fc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">LangChain OpenAI Function Agent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./langchain_agent_pae.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">LangChain PlanAndExcute Agent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./langflow_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Langflow</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Embedchain</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./embedchain_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embedchain 简介</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">AutoGen</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Case Study</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./case1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Case1</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./glossary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">术语表</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./install_langchain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">LangChain 安装指南</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./milvus_install.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Milvus Beginner</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#document-loaders" id="toc-document-loaders" class="nav-link active" data-scroll-target="#document-loaders"><span class="header-section-number">7.1</span> Document loaders</a></li>
+  <li><a href="#document-transformers" id="toc-document-transformers" class="nav-link" data-scroll-target="#document-transformers"><span class="header-section-number">7.2</span> Document transformers</a></li>
+  <li><a href="#text-embedding-models" id="toc-text-embedding-models" class="nav-link" data-scroll-target="#text-embedding-models"><span class="header-section-number">7.3</span> Text embedding models</a></li>
+  <li><a href="#vector-stores" id="toc-vector-stores" class="nav-link" data-scroll-target="#vector-stores"><span class="header-section-number">7.4</span> Vector stores</a></li>
+  <li><a href="#retrivers" id="toc-retrivers" class="nav-link" data-scroll-target="#retrivers"><span class="header-section-number">7.5</span> Retrivers</a></li>
+  <li><a href="#retrievalqa" id="toc-retrievalqa" class="nav-link" data-scroll-target="#retrievalqa"><span class="header-section-number">7.6</span> RetrievalQA</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">LangChain Retrieval</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>在 <a href="RAG_intro.html"><span>章节&nbsp;3</span></a> 中，我们介绍了基于检索增强的生成式技术，这一章，我们重点介绍如何使用 LangChain 实现 RAG。</p>
+<p>无论是简单的 RAG 应用，还是复杂的 RGA 应用，LangChain 都为我们提供了相应的构建能力。在 LangChain 中，RAG 的整个过程涉及到如 <a href="#fig-rag_langchain_overview">图&nbsp;<span>7.1</span></a> 的模块和步骤：</p>
+<div id="fig-rag_langchain_overview" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/rag_langchain_overview.jpeg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;7.1: LangChain 中 RAG 的关键模块</figcaption>
+</figure>
+</div>
+<section id="document-loaders" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="document-loaders"><span class="header-section-number">7.1</span> Document loaders</h2>
+<p>LangChain 提供了<a href="https://python.langchain.com/docs/integrations/document_loaders">100多种不同的文档加载器</a>，并与该领域的其他主要供应商（如 <a href="https://airbyte.com/">AirByte</a>、<a href="https://unstructured.io/">Unstructured</a>）进行了集成，从而可以从任何地方（私有 s3 存储、网站）加载任何类型的文档（HTML、PDF、代码）。</p>
+<p>文档加载器提供了一个 <code>load()</code> 方法来从指定的加载源加载文档数据。文档加载器还提供了一个 <code>lazy_load()</code> 方法来实现现“延迟加载”，以避免一次将太多的数据加载到内存之中。</p>
+<div id="lst-langchain_loader" class="listing">
+<p>列表&nbsp;7.1: 加载远程网页</p>
+<div class="sourceCode" id="lst-langchain_loader" data-lst-cap="加载远程网页"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-langchain_loader-1"><a href="#lst-langchain_loader-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.document_loaders.recursive_url_loader <span class="im">import</span> RecursiveUrlLoader</span>
+<span id="lst-langchain_loader-2"><a href="#lst-langchain_loader-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader-3"><a href="#lst-langchain_loader-3" aria-hidden="true" tabindex="-1"></a>URL_ROOT <span class="op">=</span> <span class="st">"https://wangwei1237.github.io/"</span></span>
+<span id="lst-langchain_loader-4"><a href="#lst-langchain_loader-4" aria-hidden="true" tabindex="-1"></a>loader <span class="op">=</span> RecursiveUrlLoader(url<span class="op">=</span>URL, max_depth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="lst-langchain_loader-5"><a href="#lst-langchain_loader-5" aria-hidden="true" tabindex="-1"></a>docs <span class="op">=</span> loader.load()</span>
+<span id="lst-langchain_loader-6"><a href="#lst-langchain_loader-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader-7"><a href="#lst-langchain_loader-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(docs))</span>
+<span id="lst-langchain_loader-8"><a href="#lst-langchain_loader-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader-9"><a href="#lst-langchain_loader-9" aria-hidden="true" tabindex="-1"></a>URLS <span class="op">=</span> []</span>
+<span id="lst-langchain_loader-10"><a href="#lst-langchain_loader-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> doc <span class="kw">in</span> docs:</span>
+<span id="lst-langchain_loader-11"><a href="#lst-langchain_loader-11" aria-hidden="true" tabindex="-1"></a>    url   <span class="op">=</span>  doc.metadata[<span class="st">"source"</span>]</span>
+<span id="lst-langchain_loader-12"><a href="#lst-langchain_loader-12" aria-hidden="true" tabindex="-1"></a>    title <span class="op">=</span> doc.metadata[<span class="st">"title"</span>]</span>
+<span id="lst-langchain_loader-13"><a href="#lst-langchain_loader-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(url, <span class="st">"-&gt;"</span>, title)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+警告
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>RecursiveUrlLoader()</code> 对中文的抓取看起来不是非常友好，中文内容显示成了乱码。可以使用 <a href="#lst-langchain_loader_2">列表&nbsp;<span>7.2</span></a> 所示的方法来解决中文乱码的问题，不过这种方式的缺点是需要 <code>load()</code> 两次。更好的方式后续再思考。</p>
+</div>
+</div>
+<div id="lst-langchain_loader_2" class="listing">
+<p>列表&nbsp;7.2: 解决中文乱码的方法</p>
+<div class="sourceCode" id="lst-langchain_loader_2" data-lst-cap="解决中文乱码的方法"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-langchain_loader_2-1"><a href="#lst-langchain_loader_2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.document_loaders <span class="im">import</span> WebBaseLoader</span>
+<span id="lst-langchain_loader_2-2"><a href="#lst-langchain_loader_2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.document_loaders.recursive_url_loader <span class="im">import</span> RecursiveUrlLoader</span>
+<span id="lst-langchain_loader_2-3"><a href="#lst-langchain_loader_2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader_2-4"><a href="#lst-langchain_loader_2-4" aria-hidden="true" tabindex="-1"></a>URL_ROOT <span class="op">=</span> <span class="st">"https://wangwei1237.github.io/"</span></span>
+<span id="lst-langchain_loader_2-5"><a href="#lst-langchain_loader_2-5" aria-hidden="true" tabindex="-1"></a>loader <span class="op">=</span> RecursiveUrlLoader(url<span class="op">=</span>URL_ROOT, max_depth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="lst-langchain_loader_2-6"><a href="#lst-langchain_loader_2-6" aria-hidden="true" tabindex="-1"></a>docs <span class="op">=</span> loader.load()</span>
+<span id="lst-langchain_loader_2-7"><a href="#lst-langchain_loader_2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader_2-8"><a href="#lst-langchain_loader_2-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(docs))</span>
+<span id="lst-langchain_loader_2-9"><a href="#lst-langchain_loader_2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader_2-10"><a href="#lst-langchain_loader_2-10" aria-hidden="true" tabindex="-1"></a>URLS <span class="op">=</span> []</span>
+<span id="lst-langchain_loader_2-11"><a href="#lst-langchain_loader_2-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> doc <span class="kw">in</span> docs:</span>
+<span id="lst-langchain_loader_2-12"><a href="#lst-langchain_loader_2-12" aria-hidden="true" tabindex="-1"></a>    url   <span class="op">=</span>  doc.metadata[<span class="st">"source"</span>]</span>
+<span id="lst-langchain_loader_2-13"><a href="#lst-langchain_loader_2-13" aria-hidden="true" tabindex="-1"></a>    URLS.append(url)</span>
+<span id="lst-langchain_loader_2-14"><a href="#lst-langchain_loader_2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader_2-15"><a href="#lst-langchain_loader_2-15" aria-hidden="true" tabindex="-1"></a>loader <span class="op">=</span> WebBaseLoader(URLS)</span>
+<span id="lst-langchain_loader_2-16"><a href="#lst-langchain_loader_2-16" aria-hidden="true" tabindex="-1"></a>docs <span class="op">=</span> loader.load()</span>
+<span id="lst-langchain_loader_2-17"><a href="#lst-langchain_loader_2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader_2-18"><a href="#lst-langchain_loader_2-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(docs))</span>
+<span id="lst-langchain_loader_2-19"><a href="#lst-langchain_loader_2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_loader_2-20"><a href="#lst-langchain_loader_2-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> doc <span class="kw">in</span> docs:</span>
+<span id="lst-langchain_loader_2-21"><a href="#lst-langchain_loader_2-21" aria-hidden="true" tabindex="-1"></a>    url   <span class="op">=</span>  doc.metadata[<span class="st">"source"</span>]</span>
+<span id="lst-langchain_loader_2-22"><a href="#lst-langchain_loader_2-22" aria-hidden="true" tabindex="-1"></a>    title <span class="op">=</span>  doc.metadata[<span class="st">"title"</span>]</span>
+<span id="lst-langchain_loader_2-23"><a href="#lst-langchain_loader_2-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(url, <span class="st">"-&gt;"</span>, title)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="document-transformers" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="document-transformers"><span class="header-section-number">7.2</span> Document transformers</h2>
+<p>检索的一个关键部分是<strong>只获取文档的相关部分</strong>而非获取全部文档。为了为最终的检索提供最好的文档，我们需要对文档进行很多的转换，这里的主要方法之一是将一个大文档进行拆分。LangChain 提供了<a href="https://python.langchain.com/docs/integrations/document_transformers">多种不同的拆分算法</a>，并且还针对特定文档类型（代码、标记等）的拆分提供对应的优化逻辑。</p>
+<p>文档加载后，我们通常会对文档进行一系列的转换，以更好地适应我们的应用程序。最简单的文档转换的场景就是文档拆分成，以便可以满足模型的上下文窗口（不同模型的每次交互的最大 token 数可能不同）。</p>
+<p>尽管文档拆分听起来很简单，但实际应用中却有很多潜在的复杂性。理想情况下，我们希望将语义相关的文本片段放在一起。“语义相关”的含义会取决于文本的类型，例如：</p>
+<ul>
+<li>对于代码文件而言，我们需要将一个函数置于一个完整的拆分块中；</li>
+<li>普通的文本而言，可能需要将一个段落置于一个完整的拆分块中；</li>
+<li>……</li>
+</ul>
+<p>我们利用 <code>RecursiveCharacterTextSplitter</code> 对 <a href="#lst-langchain_loader_2">列表&nbsp;<span>7.2</span></a> 的文档进行拆分。</p>
+<div id="lst-langchain_transfer" class="listing">
+<p>列表&nbsp;7.3: 使用 RecursiveCharacterTextSplitter 拆分文档</p>
+<div class="sourceCode" id="lst-langchain_transfer" data-lst-cap="使用 RecursiveCharacterTextSplitter 拆分文档"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-langchain_transfer-1"><a href="#lst-langchain_transfer-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="lst-langchain_transfer-2"><a href="#lst-langchain_transfer-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="lst-langchain_transfer-3"><a href="#lst-langchain_transfer-3" aria-hidden="true" tabindex="-1"></a>text_splitter <span class="op">=</span> RecursiveCharacterTextSplitter(</span>
+<span id="lst-langchain_transfer-4"><a href="#lst-langchain_transfer-4" aria-hidden="true" tabindex="-1"></a>    chunk_size <span class="op">=</span> <span class="dv">1000</span>,</span>
+<span id="lst-langchain_transfer-5"><a href="#lst-langchain_transfer-5" aria-hidden="true" tabindex="-1"></a>    chunk_overlap  <span class="op">=</span> <span class="dv">20</span>,</span>
+<span id="lst-langchain_transfer-6"><a href="#lst-langchain_transfer-6" aria-hidden="true" tabindex="-1"></a>    length_function <span class="op">=</span> <span class="bu">len</span>,</span>
+<span id="lst-langchain_transfer-7"><a href="#lst-langchain_transfer-7" aria-hidden="true" tabindex="-1"></a>    add_start_index <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="lst-langchain_transfer-8"><a href="#lst-langchain_transfer-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="lst-langchain_transfer-9"><a href="#lst-langchain_transfer-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_transfer-10"><a href="#lst-langchain_transfer-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> doc <span class="kw">in</span> docs:</span>
+<span id="lst-langchain_transfer-11"><a href="#lst-langchain_transfer-11" aria-hidden="true" tabindex="-1"></a>    url   <span class="op">=</span>  doc.metadata[<span class="st">"source"</span>]</span>
+<span id="lst-langchain_transfer-12"><a href="#lst-langchain_transfer-12" aria-hidden="true" tabindex="-1"></a>    title <span class="op">=</span>  doc.metadata[<span class="st">"title"</span>]</span>
+<span id="lst-langchain_transfer-13"><a href="#lst-langchain_transfer-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(url, <span class="st">"--&gt;"</span>, title)</span>
+<span id="lst-langchain_transfer-14"><a href="#lst-langchain_transfer-14" aria-hidden="true" tabindex="-1"></a>    texts <span class="op">=</span> text_splitter.create_documents([doc.page_content])</span>
+<span id="lst-langchain_transfer-15"><a href="#lst-langchain_transfer-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(texts)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>LangChain 也可以对不同的编程语言进行拆分，例如 cpp，go，markdown，……，具体支持的语言可以参见 <a href="#lst-langchain_transfer_2">列表&nbsp;<span>7.4</span></a>。</p>
+<div id="lst-langchain_transfer_2" class="listing">
+<p>列表&nbsp;7.4: LangChain 支持拆分的语言类型</p>
+<div class="sourceCode" id="lst-langchain_transfer_2" data-lst-cap="LangChain 支持拆分的语言类型"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-langchain_transfer_2-1"><a href="#lst-langchain_transfer_2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.text_splitter <span class="im">import</span> Language</span>
+<span id="lst-langchain_transfer_2-2"><a href="#lst-langchain_transfer_2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_transfer_2-3"><a href="#lst-langchain_transfer_2-3" aria-hidden="true" tabindex="-1"></a>[e.value <span class="cf">for</span> e <span class="kw">in</span> Language]</span>
+<span id="lst-langchain_transfer_2-4"><a href="#lst-langchain_transfer_2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_transfer_2-5"><a href="#lst-langchain_transfer_2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#['cpp',</span></span>
+<span id="lst-langchain_transfer_2-6"><a href="#lst-langchain_transfer_2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 'go',</span></span>
+<span id="lst-langchain_transfer_2-7"><a href="#lst-langchain_transfer_2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 'java',</span></span>
+<span id="lst-langchain_transfer_2-8"><a href="#lst-langchain_transfer_2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 'js',</span></span>
+<span id="lst-langchain_transfer_2-9"><a href="#lst-langchain_transfer_2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 'php',</span></span>
+<span id="lst-langchain_transfer_2-10"><a href="#lst-langchain_transfer_2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 'proto',</span></span>
+<span id="lst-langchain_transfer_2-11"><a href="#lst-langchain_transfer_2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 'python',</span></span>
+<span id="lst-langchain_transfer_2-12"><a href="#lst-langchain_transfer_2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 'rst',</span></span>
+<span id="lst-langchain_transfer_2-13"><a href="#lst-langchain_transfer_2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 'ruby',</span></span>
+<span id="lst-langchain_transfer_2-14"><a href="#lst-langchain_transfer_2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 'rust',</span></span>
+<span id="lst-langchain_transfer_2-15"><a href="#lst-langchain_transfer_2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 'scala',</span></span>
+<span id="lst-langchain_transfer_2-16"><a href="#lst-langchain_transfer_2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 'swift',</span></span>
+<span id="lst-langchain_transfer_2-17"><a href="#lst-langchain_transfer_2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 'markdown',</span></span>
+<span id="lst-langchain_transfer_2-18"><a href="#lst-langchain_transfer_2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 'latex',</span></span>
+<span id="lst-langchain_transfer_2-19"><a href="#lst-langchain_transfer_2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 'html',</span></span>
+<span id="lst-langchain_transfer_2-20"><a href="#lst-langchain_transfer_2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 'sol']</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="text-embedding-models" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="text-embedding-models"><span class="header-section-number">7.3</span> Text embedding models</h2>
+<p>检索的另一个关键部分是为文档创建其向量（embedding）表示。Embedding 捕获文本的语义信息，使我们能够快速、高效地查找其他相似的文本片段。LangChain 集成了 <a href="https://python.langchain.com/docs/integrations/text_embedding">25 种不同的 embedding 供应商和方法</a>，我们可以根据我们的具体需求从中进行选择。LangChain 还提供了一个标准接口，允许我们可以便捷的在不同的 embedding 之间进行交换。</p>
+<p>在 LangChain 中，<code>Embeddings</code> 类是用于文本向量模型的接口。目前，有很多的向量模型供应商，例如：OpenAI，Cohere，Hugging Face，……<code>Embeddings</code> 类的目的就是为所有这些向量模型提供统一的、标准的接口。</p>
+<p><code>Embeddings</code> 类可以为一段文本创建对应的向量表示，从而允许我们可以在向量空间中去考虑文本。在向量空间中，我们还可以执行语义搜索，从而允许我们在向量空间中检索最相似的文本片段。</p>
+<p>因为不同的向量模型供应商对文档和查询采用了不同的向量方法，<code>Embeddings</code> 提供了两个方法：</p>
+<ul>
+<li><code>embed_documents()</code>：用于文档向量化</li>
+<li><code>embed_query()</code>：用于查询向量化</li>
+</ul>
+<div id="lst-langchain_embed_query_wx" class="listing">
+<p>列表&nbsp;7.5: 使用文心大模型的 Embedding-V1 查询向量化</p>
+<div class="sourceCode" id="lst-langchain_embed_query_wx" data-lst-cap="使用文心大模型的 Embedding-V1 查询向量化"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-langchain_embed_query_wx-1"><a href="#lst-langchain_embed_query_wx-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.embeddings <span class="im">import</span> QianfanEmbeddingsEndpoint </span>
+<span id="lst-langchain_embed_query_wx-2"><a href="#lst-langchain_embed_query_wx-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_embed_query_wx-3"><a href="#lst-langchain_embed_query_wx-3" aria-hidden="true" tabindex="-1"></a>embeddings <span class="op">=</span> QianfanEmbeddingsEndpoint()</span>
+<span id="lst-langchain_embed_query_wx-4"><a href="#lst-langchain_embed_query_wx-4" aria-hidden="true" tabindex="-1"></a>query_result <span class="op">=</span> embeddings.embed_query(<span class="st">"你是谁？"</span>)</span>
+<span id="lst-langchain_embed_query_wx-5"><a href="#lst-langchain_embed_query_wx-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query_result)</span>
+<span id="lst-langchain_embed_query_wx-6"><a href="#lst-langchain_embed_query_wx-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(query_result))</span>
+<span id="lst-langchain_embed_query_wx-7"><a href="#lst-langchain_embed_query_wx-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_embed_query_wx-8"><a href="#lst-langchain_embed_query_wx-8" aria-hidden="true" tabindex="-1"></a><span class="co"># [0.02949424833059311, -0.054236963391304016, -0.01735987327992916, </span></span>
+<span id="lst-langchain_embed_query_wx-9"><a href="#lst-langchain_embed_query_wx-9" aria-hidden="true" tabindex="-1"></a><span class="co">#  0.06794580817222595, -0.00020318820315878838, 0.04264984279870987, </span></span>
+<span id="lst-langchain_embed_query_wx-10"><a href="#lst-langchain_embed_query_wx-10" aria-hidden="true" tabindex="-1"></a><span class="co">#  -0.0661700889468193, ……</span></span>
+<span id="lst-langchain_embed_query_wx-11"><a href="#lst-langchain_embed_query_wx-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ……]</span></span>
+<span id="lst-langchain_embed_query_wx-12"><a href="#lst-langchain_embed_query_wx-12" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="lst-langchain_embed_query_wx-13"><a href="#lst-langchain_embed_query_wx-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 384</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="lst-langchain_embed_docs_wx" class="listing">
+<p>列表&nbsp;7.6: 使用文心大模型的 Embedding-V1 文档向量化</p>
+<div class="sourceCode" id="lst-langchain_embed_docs_wx" data-lst-cap="使用文心大模型的 Embedding-V1 文档向量化"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-langchain_embed_docs_wx-1"><a href="#lst-langchain_embed_docs_wx-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.embeddings <span class="im">import</span> QianfanEmbeddingsEndpoint </span>
+<span id="lst-langchain_embed_docs_wx-2"><a href="#lst-langchain_embed_docs_wx-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_embed_docs_wx-3"><a href="#lst-langchain_embed_docs_wx-3" aria-hidden="true" tabindex="-1"></a>embeddings <span class="op">=</span> QianfanEmbeddingsEndpoint()</span>
+<span id="lst-langchain_embed_docs_wx-4"><a href="#lst-langchain_embed_docs_wx-4" aria-hidden="true" tabindex="-1"></a>docs_result <span class="op">=</span> embeddings.embed_documents([</span>
+<span id="lst-langchain_embed_docs_wx-5"><a href="#lst-langchain_embed_docs_wx-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"你谁谁？"</span>,</span>
+<span id="lst-langchain_embed_docs_wx-6"><a href="#lst-langchain_embed_docs_wx-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"我是百度的智能助手，小度"</span></span>
+<span id="lst-langchain_embed_docs_wx-7"><a href="#lst-langchain_embed_docs_wx-7" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="lst-langchain_embed_docs_wx-8"><a href="#lst-langchain_embed_docs_wx-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(docs_result), <span class="st">":"</span> , <span class="bu">len</span>(docs_result[<span class="dv">0</span>]))</span>
+<span id="lst-langchain_embed_docs_wx-9"><a href="#lst-langchain_embed_docs_wx-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_embed_docs_wx-10"><a href="#lst-langchain_embed_docs_wx-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 : 384</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled" title="使用 QianfanEmbeddingsEndpoint 的注意事项">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+使用 QianfanEmbeddingsEndpoint 的注意事项
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>LangChain 在 <code>0.0.300</code> 版本之后才支持 <code>QianfanEmbeddingsEndpoint</code>，并且 <code>QianfanEmbeddingsEndpoint</code> 还依赖 <code>qianfan</code> python 库的支持。</p>
+<p>因此，在使用 <code>QianfanEmbeddingsEndpoint</code> 之前，需要：</p>
+<ul>
+<li>升级 LangChain 的版本：<code>pip install -U langchain</code>。</li>
+<li>安装 <code>qianfan</code> 库：<code>pip install qianfan</code>。</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="vector-stores" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="vector-stores"><span class="header-section-number">7.4</span> Vector stores</h2>
+<p>为文档创建 embedding 之后，需要对其进行存储并实现对这些 embedding 的有效搜索，此时我们需要<strong>向量数据库</strong>的支持。LangChain 集成了 <a href="https://python.langchain.com/docs/integrations/vectorstores">50 多种不同的向量数据库</a>，还提供了一个标准接口，允许我们轻松的在不同的向量存储之间进行切换。</p>
+<div id="fig-vector_stores" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/vector_stores.jpeg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;7.2: 向量数据库检索的基本流程</figcaption>
+</figure>
+</div>
+<p>这里，我们使用 <a href="https://milvus.io/">Milvus</a> 向量数据库来进行相关的演示。Milvus 安装和使用方式可以参见：<a href="milvus_install.html"><span>附录&nbsp;C</span></a>。</p>
+<p>利用 Milvus 对 <a href="#lst-langchain_embed_docs_wx">列表&nbsp;<span>7.6</span></a> 进行优化：</p>
+<div id="lst-langchain_embed_docs_wx_2" class="listing">
+<p>列表&nbsp;7.7: 使用 Milvus 存储千帆 Embedding-V1 的结果</p>
+<div class="sourceCode" id="lst-langchain_embed_docs_wx_2" data-lst-cap="使用 Milvus 存储千帆 Embedding-V1 的结果"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-langchain_embed_docs_wx_2-1"><a href="#lst-langchain_embed_docs_wx_2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.document_loaders <span class="im">import</span> WebBaseLoader</span>
+<span id="lst-langchain_embed_docs_wx_2-2"><a href="#lst-langchain_embed_docs_wx_2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.embeddings <span class="im">import</span> QianfanEmbeddingsEndpoint</span>
+<span id="lst-langchain_embed_docs_wx_2-3"><a href="#lst-langchain_embed_docs_wx_2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.text_splitter <span class="im">import</span> RecursiveCharacterTextSplitter</span>
+<span id="lst-langchain_embed_docs_wx_2-4"><a href="#lst-langchain_embed_docs_wx_2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.vectorstores <span class="im">import</span> Milvus</span>
+<span id="lst-langchain_embed_docs_wx_2-5"><a href="#lst-langchain_embed_docs_wx_2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_embed_docs_wx_2-6"><a href="#lst-langchain_embed_docs_wx_2-6" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">'https://wangwei1237.github.io/2023/02/13/duzhiliao/'</span></span>
+<span id="lst-langchain_embed_docs_wx_2-7"><a href="#lst-langchain_embed_docs_wx_2-7" aria-hidden="true" tabindex="-1"></a>loader <span class="op">=</span> WebBaseLoader([url])</span>
+<span id="lst-langchain_embed_docs_wx_2-8"><a href="#lst-langchain_embed_docs_wx_2-8" aria-hidden="true" tabindex="-1"></a>docs  <span class="op">=</span> loader.load()</span>
+<span id="lst-langchain_embed_docs_wx_2-9"><a href="#lst-langchain_embed_docs_wx_2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_embed_docs_wx_2-10"><a href="#lst-langchain_embed_docs_wx_2-10" aria-hidden="true" tabindex="-1"></a>text_splitter <span class="op">=</span> RecursiveCharacterTextSplitter(</span>
+<span id="lst-langchain_embed_docs_wx_2-11"><a href="#lst-langchain_embed_docs_wx_2-11" aria-hidden="true" tabindex="-1"></a>    chunk_size <span class="op">=</span> <span class="dv">200</span>,</span>
+<span id="lst-langchain_embed_docs_wx_2-12"><a href="#lst-langchain_embed_docs_wx_2-12" aria-hidden="true" tabindex="-1"></a>    chunk_overlap  <span class="op">=</span> <span class="dv">20</span>,</span>
+<span id="lst-langchain_embed_docs_wx_2-13"><a href="#lst-langchain_embed_docs_wx_2-13" aria-hidden="true" tabindex="-1"></a>    length_function <span class="op">=</span> <span class="bu">len</span>,</span>
+<span id="lst-langchain_embed_docs_wx_2-14"><a href="#lst-langchain_embed_docs_wx_2-14" aria-hidden="true" tabindex="-1"></a>    add_start_index <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="lst-langchain_embed_docs_wx_2-15"><a href="#lst-langchain_embed_docs_wx_2-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="lst-langchain_embed_docs_wx_2-16"><a href="#lst-langchain_embed_docs_wx_2-16" aria-hidden="true" tabindex="-1"></a>texts <span class="op">=</span> text_splitter.create_documents([docs[<span class="dv">0</span>].page_content])</span>
+<span id="lst-langchain_embed_docs_wx_2-17"><a href="#lst-langchain_embed_docs_wx_2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_embed_docs_wx_2-18"><a href="#lst-langchain_embed_docs_wx_2-18" aria-hidden="true" tabindex="-1"></a>vector_db <span class="op">=</span> Milvus.from_documents(</span>
+<span id="lst-langchain_embed_docs_wx_2-19"><a href="#lst-langchain_embed_docs_wx_2-19" aria-hidden="true" tabindex="-1"></a>    texts,</span>
+<span id="lst-langchain_embed_docs_wx_2-20"><a href="#lst-langchain_embed_docs_wx_2-20" aria-hidden="true" tabindex="-1"></a>    QianfanEmbeddingsEndpoint(),</span>
+<span id="lst-langchain_embed_docs_wx_2-21"><a href="#lst-langchain_embed_docs_wx_2-21" aria-hidden="true" tabindex="-1"></a>    connection_args <span class="op">=</span>{<span class="st">"host"</span>: <span class="st">"127.0.0.1"</span>, <span class="st">"port"</span>: <span class="st">"8081"</span>},</span>
+<span id="lst-langchain_embed_docs_wx_2-22"><a href="#lst-langchain_embed_docs_wx_2-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="lst-langchain_embed_docs_wx_2-23"><a href="#lst-langchain_embed_docs_wx_2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-langchain_embed_docs_wx_2-24"><a href="#lst-langchain_embed_docs_wx_2-24" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> <span class="st">"什么是度知了？"</span></span>
+<span id="lst-langchain_embed_docs_wx_2-25"><a href="#lst-langchain_embed_docs_wx_2-25" aria-hidden="true" tabindex="-1"></a>docs <span class="op">=</span> vector_db.similarity_search(query)</span>
+<span id="lst-langchain_embed_docs_wx_2-26"><a href="#lst-langchain_embed_docs_wx_2-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(docs)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="#lst-langchain_embed_docs_wx_2">列表&nbsp;<span>7.7</span></a> 的运行结果中，之所以会有两条重复的结果，是因为在执行文档向量化的时候，执行了两遍。在初始化 Milvus 实例时，如果只是查询操作，可以使用如下的方式：</p>
+<div id="lst-langchain_milvus_search_2" class="listing">
+<p>列表&nbsp;7.8: Milvus 实例初始化</p>
+<div class="sourceCode" id="lst-langchain_milvus_search_2" data-lst-cap="Milvus 实例初始化"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-langchain_milvus_search_2-1"><a href="#lst-langchain_milvus_search_2-1" aria-hidden="true" tabindex="-1"></a>vector_db <span class="op">=</span> Milvus.from_documents(</span>
+<span id="lst-langchain_milvus_search_2-2"><a href="#lst-langchain_milvus_search_2-2" aria-hidden="true" tabindex="-1"></a>    [],</span>
+<span id="lst-langchain_milvus_search_2-3"><a href="#lst-langchain_milvus_search_2-3" aria-hidden="true" tabindex="-1"></a>    QianfanEmbeddingsEndpoint(),</span>
+<span id="lst-langchain_milvus_search_2-4"><a href="#lst-langchain_milvus_search_2-4" aria-hidden="true" tabindex="-1"></a>    connection_args <span class="op">=</span>{<span class="st">"host"</span>: <span class="st">"127.0.0.1"</span>, <span class="st">"port"</span>: <span class="st">"8081"</span>},</span>
+<span id="lst-langchain_milvus_search_2-5"><a href="#lst-langchain_milvus_search_2-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>Milvus.from_documents</code> 会创建一个名为 <code>LangChainCollection</code> 的 <code>Collection</code>。可以使用 milvus_cli 工具来查看该 <code>Collection</code> 的信息，也可以使用 Milvus 提供的 http 端口来查看相关信息：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>http://127.0.0.1:8081/v1/vector/collections/describe?collectionName=LangChainCollection</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+警告
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>使用千帆进行 Embedding 时，每次 Embedding 的 token 是有长度限制的，目前的最大限制是 384 个 token。因此，我们在使用 <code>RecursiveCharacterTextSplitter</code> 进行文档拆分的时候要特别注意拆分后文档的长度。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>qianfan<span class="op">.</span><span class="at">errors</span><span class="op">.</span><span class="at">APIError</span><span class="op">:</span> api <span class="cf">return</span> error<span class="op">,</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>code<span class="op">:</span> <span class="dv">336003</span><span class="op">,</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>msg<span class="op">:</span> embeddings max tokens per batch size is <span class="dv">384</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p>在使用时，为了方便，我们可以把 embedding 和 query 拆分为两个部分：</p>
+<ul>
+<li>先将数据源进行向量化，然后存储到 Milvus 中</li>
+<li>检索的时候，直接从 Milvus 中检索相关信息</li>
+</ul>
+<p>对 <a href="#lst-langchain_embed_docs_wx">列表&nbsp;<span>7.6</span></a> 的代码进行优化：</p>
+<div id="lst-langchain_milvus_embedding" class="listing">
+<p>列表&nbsp;7.9: 文档向量化后存入 Milvus</p>
+<div class="sourceCode" id="lst-langchain_milvus_embedding" data-lst-cap="文档向量化后存入 Milvus"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-langchain_milvus_embedding-1"><a href="#lst-langchain_milvus_embedding-1"></a><span class="co">#encoding: utf-8</span></span>
+<span id="lst-langchain_milvus_embedding-2"><a href="#lst-langchain_milvus_embedding-2"></a></span>
+<span id="lst-langchain_milvus_embedding-3"><a href="#lst-langchain_milvus_embedding-3"></a><span class="co">"""</span></span>
+<span id="lst-langchain_milvus_embedding-4"><a href="#lst-langchain_milvus_embedding-4"></a><span class="co">@discribe: example for milvus embedding </span></span>
+<span id="lst-langchain_milvus_embedding-5"><a href="#lst-langchain_milvus_embedding-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-langchain_milvus_embedding-6"><a href="#lst-langchain_milvus_embedding-6"></a><span class="co">"""</span></span>
+<span id="lst-langchain_milvus_embedding-7"><a href="#lst-langchain_milvus_embedding-7"></a></span>
+<span id="lst-langchain_milvus_embedding-8"><a href="#lst-langchain_milvus_embedding-8"></a><span class="im">from</span> langchain.document_loaders <span class="im">import</span> WebBaseLoader</span>
+<span id="lst-langchain_milvus_embedding-9"><a href="#lst-langchain_milvus_embedding-9"></a><span class="im">from</span> langchain.document_loaders.recursive_url_loader <span class="im">import</span> RecursiveUrlLoader</span>
+<span id="lst-langchain_milvus_embedding-10"><a href="#lst-langchain_milvus_embedding-10"></a><span class="im">from</span> langchain.text_splitter <span class="im">import</span> RecursiveCharacterTextSplitter</span>
+<span id="lst-langchain_milvus_embedding-11"><a href="#lst-langchain_milvus_embedding-11"></a><span class="im">from</span> langchain.document_loaders <span class="im">import</span> WebBaseLoader</span>
+<span id="lst-langchain_milvus_embedding-12"><a href="#lst-langchain_milvus_embedding-12"></a><span class="im">from</span> langchain.embeddings <span class="im">import</span> QianfanEmbeddingsEndpoint</span>
+<span id="lst-langchain_milvus_embedding-13"><a href="#lst-langchain_milvus_embedding-13"></a><span class="im">from</span> langchain.text_splitter <span class="im">import</span> RecursiveCharacterTextSplitter</span>
+<span id="lst-langchain_milvus_embedding-14"><a href="#lst-langchain_milvus_embedding-14"></a><span class="im">from</span> langchain.vectorstores <span class="im">import</span> Milvus</span>
+<span id="lst-langchain_milvus_embedding-15"><a href="#lst-langchain_milvus_embedding-15"></a><span class="im">import</span> time</span>
+<span id="lst-langchain_milvus_embedding-16"><a href="#lst-langchain_milvus_embedding-16"></a></span>
+<span id="lst-langchain_milvus_embedding-17"><a href="#lst-langchain_milvus_embedding-17"></a>URL_ROOT <span class="op">=</span> <span class="st">"https://wangwei1237.github.io/2023/02/13/duzhiliao/"</span></span>
+<span id="lst-langchain_milvus_embedding-18"><a href="#lst-langchain_milvus_embedding-18"></a>loader <span class="op">=</span> RecursiveUrlLoader(url<span class="op">=</span>URL_ROOT, max_depth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="lst-langchain_milvus_embedding-19"><a href="#lst-langchain_milvus_embedding-19"></a>docs <span class="op">=</span> loader.load()</span>
+<span id="lst-langchain_milvus_embedding-20"><a href="#lst-langchain_milvus_embedding-20"></a></span>
+<span id="lst-langchain_milvus_embedding-21"><a href="#lst-langchain_milvus_embedding-21"></a>URLS <span class="op">=</span> []</span>
+<span id="lst-langchain_milvus_embedding-22"><a href="#lst-langchain_milvus_embedding-22"></a><span class="cf">for</span> doc <span class="kw">in</span> docs:</span>
+<span id="lst-langchain_milvus_embedding-23"><a href="#lst-langchain_milvus_embedding-23"></a>    url   <span class="op">=</span>  doc.metadata[<span class="st">"source"</span>]</span>
+<span id="lst-langchain_milvus_embedding-24"><a href="#lst-langchain_milvus_embedding-24"></a>    URLS.append(url)</span>
+<span id="lst-langchain_milvus_embedding-25"><a href="#lst-langchain_milvus_embedding-25"></a></span>
+<span id="lst-langchain_milvus_embedding-26"><a href="#lst-langchain_milvus_embedding-26"></a><span class="bu">print</span>(<span class="st">"URLS length: "</span>, <span class="bu">len</span>(URLS))</span>
+<span id="lst-langchain_milvus_embedding-27"><a href="#lst-langchain_milvus_embedding-27"></a></span>
+<span id="lst-langchain_milvus_embedding-28"><a href="#lst-langchain_milvus_embedding-28"></a>text_splitter <span class="op">=</span> RecursiveCharacterTextSplitter(</span>
+<span id="lst-langchain_milvus_embedding-29"><a href="#lst-langchain_milvus_embedding-29"></a>    chunk_size <span class="op">=</span> <span class="dv">200</span>,</span>
+<span id="lst-langchain_milvus_embedding-30"><a href="#lst-langchain_milvus_embedding-30"></a>    chunk_overlap  <span class="op">=</span> <span class="dv">20</span>,</span>
+<span id="lst-langchain_milvus_embedding-31"><a href="#lst-langchain_milvus_embedding-31"></a>    length_function <span class="op">=</span> <span class="bu">len</span>,</span>
+<span id="lst-langchain_milvus_embedding-32"><a href="#lst-langchain_milvus_embedding-32"></a>    add_start_index <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="lst-langchain_milvus_embedding-33"><a href="#lst-langchain_milvus_embedding-33"></a>)</span>
+<span id="lst-langchain_milvus_embedding-34"><a href="#lst-langchain_milvus_embedding-34"></a></span>
+<span id="lst-langchain_milvus_embedding-35"><a href="#lst-langchain_milvus_embedding-35"></a><span class="cf">for</span> url <span class="kw">in</span> URLS:</span>
+<span id="lst-langchain_milvus_embedding-36"><a href="#lst-langchain_milvus_embedding-36"></a>    <span class="bu">print</span>(<span class="st">'-------------'</span>, url, <span class="st">'----------------'</span>)</span>
+<span id="lst-langchain_milvus_embedding-37"><a href="#lst-langchain_milvus_embedding-37"></a>    loader <span class="op">=</span> WebBaseLoader([url])</span>
+<span id="lst-langchain_milvus_embedding-38"><a href="#lst-langchain_milvus_embedding-38"></a>    doc <span class="op">=</span> loader.load()</span>
+<span id="lst-langchain_milvus_embedding-39"><a href="#lst-langchain_milvus_embedding-39"></a>    texts <span class="op">=</span> text_splitter.split_documents(doc)</span>
+<span id="lst-langchain_milvus_embedding-40"><a href="#lst-langchain_milvus_embedding-40"></a>    vector_db <span class="op">=</span> Milvus.from_documents(</span>
+<span id="lst-langchain_milvus_embedding-41"><a href="#lst-langchain_milvus_embedding-41"></a>        texts,</span>
+<span id="lst-langchain_milvus_embedding-42"><a href="#lst-langchain_milvus_embedding-42"></a>        QianfanEmbeddingsEndpoint(),</span>
+<span id="lst-langchain_milvus_embedding-43"><a href="#lst-langchain_milvus_embedding-43"></a>        connection_args <span class="op">=</span>{<span class="st">"host"</span>: <span class="st">"127.0.0.1"</span>, <span class="st">"port"</span>: <span class="st">"8081"</span>},</span>
+<span id="lst-langchain_milvus_embedding-44"><a href="#lst-langchain_milvus_embedding-44"></a>    )</span>
+<span id="lst-langchain_milvus_embedding-45"><a href="#lst-langchain_milvus_embedding-45"></a>    <span class="bu">print</span>(<span class="st">"    . insert "</span>, <span class="bu">len</span>(texts), <span class="st">" texts embeddings successful"</span>)</span>
+<span id="lst-langchain_milvus_embedding-46"><a href="#lst-langchain_milvus_embedding-46"></a>    time.sleep(<span class="dv">5</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>检索相似内容的代码可以简化为：</p>
+<div id="lst-langchain_milvus_embedding_search" class="listing">
+<p>列表&nbsp;7.10: 内容检索</p>
+<div class="sourceCode" id="lst-langchain_milvus_embedding_search" data-lst-cap="内容检索"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-langchain_milvus_embedding_search-1"><a href="#lst-langchain_milvus_embedding_search-1"></a><span class="co">#encoding: utf-8</span></span>
+<span id="lst-langchain_milvus_embedding_search-2"><a href="#lst-langchain_milvus_embedding_search-2"></a></span>
+<span id="lst-langchain_milvus_embedding_search-3"><a href="#lst-langchain_milvus_embedding_search-3"></a><span class="co">"""</span></span>
+<span id="lst-langchain_milvus_embedding_search-4"><a href="#lst-langchain_milvus_embedding_search-4"></a><span class="co">@discribe: example for milvus embedding query</span></span>
+<span id="lst-langchain_milvus_embedding_search-5"><a href="#lst-langchain_milvus_embedding_search-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-langchain_milvus_embedding_search-6"><a href="#lst-langchain_milvus_embedding_search-6"></a><span class="co">"""</span></span>
+<span id="lst-langchain_milvus_embedding_search-7"><a href="#lst-langchain_milvus_embedding_search-7"></a></span>
+<span id="lst-langchain_milvus_embedding_search-8"><a href="#lst-langchain_milvus_embedding_search-8"></a><span class="im">from</span> langchain.embeddings <span class="im">import</span> QianfanEmbeddingsEndpoint</span>
+<span id="lst-langchain_milvus_embedding_search-9"><a href="#lst-langchain_milvus_embedding_search-9"></a><span class="im">from</span> langchain.vectorstores <span class="im">import</span> Milvus</span>
+<span id="lst-langchain_milvus_embedding_search-10"><a href="#lst-langchain_milvus_embedding_search-10"></a></span>
+<span id="lst-langchain_milvus_embedding_search-11"><a href="#lst-langchain_milvus_embedding_search-11"></a>vector_db <span class="op">=</span> Milvus.from_documents(</span>
+<span id="lst-langchain_milvus_embedding_search-12"><a href="#lst-langchain_milvus_embedding_search-12"></a>    [],</span>
+<span id="lst-langchain_milvus_embedding_search-13"><a href="#lst-langchain_milvus_embedding_search-13"></a>    QianfanEmbeddingsEndpoint(),</span>
+<span id="lst-langchain_milvus_embedding_search-14"><a href="#lst-langchain_milvus_embedding_search-14"></a>    connection_args <span class="op">=</span>{<span class="st">"host"</span>: <span class="st">"127.0.0.1"</span>, <span class="st">"port"</span>: <span class="st">"8081"</span>},</span>
+<span id="lst-langchain_milvus_embedding_search-15"><a href="#lst-langchain_milvus_embedding_search-15"></a>)</span>
+<span id="lst-langchain_milvus_embedding_search-16"><a href="#lst-langchain_milvus_embedding_search-16"></a></span>
+<span id="lst-langchain_milvus_embedding_search-17"><a href="#lst-langchain_milvus_embedding_search-17"></a>query <span class="op">=</span> <span class="st">"什么是 RD曲线？"</span></span>
+<span id="lst-langchain_milvus_embedding_search-18"><a href="#lst-langchain_milvus_embedding_search-18"></a>docs <span class="op">=</span> vector_db.similarity_search(query)</span>
+<span id="lst-langchain_milvus_embedding_search-19"><a href="#lst-langchain_milvus_embedding_search-19"></a><span class="bu">print</span>(docs)</span>
+<span id="lst-langchain_milvus_embedding_search-20"><a href="#lst-langchain_milvus_embedding_search-20"></a></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+警告
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>因为千帆向量化的 API 有 QPS 限制，因此，在使用千帆进行 embedding 时尽量控制一下 QPS。</p>
+</div>
+</div>
+</section>
+<section id="retrivers" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="retrivers"><span class="header-section-number">7.5</span> Retrivers</h2>
+<p>检索是 LangChain 花费精力最大的环节，LangChain 提供了<a href="https://python.langchain.com/docs/integrations/retrievers">许多不同的检索算法</a>，LangChain 不但支持简单的语义检索，而且还增加了很多算法以提高语义检索的性能。</p>
+<p>一旦我们准备好了相关的数据，并且将这些数据存储到向量数据库（例如 Milvus），我们就可以配置一个 <code>chain</code>，并在 <code>提示词</code> 中包含这些相关数据，以便 LLM 在回答我们的问题时可以利用这些数据作为参考。</p>
+<p>对于参考外部数据源的 QA 而言，LangChain 提供了 4 种 <code>chain</code>：<strong>stuff</strong>，<strong>map_reduce</strong>，<strong>refine</strong>，<strong>map_rerank</strong>。<code>stuff chain</code> 把文档作为整体包含到 <code>提示词</code> 中，这只适用于小型文档。由于大多数 LLM 对 <code>提示次</code> 可以包含的 token 最大数量存在限制，因此建议使用其他三种类型的 <code>chain</code>。对于非 <code>stuff chain</code>，LangChain 将输入文档分割成更小的部分，并以不同的方式将它们提供给 LLM。这 4 种 <code>chain</code> 的具体信息和区别可以参见：<a href="https://python.langchain.com/docs/modules/chains/document">docs/modules/chains/document</a>。</p>
+<p>我们利用 <code>QAWithSourcesChain</code> 对 <a href="#lst-langchain_milvus_embedding_search">列表&nbsp;<span>7.10</span></a> 进行优化，以实现一个完整的利用外部数据源的 <strong>Retrival Augment Generation</strong>（需要配合 <a href="#lst-langchain_milvus_embedding">列表&nbsp;<span>7.9</span></a>）。</p>
+<div id="lst-langchain_rag_demo" class="listing">
+<p>列表&nbsp;7.11: 基于 LangChain 和 Milvus 的 RAG</p>
+<div class="sourceCode" id="lst-langchain_rag_demo" data-lst-cap="基于 LangChain 和 Milvus 的 RAG"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-langchain_rag_demo-1"><a href="#lst-langchain_rag_demo-1"></a><span class="co">#encoding: utf-8</span></span>
+<span id="lst-langchain_rag_demo-2"><a href="#lst-langchain_rag_demo-2"></a></span>
+<span id="lst-langchain_rag_demo-3"><a href="#lst-langchain_rag_demo-3"></a><span class="co">"""</span></span>
+<span id="lst-langchain_rag_demo-4"><a href="#lst-langchain_rag_demo-4"></a><span class="co">@discribe: example for RAG </span></span>
+<span id="lst-langchain_rag_demo-5"><a href="#lst-langchain_rag_demo-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-langchain_rag_demo-6"><a href="#lst-langchain_rag_demo-6"></a><span class="co">"""</span></span>
+<span id="lst-langchain_rag_demo-7"><a href="#lst-langchain_rag_demo-7"></a></span>
+<span id="lst-langchain_rag_demo-8"><a href="#lst-langchain_rag_demo-8"></a><span class="im">from</span> langchain.chains.qa_with_sources <span class="im">import</span> load_qa_with_sources_chain</span>
+<span id="lst-langchain_rag_demo-9"><a href="#lst-langchain_rag_demo-9"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
+<span id="lst-langchain_rag_demo-10"><a href="#lst-langchain_rag_demo-10"></a><span class="im">from</span> langchain.embeddings <span class="im">import</span> QianfanEmbeddingsEndpoint</span>
+<span id="lst-langchain_rag_demo-11"><a href="#lst-langchain_rag_demo-11"></a><span class="im">from</span> langchain.vectorstores <span class="im">import</span> Milvus</span>
+<span id="lst-langchain_rag_demo-12"><a href="#lst-langchain_rag_demo-12"></a></span>
+<span id="lst-langchain_rag_demo-13"><a href="#lst-langchain_rag_demo-13"></a>llm <span class="op">=</span> ErnieBotChat()</span>
+<span id="lst-langchain_rag_demo-14"><a href="#lst-langchain_rag_demo-14"></a>chain <span class="op">=</span> load_qa_with_sources_chain(llm<span class="op">=</span>llm, chain_type<span class="op">=</span><span class="st">"refine"</span>, return_intermediate_steps<span class="op">=</span><span class="va">True</span>)</span>
+<span id="lst-langchain_rag_demo-15"><a href="#lst-langchain_rag_demo-15"></a></span>
+<span id="lst-langchain_rag_demo-16"><a href="#lst-langchain_rag_demo-16"></a>query <span class="op">=</span> <span class="st">"什么是度知了?"</span></span>
+<span id="lst-langchain_rag_demo-17"><a href="#lst-langchain_rag_demo-17"></a>vector_db <span class="op">=</span> Milvus.from_documents(</span>
+<span id="lst-langchain_rag_demo-18"><a href="#lst-langchain_rag_demo-18"></a>    [],</span>
+<span id="lst-langchain_rag_demo-19"><a href="#lst-langchain_rag_demo-19"></a>    QianfanEmbeddingsEndpoint(),</span>
+<span id="lst-langchain_rag_demo-20"><a href="#lst-langchain_rag_demo-20"></a>    connection_args <span class="op">=</span>{<span class="st">"host"</span>: <span class="st">"127.0.0.1"</span>, <span class="st">"port"</span>: <span class="st">"8081"</span>},</span>
+<span id="lst-langchain_rag_demo-21"><a href="#lst-langchain_rag_demo-21"></a>)</span>
+<span id="lst-langchain_rag_demo-22"><a href="#lst-langchain_rag_demo-22"></a></span>
+<span id="lst-langchain_rag_demo-23"><a href="#lst-langchain_rag_demo-23"></a>docs <span class="op">=</span> vector_db.similarity_search(query)</span>
+<span id="lst-langchain_rag_demo-24"><a href="#lst-langchain_rag_demo-24"></a><span class="bu">print</span>(<span class="bu">len</span>(docs))</span>
+<span id="lst-langchain_rag_demo-25"><a href="#lst-langchain_rag_demo-25"></a></span>
+<span id="lst-langchain_rag_demo-26"><a href="#lst-langchain_rag_demo-26"></a>res <span class="op">=</span> chain({<span class="st">"input_documents"</span>: docs, <span class="st">"question"</span>: query}, return_only_outputs<span class="op">=</span><span class="va">True</span>)</span>
+<span id="lst-langchain_rag_demo-27"><a href="#lst-langchain_rag_demo-27"></a><span class="bu">print</span>(res)</span>
+<span id="lst-langchain_rag_demo-28"><a href="#lst-langchain_rag_demo-28"></a></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="#lst-langchain_rag_demo">列表&nbsp;<span>7.11</span></a> 的运行结果如下，结果包括 <code>intermediate_steps</code> 和 <code>output_text</code>：</p>
+<ul>
+<li><code>intermediate_steps</code> 表示搜索过程中所指的文档</li>
+<li><code>output_text</code> 表示是问题的最终答案</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>{<span class="st">'intermediate_steps'</span><span class="op">:</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">'根据提供的上下文信息，回答问题：</span><span class="sc">\n\n</span><span class="st">「度知了」是一个在线问答平台，使用指南是由作者严丽编写的。该平台供了一个问答系统，用户可以在其中提出问题和获取答案。「度知了」的目的是帮助用户更好地理解和掌握知识，并提供了一个方便的途径来获取所需的信息。'</span><span class="op">,</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">'根据提供的上下文信息，「度知了」是一个在线问答平台，使用指南是由作者严丽编写的。该平台提供了一个问答系统，用户可以在其中提出问题和获取答案。「度知了」的目的是帮助用户更好地理解和掌握知识，并提供了一个方便的途径来获取所需的信息。度知了基于ITU标准，依托自研的10+项专利技术，在不断实践的基础之上而形成的一款支持多端（PC，Android，iOS）评测的视频画质评测服务。</span><span class="sc">\n\n</span><span class="st">因此，「度知了」是一个在线问答平台，提供视频画质评测服务。'</span><span class="op">,</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">'根据提供的上下文信息，「度知了」是一个在线问答平台，提供视频画质评测服务。它基于ITU标准，依托自研的10+项专利技术，支持多端（PC，Android，iOS）评测。该平台旨在帮助用户更好地理解和掌握知识，并提供了一个方便的途径来获取所需的信息。「度知了」已上架各大商店应用市场，安卓端可通过华为应用商店、百度手机助手、小米应用商店、oppo应用商店、vivo应用商店直接搜索「度知了」进行安装。在APP端，用户可以通过快捷创建创建一个评测任务。'</span><span class="op">,</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Based on the new context, the existing answer is still accurate. The 'duzhiliao' in the original answer refers to the online platform 'Du Zhili', which provides video quality evaluation services. It is a multi-platform application (PC, Android, iOS) that uses 10+ self-developed patent technologies based on ITU standards to help users better understand and master knowledge, and provide a convenient way to obtain needed information. The platform has been uploaded to various store application markets, and users can install it through search for 'Du Zhili' on Huawei App Store, Baidu App Store, Xiaomi App Store, OPPO App Store, Vivo App Store. In the app, users can quickly create a review task."</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'output_text'</span><span class="op">:</span> <span class="st">"Based on the new context, the existing answer is still accurate. The 'duzhiliao' in the original answer refers to the online platform 'Du Zhili', which provides video quality evaluation services. It is a multi-platform application (PC, Android, iOS) that uses 10+ self-developed patent technologies based on ITU standards to help users better understand and master knowledge, and provide a convenient way to obtain needed information. The platform has been uploaded to various store application markets, and users can install it through search for 'Du Zhili' on Huawei App Store, Baidu App Store, Xiaomi App Store, OPPO App Store, Vivo App Store. In the app, users can quickly create a review task."</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>为了显示 RAG 的优点，我们可以利用 <a href="langchain_intro.html#lst-chain_example">列表&nbsp;<span>5.9</span></a> 所示的代码向 LLM 问同样的问题：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span>  chain.run(name<span class="op">=</span><span class="st">"小明"</span>, user_input<span class="op">=</span><span class="st">"什么是度知了?"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ['度知了是一款智能问答产品，它能够理解并回答问题，提供信息和建议，主要应用在搜索、智能问答、智能语音交互等领域。\n\n度知了运用了文心大模型的能力，涵盖了海量数据，可以更好地理解和回答各种各样的问题。文心大模型是中国的一个大规模语言模型，它可以用于各种自然语言处理任务，包括文本分类、问答、文本摘要等。']</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="retrievalqa" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="retrievalqa"><span class="header-section-number">7.6</span> RetrievalQA</h2>
+<p>使用 RetrievalQA 也可以实现 <a href="#lst-langchain_rag_demo">列表&nbsp;<span>7.11</span></a> 同样的功能，并且代码整体会更简洁。</p>
+<div id="lst-langchain_rag_retrievalQA" class="listing">
+<p>列表&nbsp;7.12: 基于 RetrievalQA 和 Milvus 的 RAG</p>
+<div class="sourceCode" id="lst-langchain_rag_retrievalQA" data-lst-cap="基于 RetrievalQA 和 Milvus 的 RAG"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="lst-langchain_rag_retrievalQA-1"><a href="#lst-langchain_rag_retrievalQA-1"></a><span class="co">#encoding: utf-8</span></span>
+<span id="lst-langchain_rag_retrievalQA-2"><a href="#lst-langchain_rag_retrievalQA-2"></a></span>
+<span id="lst-langchain_rag_retrievalQA-3"><a href="#lst-langchain_rag_retrievalQA-3"></a><span class="co">"""</span></span>
+<span id="lst-langchain_rag_retrievalQA-4"><a href="#lst-langchain_rag_retrievalQA-4"></a><span class="co">@discribe: example for RetrivalQA.</span></span>
+<span id="lst-langchain_rag_retrievalQA-5"><a href="#lst-langchain_rag_retrievalQA-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-langchain_rag_retrievalQA-6"><a href="#lst-langchain_rag_retrievalQA-6"></a><span class="co">"""</span></span>
+<span id="lst-langchain_rag_retrievalQA-7"><a href="#lst-langchain_rag_retrievalQA-7"></a></span>
+<span id="lst-langchain_rag_retrievalQA-8"><a href="#lst-langchain_rag_retrievalQA-8"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
+<span id="lst-langchain_rag_retrievalQA-9"><a href="#lst-langchain_rag_retrievalQA-9"></a><span class="im">from</span> langchain.embeddings <span class="im">import</span> QianfanEmbeddingsEndpoint</span>
+<span id="lst-langchain_rag_retrievalQA-10"><a href="#lst-langchain_rag_retrievalQA-10"></a><span class="im">from</span> langchain.vectorstores <span class="im">import</span> Milvus</span>
+<span id="lst-langchain_rag_retrievalQA-11"><a href="#lst-langchain_rag_retrievalQA-11"></a><span class="im">from</span> langchain.chains <span class="im">import</span> RetrievalQA</span>
+<span id="lst-langchain_rag_retrievalQA-12"><a href="#lst-langchain_rag_retrievalQA-12"></a><span class="im">from</span> langchain.vectorstores.base <span class="im">import</span> VectorStoreRetriever</span>
+<span id="lst-langchain_rag_retrievalQA-13"><a href="#lst-langchain_rag_retrievalQA-13"></a><span class="im">from</span> retrieval_prompt <span class="im">import</span> PROMPT_SELECTOR</span>
+<span id="lst-langchain_rag_retrievalQA-14"><a href="#lst-langchain_rag_retrievalQA-14"></a></span>
+<span id="lst-langchain_rag_retrievalQA-15"><a href="#lst-langchain_rag_retrievalQA-15"></a>retriever <span class="op">=</span> VectorStoreRetriever(vectorstore<span class="op">=</span>Milvus(embedding_function<span class="op">=</span>QianfanEmbeddingsEndpoint(),</span>
+<a class="code-annotation-anchor" data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-langchain_rag_retrievalQA-16" class="code-annotation-target"><a href="#lst-langchain_rag_retrievalQA-16"></a>                                                    connection_args<span class="op">=</span>{<span class="st">"host"</span>: <span class="st">"127.0.0.1"</span>, <span class="st">"port"</span>: <span class="st">"8081"</span>}))</span>
+<span id="lst-langchain_rag_retrievalQA-17"><a href="#lst-langchain_rag_retrievalQA-17"></a></span>
+<span id="lst-langchain_rag_retrievalQA-18"><a href="#lst-langchain_rag_retrievalQA-18"></a>llm <span class="op">=</span> ErnieBotChat()</span>
+<a class="code-annotation-anchor" data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="lst-langchain_rag_retrievalQA-19" class="code-annotation-target"><a href="#lst-langchain_rag_retrievalQA-19"></a>prompt <span class="op">=</span> PROMPT_SELECTOR.get_prompt(llm)</span>
+<a class="code-annotation-anchor" data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="lst-langchain_rag_retrievalQA-20" class="code-annotation-target"><a href="#lst-langchain_rag_retrievalQA-20"></a>retrievalQA <span class="op">=</span> RetrievalQA.from_llm(llm<span class="op">=</span>llm, prompt<span class="op">=</span>prompt, retriever<span class="op">=</span>retriever)</span>
+<span id="lst-langchain_rag_retrievalQA-21"><a href="#lst-langchain_rag_retrievalQA-21"></a></span>
+<span id="lst-langchain_rag_retrievalQA-22"><a href="#lst-langchain_rag_retrievalQA-22"></a>query <span class="op">=</span> <span class="st">"什么是度知了?"</span></span>
+<span id="lst-langchain_rag_retrievalQA-23"><a href="#lst-langchain_rag_retrievalQA-23"></a></span>
+<a class="code-annotation-anchor" data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="lst-langchain_rag_retrievalQA-24" class="code-annotation-target"><a href="#lst-langchain_rag_retrievalQA-24"></a>res <span class="op">=</span> retrievalQA.run(query)</span>
+<span id="lst-langchain_rag_retrievalQA-25"><a href="#lst-langchain_rag_retrievalQA-25"></a><span class="bu">print</span>(res)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-lines="16" data-code-annotation="1" data-code-cell="lst-langchain_rag_retrievalQA">使用 Milvus 初始化向量检索器</span>
+</dd>
+<dt data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-lines="19" data-code-annotation="2" data-code-cell="lst-langchain_rag_retrievalQA">因为文心对 MessageList 的限制，所以此处要重写 Prompt，否则执行时会报 Message 类型错误。具体提示词的修改可以参考：<a href="#lst-langchain_rag_retrievalQA_prompt">列表&nbsp;<span>7.13</span></a>。</span>
+</dd>
+<dt data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-lines="20" data-code-annotation="3" data-code-cell="lst-langchain_rag_retrievalQA">使用向量检索器初始化 RetrievalQA 实例</span>
+</dd>
+<dt data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-lines="24" data-code-annotation="4" data-code-cell="lst-langchain_rag_retrievalQA">执行 RAG 检索并提炼最终结果</span>
+</dd>
+</dl>
+<div id="lst-langchain_rag_retrievalQA_prompt" class="listing">
+<p>列表&nbsp;7.13: RetrievalQA 的提示词</p>
+<div class="sourceCode" id="lst-langchain_rag_retrievalQA_prompt" data-lst-cap="RetrievalQA 的提示词"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="lst-langchain_rag_retrievalQA_prompt-1"><a href="#lst-langchain_rag_retrievalQA_prompt-1"></a><span class="co"># flake8: noqa</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-2"><a href="#lst-langchain_rag_retrievalQA_prompt-2"></a></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-3"><a href="#lst-langchain_rag_retrievalQA_prompt-3"></a><span class="co">"""</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-4"><a href="#lst-langchain_rag_retrievalQA_prompt-4"></a><span class="co">@discribe: prompt for test_retrievalQA.py.</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-5"><a href="#lst-langchain_rag_retrievalQA_prompt-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-6"><a href="#lst-langchain_rag_retrievalQA_prompt-6"></a><span class="co">"""</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-7"><a href="#lst-langchain_rag_retrievalQA_prompt-7"></a></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-8"><a href="#lst-langchain_rag_retrievalQA_prompt-8"></a><span class="im">from</span> langchain.chains.prompt_selector <span class="im">import</span> ConditionalPromptSelector, is_chat_model</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-9"><a href="#lst-langchain_rag_retrievalQA_prompt-9"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> PromptTemplate</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-10"><a href="#lst-langchain_rag_retrievalQA_prompt-10"></a><span class="im">from</span> langchain.prompts.chat <span class="im">import</span> (</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-11"><a href="#lst-langchain_rag_retrievalQA_prompt-11"></a>    ChatPromptTemplate,</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-12"><a href="#lst-langchain_rag_retrievalQA_prompt-12"></a>    HumanMessagePromptTemplate,</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-13"><a href="#lst-langchain_rag_retrievalQA_prompt-13"></a>    AIMessagePromptTemplate,</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-14"><a href="#lst-langchain_rag_retrievalQA_prompt-14"></a>)</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-15"><a href="#lst-langchain_rag_retrievalQA_prompt-15"></a></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-16"><a href="#lst-langchain_rag_retrievalQA_prompt-16"></a>prompt_template <span class="op">=</span> <span class="st">"""Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-17"><a href="#lst-langchain_rag_retrievalQA_prompt-17"></a></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-18"><a href="#lst-langchain_rag_retrievalQA_prompt-18"></a><span class="sc">{context}</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-19"><a href="#lst-langchain_rag_retrievalQA_prompt-19"></a></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-20"><a href="#lst-langchain_rag_retrievalQA_prompt-20"></a><span class="st">Question: </span><span class="sc">{question}</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-21"><a href="#lst-langchain_rag_retrievalQA_prompt-21"></a><span class="st">Helpful Answer:"""</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-22"><a href="#lst-langchain_rag_retrievalQA_prompt-22"></a>PROMPT <span class="op">=</span> PromptTemplate(</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-23"><a href="#lst-langchain_rag_retrievalQA_prompt-23"></a>    template<span class="op">=</span>prompt_template, input_variables<span class="op">=</span>[<span class="st">"context"</span>, <span class="st">"question"</span>]</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-24"><a href="#lst-langchain_rag_retrievalQA_prompt-24"></a>)</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-25"><a href="#lst-langchain_rag_retrievalQA_prompt-25"></a></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-26"><a href="#lst-langchain_rag_retrievalQA_prompt-26"></a>system_template <span class="op">=</span> <span class="st">"""Use the following pieces of context to answer the users question. </span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-27"><a href="#lst-langchain_rag_retrievalQA_prompt-27"></a><span class="st">If you don't know the answer, just say that you don't know, don't try to make up an answer.</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-28"><a href="#lst-langchain_rag_retrievalQA_prompt-28"></a><span class="st">----------------</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-29"><a href="#lst-langchain_rag_retrievalQA_prompt-29"></a><span class="sc">{context}</span><span class="st">"""</span></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-30"><a href="#lst-langchain_rag_retrievalQA_prompt-30"></a>messages <span class="op">=</span> [</span>
+<a class="code-annotation-anchor" data-target-cell="lst-langchain_rag_retrievalQA_prompt" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-langchain_rag_retrievalQA_prompt-31" class="code-annotation-target"><a href="#lst-langchain_rag_retrievalQA_prompt-31"></a>    HumanMessagePromptTemplate.from_template(system_template),</span>
+<a class="code-annotation-anchor" data-target-cell="lst-langchain_rag_retrievalQA_prompt" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="lst-langchain_rag_retrievalQA_prompt-32" class="code-annotation-target"><a href="#lst-langchain_rag_retrievalQA_prompt-32"></a>    AIMessagePromptTemplate.from_template(<span class="st">"OK!"</span>),</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-33"><a href="#lst-langchain_rag_retrievalQA_prompt-33"></a>    HumanMessagePromptTemplate.from_template(<span class="st">"</span><span class="sc">{question}</span><span class="st">"</span>),</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-34"><a href="#lst-langchain_rag_retrievalQA_prompt-34"></a>]</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-35"><a href="#lst-langchain_rag_retrievalQA_prompt-35"></a>CHAT_PROMPT <span class="op">=</span> ChatPromptTemplate.from_messages(messages)</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-36"><a href="#lst-langchain_rag_retrievalQA_prompt-36"></a></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-37"><a href="#lst-langchain_rag_retrievalQA_prompt-37"></a></span>
+<span id="lst-langchain_rag_retrievalQA_prompt-38"><a href="#lst-langchain_rag_retrievalQA_prompt-38"></a>PROMPT_SELECTOR <span class="op">=</span> ConditionalPromptSelector(</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-39"><a href="#lst-langchain_rag_retrievalQA_prompt-39"></a>    default_prompt<span class="op">=</span>PROMPT, conditionals<span class="op">=</span>[(is_chat_model, CHAT_PROMPT)]</span>
+<span id="lst-langchain_rag_retrievalQA_prompt-40"><a href="#lst-langchain_rag_retrievalQA_prompt-40"></a>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="lst-langchain_rag_retrievalQA_prompt" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-lines="31" data-code-annotation="1" data-code-cell="lst-langchain_rag_retrievalQA_prompt">修改 <code>SystemMessagePromptTemplate</code> 为 <code>HumanMessagePromptTemplate</code>。</span>
+</dd>
+<dt data-target-cell="lst-langchain_rag_retrievalQA_prompt" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-lines="32" data-code-annotation="2" data-code-cell="lst-langchain_rag_retrievalQA_prompt">增加一条 <code>AIMessagePromptTemplate</code> 消息。</span>
+</dd>
+</dl>
+<p><a href="#lst-langchain_rag_retrievalQA">列表&nbsp;<span>7.12</span></a> 的运行结果如下所示：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">度知了是一款视频画质评测服务，基于ITU标准，依托自研的10+项专利技术，支持多端（PC、Android、iOS）评测，提供画质评测工具。</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./langchain_serialization.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">LangChain 序列化</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./langchain_function_call.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">LangChain 函数调用</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
