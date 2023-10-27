@@ -342,7 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./install_langchain.html" class="sidebar-item-text sidebar-link">
+  <a href="./langchain_install.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">LangChain 安装指南</span></span></a>
   </div>
 </li>
@@ -624,6 +624,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><code>Milvus.from_documents</code> 会创建一个名为 <code>LangChainCollection</code> 的 <code>Collection</code>。可以使用 milvus_cli 工具来查看该 <code>Collection</code> 的信息，也可以使用 Milvus 提供的 http 端口来查看相关信息：</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>http://127.0.0.1:8081/v1/vector/collections/describe?collectionName=LangChainCollection</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled" title="修改 Collection 名称">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+修改 Collection 名称
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>为了方便使用，可以使用 <code>collection_name</code> 参数以实现将不同的专有数据源存储在不同的 Collection。</p>
+<div class="sourceCode" id="annotated-cell-1"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-1-1"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a>vector_db <span class="op">=</span> Milvus.from_documents(</span>
+<span id="annotated-cell-1-2"><a href="#annotated-cell-1-2" aria-hidden="true" tabindex="-1"></a>    texts,</span>
+<span id="annotated-cell-1-3"><a href="#annotated-cell-1-3" aria-hidden="true" tabindex="-1"></a>    QianfanEmbeddingsEndpoint(),</span>
+<span id="annotated-cell-1-4"><a href="#annotated-cell-1-4" aria-hidden="true" tabindex="-1"></a>    connection_args<span class="op">=</span>{<span class="st">"host"</span>: <span class="st">"127.0.0.1"</span>, <span class="st">"port"</span>: <span class="st">"8081"</span>},</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-1-5" class="code-annotation-target"><a href="#annotated-cell-1-5" aria-hidden="true" tabindex="-1"></a>    collection_name<span class="op">=</span><span class="st">"test"</span>,</span>
+<span id="annotated-cell-1-6"><a href="#annotated-cell-1-6" aria-hidden="true" tabindex="-1"></a>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-1" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-lines="5" data-code-cell="annotated-cell-1">设置数据存储的 Collection，类似于在关系数据库中，将数据存储在不同的表中。</span>
+</dd>
+</dl>
+</div>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -826,19 +851,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <dl class="code-annotation-container-grid">
 <dt data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-lines="16" data-code-cell="lst-langchain_rag_retrievalQA" data-code-annotation="1">使用 Milvus 初始化向量检索器</span>
+<span data-code-annotation="1" data-code-lines="16" data-code-cell="lst-langchain_rag_retrievalQA">使用 Milvus 初始化向量检索器</span>
 </dd>
 <dt data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-lines="19" data-code-cell="lst-langchain_rag_retrievalQA" data-code-annotation="2">因为文心对 MessageList 的限制，所以此处要重写 Prompt，否则执行时会报 Message 类型错误。具体提示词的修改可以参考：<a href="#lst-langchain_rag_retrievalQA_prompt">列表&nbsp;<span>7.13</span></a>。</span>
+<span data-code-annotation="2" data-code-lines="19" data-code-cell="lst-langchain_rag_retrievalQA">因为文心对 MessageList 的限制，所以此处要重写 Prompt，否则执行时会报 Message 类型错误。具体提示词的修改可以参考：<a href="#lst-langchain_rag_retrievalQA_prompt">列表&nbsp;<span>7.13</span></a>。</span>
 </dd>
 <dt data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-lines="20" data-code-cell="lst-langchain_rag_retrievalQA" data-code-annotation="3">使用向量检索器初始化 RetrievalQA 实例</span>
+<span data-code-annotation="3" data-code-lines="20" data-code-cell="lst-langchain_rag_retrievalQA">使用向量检索器初始化 RetrievalQA 实例</span>
 </dd>
 <dt data-target-cell="lst-langchain_rag_retrievalQA" data-target-annotation="4">4</dt>
 <dd>
-<span data-code-lines="24" data-code-cell="lst-langchain_rag_retrievalQA" data-code-annotation="4">执行 RAG 检索并提炼最终结果</span>
+<span data-code-annotation="4" data-code-lines="24" data-code-cell="lst-langchain_rag_retrievalQA">执行 RAG 检索并提炼最终结果</span>
 </dd>
 </dl>
 <div id="lst-langchain_rag_retrievalQA_prompt" class="listing">
@@ -887,11 +912,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <dl class="code-annotation-container-grid">
 <dt data-target-cell="lst-langchain_rag_retrievalQA_prompt" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-lines="31" data-code-cell="lst-langchain_rag_retrievalQA_prompt" data-code-annotation="1">修改 <code>SystemMessagePromptTemplate</code> 为 <code>HumanMessagePromptTemplate</code>。</span>
+<span data-code-annotation="1" data-code-lines="31" data-code-cell="lst-langchain_rag_retrievalQA_prompt">修改 <code>SystemMessagePromptTemplate</code> 为 <code>HumanMessagePromptTemplate</code>。</span>
 </dd>
 <dt data-target-cell="lst-langchain_rag_retrievalQA_prompt" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-lines="32" data-code-cell="lst-langchain_rag_retrievalQA_prompt" data-code-annotation="2">增加一条 <code>AIMessagePromptTemplate</code> 消息。</span>
+<span data-code-annotation="2" data-code-lines="32" data-code-cell="lst-langchain_rag_retrievalQA_prompt">增加一条 <code>AIMessagePromptTemplate</code> 消息。</span>
 </dd>
 </dl>
 <p><a href="#lst-langchain_rag_retrievalQA">列表&nbsp;<span>7.12</span></a> 的运行结果如下所示：</p>
