@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Large Language Model in Action - 5&nbsp; Retrieval Augmented Generation</title>
+<title>Large Language Model in Action - 3&nbsp; 提示词工程</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,26 +20,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -49,8 +30,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./agent_intro.html" rel="next">
-<link href="./hallucination.html" rel="prev">
+<link href="./hallucination.html" rel="next">
+<link href="./embedding.html" rel="prev">
 <link href="./favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -82,12 +63,10 @@ div.csl-indent {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="Large Language Model in Action - 5&nbsp; Retrieval Augmented Generation">
+<meta property="og:title" content="Large Language Model in Action - 3&nbsp; 提示词工程">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/RATG_overview.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/bd2023.jpg">
 <meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
@@ -147,7 +126,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tokens.html">LLM 基本概念</a></li><li class="breadcrumb-item"><a href="./RAG_intro.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Retrieval Augmented Generation</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tokens.html">LLM 基本概念</a></li><li class="breadcrumb-item"><a href="./prompt_engineer.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">提示词工程</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -202,7 +181,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./prompt_engineer.html" class="sidebar-item-text sidebar-link">
+  <a href="./prompt_engineer.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">提示词工程</span></span></a>
   </div>
 </li>
@@ -214,7 +193,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./RAG_intro.html" class="sidebar-item-text sidebar-link active">
+  <a href="./RAG_intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Retrieval Augmented Generation</span></span></a>
   </div>
 </li>
@@ -368,25 +347,18 @@ div.csl-indent {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#rag-基本概念" id="toc-rag-基本概念" class="nav-link active" data-scroll-target="#rag-基本概念"><span class="header-section-number">5.1</span> RAG 基本概念</a>
-  <ul class="collapse">
-  <li><a href="#rag-的表示方法" id="toc-rag-的表示方法" class="nav-link" data-scroll-target="#rag-的表示方法"><span class="header-section-number">5.1.1</span> RAG 的表示方法</a></li>
-  <li><a href="#retrieval-source-类型" id="toc-retrieval-source-类型" class="nav-link" data-scroll-target="#retrieval-source-类型"><span class="header-section-number">5.1.2</span> Retrieval Source 类型</a></li>
-  <li><a href="#retrieval-metrics-类型" id="toc-retrieval-metrics-类型" class="nav-link" data-scroll-target="#retrieval-metrics-类型"><span class="header-section-number">5.1.3</span> Retrieval Metrics 类型</a></li>
-  <li><a href="#integration-method-类型" id="toc-integration-method-类型" class="nav-link" data-scroll-target="#integration-method-类型"><span class="header-section-number">5.1.4</span> Integration Method 类型</a></li>
-  </ul></li>
-  <li><a href="#为什么要使用-rag" id="toc-为什么要使用-rag" class="nav-link" data-scroll-target="#为什么要使用-rag"><span class="header-section-number">5.2</span> 为什么要使用 RAG</a></li>
-  <li><a href="#更多内容" id="toc-更多内容" class="nav-link" data-scroll-target="#更多内容"><span class="header-section-number">5.3</span> 更多内容</a></li>
-  <li><a href="#参考文献" id="toc-参考文献" class="nav-link" data-scroll-target="#参考文献"><span class="header-section-number">5.4</span> 参考文献</a></li>
+  <li><a href="#什么是提示词" id="toc-什么是提示词" class="nav-link active" data-scroll-target="#什么是提示词"><span class="header-section-number">3.1</span> 什么是提示词</a></li>
+  <li><a href="#什么是提示词工程" id="toc-什么是提示词工程" class="nav-link" data-scroll-target="#什么是提示词工程"><span class="header-section-number">3.2</span> 什么是提示词工程</a></li>
+  <li><a href="#一种新的职业" id="toc-一种新的职业" class="nav-link" data-scroll-target="#一种新的职业"><span class="header-section-number">3.3</span> 一种新的职业</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/RAG_intro.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/prompt_engineer.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-RAG" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Retrieval Augmented Generation</span></span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">提示词工程</span></h1>
 </div>
 
 
@@ -401,107 +373,100 @@ div.csl-indent {
 
 </header>
 
-<div class="callout callout-style-default callout-tip callout-titled">
+<p>在和 LLM 的交互中，<code>提示词</code> 发挥着至关重要的作用，<code>提示词</code> 是我们和 LLM 沟通的桥梁。</p>
+<section id="什么是提示词" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="什么是提示词"><span class="header-section-number">3.1</span> 什么是提示词</h2>
+<p>在 NLP 领域，<code>提示</code> 是一种用于引导预训练语言模型解决特定任务的方法。<code>提示</code> 通常是一段文本，用于构建问题或任务的描述，以便预训练语言模型可以根据其内在知识生成合适的输出。</p>
+<p>如果大语言模型是一个 5 岁的小孩，那么他基本上可以做非常多的事情了，关键是我们如何与一个 5 岁的小孩进行良好的沟通，以让他可以完成我们期望的任务？其中的关键就是 <code>提示词</code>。你是否还能记起你和孩子在一起的很多互动场景：</p>
+<ul>
+<li>出门的场景
+<ul>
+<li>快点，要迟到嘞，别磨蹭了</li>
+<li>紧急呼叫汪汪队到门口集合</li>
+</ul></li>
+<li>打扫卫生的场景
+<ul>
+<li>帮爸爸收拾一下桌子</li>
+<li>呼叫无敌小帮手，爸爸需要支援</li>
+</ul></li>
+<li>……</li>
+</ul>
+<p>不同的 <code>提示词</code>，既可以让孩子帮我们完成工作，又可以让孩子在这个过程中得到成长和锻炼。对于 LLM 而言，也是如此。</p>
+<p>从 <a href="#fig-bd_2023">图&nbsp;<span>3.1</span></a> 也能看出，<code>提示词</code> 的重要性。</p>
+<div id="fig-bd_2023" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/bd2023.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;3.1: 2023年百度世界大会主题</figcaption>
+</figure>
+</div>
+</section>
+<section id="什么是提示词工程" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="什么是提示词工程"><span class="header-section-number">3.2</span> 什么是提示词工程</h2>
+<p>提示工程起源于对预训练模型如何将知识应用于具体任务的探讨。</p>
+<p>预训练语言模型通常在大规模语料库上进行预训练，从而学习到大量的语言知识。然而，将这些知识应用于具体任务时，往往需要对模型进行微调（SFT：Supervised Fine Tuning）。微调过程中，模型需要根据标注的任务数据学习任务相关的知识。</p>
+<p>这种根据专有数据进行微调的方法，在许多情况下取得了很好的效果，但仍然存在一些问题。例如：</p>
+<ul>
+<li>微调过程可能需要大量的标注数据，而这些数据往往难以获得。</li>
+<li>微调后的模型可能会存在过拟合现象，导致模型的泛化能力下降。</li>
+</ul>
+<p>为了解决这些问题，研究人员开始关注如何通过优化输入和问题表述来引导模型产生更好的输出结果，而无须进行昂贵的微调，这种方法被称 <code>提示词工程</code>，如 <a href="#fig-pe_arch">图&nbsp;<span>3.2</span></a> 所示。</p>
+<div id="fig-pe_arch" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/pe_arch.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;3.2: 微调和提示词工程的关系</figcaption>
+</figure>
+</div>
+<p>通过精心设计 <code>提示词</code>，我们可以引导模型关注输入数据中的关键信息，从而提高模型在各种自然语言处理任务上的性能。<code>提示词工程</code> 的核心思想是: <strong>将问题表述为一种容易被模型理解和解答的形式</strong>。可以通过多种方式来实现 <code>提示词工程</code>，例如：重述问题，给出示例或采用渐进式提示等。<code>提示词工程</code> 的关键在于找到一种能够充分发挥模型潜力的问题表述方式。</p>
+<p><code>提示词工程</code> 是一种优化和设计 <code>提示词</code> 的技术，从而可以更好的应用预训练大语言模型，使其可以更好的解决各种任务。</p>
+</section>
+<section id="一种新的职业" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="一种新的职业"><span class="header-section-number">3.3</span> 一种新的职业</h2>
+<p><code>提示词工程</code> 对于任何使用 LLM 的人来说都是一项关键技能。随着越来越多的组织采用 LLM 来实现任务自动化并提高其生产效能，<code>提示词工程</code> 更是一项需求量很大的技能和职业。作为一个新兴的领域，<code>提示词工程</code> 特别需要创造力和对细节的关注。<code>提示词工程</code> 包括但不限于：选择正确的单词、短语、符号和格式，以指导模型生成高质量的、相关的文本。一个好的提示工程师可以通过设计产生所需输出的提示来帮助组织充分利用 LLM。</p>
+<p>如果大家已经使用过文心一言来和文心大模型互动，那么对于 <code>提示词</code> 应该比较熟悉。我们来看一下如下两个 <code>提示词</code> 的结果：</p>
+<div id="fig-wx_pe" class="quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-pe_wx_1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/pe_wx_1.jpg" class="img-fluid figure-img" data-ref-parent="fig-wx_pe"></p>
+<figcaption class="figure-caption">(a) 请给出描述高兴的成语。</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-pe_wx_2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/pe_wx_2.jpg" class="img-fluid figure-img" data-ref-parent="fig-wx_pe"></p>
+<figcaption class="figure-caption">(b) 请给出5个描述高兴的成语，并给出其解释。</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">图&nbsp;3.3: 不同提示词的结果差异</figcaption><p></p>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="扩展资料">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-提示
+扩展资料
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Retrieval Augment Generation: A LLM that uses an external datastore at test time（not at pre-training time）.</p>
-<blockquote class="blockquote">
-<p>在运行时（而非预训练时），使用外部数据的大语言模型称之为基于检索增强的生成式。</p>
-</blockquote>
+<p>更多关于提示词工程的具体实践方法可以参考：Learn Prompting <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 和 Stabel Diffusion 提示词手册 <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
 </div>
 </div>
-<section id="rag-基本概念" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="rag-基本概念"><span class="header-section-number">5.1</span> RAG 基本概念</h2>
-<p>根据 <em>A Survey on Retrieval-Augmented Text Generation</em> <span class="citation" data-cites="RATGSurvey">[<a href="references.html#ref-RATGSurvey" role="doc-biblioref">1</a>]</span> 所述：RAG 是深度学习和传统检索技术（Retrieval Technology）的有机结合，在生成式大模型时代，有着以下优势：</p>
-<ul>
-<li>知识库和模型分离，知识不以参数的形式存储在模型中，而是明文存储在数据库中，灵活性更高；</li>
-<li>文本生成转变为文本总结，生成结果的可信度更高，同时还降低了文本生成的难度；</li>
-</ul>
-<div id="fig-ratg_overview" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/RATG_overview.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;5.1: RATG 综述研究概览</figcaption>
-</figure>
-</div>
-<p>根据 <a href="#fig-ratg_overview">图&nbsp;<span>5.1</span></a>，RAG 范式有三个重要的组成部分：Retrieval Source，Retrieval Metric，Integration Method。</p>
-<section id="rag-的表示方法" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="rag-的表示方法"><span class="header-section-number">5.1.1</span> RAG 的表示方法</h3>
-<p>传统的文本生成方法可以用如下公式表示：</p>
-<p><span id="eq-RATG_1"><span class="math display">\[\boldsymbol{y}=f(\boldsymbol{x}) \tag{5.1}\]</span></span></p>
-<p>其中，<span class="math inline">\(\boldsymbol{x}\)</span> 代表输入的文本（字符串序列），<span class="math inline">\(f\)</span> 表示模型，<span class="math inline">\(\boldsymbol{y}\)</span> 表示模型输出的文本。</p>
-<p>RAG 则可以用如下公式表示：</p>
-<p><span id="eq-RATG_2"><span class="math display">\[\boldsymbol{y}=f(\boldsymbol{x}, \boldsymbol{z}), \boldsymbol{z} = \{(\boldsymbol{x}^\gamma, \boldsymbol{y}^\gamma)\} \tag{5.2}\]</span></span></p>
-<p>其中，<span class="math inline">\(\boldsymbol{x}\)</span> 代表输入的文本（字符串序列），<span class="math inline">\(\boldsymbol{z}\)</span> 代表知识库，<span class="math inline">\(f\)</span> 表示模型，<span class="math inline">\(\boldsymbol{x}^\gamma\)</span> 表示作为输入文本 <span class="math inline">\(\boldsymbol{x}\)</span> 的检索 <em>key</em>，<span class="math inline">\(\boldsymbol{y}^\gamma\)</span> 是与模型输出相关的知识。</p>
-</section>
-<section id="retrieval-source-类型" class="level3" data-number="5.1.2">
-<h3 data-number="5.1.2" class="anchored" data-anchor-id="retrieval-source-类型"><span class="header-section-number">5.1.2</span> Retrieval Source 类型</h3>
-<ul>
-<li><strong>Training Corpus</strong>：有标注的训练数据直接作为外部知识。</li>
-<li><strong>External Data</strong>：支持提供训练数据之外的外部知识作为检索来源，比如于任务相关的领域数据，实现模型的快速适应。</li>
-<li><strong>Unsupervised Data</strong>：前两种知识源都需要一定的人工标注来完善“检索依据-输出”的对齐工作，无监督知识源可以直接支持无标注/对齐的知识作为检索来源。</li>
-</ul>
-</section>
-<section id="retrieval-metrics-类型" class="level3" data-number="5.1.3">
-<h3 data-number="5.1.3" class="anchored" data-anchor-id="retrieval-metrics-类型"><span class="header-section-number">5.1.3</span> Retrieval Metrics 类型</h3>
-<ul>
-<li><strong>Sparse-vector Retrieval</strong>（浅层语义）：针对稀疏向量场景的度量方法，比如TF-IDF, BM25等。</li>
-<li><strong>Dense-vector Retrieval</strong>（深层语义）：针对稠密向量的度量方法，比如文本相似度。</li>
-<li><strong>Task-specific Retrieval</strong>：在通用的度量场景下，度量得分高并不能代表召回知识准确，因此有学者提出基于特定任务优化的召回度量方法，提高度量的准确率。</li>
-</ul>
-</section>
-<section id="integration-method-类型" class="level3" data-number="5.1.4">
-<h3 data-number="5.1.4" class="anchored" data-anchor-id="integration-method-类型"><span class="header-section-number">5.1.4</span> Integration Method 类型</h3>
-<ul>
-<li><strong>Data Augmentation</strong>：直接拼接用户输入文本和知识文本，然后输入文本生成模型。</li>
-<li><strong>Attention Mechanisms</strong>：引入额外的Encoder，对用户输入文本和知识文本进行注意力编码后输入文本生成模型。</li>
-<li><strong>Skeleton Extraction</strong>：前两种方法都是通过文本向量化的隐式方法完成知识重点片段的抽取，Skeleton Extraction方法可以显式地完成类似工作。</li>
-</ul>
-<p>在 RAG 模式下，AI 应用发生了新的范式变化，从传统的 <code>Pre-training</code> + <code>Fine-tune</code> 的模式转换为了 <code>Pre-training</code> + <code>Prompt</code> 模式。这种模式的转变简化了对于不同任务而言模型训练的工作量，降低了 AI 的开发和使用门槛，同时也使得 <code>Retriveval</code> + <code>Generation</code> 成为可能。</p>
-<div id="fig-RAG_arch" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/RAG_arch.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;5.2: RAG 基本架构</figcaption>
-</figure>
-</div>
-</section>
-</section>
-<section id="为什么要使用-rag" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="为什么要使用-rag"><span class="header-section-number">5.2</span> 为什么要使用 RAG</h2>
-<p>仅依靠大模型已经可以完成很多任务，<code>Fine-tune</code> 也可以起到补充领域知识的作用，为什么 RAG 仍然如此重要呢？</p>
-<ul>
-<li><p><strong>幻觉问题</strong>：尽管大模型的参数量很大，但和人类的所有知识相比，仍然有非常大的差距。所以，大模型在生成内容时，很有可能会捏造事实，导致如 <a href="hallucination.html"><span>章节&nbsp;4</span></a> 所述的“幻觉”。因此，对于 LLMs 而言，通过搜索召回相关领域知识来作为特定领域的知识补充是非常必要的。</p></li>
-<li><p><strong>语料更新时效性问题</strong>：大模型的训练数据存在时间截止的问题。尽管可以通过 <code>Fine-tune</code> 来为大模型加入新的知识，但大模型的的训练成本和时间依然是需要面对的严峻难题：通常需要大量的计算资源，时间也难做到天级别更新。在 RAG 模式下，向量数据库和搜索引擎数据的更新都更加容易，这有助于业务数据的实时性。</p></li>
-<li><p><strong>数据泄露问题</strong>：尽管，可以利用 <code>Fine-tune</code> 的方式增强 LLM 在特定领域的处理能力。但是，用于 <code>Fine-tune</code> 的这些领域知识很可能包含个人或者公司的机密信息，且这些数据很可能通过模型而不经意间泄露出去<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。RAG 可以通过增加私有数据存储的方式使得用户的数据更加安全。</p></li>
-</ul>
-</section>
-<section id="更多内容" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="更多内容"><span class="header-section-number">5.3</span> 更多内容</h2>
-<p>更详细、深入的内容可以参考如下几篇文章：<span class="citation" data-cites="RATGSurvey">[<a href="references.html#ref-RATGSurvey" role="doc-biblioref">1</a>]</span>，<span class="citation" data-cites="AugmentedLM">[<a href="references.html#ref-AugmentedLM" role="doc-biblioref">2</a>]</span>。</p>
-</section>
-<section id="参考文献" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="参考文献"><span class="header-section-number">5.4</span> 参考文献</h2>
 
 
-<div id="refs" class="references csl-bib-body" role="list" style="display: none">
-<div id="ref-RATGSurvey" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline">Li, H. 等 2022. <a href="https://arxiv.org/abs/2202.01110">A Survey on Retrieval-Augmented Text Generation</a>. <em>arXiv preprint arXiv:2202.01110</em>. (2022).</div>
-</div>
-<div id="ref-AugmentedLM" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[2] </div><div class="csl-right-inline">Mialon, G. 等 2023. <a href="https://arxiv.org/abs/2302.07842">Augmented Language Models: a Survey</a>. (2023).</div>
-</div>
-</div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p><a href="https://zhuanlan.zhihu.com/p/619432239">ChatGPT致三星半导体机密泄漏</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p><a href="https://learnprompting.org/zh-Hans/docs/intro">Learn Prompting</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://learnprompting.org/zh-Hans/docs/intro">Stabel Diffusion 提示词手册</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -743,13 +708,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./hallucination.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">幻觉</span></span>
+      <a href="./embedding.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Embedding</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./agent_intro.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Agent</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./hallucination.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">幻觉</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

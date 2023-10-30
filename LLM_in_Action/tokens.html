@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Large Language Model in Action - 5&nbsp; Retrieval Augmented Generation</title>
+<title>Large Language Model in Action - 1&nbsp; Tokens</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -49,8 +49,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./agent_intro.html" rel="next">
-<link href="./hallucination.html" rel="prev">
+<link href="./embedding.html" rel="next">
+<link href="./intro.html" rel="prev">
 <link href="./favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -85,9 +85,9 @@ div.csl-indent {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="Large Language Model in Action - 5&nbsp; Retrieval Augmented Generation">
+<meta property="og:title" content="Large Language Model in Action - 1&nbsp; Tokens">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/RATG_overview.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/token_openai_demo_1.jpg">
 <meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
@@ -147,7 +147,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tokens.html">LLM 基本概念</a></li><li class="breadcrumb-item"><a href="./RAG_intro.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Retrieval Augmented Generation</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tokens.html">LLM 基本概念</a></li><li class="breadcrumb-item"><a href="./tokens.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tokens</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -190,7 +190,7 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tokens.html" class="sidebar-item-text sidebar-link">
+  <a href="./tokens.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tokens</span></span></a>
   </div>
 </li>
@@ -214,7 +214,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./RAG_intro.html" class="sidebar-item-text sidebar-link active">
+  <a href="./RAG_intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Retrieval Augmented Generation</span></span></a>
   </div>
 </li>
@@ -368,25 +368,23 @@ div.csl-indent {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#rag-基本概念" id="toc-rag-基本概念" class="nav-link active" data-scroll-target="#rag-基本概念"><span class="header-section-number">5.1</span> RAG 基本概念</a>
+  <li><a href="#tokenizer-工具" id="toc-tokenizer-工具" class="nav-link active" data-scroll-target="#tokenizer-工具"><span class="header-section-number">1.1</span> Tokenizer 工具</a></li>
+  <li><a href="#tokenization-方式" id="toc-tokenization-方式" class="nav-link" data-scroll-target="#tokenization-方式"><span class="header-section-number">1.2</span> Tokenization 方式</a>
   <ul class="collapse">
-  <li><a href="#rag-的表示方法" id="toc-rag-的表示方法" class="nav-link" data-scroll-target="#rag-的表示方法"><span class="header-section-number">5.1.1</span> RAG 的表示方法</a></li>
-  <li><a href="#retrieval-source-类型" id="toc-retrieval-source-类型" class="nav-link" data-scroll-target="#retrieval-source-类型"><span class="header-section-number">5.1.2</span> Retrieval Source 类型</a></li>
-  <li><a href="#retrieval-metrics-类型" id="toc-retrieval-metrics-类型" class="nav-link" data-scroll-target="#retrieval-metrics-类型"><span class="header-section-number">5.1.3</span> Retrieval Metrics 类型</a></li>
-  <li><a href="#integration-method-类型" id="toc-integration-method-类型" class="nav-link" data-scroll-target="#integration-method-类型"><span class="header-section-number">5.1.4</span> Integration Method 类型</a></li>
+  <li><a href="#bpe" id="toc-bpe" class="nav-link" data-scroll-target="#bpe"><span class="header-section-number">1.2.1</span> BPE</a></li>
+  <li><a href="#wordpiece" id="toc-wordpiece" class="nav-link" data-scroll-target="#wordpiece"><span class="header-section-number">1.2.2</span> WordPiece</a></li>
+  <li><a href="#unigram-language-model" id="toc-unigram-language-model" class="nav-link" data-scroll-target="#unigram-language-model"><span class="header-section-number">1.2.3</span> Unigram Language Model</a></li>
   </ul></li>
-  <li><a href="#为什么要使用-rag" id="toc-为什么要使用-rag" class="nav-link" data-scroll-target="#为什么要使用-rag"><span class="header-section-number">5.2</span> 为什么要使用 RAG</a></li>
-  <li><a href="#更多内容" id="toc-更多内容" class="nav-link" data-scroll-target="#更多内容"><span class="header-section-number">5.3</span> 更多内容</a></li>
-  <li><a href="#参考文献" id="toc-参考文献" class="nav-link" data-scroll-target="#参考文献"><span class="header-section-number">5.4</span> 参考文献</a></li>
+  <li><a href="#token-与模型成本之间的关系" id="toc-token-与模型成本之间的关系" class="nav-link" data-scroll-target="#token-与模型成本之间的关系"><span class="header-section-number">1.3</span> Token 与模型成本之间的关系</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/RAG_intro.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/tokens.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-RAG" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Retrieval Augmented Generation</span></span></h1>
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tokens</span></h1>
 </div>
 
 
@@ -401,107 +399,153 @@ div.csl-indent {
 
 </header>
 
-<div class="callout callout-style-default callout-tip callout-titled">
+<p>Tokens（分词） 是 LLM AI 处理文本或代码的基本单位。Tokens 可以是字符（characters）、单词（words）、子单词（subwords）或其他文本段落（segments of text）或代码段落（segments of code），tokens 的具体内容取决于所选的 token 化（tokenization）算法和方法。Tokenization 算法和 tokenizer 是 LLM 的基础组件。</p>
+<p>在 token 化过程中，我们会给 token 分配一个数值 ID 对该 token 进行标记，模型的处理过程中处理的实际上是这些 token 的数值化的 ID 标记。</p>
+<section id="tokenizer-工具" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="tokenizer-工具"><span class="header-section-number">1.1</span> Tokenizer 工具</h2>
+<p>我们可以使用 OpenAI 提供的在线 <a href="https://platform.openai.com/tokenizer">Tokenizer Tool</a> 来加深对 token 的理解和认识。</p>
+<div id="fig-token_openai_1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/token_openai_demo_1.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;1.1: 待 token 化的原始文本</figcaption>
+</figure>
+</div>
+<div id="fig-elephants" class="quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-token_openai_2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/token_openai_demo_2.jpg" class="img-fluid figure-img" data-ref-parent="fig-elephants"></p>
+<figcaption class="figure-caption">(a) token 化结果</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-token_openai_3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/token_openai_demo_3.jpg" class="img-fluid figure-img" data-ref-parent="fig-elephants"></p>
+<figcaption class="figure-caption">(b) 各 token 的 ID</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">图&nbsp;1.2: OpenAI GTP-4 tokenization 结果</figcaption><p></p>
+</figure>
+</div>
+<p>在 OpenAI 中，一个 token 大概约等于 4 个英文字母的长度，换算一下的话，大概约是 <span class="math inline">\(\frac{3}{4}\)</span> 个单词。</p>
+<p>当然，OpenAI 也支持对中文的 tokenization 处理。</p>
+<div id="fig-token_openai_c1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/token_openai_demo_c_1.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;1.3: 待 token 化的中文原始文本</figcaption>
+</figure>
+</div>
+<div id="fig-open_token" class="quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-token_openai_c2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/token_openai_demo_c_2.jpg" class="img-fluid figure-img" data-ref-parent="fig-open_token"></p>
+<figcaption class="figure-caption">(a) 中文 token 化结果</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-token_openai_c3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/token_openai_demo_c_3.jpg" class="img-fluid figure-img" data-ref-parent="fig-open_token"></p>
+<figcaption class="figure-caption">(b) 各中文 token 的 ID</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">图&nbsp;1.4: 利用 OpenAI GTP-4 对中文进行 tokenization 的结果</figcaption><p></p>
+</figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-提示
+警告
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Retrieval Augment Generation: A LLM that uses an external datastore at test time（not at pre-training time）.</p>
-<blockquote class="blockquote">
-<p>在运行时（而非预训练时），使用外部数据的大语言模型称之为基于检索增强的生成式。</p>
-</blockquote>
+<p>在 <a href="#fig-token_openai_c2">图&nbsp;<span>1.4 (a)</span></a> 中，我们会发现有乱码出现，这主要是因为部分中文会包含一个或多个映射到多个 token 的 unicode 字符。在线化工具会以非标准的方式显示每个 token 中的字节。</p>
 </div>
 </div>
-<section id="rag-基本概念" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="rag-基本概念"><span class="header-section-number">5.1</span> RAG 基本概念</h2>
-<p>根据 <em>A Survey on Retrieval-Augmented Text Generation</em> <span class="citation" data-cites="RATGSurvey">[<a href="references.html#ref-RATGSurvey" role="doc-biblioref">1</a>]</span> 所述：RAG 是深度学习和传统检索技术（Retrieval Technology）的有机结合，在生成式大模型时代，有着以下优势：</p>
+<p>从 <a href="#fig-token_openai_c2">图&nbsp;<span>1.4 (a)</span></a> 中，我们也会发现，对中文的 tokenization 有其独特性——并非将每个汉字都处理为一个 token，有时候一个 token 可能是一个词。例如，”北京“ 在 tokenization 之后是一个 token，其 ID 为 70090。</p>
+<p>如果想在代码中使用 OpenAI 的 tokenizer 工具进行 token 化处理，可以使用如下的库：</p>
 <ul>
-<li>知识库和模型分离，知识不以参数的形式存储在模型中，而是明文存储在数据库中，灵活性更高；</li>
-<li>文本生成转变为文本总结，生成结果的可信度更高，同时还降低了文本生成的难度；</li>
-</ul>
-<div id="fig-ratg_overview" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/RATG_overview.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;5.1: RATG 综述研究概览</figcaption>
-</figure>
-</div>
-<p>根据 <a href="#fig-ratg_overview">图&nbsp;<span>5.1</span></a>，RAG 范式有三个重要的组成部分：Retrieval Source，Retrieval Metric，Integration Method。</p>
-<section id="rag-的表示方法" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="rag-的表示方法"><span class="header-section-number">5.1.1</span> RAG 的表示方法</h3>
-<p>传统的文本生成方法可以用如下公式表示：</p>
-<p><span id="eq-RATG_1"><span class="math display">\[\boldsymbol{y}=f(\boldsymbol{x}) \tag{5.1}\]</span></span></p>
-<p>其中，<span class="math inline">\(\boldsymbol{x}\)</span> 代表输入的文本（字符串序列），<span class="math inline">\(f\)</span> 表示模型，<span class="math inline">\(\boldsymbol{y}\)</span> 表示模型输出的文本。</p>
-<p>RAG 则可以用如下公式表示：</p>
-<p><span id="eq-RATG_2"><span class="math display">\[\boldsymbol{y}=f(\boldsymbol{x}, \boldsymbol{z}), \boldsymbol{z} = \{(\boldsymbol{x}^\gamma, \boldsymbol{y}^\gamma)\} \tag{5.2}\]</span></span></p>
-<p>其中，<span class="math inline">\(\boldsymbol{x}\)</span> 代表输入的文本（字符串序列），<span class="math inline">\(\boldsymbol{z}\)</span> 代表知识库，<span class="math inline">\(f\)</span> 表示模型，<span class="math inline">\(\boldsymbol{x}^\gamma\)</span> 表示作为输入文本 <span class="math inline">\(\boldsymbol{x}\)</span> 的检索 <em>key</em>，<span class="math inline">\(\boldsymbol{y}^\gamma\)</span> 是与模型输出相关的知识。</p>
-</section>
-<section id="retrieval-source-类型" class="level3" data-number="5.1.2">
-<h3 data-number="5.1.2" class="anchored" data-anchor-id="retrieval-source-类型"><span class="header-section-number">5.1.2</span> Retrieval Source 类型</h3>
-<ul>
-<li><strong>Training Corpus</strong>：有标注的训练数据直接作为外部知识。</li>
-<li><strong>External Data</strong>：支持提供训练数据之外的外部知识作为检索来源，比如于任务相关的领域数据，实现模型的快速适应。</li>
-<li><strong>Unsupervised Data</strong>：前两种知识源都需要一定的人工标注来完善“检索依据-输出”的对齐工作，无监督知识源可以直接支持无标注/对齐的知识作为检索来源。</li>
+<li>Python：<a href="https://github.com/openai/tiktoken">tiktoken</a></li>
+<li>JavaScript: <a href="https://github.com/dqbd/tiktoken">dqbd/tiktoken</a></li>
 </ul>
 </section>
-<section id="retrieval-metrics-类型" class="level3" data-number="5.1.3">
-<h3 data-number="5.1.3" class="anchored" data-anchor-id="retrieval-metrics-类型"><span class="header-section-number">5.1.3</span> Retrieval Metrics 类型</h3>
+<section id="tokenization-方式" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="tokenization-方式"><span class="header-section-number">1.2</span> Tokenization 方式</h2>
+<p>把输入/输出文本拆分为 LLM AI 模型可以处理的、更小单元的过程，我们称之为：<strong>Token 化</strong>。如前所述，token 可以是单词、字符、子单词或符号。文本 Token 化之后，模型可以在 token 的基础上处理不同的语言、词汇和格式，并降低处理过程的计算成本和资源成本。Token 化还可以通过影响 token 的含义和上下文来影响生成文本的质量和多样性。</p>
+<p>目前主要有三种主流的 tokenization 算法：BPE，WordPiece，Unigram Language Model。</p>
+<section id="bpe" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="bpe"><span class="header-section-number">1.2.1</span> BPE</h3>
+<p>BPE（Byte Pair Encoding）最早是一种数据压缩算法，其思想是将经常一起出现的数据对替换为不在数据串中的其他字符，然后再通过一个 merge 表来恢复原始数据。</p>
+<p>在 2015 年，<span class="citation" data-cites="sennrich2016neural">[<a href="references.html#ref-sennrich2016neural" role="doc-biblioref">3</a>]</span> 把该算法引入到 NLP 领域。2019 年，<span class="citation" data-cites="wang2019neural">[<a href="references.html#ref-wang2019neural" role="doc-biblioref">4</a>]</span> 又提出了 BBPE（Byte-Level BPE）算法，将 BPE 的思想从字符级别扩展到字节级别。</p>
+<p>OpenAI 所采用的 tokenization 算法就是 BPE 算法。BPE 可以帮助模型处理罕见的、或者看不见的单词，并创建更紧凑和一致的文本表示。BPE 还允许模型通过组合现有单词或 token 来生成新单词或 token。词汇量越大，模型生成的文本就越多样化和富有表现力。然而，词汇表越大，模型需要的内存和计算资源就越多。因此，词汇大小的选择取决于模型的质量和效率之间的权衡。</p>
+</section>
+<section id="wordpiece" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="wordpiece"><span class="header-section-number">1.2.2</span> WordPiece</h3>
+<p><span class="citation" data-cites="pub37842">[<a href="references.html#ref-pub37842" role="doc-biblioref">2</a>]</span> 提出了用于解决日语和韩语语音问题的 WordPiece。与BPE 类似，WordPiece 也是从一个基础小词表出发，通过不断合并来产生最终的词表。</p>
+<p>WordPiece 与 BPE 的主要的差别在于，BPE 按频率来选择合并的 token 对，而 WordPiece 按 token 间的互信息<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>来进行合并。WordPiece 可以较好的平衡词表大小和 OOV<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 问题，但是可能会产生不太合理的、错误的切分，并且 WordPeice 对拼写错误非常敏感，同时其对前缀的支持也不够好。</p>
+</section>
+<section id="unigram-language-model" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="unigram-language-model"><span class="header-section-number">1.2.3</span> Unigram Language Model</h3>
+<p><span class="citation" data-cites="kudo2018subword">[<a href="references.html#ref-kudo2018subword" role="doc-biblioref">1</a>]</span> 提出了 Unigram Language Model，其核心思想就是先初始化一个大词表，然后通过 unigram 语言模型计算删除不同 subword 造成的损失来代表 subword 的重要性，最后保留 loss 较大或者说重要性较高的 subword。</p>
+<p>ULM 是一种基于语言模型的分词算法，这种语言模型可以给多种分词结果赋予概率，从而可以学到其中的噪声，其使用的训练算法可以利用所有可能的分词结果。但是，ULM 的效果与初始词表息息相关，初始词表的好还会影响到最终的结果。</p>
+</section>
+</section>
+<section id="token-与模型成本之间的关系" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="token-与模型成本之间的关系"><span class="header-section-number">1.3</span> Token 与模型成本之间的关系</h2>
+<p>Tokenization 会影响 LLM 需要处理的数据量和计算次数。LLM 需要处理的 token 越多，模型消耗的内存和计算资源就越多。</p>
+<p>因此，运行 LLM 的成本取决于：</p>
+<ol type="1">
+<li>tokenization 采用的算法和模型所使用的词汇表的大小</li>
+<li>输入/输出文本的长度和复杂性</li>
+</ol>
+<p>因此，对于不同的模型<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>，与模型交互时所使用的 token 数量的不同，最终所花费的成本也不同。对于 OpenAI 而言，GTP4 的费用是 GTP3 的 10 倍，对于 GPT4 而言，32K 上下文模型的费用是 4K 上下文模型费用的 2 倍<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>。百度的文心 4.0 大模型的费用则是之前版本的 15 倍<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>。</p>
 <ul>
-<li><strong>Sparse-vector Retrieval</strong>（浅层语义）：针对稀疏向量场景的度量方法，比如TF-IDF, BM25等。</li>
-<li><strong>Dense-vector Retrieval</strong>（深层语义）：针对稠密向量的度量方法，比如文本相似度。</li>
-<li><strong>Task-specific Retrieval</strong>：在通用的度量场景下，度量得分高并不能代表召回知识准确，因此有学者提出基于特定任务优化的召回度量方法，提高度量的准确率。</li>
+<li>对于 OpenAI 的 gpt-3.5-turbo-16k 模型而言，每 1024 个输入 token 的费用为 0.003$，每 1024 个输出 token 的费用为 0.004$。</li>
+<li>对于 OpenAI 的 gpt-4 模型而言，每 1024 个输入 token 的费用为 0.03$，每 1024 个输出 token 的费用为 0.06$。</li>
+<li>对于 OpenAI 的 gpt-4-32k 模型而言，每 1024 个输入 token 的费用为 0.06$，每 1024 个输出 token 的费用为 0.12$。</li>
+<li>对于百度的 ERNIE-Bot-turbo 模型而言，每 1000 个输入 token 的费用为 0.008￥，每 1000 个输出 token 的费用为 0.008￥。</li>
+<li>对于百度的 ERNIE-Bot 4.0 模型而言，每 1000 个输入 token 的费用为 0.12￥，每 1000 个输出 token 的费用为 0.12￥。</li>
 </ul>
-</section>
-<section id="integration-method-类型" class="level3" data-number="5.1.4">
-<h3 data-number="5.1.4" class="anchored" data-anchor-id="integration-method-类型"><span class="header-section-number">5.1.4</span> Integration Method 类型</h3>
-<ul>
-<li><strong>Data Augmentation</strong>：直接拼接用户输入文本和知识文本，然后输入文本生成模型。</li>
-<li><strong>Attention Mechanisms</strong>：引入额外的Encoder，对用户输入文本和知识文本进行注意力编码后输入文本生成模型。</li>
-<li><strong>Skeleton Extraction</strong>：前两种方法都是通过文本向量化的隐式方法完成知识重点片段的抽取，Skeleton Extraction方法可以显式地完成类似工作。</li>
-</ul>
-<p>在 RAG 模式下，AI 应用发生了新的范式变化，从传统的 <code>Pre-training</code> + <code>Fine-tune</code> 的模式转换为了 <code>Pre-training</code> + <code>Prompt</code> 模式。这种模式的转变简化了对于不同任务而言模型训练的工作量，降低了 AI 的开发和使用门槛，同时也使得 <code>Retriveval</code> + <code>Generation</code> 成为可能。</p>
-<div id="fig-RAG_arch" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/RAG_arch.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;5.2: RAG 基本架构</figcaption>
-</figure>
-</div>
-</section>
-</section>
-<section id="为什么要使用-rag" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="为什么要使用-rag"><span class="header-section-number">5.2</span> 为什么要使用 RAG</h2>
-<p>仅依靠大模型已经可以完成很多任务，<code>Fine-tune</code> 也可以起到补充领域知识的作用，为什么 RAG 仍然如此重要呢？</p>
-<ul>
-<li><p><strong>幻觉问题</strong>：尽管大模型的参数量很大，但和人类的所有知识相比，仍然有非常大的差距。所以，大模型在生成内容时，很有可能会捏造事实，导致如 <a href="hallucination.html"><span>章节&nbsp;4</span></a> 所述的“幻觉”。因此，对于 LLMs 而言，通过搜索召回相关领域知识来作为特定领域的知识补充是非常必要的。</p></li>
-<li><p><strong>语料更新时效性问题</strong>：大模型的训练数据存在时间截止的问题。尽管可以通过 <code>Fine-tune</code> 来为大模型加入新的知识，但大模型的的训练成本和时间依然是需要面对的严峻难题：通常需要大量的计算资源，时间也难做到天级别更新。在 RAG 模式下，向量数据库和搜索引擎数据的更新都更加容易，这有助于业务数据的实时性。</p></li>
-<li><p><strong>数据泄露问题</strong>：尽管，可以利用 <code>Fine-tune</code> 的方式增强 LLM 在特定领域的处理能力。但是，用于 <code>Fine-tune</code> 的这些领域知识很可能包含个人或者公司的机密信息，且这些数据很可能通过模型而不经意间泄露出去<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。RAG 可以通过增加私有数据存储的方式使得用户的数据更加安全。</p></li>
-</ul>
-</section>
-<section id="更多内容" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="更多内容"><span class="header-section-number">5.3</span> 更多内容</h2>
-<p>更详细、深入的内容可以参考如下几篇文章：<span class="citation" data-cites="RATGSurvey">[<a href="references.html#ref-RATGSurvey" role="doc-biblioref">1</a>]</span>，<span class="citation" data-cites="AugmentedLM">[<a href="references.html#ref-AugmentedLM" role="doc-biblioref">2</a>]</span>。</p>
-</section>
-<section id="参考文献" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="参考文献"><span class="header-section-number">5.4</span> 参考文献</h2>
 
 
 <div id="refs" class="references csl-bib-body" role="list" style="display: none">
-<div id="ref-RATGSurvey" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline">Li, H. 等 2022. <a href="https://arxiv.org/abs/2202.01110">A Survey on Retrieval-Augmented Text Generation</a>. <em>arXiv preprint arXiv:2202.01110</em>. (2022).</div>
+<div id="ref-kudo2018subword" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">Kudo, T. 2018. <a href="https://arxiv.org/abs/1804.10959">Subword Regularization: Improving Neural Network Translation Models with Multiple Subword Candidates</a>.</div>
 </div>
-<div id="ref-AugmentedLM" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[2] </div><div class="csl-right-inline">Mialon, G. 等 2023. <a href="https://arxiv.org/abs/2302.07842">Augmented Language Models: a Survey</a>. (2023).</div>
+<div id="ref-pub37842" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">Schuster, M. 和 Nakajima, K. 2012. <a href="https://research.google/pubs/pub37842/">Japanese and Korean Voice Search</a>.</div>
+</div>
+<div id="ref-sennrich2016neural" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">Sennrich, R. 等 2016. <a href="https://arxiv.org/abs/1508.07909">Neural Machine Translation of Rare Words with Subword Units</a>.</div>
+</div>
+<div id="ref-wang2019neural" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">Wang, C. 等 2019. <a href="https://arxiv.org/abs/1909.03341">Neural Machine Translation with Byte-Level Subwords</a>.</div>
 </div>
 </div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p><a href="https://zhuanlan.zhihu.com/p/619432239">ChatGPT致三星半导体机密泄漏</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>在分词领域有时也被称为凝固度、内聚度，可以反映一个词内部的两个部分结合的紧密程度。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>OOV（Out-of-Vocabulary）：词粒度分词模型只能使用词表中的词来进行处理，无法处理词表之外的词汇，这就是所谓的 OOV 问题。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://platform.openai.com/docs/models">OpenAI 的模型列表</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://openai.com/pricing">OpenAI 计费说明</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a href="https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Blfmc9dlf">文心大模型计费说明</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -743,13 +787,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./hallucination.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">幻觉</span></span>
+      <a href="./intro.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">简介</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./agent_intro.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Agent</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./embedding.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Embedding</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
