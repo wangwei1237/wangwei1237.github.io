@@ -1,10 +1,31 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
+    "objectID": "index.html#欢迎阅读",
+    "href": "index.html#欢迎阅读",
     "title": "Large Language Model in Action",
-    "section": "",
-    "text": "序言\n这是一本关于 LLMs 的书籍。"
+    "section": "欢迎阅读",
+    "text": "欢迎阅读\n这是一本关于 大语言模型 实践的书籍，而不是一本深入研究 大语言模型 的运行原理和底层算法的书籍。\n如果您是一位想深入学习框架、算法并对其进行优化改进的研究者，本书可能并不适合您。\n如果您想大概了解一下相关的概念，并以此来指导自己的实践，想了解目前在应用开发中有哪些工具以及这些工具的具体实践用法，那么这本书正式您你而作。\n正如这本书的题目，这本书会更偏向实践、应用，但是我们也会在数据介绍大模型相关的概念，这些概念会让您对大模型有一个初步的认识，仅此而已。如果您想深入了解相关概念的底层细节，我们也提供了对应的文献，您可以深入阅读相关的文献。\n这是一个飞速发展的时代，技术、工具的发展亦是如此——每天有新的工具产生，也会有部分技术过时——因此我们以在线书籍的方式来构建这本书以保持内容的与时俱进。这也是一本开放的书籍，如果您希望为本书贡献自己的力量，您可以进入点击导航栏右上角的图标进入本书的代码仓库，提交您的内容。\n这本书整体会分为三大部分：\n\nPART 1：基本概念篇，主要介绍大模型相关的基本概念\nPART 2：相关工具篇，主要介绍大模型相关的工具，LangChain, Langflow, AutoGen……\nPART 3：具体实践偏，主要介绍应用大模型的具体案例"
+  },
+  {
+    "objectID": "index.html#版权声明",
+    "href": "index.html#版权声明",
+    "title": "Large Language Model in Action",
+    "section": "版权声明",
+    "text": "版权声明\n本书采用“保持署名—非商用”创意共享 4.0 许可证。只要保持署名和非商用，您可以自由地阅读、分享本书。\n您可以：\n\n下载、保存以及打印本翻译稿\n网络链接、转载本翻译稿的部分或者全部内容，但是必须在明显处提供读者访问本书发布网站的链接\n\n您不可以：\n\n以任何形式出售本书的电子版或者打印版\n擅自印刷、出版本书\n以纸媒出版为目的，改写、改编以及摘抄本书的内容"
+  },
+  {
+    "objectID": "preface.html#书中的样式惯例",
+    "href": "preface.html#书中的样式惯例",
+    "title": "序言",
+    "section": "书中的样式惯例",
+    "text": "书中的样式惯例\n在本书中，遵循以下的排版约定：\n\n斜体：表示新术语、URL、电子邮件地址、文件名和文件扩展名。\n固定宽度：用于程序列表、段落中引用程序元素，如变量或函数名称、数据库、数据类型、环境变量、语句和关键字。\n粗体：突出显示重要文本。\n\n\n\n\n\n\n注释\n\n\n\n需要注意的事项或额外的内容补充将如此表示，包括需要注意的事情，因为它可能会影响到我们的操作。\n\n\n\n\n\n\n\n\n提示\n\n\n\n技巧类信息将如此表示， 并提供可能对我们有用或简化操作方式的内容。\n\n\n\n\n\n\n\n\n警告\n\n\n\n警告信息将如此表示，并介绍如果不注意此处的信息则可能导致损失的事项。"
+  },
+  {
+    "objectID": "preface.html#致谢",
+    "href": "preface.html#致谢",
+    "title": "序言",
+    "section": "致谢",
+    "text": "致谢\n感谢在探索之路上，一起打怪升级的队友和朋友们~"
   },
   {
     "objectID": "llm_intro.html#大语言模型族谱",
@@ -389,14 +410,14 @@
     "href": "langchain_agent_react.html#structured-chat-agent",
     "title": "13  LangChain ReAct Agent",
     "section": "13.6 Structured Chat Agent",
-    "text": "13.6 Structured Chat Agent\n如前所述，Structured Chat Agent 允许使用的 Tool 的输入参数并非只有 1 个，而是可以具有 0 个或者 2 个及以上的输入参数。\n根据 langchain/agents/structured_chat/prompt.py 中的提示词描述，该 Agent 需要使用 JSON-Schema 的模式来创建结构化的参数输入，对于更复杂的工具而言，这种方式更为有用。\n因为文心大模型 chat 模式的 message 消息类型和 OpenAI 的不同——缺少 SystemMessage 类型，因此，如果要让 Structured Chat Agent 支持文心，需要对其 Prompt 的生成方式进行修改。\n\n列表 13.16: create_prompt_for_ernie\n@classmethod\ndef create_prompt_for_ernie(\n    ......\n) -&gt; BasePromptTemplate:\n    ......\n    messages = [\n1        HumanMessagePromptTemplate.from_template(template),\n2        AIMessagePromptTemplate.from_template(\"YES, I Know.\"),\n        *_memory_prompts,\n        HumanMessagePromptTemplate.from_template(human_message_template),\n    ]\n    return ChatPromptTemplate(input_variables=input_variables, messages=messages)\n\n\n@classmethod\ndef from_llm_and_tools(\n    ......\n) -&gt; Agent:\n    \"\"\"Construct an agent from an LLM and tools.\"\"\"\n    cls._validate_tools(tools)\n3    if llm.model_name == \"ERNIE-Bot-turbo\":\n        prompt = cls.create_prompt_for_ernie(\n            ......\n        )\n    else:\n        prompt = cls.create_prompt(\n            ......\n        )\n    ......\n\n\n1\n\n将 SystemMessage 修改为 HumanMessage\n\n2\n\n补充 AIMessage，以满足文心的消息列表限制\n\n3\n\n根据模型名称来调用不同的提示词生成方法\n\n\n具体的完整代码可以参见：structed_chat_agent_base.py。\n然后，我们就可以使用 Structured Chat Agent 来调用多输入参数的工具了（工具的具体实现可以参考 章节 13.7.2）。\nstructured_agent = initialize_agent(\n    agent=\"structured-chat-zero-shot-react-description\",\n    tools=tools,\n    llm=llm,\n    verbose=True,\n    max_iterations=3,\n    memory=memory\n)\n\nstructured_agent(question)"
+    "text": "13.6 Structured Chat Agent\n如前所述，Structured Chat Agent 允许使用的 Tool 的输入参数并非只有 1 个，而是可以具有 0 个或者 2 个及以上的输入参数。\n根据 langchain/agents/structured_chat/prompt.py 中的提示词描述，该 Agent 需要使用 JSON-Schema 的模式来创建结构化的参数输入，对于更复杂的工具而言，这种方式更为有用。\n因为文心大模型 chat 模式的 message 消息类型和 OpenAI 的不同——缺少 SystemMessage 类型，因此，如果要让 Structured Chat Agent 支持文心，需要对其 Prompt 的生成方式进行修改。\n\n列表 13.16: create_prompt_for_ernie\n@classmethod\ndef create_prompt_for_ernie(\n    ......\n) -&gt; BasePromptTemplate:\n    ......\n    messages = [\n1        HumanMessagePromptTemplate.from_template(template),\n2        AIMessagePromptTemplate.from_template(\"YES, I Know.\"),\n        *_memory_prompts,\n        HumanMessagePromptTemplate.from_template(human_message_template),\n    ]\n    return ChatPromptTemplate(input_variables=input_variables, messages=messages)\n\n\n@classmethod\ndef from_llm_and_tools(\n    ......\n) -&gt; Agent:\n    \"\"\"Construct an agent from an LLM and tools.\"\"\"\n    cls._validate_tools(tools)\n3    if \"ERNIE\" in llm.model_name:\n        prompt = cls.create_prompt_for_ernie(\n            ......\n        )\n    else:\n        prompt = cls.create_prompt(\n            ......\n        )\n    ......\n\n\n1\n\n将 SystemMessage 修改为 HumanMessage\n\n2\n\n补充 AIMessage，以满足文心的消息列表限制\n\n3\n\n根据模型名称来调用不同的提示词生成方法\n\n\n具体的完整代码可以参见：structed_chat_agent_base.py。\n然后，我们就可以使用 Structured Chat Agent 来调用多输入参数的工具了（工具的具体实现可以参考 章节 13.7.2）。\nstructured_agent = initialize_agent(\n    agent=\"structured-chat-zero-shot-react-description\",\n    tools=tools,\n    llm=llm,\n    verbose=True,\n    max_iterations=3,\n    memory=memory\n)\n\nstructured_agent(question)"
   },
   {
     "objectID": "langchain_agent_react.html#自定义-agent-tools",
     "href": "langchain_agent_react.html#自定义-agent-tools",
     "title": "13  LangChain ReAct Agent",
     "section": "13.7 自定义 Agent Tools",
-    "text": "13.7 自定义 Agent Tools\n关于单输入参数 Tool 和 多输入参数 Tool 的区别的应用场景，请参考：章节 13.5.1。\n\n13.7.1 单输入参数\n\n列表 13.17: 根据圆的半径计算圆周长 Tool\nclass CircumferenceTool(BaseTool):\n    name = \"Circumference calculator\"\n    description = \"use this tool when you need to calculate a circumference using the radius of a circle\"\n\n    def _run(self, radius: Union[int, float]):\n        return float(radius)*2.0*pi\n\n    def _arun(self, radius: int):\n        raise NotImplementedError(\"This tool does not support async\")\n\n\n\n13.7.2 多输入参数\n\n列表 13.18: 计算直角三角形斜边长度 Tool\ndesc = (\n    \"use this tool when you need to calculate the length of a hypotenuse\"\n    \"given one or two sides of a triangle and/or an angle (in degrees). \"\n    \"To use the tool, you must provide at least two of the following parameters \"\n    \"['adjacent_side', 'opposite_side', 'angle'].\"\n)\n\nclass PythagorasTool(BaseTool):\n    name = \"Hypotenuse calculator\"\n    description = desc\n    \n    def _run(\n        self,\n        adjacent_side: Optional[Union[int, float]] = None,\n        opposite_side: Optional[Union[int, float]] = None,\n        angle: Optional[Union[int, float]] = None\n    ):\n        # check for the values we have been given\n        if adjacent_side and opposite_side:\n            return sqrt(float(adjacent_side)**2 + float(opposite_side)**2)\n        elif adjacent_side and angle:\n            return float(adjacent_side) / cos(float(angle))\n        elif opposite_side and angle:\n            return float(opposite_side) / sin(float(angle))\n        else:\n            return \"Could not calculate the hypotenuse of the triangle. Need two or more of `adjacent_side`, `opposite_side`, or `angle`.\"\n    \n    def _arun(self, query: str):\n        raise NotImplementedError(\"This tool does not support async\")"
+    "text": "13.7 自定义 Agent Tools\n关于单输入参数 Tool 和 多输入参数 Tool 的区别的应用场景，请参考：章节 13.5.1。\n\n13.7.1 单输入参数\n\n列表 13.17: 根据圆的半径计算圆周长 Tool\nclass CircumferenceTool(BaseTool):\n    name = \"Circumference calculator\"\n    description = \"use this tool when you need to calculate a circumference using the radius of a circle\"\n\n    def _run(self, radius: Union[int, float]):\n        return float(radius)*2.0*pi\n\n    def _arun(self, radius: int):\n        raise NotImplementedError(\"This tool does not support async\")\n\n\n# when giving tools to LLM, we must pass as list of tools\ntools = [CircumferenceTool()]\n# ...\n\n\n\n13.7.2 多输入参数\n\n列表 13.18: 计算直角三角形斜边长度 Tool\ndesc = (\n    \"use this tool when you need to calculate the length of a hypotenuse\"\n    \"given one or two sides of a triangle and/or an angle (in degrees). \"\n    \"To use the tool, you must provide at least two of the following parameters \"\n    \"['adjacent_side', 'opposite_side', 'angle'].\"\n)\n\nclass PythagorasTool(BaseTool):\n    name = \"Hypotenuse calculator\"\n    description = desc\n    \n    def _run(\n        self,\n        adjacent_side: Optional[Union[int, float]] = None,\n        opposite_side: Optional[Union[int, float]] = None,\n        angle: Optional[Union[int, float]] = None\n    ):\n        # check for the values we have been given\n        if adjacent_side and opposite_side:\n            return sqrt(float(adjacent_side)**2 + float(opposite_side)**2)\n        elif adjacent_side and angle:\n            return float(adjacent_side) / cos(float(angle))\n        elif opposite_side and angle:\n            return float(opposite_side) / sin(float(angle))\n        else:\n            return \"Could not calculate the hypotenuse of the triangle. Need two or more of `adjacent_side`, `opposite_side`, or `angle`.\"\n    \n    def _arun(self, query: str):\n        raise NotImplementedError(\"This tool does not support async\")"
   },
   {
     "objectID": "langchain_agent_react.html#总结",

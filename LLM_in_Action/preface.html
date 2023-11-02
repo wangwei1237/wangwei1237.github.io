@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Large Language Model in Action - 7&nbsp; RAG</title>
+<title>Large Language Model in Action - 序言</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,26 +20,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -49,8 +30,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./agent_intro.html" rel="next">
-<link href="./hallucination.html" rel="prev">
+<link href="./llm_intro.html" rel="next">
+<link href="./index.html" rel="prev">
 <link href="./favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -82,12 +63,9 @@ div.csl-indent {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="Large Language Model in Action - 7&nbsp; RAG">
+<meta property="og:title" content="Large Language Model in Action - 序言">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/RATG_overview.jpg">
 <meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
@@ -154,7 +132,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./llm_intro.html">LLM 基本概念</a></li><li class="breadcrumb-item"><a href="./rag_intro.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">RAG</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./preface.html">序言</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -182,7 +160,7 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+  <a href="./preface.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">序言</span></a>
   </div>
 </li>
@@ -233,7 +211,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rag_intro.html" class="sidebar-item-text sidebar-link active">
+  <a href="./rag_intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">RAG</span></span></a>
   </div>
 </li>
@@ -387,24 +365,17 @@ div.csl-indent {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#rag-基本概念" id="toc-rag-基本概念" class="nav-link active" data-scroll-target="#rag-基本概念"><span class="header-section-number">7.1</span> RAG 基本概念</a>
-  <ul class="collapse">
-  <li><a href="#rag-的表示方法" id="toc-rag-的表示方法" class="nav-link" data-scroll-target="#rag-的表示方法"><span class="header-section-number">7.1.1</span> RAG 的表示方法</a></li>
-  <li><a href="#retrieval-source-类型" id="toc-retrieval-source-类型" class="nav-link" data-scroll-target="#retrieval-source-类型"><span class="header-section-number">7.1.2</span> Retrieval Source 类型</a></li>
-  <li><a href="#retrieval-metrics-类型" id="toc-retrieval-metrics-类型" class="nav-link" data-scroll-target="#retrieval-metrics-类型"><span class="header-section-number">7.1.3</span> Retrieval Metrics 类型</a></li>
-  <li><a href="#integration-method-类型" id="toc-integration-method-类型" class="nav-link" data-scroll-target="#integration-method-类型"><span class="header-section-number">7.1.4</span> Integration Method 类型</a></li>
-  </ul></li>
-  <li><a href="#为什么要使用-rag" id="toc-为什么要使用-rag" class="nav-link" data-scroll-target="#为什么要使用-rag"><span class="header-section-number">7.2</span> 为什么要使用 RAG</a></li>
-  <li><a href="#更多内容" id="toc-更多内容" class="nav-link" data-scroll-target="#更多内容"><span class="header-section-number">7.3</span> 更多内容</a></li>
+  <li><a href="#书中的样式惯例" id="toc-书中的样式惯例" class="nav-link active" data-scroll-target="#书中的样式惯例">书中的样式惯例</a></li>
+  <li><a href="#致谢" id="toc-致谢" class="nav-link" data-scroll-target="#致谢">致谢</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/rag_intro.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/preface.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-RAG" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">RAG</span></span></h1>
+<h1 class="title">序言</h1>
 </div>
 
 
@@ -419,7 +390,34 @@ div.csl-indent {
 
 </header>
 
-<div class="callout callout-style-default callout-tip callout-titled">
+<p>这本书将教大学了解大模型相关的基本概念，在应用大模型解决自己的具体问题时，对这些基本概念的熟悉是非常必要的。了解我们的工具，才会最大限度的发挥出工具的性能。但是，作为应用者，我们没有必要了解大模型的全部细节，“不求甚解”可能是一种更好的学习方法。就像我们无需了操作系统的底层实现，也可以基于操作系统开发出丰富的上层应用一样。</p>
+<p>作为大模型领域的非原著居民，我们将自己在实践中探索的过程整理到本书之中，希望帮助和我们一样正在实践的大模型领域的爱好者。这本书从整体上会划分为三大部分：</p>
+<ul>
+<li>介绍大模型领域的相关概念</li>
+<li>介绍大模型相关的工具&amp;平台</li>
+<li>介绍具体的应用大模型的案例</li>
+</ul>
+<section id="书中的样式惯例" class="level2">
+<h2 class="anchored" data-anchor-id="书中的样式惯例">书中的样式惯例</h2>
+<p>在本书中，遵循以下的排版约定：</p>
+<ul>
+<li><em>斜体</em>：表示新术语、URL、电子邮件地址、文件名和文件扩展名。</li>
+<li><code>固定宽度</code>：用于程序列表、段落中引用程序元素，如变量或函数名称、数据库、数据类型、环境变量、语句和关键字。</li>
+<li><strong>粗体</strong>：突出显示重要文本。</li>
+<li><div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注释
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>需要注意的事项或额外的内容补充将如此表示，包括需要注意的事情，因为它可能会影响到我们的操作。</p>
+</div>
+</div></li>
+<li><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -429,95 +427,29 @@ div.csl-indent {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Retrieval Augment Generation: A LLM that uses an external datastore at test time（not at pre-training time）.</p>
-<blockquote class="blockquote">
-<p>在运行时（而非预训练时），使用外部数据的大语言模型称之为基于检索增强的生成式。</p>
-</blockquote>
+<p>技巧类信息将如此表示， 并提供可能对我们有用或简化操作方式的内容。</p>
+</div>
+</div></li>
+<li><div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+警告
 </div>
 </div>
-<section id="rag-基本概念" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="rag-基本概念"><span class="header-section-number">7.1</span> RAG 基本概念</h2>
-<p>根据 <em>A Survey on Retrieval-Augmented Text Generation</em> <span class="citation" data-cites="RATGSurvey">[<a href="references.html#ref-RATGSurvey" role="doc-biblioref">1</a>]</span> 所述：RAG 是深度学习和传统检索技术（Retrieval Technology）的有机结合，在生成式大模型时代，有着以下优势：</p>
-<ul>
-<li>知识库和模型分离，知识不以参数的形式存储在模型中，而是明文存储在数据库中，灵活性更高；</li>
-<li>文本生成转变为文本总结，生成结果的可信度更高，同时还降低了文本生成的难度；</li>
-</ul>
-<div id="fig-ratg_overview" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/RATG_overview.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;7.1: RATG 综述研究概览</figcaption>
-</figure>
+<div class="callout-body-container callout-body">
+<p>警告信息将如此表示，并介绍如果不注意此处的信息则可能导致损失的事项。</p>
 </div>
-<p>根据 <a href="#fig-ratg_overview">图&nbsp;<span>7.1</span></a>，RAG 范式有三个重要的组成部分：Retrieval Source，Retrieval Metric，Integration Method。</p>
-<section id="rag-的表示方法" class="level3" data-number="7.1.1">
-<h3 data-number="7.1.1" class="anchored" data-anchor-id="rag-的表示方法"><span class="header-section-number">7.1.1</span> RAG 的表示方法</h3>
-<p>传统的文本生成方法可以用如下公式表示：</p>
-<p><span id="eq-RATG_1"><span class="math display">\[\boldsymbol{y}=f(\boldsymbol{x}) \tag{7.1}\]</span></span></p>
-<p>其中，<span class="math inline">\(\boldsymbol{x}\)</span> 代表输入的文本（字符串序列），<span class="math inline">\(f\)</span> 表示模型，<span class="math inline">\(\boldsymbol{y}\)</span> 表示模型输出的文本。</p>
-<p>RAG 则可以用如下公式表示：</p>
-<p><span id="eq-RATG_2"><span class="math display">\[\boldsymbol{y}=f(\boldsymbol{x}, \boldsymbol{z}), \boldsymbol{z} = \{(\boldsymbol{x}^\gamma, \boldsymbol{y}^\gamma)\} \tag{7.2}\]</span></span></p>
-<p>其中，<span class="math inline">\(\boldsymbol{x}\)</span> 代表输入的文本（字符串序列），<span class="math inline">\(\boldsymbol{z}\)</span> 代表知识库，<span class="math inline">\(f\)</span> 表示模型，<span class="math inline">\(\boldsymbol{x}^\gamma\)</span> 表示作为输入文本 <span class="math inline">\(\boldsymbol{x}\)</span> 的检索 <em>key</em>，<span class="math inline">\(\boldsymbol{y}^\gamma\)</span> 是与模型输出相关的知识。</p>
-</section>
-<section id="retrieval-source-类型" class="level3" data-number="7.1.2">
-<h3 data-number="7.1.2" class="anchored" data-anchor-id="retrieval-source-类型"><span class="header-section-number">7.1.2</span> Retrieval Source 类型</h3>
-<ul>
-<li><strong>Training Corpus</strong>：有标注的训练数据直接作为外部知识。</li>
-<li><strong>External Data</strong>：支持提供训练数据之外的外部知识作为检索来源，比如于任务相关的领域数据，实现模型的快速适应。</li>
-<li><strong>Unsupervised Data</strong>：前两种知识源都需要一定的人工标注来完善“检索依据-输出”的对齐工作，无监督知识源可以直接支持无标注/对齐的知识作为检索来源。</li>
+</div></li>
 </ul>
 </section>
-<section id="retrieval-metrics-类型" class="level3" data-number="7.1.3">
-<h3 data-number="7.1.3" class="anchored" data-anchor-id="retrieval-metrics-类型"><span class="header-section-number">7.1.3</span> Retrieval Metrics 类型</h3>
-<ul>
-<li><strong>Sparse-vector Retrieval</strong>（浅层语义）：针对稀疏向量场景的度量方法，比如TF-IDF, BM25等。</li>
-<li><strong>Dense-vector Retrieval</strong>（深层语义）：针对稠密向量的度量方法，比如文本相似度。</li>
-<li><strong>Task-specific Retrieval</strong>：在通用的度量场景下，度量得分高并不能代表召回知识准确，因此有学者提出基于特定任务优化的召回度量方法，提高度量的准确率。</li>
-</ul>
-</section>
-<section id="integration-method-类型" class="level3" data-number="7.1.4">
-<h3 data-number="7.1.4" class="anchored" data-anchor-id="integration-method-类型"><span class="header-section-number">7.1.4</span> Integration Method 类型</h3>
-<ul>
-<li><strong>Data Augmentation</strong>：直接拼接用户输入文本和知识文本，然后输入文本生成模型。</li>
-<li><strong>Attention Mechanisms</strong>：引入额外的Encoder，对用户输入文本和知识文本进行注意力编码后输入文本生成模型。</li>
-<li><strong>Skeleton Extraction</strong>：前两种方法都是通过文本向量化的隐式方法完成知识重点片段的抽取，Skeleton Extraction方法可以显式地完成类似工作。</li>
-</ul>
-<p>在 RAG 模式下，AI 应用发生了新的范式变化，从传统的 <code>Pre-training</code> + <code>Fine-tune</code> 的模式转换为了 <code>Pre-training</code> + <code>Prompt</code> 模式。这种模式的转变简化了对于不同任务而言模型训练的工作量，降低了 AI 的开发和使用门槛，同时也使得 <code>Retriveval</code> + <code>Generation</code> 成为可能。</p>
-<div id="fig-RAG_arch" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/RAG_arch.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;7.2: RAG 基本架构</figcaption>
-</figure>
-</div>
-</section>
-</section>
-<section id="为什么要使用-rag" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="为什么要使用-rag"><span class="header-section-number">7.2</span> 为什么要使用 RAG</h2>
-<p>仅依靠大模型已经可以完成很多任务，<code>Fine-tune</code> 也可以起到补充领域知识的作用，为什么 RAG 仍然如此重要呢？</p>
-<ul>
-<li><p><strong>幻觉问题</strong>：尽管大模型的参数量很大，但和人类的所有知识相比，仍然有非常大的差距。所以，大模型在生成内容时，很有可能会捏造事实，导致如 <a href="hallucination.html"><span>章节&nbsp;6</span></a> 所述的“幻觉”。因此，对于 LLMs 而言，通过搜索召回相关领域知识来作为特定领域的知识补充是非常必要的。</p></li>
-<li><p><strong>语料更新时效性问题</strong>：大模型的训练数据存在时间截止的问题。尽管可以通过 <code>Fine-tune</code> 来为大模型加入新的知识，但大模型的的训练成本和时间依然是需要面对的严峻难题：通常需要大量的计算资源，时间也难做到天级别更新。在 RAG 模式下，向量数据库和搜索引擎数据的更新都更加容易，这有助于业务数据的实时性。</p></li>
-<li><p><strong>数据泄露问题</strong>：尽管，可以利用 <code>Fine-tune</code> 的方式增强 LLM 在特定领域的处理能力。但是，用于 <code>Fine-tune</code> 的这些领域知识很可能包含个人或者公司的机密信息，且这些数据很可能通过模型而不经意间泄露出去<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。RAG 可以通过增加私有数据存储的方式使得用户的数据更加安全。</p></li>
-</ul>
-</section>
-<section id="更多内容" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="更多内容"><span class="header-section-number">7.3</span> 更多内容</h2>
-<p>更详细、深入的内容可以参考如下几篇文章：<span class="citation" data-cites="RATGSurvey">[<a href="references.html#ref-RATGSurvey" role="doc-biblioref">1</a>]</span>，<span class="citation" data-cites="AugmentedLM">[<a href="references.html#ref-AugmentedLM" role="doc-biblioref">2</a>]</span>。</p>
+<section id="致谢" class="level2">
+<h2 class="anchored" data-anchor-id="致谢">致谢</h2>
+<p>感谢在探索之路上，一起打怪升级的队友和朋友们~</p>
 
 
-<div id="refs" class="references csl-bib-body" role="list" style="display: none">
-<div id="ref-RATGSurvey" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline">Li, H. 等 2022. <a href="https://arxiv.org/abs/2202.01110">A Survey on Retrieval-Augmented Text Generation</a>. <em>arXiv preprint arXiv:2202.01110</em>. (2022).</div>
-</div>
-<div id="ref-AugmentedLM" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[2] </div><div class="csl-right-inline">Mialon, G. 等 2023. <a href="https://arxiv.org/abs/2302.07842">Augmented Language Models: a Survey</a>. (2023).</div>
-</div>
-</div>
-</section>
-<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr>
-<ol>
-<li id="fn1"><p><a href="https://zhuanlan.zhihu.com/p/619432239">ChatGPT致三星半导体机密泄漏</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
 </section>
 
 </main> <!-- /main -->
@@ -758,13 +690,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./hallucination.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">幻觉</span></span>
+      <a href="./index.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">欢迎阅读</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./agent_intro.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Agent</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./llm_intro.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">LLM 的前世今生</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
