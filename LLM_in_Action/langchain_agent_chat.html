@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Large Language Model in Action - 附录 C — Milvus Beginner</title>
+<title>Large Language Model in Action - 14&nbsp; LangChain Chat Agent</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,7 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./langchain_install.html" rel="prev">
+<link href="./langchain_agent_fc.html" rel="next">
+<link href="./langchain_agent_react.html" rel="prev">
 <link href="./favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -97,9 +98,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<meta property="og:title" content="Large Language Model in Action - 附录 C — Milvus Beginner">
+<meta property="og:title" content="Large Language Model in Action - 14&nbsp; LangChain Chat Agent">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/milvus_cli_case.jpg">
 <meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
@@ -166,7 +166,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glossary.html">附录</a></li><li class="breadcrumb-item"><a href="./milvus_install.html"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Milvus Beginner</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_agent_chat.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">LangChain Chat Agent</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -298,7 +298,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./langchain_agent_chat.html" class="sidebar-item-text sidebar-link">
+  <a href="./langchain_agent_chat.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">LangChain Chat Agent</span></span></a>
   </div>
 </li>
@@ -389,7 +389,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./milvus_install.html" class="sidebar-item-text sidebar-link active">
+  <a href="./milvus_install.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Milvus Beginner</span></span></a>
   </div>
 </li>
@@ -405,27 +405,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#milvus-安装" id="toc-milvus-安装" class="nav-link active" data-scroll-target="#milvus-安装"><span class="header-section-number">C.1</span> Milvus 安装</a>
-  <ul class="collapse">
-  <li><a href="#安装-docker-ce" id="toc-安装-docker-ce" class="nav-link" data-scroll-target="#安装-docker-ce"><span class="header-section-number">C.1.1</span> 1. 安装 docker-ce</a></li>
-  <li><a href="#安装-docker-composer" id="toc-安装-docker-composer" class="nav-link" data-scroll-target="#安装-docker-composer"><span class="header-section-number">C.1.2</span> 2. 安装 docker-composer</a></li>
-  <li><a href="#安装-docker-milvus-并启动" id="toc-安装-docker-milvus-并启动" class="nav-link" data-scroll-target="#安装-docker-milvus-并启动"><span class="header-section-number">C.1.3</span> 3. 安装 docker-milvus 并启动</a></li>
-  </ul></li>
-  <li><a href="#milvus-测试" id="toc-milvus-测试" class="nav-link" data-scroll-target="#milvus-测试"><span class="header-section-number">C.2</span> Milvus 测试</a>
-  <ul class="collapse">
-  <li><a href="#安装-milvus-sdk" id="toc-安装-milvus-sdk" class="nav-link" data-scroll-target="#安装-milvus-sdk"><span class="header-section-number">C.2.1</span> 安装 Milvus SDK</a></li>
-  <li><a href="#测试-milvus" id="toc-测试-milvus" class="nav-link" data-scroll-target="#测试-milvus"><span class="header-section-number">C.2.2</span> 测试 Milvus</a></li>
-  </ul></li>
-  <li><a href="#milvus-cli" id="toc-milvus-cli" class="nav-link" data-scroll-target="#milvus-cli"><span class="header-section-number">C.3</span> Milvus CLI</a></li>
+  <li><a href="#修改-chat-agent-的提示词逻辑" id="toc-修改-chat-agent-的提示词逻辑" class="nav-link active" data-scroll-target="#修改-chat-agent-的提示词逻辑"><span class="header-section-number">14.1</span> 修改 Chat Agent 的提示词逻辑</a></li>
+  <li><a href="#chatconversationagent" id="toc-chatconversationagent" class="nav-link" data-scroll-target="#chatconversationagent"><span class="header-section-number">14.2</span> ChatConversationAgent</a></li>
+  <li><a href="#messagesplaceholder" id="toc-messagesplaceholder" class="nav-link" data-scroll-target="#messagesplaceholder"><span class="header-section-number">14.3</span> MessagesPlaceholder</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/milvus_install.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_agent_chat.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-milvus_install" class="quarto-section-identifier">附录 C — Milvus Beginner</span></h1>
+<h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">LangChain Chat Agent</span></h1>
 </div>
 
 
@@ -440,33 +431,158 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="milvus-安装" class="level2" data-number="C.1">
-<h2 data-number="C.1" class="anchored" data-anchor-id="milvus-安装"><span class="header-section-number">C.1</span> Milvus 安装</h2>
-<section id="安装-docker-ce" class="level3" data-number="C.1.1">
-<h3 data-number="C.1.1" class="anchored" data-anchor-id="安装-docker-ce"><span class="header-section-number">C.1.1</span> 1. 安装 docker-ce</h3>
-<p>https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository。</p>
+<p>在 <a href="langchain_agent_react.html"><span>章节&nbsp;13</span></a> 中，除了 <code>Structured Chat Agent</code> 外，我们所介绍的 Agent 都是非 <code>Chat</code> 模式的 Agent。这里的 <code>Chat</code> 模式类似 <a href="langchain_intro.html#sec-LLMs"><span>章节&nbsp;9.2.2</span></a> 中介绍的 LLM 的 <code>Chat</code> 模式，其最主要的特点就是：他们以聊天消息列表格式的提示词作为输入。</p>
+<section id="修改-chat-agent-的提示词逻辑" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="修改-chat-agent-的提示词逻辑"><span class="header-section-number">14.1</span> 修改 Chat Agent 的提示词逻辑</h2>
+<p>因为文心大模型 <code>Chat</code> 模式的 message 消息类型和 <code>OpenAI</code> 的不同——缺少 <code>SystemMessage</code> 类型，因此，如果要让 <code>Chat Agent</code> 支持文心，需要按照 <a href="langchain_agent_react.html#lst-lc_struct_agent_fixed_for_ernine">列表&nbsp;<span>13.16</span></a> 的思路对其 Prompt 的生成方式进行修改。</p>
+<div class="sourceCode" id="annotated-cell-1"><pre class="sourceCode python code-annotation-code code-with-copy"><code class="sourceCode python"><span id="annotated-cell-1-1"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a><span class="at">@classmethod</span></span>
+<span id="annotated-cell-1-2"><a href="#annotated-cell-1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_prompt_for_ernie(</span>
+<span id="annotated-cell-1-3"><a href="#annotated-cell-1-3" aria-hidden="true" tabindex="-1"></a>    ......</span>
+<span id="annotated-cell-1-4"><a href="#annotated-cell-1-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> BasePromptTemplate:</span>
+<span id="annotated-cell-1-5"><a href="#annotated-cell-1-5" aria-hidden="true" tabindex="-1"></a>    ......</span>
+<span id="annotated-cell-1-6"><a href="#annotated-cell-1-6" aria-hidden="true" tabindex="-1"></a>    messages <span class="op">=</span> [</span>
+<span id="annotated-cell-1-7"><a href="#annotated-cell-1-7" aria-hidden="true" tabindex="-1"></a>        HumanMessagePromptTemplate.from_template(template),</span>
+<span id="annotated-cell-1-8"><a href="#annotated-cell-1-8" aria-hidden="true" tabindex="-1"></a>        AIMessagePromptTemplate.from_template(<span class="st">"YES, I Know."</span>),</span>
+<span id="annotated-cell-1-9"><a href="#annotated-cell-1-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>_memory_prompts,</span>
+<span id="annotated-cell-1-10"><a href="#annotated-cell-1-10" aria-hidden="true" tabindex="-1"></a>        HumanMessagePromptTemplate.from_template(human_message_template),</span>
+<span id="annotated-cell-1-11"><a href="#annotated-cell-1-11" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="annotated-cell-1-12"><a href="#annotated-cell-1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ChatPromptTemplate(input_variables<span class="op">=</span>input_variables, messages<span class="op">=</span>messages)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="安装-docker-composer" class="level3" data-number="C.1.2">
-<h3 data-number="C.1.2" class="anchored" data-anchor-id="安装-docker-composer"><span class="header-section-number">C.1.2</span> 2. 安装 docker-composer</h3>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-L</span> <span class="st">"https://github.com/docker/compose/releases/download/2.22.0/docker-compose-</span><span class="va">$(</span><span class="fu">uname</span> <span class="at">-s</span> <span class="kw">|</span> <span class="fu">tr</span> <span class="st">'A-Z'</span> <span class="st">'a-z'</span><span class="va">)</span><span class="st">-</span><span class="va">$(</span><span class="fu">uname</span> <span class="at">-m</span><span class="va">)</span><span class="st">"</span> <span class="at">-o</span> /usr/local/bin/docker-compose</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo chmod +x /usr/local/bin/docker-compose</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker-compose <span class="at">--version</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="chatconversationagent" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="chatconversationagent"><span class="header-section-number">14.2</span> ChatConversationAgent</h2>
+<p>参照 <a href="langchain_agent_react.html#lst-map_agent_type_class">列表&nbsp;<span>13.7</span></a> 和 <a href="langchain_agent_react.html#lst-la_conversation_demo">列表&nbsp;<span>13.11</span></a>，我们可以构建一个 <code>chat-conversational-react-description</code>。</p>
+<div id="lst-la_chat_conversation_demo" class="listing">
+<p>列表&nbsp;14.1: Chat Conversation Agent</p>
+<div class="sourceCode" id="lst-la_chat_conversation_demo" data-lst-cap="Chat Conversation Agent"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-la_chat_conversation_demo-1"><a href="#lst-la_chat_conversation_demo-1"></a><span class="co">#encoding: utf-8</span></span>
+<span id="lst-la_chat_conversation_demo-2"><a href="#lst-la_chat_conversation_demo-2"></a></span>
+<span id="lst-la_chat_conversation_demo-3"><a href="#lst-la_chat_conversation_demo-3"></a><span class="co">"""</span></span>
+<span id="lst-la_chat_conversation_demo-4"><a href="#lst-la_chat_conversation_demo-4"></a><span class="co">@discribe: example for chat conversation agent.</span></span>
+<span id="lst-la_chat_conversation_demo-5"><a href="#lst-la_chat_conversation_demo-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-la_chat_conversation_demo-6"><a href="#lst-la_chat_conversation_demo-6"></a><span class="co">"""</span></span>
+<span id="lst-la_chat_conversation_demo-7"><a href="#lst-la_chat_conversation_demo-7"></a></span>
+<span id="lst-la_chat_conversation_demo-8"><a href="#lst-la_chat_conversation_demo-8"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
+<span id="lst-la_chat_conversation_demo-9"><a href="#lst-la_chat_conversation_demo-9"></a><span class="im">from</span> langchain.chains <span class="im">import</span> LLMMathChain</span>
+<span id="lst-la_chat_conversation_demo-10"><a href="#lst-la_chat_conversation_demo-10"></a><span class="im">from</span> langchain.agents <span class="im">import</span> Tool</span>
+<span id="lst-la_chat_conversation_demo-11"><a href="#lst-la_chat_conversation_demo-11"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferMemory</span>
+<span id="lst-la_chat_conversation_demo-12"><a href="#lst-la_chat_conversation_demo-12"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent</span>
+<span id="lst-la_chat_conversation_demo-13"><a href="#lst-la_chat_conversation_demo-13"></a></span>
+<span id="lst-la_chat_conversation_demo-14"><a href="#lst-la_chat_conversation_demo-14"></a>memory <span class="op">=</span> ConversationBufferMemory(memory_key<span class="op">=</span><span class="st">"chat_history"</span>)</span>
+<span id="lst-la_chat_conversation_demo-15"><a href="#lst-la_chat_conversation_demo-15"></a></span>
+<span id="lst-la_chat_conversation_demo-16"><a href="#lst-la_chat_conversation_demo-16"></a>llm <span class="op">=</span> ErnieBotChat(model_name<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
+<span id="lst-la_chat_conversation_demo-17"><a href="#lst-la_chat_conversation_demo-17"></a></span>
+<span id="lst-la_chat_conversation_demo-18"><a href="#lst-la_chat_conversation_demo-18"></a><span class="co"># initialize the math tool</span></span>
+<span id="lst-la_chat_conversation_demo-19"><a href="#lst-la_chat_conversation_demo-19"></a>llm_math <span class="op">=</span> LLMMathChain(llm<span class="op">=</span>llm)</span>
+<span id="lst-la_chat_conversation_demo-20"><a href="#lst-la_chat_conversation_demo-20"></a>math_tool <span class="op">=</span> Tool(</span>
+<span id="lst-la_chat_conversation_demo-21"><a href="#lst-la_chat_conversation_demo-21"></a>    name<span class="op">=</span><span class="st">'Calculator'</span>,</span>
+<span id="lst-la_chat_conversation_demo-22"><a href="#lst-la_chat_conversation_demo-22"></a>    func<span class="op">=</span>llm_math.run,</span>
+<span id="lst-la_chat_conversation_demo-23"><a href="#lst-la_chat_conversation_demo-23"></a>    description<span class="op">=</span><span class="st">'Useful for when you need to answer questions about math.'</span></span>
+<span id="lst-la_chat_conversation_demo-24"><a href="#lst-la_chat_conversation_demo-24"></a>)</span>
+<span id="lst-la_chat_conversation_demo-25"><a href="#lst-la_chat_conversation_demo-25"></a></span>
+<span id="lst-la_chat_conversation_demo-26"><a href="#lst-la_chat_conversation_demo-26"></a><span class="co"># when giving tools to LLM, we must pass as list of tools</span></span>
+<span id="lst-la_chat_conversation_demo-27"><a href="#lst-la_chat_conversation_demo-27"></a>tools <span class="op">=</span> [math_tool]</span>
+<span id="lst-la_chat_conversation_demo-28"><a href="#lst-la_chat_conversation_demo-28"></a></span>
+<span id="lst-la_chat_conversation_demo-29"><a href="#lst-la_chat_conversation_demo-29"></a>chat_conversation_agent <span class="op">=</span> initialize_agent(</span>
+<span id="lst-la_chat_conversation_demo-30"><a href="#lst-la_chat_conversation_demo-30"></a>    agent<span class="op">=</span><span class="st">"chat-conversational-react-description"</span>,</span>
+<span id="lst-la_chat_conversation_demo-31"><a href="#lst-la_chat_conversation_demo-31"></a>    tools<span class="op">=</span>tools,</span>
+<span id="lst-la_chat_conversation_demo-32"><a href="#lst-la_chat_conversation_demo-32"></a>    llm<span class="op">=</span>llm,</span>
+<span id="lst-la_chat_conversation_demo-33"><a href="#lst-la_chat_conversation_demo-33"></a>    verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="lst-la_chat_conversation_demo-34"><a href="#lst-la_chat_conversation_demo-34"></a>    max_iterations<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="lst-la_chat_conversation_demo-35"><a href="#lst-la_chat_conversation_demo-35"></a>    memory<span class="op">=</span>memory</span>
+<span id="lst-la_chat_conversation_demo-36"><a href="#lst-la_chat_conversation_demo-36"></a>)</span>
+<span id="lst-la_chat_conversation_demo-37"><a href="#lst-la_chat_conversation_demo-37"></a></span>
+<span id="lst-la_chat_conversation_demo-38"><a href="#lst-la_chat_conversation_demo-38"></a>chat_conversation_agent(<span class="st">"4.1*7.9=?"</span>)</span>
+<span id="lst-la_chat_conversation_demo-39"><a href="#lst-la_chat_conversation_demo-39"></a>chat_conversation_agent(<span class="st">"2 * 2"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>但是，执行 <a href="#lst-la_chat_conversation_demo">列表&nbsp;<span>14.1</span></a> 时，却报错了：</p>
+<div class="sourceCode" id="annotated-cell-2"><pre class="sourceCode bash code-annotation-code code-with-copy code-annotated"><code class="sourceCode bash"><span id="annotated-cell-2-1"><a href="#annotated-cell-2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Traceback</span> <span class="er">(</span><span class="ex">most</span> recent call last<span class="kw">)</span><span class="bu">:</span></span>
+<span id="annotated-cell-2-2"><a href="#annotated-cell-2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"code/test_chat_coversation_agent.py"</span>, line 38, in <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
+<span id="annotated-cell-2-3"><a href="#annotated-cell-2-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">chat_conversation_agent</span><span class="er">(</span><span class="st">"4.1*7.9=?"</span><span class="kw">)</span></span>
+<span id="annotated-cell-2-4"><a href="#annotated-cell-2-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">...</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-2-5" class="code-annotation-target"><a href="#annotated-cell-2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ValueError:</span> variable chat_history should be a list of base messages, got</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-2" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="5" data-code-annotation="1">chat_history 变量必须是一个消息列表</span>
+</dd>
+</dl>
 </section>
-<section id="安装-docker-milvus-并启动" class="level3" data-number="C.1.3">
-<h3 data-number="C.1.3" class="anchored" data-anchor-id="安装-docker-milvus-并启动"><span class="header-section-number">C.1.3</span> 3. 安装 docker-milvus 并启动</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir milvus <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> milvus </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> wget https://github.com/milvus-io/milvus/releases/download/v2.3.1/milvus-standalone-docker-compose.yml <span class="at">-O</span> docker-compose.yml</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo docker compose up <span class="at">-d</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo docker compose ps</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="milvus-测试" class="level2" data-number="C.2">
-<h2 data-number="C.2" class="anchored" data-anchor-id="milvus-测试"><span class="header-section-number">C.2</span> Milvus 测试</h2>
+<section id="messagesplaceholder" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="messagesplaceholder"><span class="header-section-number">14.3</span> MessagesPlaceholder</h2>
+<p>我们说过，Agent 本质上就是 LLM，既然 <a href="#lst-la_chat_conversation_demo">列表&nbsp;<span>14.1</span></a> 执行有异常，那我们就看下他的提示词究竟是怎么实现的（具体实现位于 <code>langchain/agents/conversation_chat/base.py</code> 的 <code>create_prompt()</code>）。</p>
+<div class="sourceCode" id="annotated-cell-3"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-3-1"><a href="#annotated-cell-3-1" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
+<span id="annotated-cell-3-2"><a href="#annotated-cell-3-2" aria-hidden="true" tabindex="-1"></a>    SystemMessagePromptTemplate.from_template(system_message),</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-3" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-3-3" class="code-annotation-target"><a href="#annotated-cell-3-3" aria-hidden="true" tabindex="-1"></a>    MessagesPlaceholder(variable_name<span class="op">=</span><span class="st">"chat_history"</span>),</span>
+<span id="annotated-cell-3-4"><a href="#annotated-cell-3-4" aria-hidden="true" tabindex="-1"></a>    HumanMessagePromptTemplate.from_template(final_prompt),</span>
+<span id="annotated-cell-3-5"><a href="#annotated-cell-3-5" aria-hidden="true" tabindex="-1"></a>    MessagesPlaceholder(variable_name<span class="op">=</span><span class="st">"agent_scratchpad"</span>),</span>
+<span id="annotated-cell-3-6"><a href="#annotated-cell-3-6" aria-hidden="true" tabindex="-1"></a>]</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-3" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-3" data-code-lines="3" data-code-annotation="1">从提示词的构造方式上，<code>chat_history</code> 是通过 <code>MessagesPlaceholder</code> 构造的。而此处的 <code>chat_history</code> 又是通过 <code>ConversationBufferMemory</code> 获取的。</span>
+</dd>
+</dl>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationBufferMemory(memory_key<span class="op">=</span><span class="st">"chat_history"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>ConversationBufferMemory</code> 返回的内容逻辑如下所示：</p>
+<div class="sourceCode" id="annotated-cell-5"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-5-1"><a href="#annotated-cell-5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@property</span></span>
+<span id="annotated-cell-5-2"><a href="#annotated-cell-5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="bu">buffer</span>(<span class="va">self</span>) <span class="op">-&gt;</span> Any:</span>
+<span id="annotated-cell-5-3"><a href="#annotated-cell-5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""String buffer of memory."""</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-5-4" class="code-annotation-target"><a href="#annotated-cell-5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>.buffer_as_messages <span class="cf">if</span> <span class="va">self</span>.return_messages <span class="cf">else</span> <span class="va">self</span>.buffer_as_str</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-5" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-5" data-code-lines="4" data-code-annotation="1">根据 <code>return_messages</code> 来返回不同格式的记忆。</span>
+</dd>
+</dl>
+<p>而在 LangChain 中，<code>return_messages</code> 默认值为 <code>False</code>，因此，实际上 <code>buffer()</code> 返回的是<strong>字符串格式</strong>的内容。这就是导致执行异常的根本原因。</p>
+<p>为了解决这个问题，我们需要在初始化 <code>ConversationBufferMemory</code> 时，配置 <code>return_messages</code> = <code>True</code>。</p>
+<div id="lst-la_chat_conversation_demo_1" class="listing">
+<p>列表&nbsp;14.2: Chat Conversation Agent</p>
+<div class="sourceCode" id="lst-la_chat_conversation_demo_1" data-lst-cap="Chat Conversation Agent"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="lst-la_chat_conversation_demo_1-1"><a href="#lst-la_chat_conversation_demo_1-1"></a><span class="co">#encoding: utf-8</span></span>
+<span id="lst-la_chat_conversation_demo_1-2"><a href="#lst-la_chat_conversation_demo_1-2"></a></span>
+<span id="lst-la_chat_conversation_demo_1-3"><a href="#lst-la_chat_conversation_demo_1-3"></a><span class="co">"""</span></span>
+<span id="lst-la_chat_conversation_demo_1-4"><a href="#lst-la_chat_conversation_demo_1-4"></a><span class="co">@discribe: example for chat conversation agent.</span></span>
+<span id="lst-la_chat_conversation_demo_1-5"><a href="#lst-la_chat_conversation_demo_1-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-la_chat_conversation_demo_1-6"><a href="#lst-la_chat_conversation_demo_1-6"></a><span class="co">"""</span></span>
+<span id="lst-la_chat_conversation_demo_1-7"><a href="#lst-la_chat_conversation_demo_1-7"></a></span>
+<span id="lst-la_chat_conversation_demo_1-8"><a href="#lst-la_chat_conversation_demo_1-8"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
+<span id="lst-la_chat_conversation_demo_1-9"><a href="#lst-la_chat_conversation_demo_1-9"></a><span class="im">from</span> langchain.chains <span class="im">import</span> LLMMathChain</span>
+<span id="lst-la_chat_conversation_demo_1-10"><a href="#lst-la_chat_conversation_demo_1-10"></a><span class="im">from</span> langchain.agents <span class="im">import</span> Tool</span>
+<span id="lst-la_chat_conversation_demo_1-11"><a href="#lst-la_chat_conversation_demo_1-11"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferMemory</span>
+<span id="lst-la_chat_conversation_demo_1-12"><a href="#lst-la_chat_conversation_demo_1-12"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent</span>
+<span id="lst-la_chat_conversation_demo_1-13"><a href="#lst-la_chat_conversation_demo_1-13"></a></span>
+<a class="code-annotation-anchor" data-target-cell="lst-la_chat_conversation_demo_1" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-la_chat_conversation_demo_1-14" class="code-annotation-target"><a href="#lst-la_chat_conversation_demo_1-14"></a>memory <span class="op">=</span> ConversationBufferMemory(memory_key<span class="op">=</span><span class="st">"chat_history"</span>)</span>
+<span id="lst-la_chat_conversation_demo_1-15"><a href="#lst-la_chat_conversation_demo_1-15"></a></span>
+<span id="lst-la_chat_conversation_demo_1-16"><a href="#lst-la_chat_conversation_demo_1-16"></a>llm <span class="op">=</span> ErnieBotChat(model_name<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
+<span id="lst-la_chat_conversation_demo_1-17"><a href="#lst-la_chat_conversation_demo_1-17"></a></span>
+<span id="lst-la_chat_conversation_demo_1-18"><a href="#lst-la_chat_conversation_demo_1-18"></a><span class="co"># initialize the math tool</span></span>
+<span id="lst-la_chat_conversation_demo_1-19"><a href="#lst-la_chat_conversation_demo_1-19"></a>llm_math <span class="op">=</span> LLMMathChain(llm<span class="op">=</span>llm)</span>
+<span id="lst-la_chat_conversation_demo_1-20"><a href="#lst-la_chat_conversation_demo_1-20"></a>math_tool <span class="op">=</span> Tool(</span>
+<span id="lst-la_chat_conversation_demo_1-21"><a href="#lst-la_chat_conversation_demo_1-21"></a>    name<span class="op">=</span><span class="st">'Calculator'</span>,</span>
+<span id="lst-la_chat_conversation_demo_1-22"><a href="#lst-la_chat_conversation_demo_1-22"></a>    func<span class="op">=</span>llm_math.run,</span>
+<span id="lst-la_chat_conversation_demo_1-23"><a href="#lst-la_chat_conversation_demo_1-23"></a>    description<span class="op">=</span><span class="st">'Useful for when you need to answer questions about math.'</span></span>
+<span id="lst-la_chat_conversation_demo_1-24"><a href="#lst-la_chat_conversation_demo_1-24"></a>)</span>
+<span id="lst-la_chat_conversation_demo_1-25"><a href="#lst-la_chat_conversation_demo_1-25"></a></span>
+<span id="lst-la_chat_conversation_demo_1-26"><a href="#lst-la_chat_conversation_demo_1-26"></a><span class="co"># when giving tools to LLM, we must pass as list of tools</span></span>
+<span id="lst-la_chat_conversation_demo_1-27"><a href="#lst-la_chat_conversation_demo_1-27"></a>tools <span class="op">=</span> [math_tool]</span>
+<span id="lst-la_chat_conversation_demo_1-28"><a href="#lst-la_chat_conversation_demo_1-28"></a></span>
+<span id="lst-la_chat_conversation_demo_1-29"><a href="#lst-la_chat_conversation_demo_1-29"></a>chat_conversation_agent <span class="op">=</span> initialize_agent(</span>
+<span id="lst-la_chat_conversation_demo_1-30"><a href="#lst-la_chat_conversation_demo_1-30"></a>    agent<span class="op">=</span><span class="st">"chat-conversational-react-description"</span>,</span>
+<span id="lst-la_chat_conversation_demo_1-31"><a href="#lst-la_chat_conversation_demo_1-31"></a>    tools<span class="op">=</span>tools,</span>
+<span id="lst-la_chat_conversation_demo_1-32"><a href="#lst-la_chat_conversation_demo_1-32"></a>    llm<span class="op">=</span>llm,</span>
+<span id="lst-la_chat_conversation_demo_1-33"><a href="#lst-la_chat_conversation_demo_1-33"></a>    verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="lst-la_chat_conversation_demo_1-34"><a href="#lst-la_chat_conversation_demo_1-34"></a>    max_iterations<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="lst-la_chat_conversation_demo_1-35"><a href="#lst-la_chat_conversation_demo_1-35"></a>    memory<span class="op">=</span>memory</span>
+<span id="lst-la_chat_conversation_demo_1-36"><a href="#lst-la_chat_conversation_demo_1-36"></a>)</span>
+<span id="lst-la_chat_conversation_demo_1-37"><a href="#lst-la_chat_conversation_demo_1-37"></a></span>
+<span id="lst-la_chat_conversation_demo_1-38"><a href="#lst-la_chat_conversation_demo_1-38"></a>chat_conversation_agent(<span class="st">"4.1*7.9=?"</span>)</span>
+<span id="lst-la_chat_conversation_demo_1-39"><a href="#lst-la_chat_conversation_demo_1-39"></a>chat_conversation_agent(<span class="st">"2 * 2"</span>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="lst-la_chat_conversation_demo_1" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="lst-la_chat_conversation_demo_1" data-code-lines="14" data-code-annotation="1">通过设置 <code>return_messages</code> 为 <code>True</code> 以返回消息列表格式的记忆内容。</span>
+</dd>
+</dl>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -477,83 +593,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>为了避免不同网络环境下的端口限制，可以使用 Nginx 的 TCP Proxy 功能代理 Milvus 默认的 <code>19530</code> 端口和 <code>9091</code> 端口。具体配置参见：<a href="#lst-milvus_port">列表&nbsp;<span>C.1</span></a>。</p>
-<div id="lst-milvus_port" class="listing">
-<p>列表&nbsp;C.1: Nginx 反向代理配置</p>
-<div class="sourceCode" id="lst-milvus_port" data-lst-cap="Nginx 反向代理配置"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-milvus_port-1"><a href="#lst-milvus_port-1" aria-hidden="true" tabindex="-1"></a><span class="ex">stream</span> {</span>
-<span id="lst-milvus_port-2"><a href="#lst-milvus_port-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">server</span> {</span>
-<span id="lst-milvus_port-3"><a href="#lst-milvus_port-3" aria-hidden="true" tabindex="-1"></a>        <span class="ex">listen</span> 8081<span class="kw">;</span></span>
-<span id="lst-milvus_port-4"><a href="#lst-milvus_port-4" aria-hidden="true" tabindex="-1"></a>        <span class="ex">proxy_pass</span> 127.0.0.1:19530<span class="kw">;</span></span>
-<span id="lst-milvus_port-5"><a href="#lst-milvus_port-5" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span></span>
-<span id="lst-milvus_port-6"><a href="#lst-milvus_port-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-milvus_port-7"><a href="#lst-milvus_port-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">server</span> {</span>
-<span id="lst-milvus_port-8"><a href="#lst-milvus_port-8" aria-hidden="true" tabindex="-1"></a>        <span class="ex">listen</span> 8082<span class="kw">;</span></span>
-<span id="lst-milvus_port-9"><a href="#lst-milvus_port-9" aria-hidden="true" tabindex="-1"></a>        <span class="ex">proxy_pass</span> 127.0.0.1:9091<span class="kw">;</span></span>
-<span id="lst-milvus_port-10"><a href="#lst-milvus_port-10" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span></span>
-<span id="lst-milvus_port-11"><a href="#lst-milvus_port-11" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-<section id="安装-milvus-sdk" class="level3" data-number="C.2.1">
-<h3 data-number="C.2.1" class="anchored" data-anchor-id="安装-milvus-sdk"><span class="header-section-number">C.2.1</span> 安装 Milvus SDK</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install pymilvus</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="测试-milvus" class="level3" data-number="C.2.2">
-<h3 data-number="C.2.2" class="anchored" data-anchor-id="测试-milvus"><span class="header-section-number">C.2.2</span> 测试 Milvus</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymilvus <span class="im">import</span> connections,db</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> connections.<span class="ex">connect</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  port<span class="op">=</span><span class="st">'8081'</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># database = db.create_database("test")</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> db.list_database()</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ['default', 'test']</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>执行 <code>docker-compose logs -f | grep 'test'</code> 可以看到 Milvus 创建 <code>test</code> 数据库的日志：</p>
-<div id="lst-milvus_test" class="listing">
-<p>列表&nbsp;C.2: 创建数据库日志</p>
-<div class="sourceCode" id="lst-milvus_test" data-lst-cap="创建数据库日志"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-milvus_test-1"><a href="#lst-milvus_test-1" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.922 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">proxy/impl.go:174</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"CreateDatabase received"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=proxy</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span></span>
-<span id="lst-milvus_test-2"><a href="#lst-milvus_test-2" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.922 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">proxy/impl.go:182</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"CreateDatabase enqueued"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=proxy</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span></span>
-<span id="lst-milvus_test-3"><a href="#lst-milvus_test-3" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.923 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">rootcoord/root_coord.go:772</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"received request to create database"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=rootcoord</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">msgID=444519207108608004</span><span class="pp">]</span></span>
-<span id="lst-milvus_test-4"><a href="#lst-milvus_test-4" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.925 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">rootcoord/meta_table.go:272</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"create database"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">db=test</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">ts=444519207108608005</span><span class="pp">]</span></span>
-<span id="lst-milvus_test-5"><a href="#lst-milvus_test-5" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.925 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">rootcoord/root_coord.go:804</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"done to create database"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=rootcoord</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">msgID=444519207108608004</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">ts=444519207108608005</span><span class="pp">]</span></span>
-<span id="lst-milvus_test-6"><a href="#lst-milvus_test-6" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.925 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">proxy/impl.go:190</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"CreateDatabase done"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=proxy</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-</section>
-<section id="milvus-cli" class="level2" data-number="C.3">
-<h2 data-number="C.3" class="anchored" data-anchor-id="milvus-cli"><span class="header-section-number">C.3</span> Milvus CLI</h2>
-<p>很多时候，使用类似 <a href="https://dev.mysql.com/doc/refman/8.0/en/mysql.html">mysql</a> 这样的客户端工具来连接数据库并进行相关操作会更便捷。Milvus 也提供了类似的客户端端工具 <code>milvus_cli</code>，来方便我们对 Milvus 进行相关操作。</p>
-<p>可以采用如下命令来安装 <code>milvus_cli</code> 客户端：</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install milvus-cli</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>具体的使用如图：<a href="#fig-milvus_cli">图&nbsp;<span>C.1</span></a>。</p>
-<div id="fig-milvus_cli" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/milvus_cli_case.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;C.1: 使用 milvus_cli 连接 Milvus</figcaption>
-</figure>
-</div>
-<p><code>milvus_cli</code> 的使用命令参考：<a href="https://milvus.io/docs/cli_commands.md">Milvus Client Commands</a>。</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-警告
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>在安装 <code>milvus_cli</code> 的时候，可能会存在依赖库的版本冲突，这可能会导致安装的 <code>milvus_cli</code> 无法正常使用，如图 <a href="#fig-milvus_cli_2">图&nbsp;<span>C.2</span></a> 所示。此时，更新相关依赖的版本，并重新安装 <code>milvus_cli</code> 即可。</p>
-<div id="fig-milvus_cli_2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/milvus_cli_2.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;C.2: milvus_cli 连接超时</figcaption>
-</figure>
-</div>
+<p>例如本节中提到的 LangChain 相关基建对文心大模型支持不够友好的问题，最好的修复方案还是给 LangChain 提交 <code>PR</code> 来解决。不过，一直没有想到比较优雅的修改方法，所以一直就耽搁着。如果您有比较好的想法，可以直接给 <a href="https://github.com/langchain-ai/langchain/pulls">LangChain</a> 提交 <code>PR</code>。</p>
 </div>
 </div>
 
@@ -798,11 +838,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./langchain_install.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">LangChain 安装指南</span></span>
+      <a href="./langchain_agent_react.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">LangChain ReAct Agent</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./langchain_agent_fc.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">LangChain OpenAI Function Agent</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

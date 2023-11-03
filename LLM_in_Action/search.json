@@ -4,7 +4,7 @@
     "href": "index.html#欢迎阅读",
     "title": "Large Language Model in Action",
     "section": "欢迎阅读",
-    "text": "欢迎阅读\n这是一本关于 大语言模型 实践的书籍，而不是一本深入研究 大语言模型 的运行原理和底层算法的书籍。\n如果您是一位想深入学习框架、算法并对其进行优化改进的研究者，本书可能并不适合您。\n如果您想大概了解一下相关的概念，并以此来指导自己的实践，想了解目前在应用开发中有哪些工具以及这些工具的具体实践用法，那么这本书正式您你而作。\n正如这本书的题目，这本书会更偏向实践、应用，但是我们也会在数据介绍大模型相关的概念，这些概念会让您对大模型有一个初步的认识，仅此而已。如果您想深入了解相关概念的底层细节，我们也提供了对应的文献，您可以深入阅读相关的文献。\n这是一个飞速发展的时代，技术、工具的发展亦是如此——每天有新的工具产生，也会有部分技术过时——因此我们以在线书籍的方式来构建这本书以保持内容的与时俱进。这也是一本开放的书籍，如果您希望为本书贡献自己的力量，您可以进入点击导航栏右上角的图标进入本书的代码仓库，提交您的内容。\n这本书整体会分为三大部分：\n\nPART 1：基本概念篇，主要介绍大模型相关的基本概念\nPART 2：相关工具篇，主要介绍大模型相关的工具，LangChain, Langflow, AutoGen……\nPART 3：具体实践偏，主要介绍应用大模型的具体案例"
+    "text": "欢迎阅读\n这是一本关于 大语言模型 实践的书籍，而不是一本深入研究 大语言模型 的运行原理和底层算法的书籍。\n如果您是一位想深入学习框架、算法并对其进行优化改进的研究者，本书可能并不适合您。\n如果您想大概了解一下相关的概念，并以此来指导自己的实践，想了解目前在应用开发中有哪些工具以及这些工具的具体实践用法，那么这本书正是为您你而作。\n正如这本书的题目，这本书会更偏向实践、应用，但是我们也会在数据介绍大模型相关的概念，这些概念会让您对大模型有一个初步的认识，仅此而已。如果您想深入了解相关概念的底层细节，我们也提供了对应的文献，您可以深入阅读相关的文献。\n这是一个飞速发展的时代，技术、工具的发展亦是如此——每天有新的工具产生，也会有部分技术过时——因此我们以在线书籍的方式来构建这本书以保持内容的与时俱进。这也是一本开放的书籍，如果您希望为本书贡献自己的力量，您可以进入点击导航栏右上角的图标进入本书的代码仓库，提交您的内容。\n这本书整体会分为三大部分：\n\nPART 1：基本概念篇，主要介绍大模型相关的基本概念\nPART 2：相关工具篇，主要介绍大模型相关的工具，LangChain, Langflow, AutoGen……\nPART 3：具体实践偏，主要介绍应用大模型的具体案例"
   },
   {
     "objectID": "index.html#版权声明",
@@ -425,6 +425,27 @@
     "title": "13  LangChain ReAct Agent",
     "section": "13.8 总结",
     "text": "13.8 总结\n在本章的简单示例中，我们介绍了 LangChain Agent & Tool 的基本结构，Agent 可以作为控制器来驱动各种工具并最终完成任务，这真是一件令人振奋的事情~\n当然，我们可以做的远不止于此。我们可以将无限的功能和服务集成在 Tool 中，或与其他的专家模型进行通信。\n我们可以使用 LangChain 提供的默认工具来运行 SQL 查询、执行数学计算、进行向量搜索。\n当这些默认工具无法满足我们的要求时，我们还可以自己动手构建我们自己的工具，以丰富 LLM 的能力，并最终实现我们的目的。\n\n\n\n\n[1] Karpas, E. 等 2022. MRKL Systems: A modular, neuro-symbolic architecture that combines large language models, external knowledge sources and discrete reasoning. (2022)."
+  },
+  {
+    "objectID": "langchain_agent_chat.html#修改-chat-agent-的提示词逻辑",
+    "href": "langchain_agent_chat.html#修改-chat-agent-的提示词逻辑",
+    "title": "14  LangChain Chat Agent",
+    "section": "14.1 修改 Chat Agent 的提示词逻辑",
+    "text": "14.1 修改 Chat Agent 的提示词逻辑\n因为文心大模型 Chat 模式的 message 消息类型和 OpenAI 的不同——缺少 SystemMessage 类型，因此，如果要让 Chat Agent 支持文心，需要按照 列表 13.16 的思路对其 Prompt 的生成方式进行修改。\n@classmethod\ndef create_prompt_for_ernie(\n    ......\n) -&gt; BasePromptTemplate:\n    ......\n    messages = [\n        HumanMessagePromptTemplate.from_template(template),\n        AIMessagePromptTemplate.from_template(\"YES, I Know.\"),\n        *_memory_prompts,\n        HumanMessagePromptTemplate.from_template(human_message_template),\n    ]\n    return ChatPromptTemplate(input_variables=input_variables, messages=messages)"
+  },
+  {
+    "objectID": "langchain_agent_chat.html#chatconversationagent",
+    "href": "langchain_agent_chat.html#chatconversationagent",
+    "title": "14  LangChain Chat Agent",
+    "section": "14.2 ChatConversationAgent",
+    "text": "14.2 ChatConversationAgent\n参照 列表 13.7 和 列表 13.11，我们可以构建一个 chat-conversational-react-description。\n\n列表 14.1: Chat Conversation Agent\n#encoding: utf-8\n\n\"\"\"\n@discribe: example for chat conversation agent.\n@author: wangwei1237@gmail.com\n\"\"\"\n\nfrom langchain.chat_models import ErnieBotChat\nfrom langchain.chains import LLMMathChain\nfrom langchain.agents import Tool\nfrom langchain.memory import ConversationBufferMemory\nfrom langchain.agents import initialize_agent\n\nmemory = ConversationBufferMemory(memory_key=\"chat_history\")\n\nllm = ErnieBotChat(model_name=\"ERNIE-Bot-4\")\n\n# initialize the math tool\nllm_math = LLMMathChain(llm=llm)\nmath_tool = Tool(\n    name='Calculator',\n    func=llm_math.run,\n    description='Useful for when you need to answer questions about math.'\n)\n\n# when giving tools to LLM, we must pass as list of tools\ntools = [math_tool]\n\nchat_conversation_agent = initialize_agent(\n    agent=\"chat-conversational-react-description\",\n    tools=tools,\n    llm=llm,\n    verbose=True,\n    max_iterations=3,\n    memory=memory\n)\n\nchat_conversation_agent(\"4.1*7.9=?\")\nchat_conversation_agent(\"2 * 2\")\n\n但是，执行 列表 14.1 时，却报错了：\nTraceback (most recent call last):\n  File \"code/test_chat_coversation_agent.py\", line 38, in &lt;module&gt;\n    chat_conversation_agent(\"4.1*7.9=?\")\n  ...\n1ValueError: variable chat_history should be a list of base messages, got\n\n1\n\nchat_history 变量必须是一个消息列表"
+  },
+  {
+    "objectID": "langchain_agent_chat.html#messagesplaceholder",
+    "href": "langchain_agent_chat.html#messagesplaceholder",
+    "title": "14  LangChain Chat Agent",
+    "section": "14.3 MessagesPlaceholder",
+    "text": "14.3 MessagesPlaceholder\n我们说过，Agent 本质上就是 LLM，既然 列表 14.1 执行有异常，那我们就看下他的提示词究竟是怎么实现的（具体实现位于 langchain/agents/conversation_chat/base.py 的 create_prompt()）。\nmessages = [\n    SystemMessagePromptTemplate.from_template(system_message),\n1    MessagesPlaceholder(variable_name=\"chat_history\"),\n    HumanMessagePromptTemplate.from_template(final_prompt),\n    MessagesPlaceholder(variable_name=\"agent_scratchpad\"),\n]\n\n1\n\n从提示词的构造方式上，chat_history 是通过 MessagesPlaceholder 构造的。而此处的 chat_history 又是通过 ConversationBufferMemory 获取的。\n\n\nmemory = ConversationBufferMemory(memory_key=\"chat_history\")\nConversationBufferMemory 返回的内容逻辑如下所示：\n@property\ndef buffer(self) -&gt; Any:\n    \"\"\"String buffer of memory.\"\"\"\n1    return self.buffer_as_messages if self.return_messages else self.buffer_as_str\n\n1\n\n根据 return_messages 来返回不同格式的记忆。\n\n\n而在 LangChain 中，return_messages 默认值为 False，因此，实际上 buffer() 返回的是字符串格式的内容。这就是导致执行异常的根本原因。\n为了解决这个问题，我们需要在初始化 ConversationBufferMemory 时，配置 return_messages = True。\n\n列表 14.2: Chat Conversation Agent\n#encoding: utf-8\n\n\"\"\"\n@discribe: example for chat conversation agent.\n@author: wangwei1237@gmail.com\n\"\"\"\n\nfrom langchain.chat_models import ErnieBotChat\nfrom langchain.chains import LLMMathChain\nfrom langchain.agents import Tool\nfrom langchain.memory import ConversationBufferMemory\nfrom langchain.agents import initialize_agent\n\n1memory = ConversationBufferMemory(memory_key=\"chat_history\")\n\nllm = ErnieBotChat(model_name=\"ERNIE-Bot-4\")\n\n# initialize the math tool\nllm_math = LLMMathChain(llm=llm)\nmath_tool = Tool(\n    name='Calculator',\n    func=llm_math.run,\n    description='Useful for when you need to answer questions about math.'\n)\n\n# when giving tools to LLM, we must pass as list of tools\ntools = [math_tool]\n\nchat_conversation_agent = initialize_agent(\n    agent=\"chat-conversational-react-description\",\n    tools=tools,\n    llm=llm,\n    verbose=True,\n    max_iterations=3,\n    memory=memory\n)\n\nchat_conversation_agent(\"4.1*7.9=?\")\nchat_conversation_agent(\"2 * 2\")\n\n\n1\n\n通过设置 return_messages 为 True 以返回消息列表格式的记忆内容。\n\n\n\n\n\n\n\n\n警告\n\n\n\n例如本节中提到的 LangChain 相关基建对文心大模型支持不够友好的问题，最好的修复方案还是给 LangChain 提交 PR 来解决。不过，一直没有想到比较优雅的修改方法，所以一直就耽搁着。如果您有比较好的想法，可以直接给 LangChain 提交 PR。"
   },
   {
     "objectID": "references.html",
