@@ -418,7 +418,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#文心-api" id="toc-文心-api" class="nav-link" data-scroll-target="#文心-api"><span class="header-section-number">12.4.1</span> 文心 API</a></li>
   <li><a href="#文心函数调用-llmchain" id="toc-文心函数调用-llmchain" class="nav-link" data-scroll-target="#文心函数调用-llmchain"><span class="header-section-number">12.4.2</span> 文心函数调用 LLMChain</a></li>
   </ul></li>
-  <li><a href="#参考文献" id="toc-参考文献" class="nav-link" data-scroll-target="#参考文献"><span class="header-section-number">12.5</span> 参考文献</a></li>
+  <li><a href="#根据-llm-的返回调用对应函数" id="toc-根据-llm-的返回调用对应函数" class="nav-link" data-scroll-target="#根据-llm-的返回调用对应函数"><span class="header-section-number">12.5</span> 根据 LLM 的返回调用对应函数</a></li>
+  <li><a href="#参考文献" id="toc-参考文献" class="nav-link" data-scroll-target="#参考文献"><span class="header-section-number">12.6</span> 参考文献</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_function_call.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
@@ -892,15 +893,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <dl class="code-annotation-container-grid">
 <dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-annotation="1" data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="5">指定采用的模型名称</span>
+<span data-code-lines="5" data-code-annotation="1" data-code-cell="lst-la_fc_fd_qf_demo">指定采用的模型名称</span>
 </dd>
 <dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-annotation="2" data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="6">和大模型交互的消息列表</span>
+<span data-code-lines="6" data-code-annotation="2" data-code-cell="lst-la_fc_fd_qf_demo">和大模型交互的消息列表</span>
 </dd>
 <dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-annotation="3" data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="7">告诉大模型我们有哪些函数可以调用，以及对应函数的具体描述，具体参见 <a href="#lst-la_fc_fd">列表&nbsp;<span>12.7</span></a></span>
+<span data-code-lines="7" data-code-annotation="3" data-code-cell="lst-la_fc_fd_qf_demo">告诉大模型我们有哪些函数可以调用，以及对应函数的具体描述，具体参见 <a href="#lst-la_fc_fd">列表&nbsp;<span>12.7</span></a></span>
 </dd>
 </dl>
 <p><a href="#lst-la_fc_fd_qf_demo">列表&nbsp;<span>12.8</span></a> 的运行结果如下：</p>
@@ -909,7 +910,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="文心函数调用-llmchain" class="level3" data-number="12.4.2">
 <h3 data-number="12.4.2" class="anchored" data-anchor-id="文心函数调用-llmchain"><span class="header-section-number">12.4.2</span> 文心函数调用 LLMChain</h3>
-<p>目前，LangChain 并不支持像 <a href="#lst-fc_multi_fcs">列表&nbsp;<span>12.5</span></a> 那样，通过 <code>create_openai_fn_chain()</code> 来进行函数调用。如果要实现该通能，需要对 LangChain 进行扩展，增加 <code>create_ernie_fn_chai()</code>。可以参照 <code>create_openai_fn_chain()</code> 来实现 <code>create_ernie_fn_chain()</code>，具体需要修改的代码参考：<a href="https://github.com/wangwei1237/langchain/pull/2">wangwei1237-patch-3</a>。</p>
+<p>目前，LangChain 并不支持像 <a href="#lst-fc_multi_fcs">列表&nbsp;<span>12.5</span></a> 那样，通过 <code>create_openai_fn_chain()</code> 来进行函数调用。如果要实现该通能，需要对 LangChain 进行扩展，增加 <code>create_ernie_fn_chai()</code>。可以参照 <code>create_openai_fn_chain()</code> 来实现 <code>create_ernie_fn_chain()</code>，具体需要修改的代码参考：<a href="https://github.com/langchain-ai/langchain/pull/13320">feat: add ERNIE-Bot-4 Function Calling</a>。</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -967,8 +968,146 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>接下来，根据文心大模型的返回内容，同时根据之前所述的 OpenAI 的 <code>函数调用</code> 方式来调用大模型返回的函数并获取对应信息即可。</p>
 </section>
 </section>
-<section id="参考文献" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="参考文献"><span class="header-section-number">12.5</span> 参考文献</h2>
+<section id="根据-llm-的返回调用对应函数" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="根据-llm-的返回调用对应函数"><span class="header-section-number">12.5</span> 根据 LLM 的返回调用对应函数</h2>
+<p>如前所述，LLMs 会根据当前的信息返回它认为我们应该调用的函数以及函数对应的参数，具体的函数执行还是需要我们手动执行。为了进一步简化该过程，我们对这个过程进行了抽象，具体如 <a href="#lst-la_wx_fc_run">列表&nbsp;<span>12.10</span></a>。</p>
+<div id="lst-la_wx_fc_run" class="listing">
+<p>列表&nbsp;12.10: utils.call_function.call_function()</p>
+<div class="sourceCode" id="lst-la_wx_fc_run" data-lst-cap="utils.call_function.call_function()"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-la_wx_fc_run-1"><a href="#lst-la_wx_fc_run-1"></a><span class="co">"""</span></span>
+<span id="lst-la_wx_fc_run-2"><a href="#lst-la_wx_fc_run-2"></a><span class="co">@discribe: The function running for Ernie-Bot-4 Function Calling.</span></span>
+<span id="lst-la_wx_fc_run-3"><a href="#lst-la_wx_fc_run-3"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-la_wx_fc_run-4"><a href="#lst-la_wx_fc_run-4"></a><span class="co">"""</span></span>
+<span id="lst-la_wx_fc_run-5"><a href="#lst-la_wx_fc_run-5"></a></span>
+<span id="lst-la_wx_fc_run-6"><a href="#lst-la_wx_fc_run-6"></a><span class="im">from</span> typing <span class="im">import</span> (</span>
+<span id="lst-la_wx_fc_run-7"><a href="#lst-la_wx_fc_run-7"></a>    Any,</span>
+<span id="lst-la_wx_fc_run-8"><a href="#lst-la_wx_fc_run-8"></a>    Callable,</span>
+<span id="lst-la_wx_fc_run-9"><a href="#lst-la_wx_fc_run-9"></a>    Dict,</span>
+<span id="lst-la_wx_fc_run-10"><a href="#lst-la_wx_fc_run-10"></a>    Sequence,</span>
+<span id="lst-la_wx_fc_run-11"><a href="#lst-la_wx_fc_run-11"></a>    Type,</span>
+<span id="lst-la_wx_fc_run-12"><a href="#lst-la_wx_fc_run-12"></a>    Union,</span>
+<span id="lst-la_wx_fc_run-13"><a href="#lst-la_wx_fc_run-13"></a>)</span>
+<span id="lst-la_wx_fc_run-14"><a href="#lst-la_wx_fc_run-14"></a></span>
+<span id="lst-la_wx_fc_run-15"><a href="#lst-la_wx_fc_run-15"></a><span class="im">from</span> langchain.chains.ernie_functions <span class="im">import</span> (</span>
+<span id="lst-la_wx_fc_run-16"><a href="#lst-la_wx_fc_run-16"></a>    convert_to_ernie_function,</span>
+<span id="lst-la_wx_fc_run-17"><a href="#lst-la_wx_fc_run-17"></a>)</span>
+<span id="lst-la_wx_fc_run-18"><a href="#lst-la_wx_fc_run-18"></a><span class="im">from</span> langchain.pydantic_v1 <span class="im">import</span> BaseModel</span>
+<span id="lst-la_wx_fc_run-19"><a href="#lst-la_wx_fc_run-19"></a></span>
+<span id="lst-la_wx_fc_run-20"><a href="#lst-la_wx_fc_run-20"></a><span class="kw">def</span> call_function(functions: Sequence[Union[Dict[<span class="bu">str</span>, Any], Type[BaseModel], Callable]],</span>
+<span id="lst-la_wx_fc_run-21"><a href="#lst-la_wx_fc_run-21"></a>                  fc_by_llm: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="lst-la_wx_fc_run-22"><a href="#lst-la_wx_fc_run-22"></a>    <span class="co">"""Calling the function and return the result."""</span></span>
+<span id="lst-la_wx_fc_run-23"><a href="#lst-la_wx_fc_run-23"></a>    <span class="cf">if</span> <span class="kw">not</span> fc_by_llm <span class="kw">or</span> <span class="st">"name"</span> <span class="kw">not</span> <span class="kw">in</span> fc_by_llm <span class="kw">or</span> <span class="st">"arguments"</span> <span class="kw">not</span> <span class="kw">in</span> fc_by_llm:</span>
+<span id="lst-la_wx_fc_run-24"><a href="#lst-la_wx_fc_run-24"></a>        <span class="cf">return</span> <span class="st">""</span></span>
+<span id="lst-la_wx_fc_run-25"><a href="#lst-la_wx_fc_run-25"></a>    func_list <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> functions <span class="cf">if</span> f.<span class="va">__name__</span> <span class="op">==</span> fc_by_llm[<span class="st">"name"</span>]]</span>
+<span id="lst-la_wx_fc_run-26"><a href="#lst-la_wx_fc_run-26"></a>    <span class="cf">if</span> <span class="bu">len</span>(func_list) <span class="op">!=</span> <span class="dv">1</span>:</span>
+<span id="lst-la_wx_fc_run-27"><a href="#lst-la_wx_fc_run-27"></a>        <span class="cf">return</span> <span class="st">""</span></span>
+<span id="lst-la_wx_fc_run-28"><a href="#lst-la_wx_fc_run-28"></a>    func <span class="op">=</span> func_list[<span class="dv">0</span>]</span>
+<span id="lst-la_wx_fc_run-29"><a href="#lst-la_wx_fc_run-29"></a>    func_args_keys <span class="op">=</span> convert_to_ernie_function(func)[<span class="st">"parameters"</span>][<span class="st">"properties"</span>].keys()</span>
+<span id="lst-la_wx_fc_run-30"><a href="#lst-la_wx_fc_run-30"></a>    fc_args_by_llm <span class="op">=</span> fc_by_llm[<span class="st">"arguments"</span>]</span>
+<span id="lst-la_wx_fc_run-31"><a href="#lst-la_wx_fc_run-31"></a>    func_args <span class="op">=</span> {</span>
+<span id="lst-la_wx_fc_run-32"><a href="#lst-la_wx_fc_run-32"></a>        key: fc_args_by_llm[key] <span class="cf">for</span> key <span class="kw">in</span> func_args_keys <span class="cf">if</span> key <span class="kw">in</span> fc_args_by_llm</span>
+<span id="lst-la_wx_fc_run-33"><a href="#lst-la_wx_fc_run-33"></a>    }</span>
+<span id="lst-la_wx_fc_run-34"><a href="#lst-la_wx_fc_run-34"></a>    res <span class="op">=</span> func(<span class="op">**</span>func_args)</span>
+<span id="lst-la_wx_fc_run-35"><a href="#lst-la_wx_fc_run-35"></a>    <span class="cf">return</span> res</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>通过文心大模型的函数调用解决我们的问题的完整代码如 <a href="#lst-la_wx_fc_demo_all">列表&nbsp;<span>12.11</span></a> 所示。</p>
+<div id="lst-la_wx_fc_demo_all" class="listing">
+<p>列表&nbsp;12.11: 文心大模型利用函数调用解决问题</p>
+<div class="sourceCode" id="lst-la_wx_fc_demo_all" data-lst-cap="文心大模型利用函数调用解决问题"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-la_wx_fc_demo_all-1"><a href="#lst-la_wx_fc_demo_all-1"></a><span class="co">"""</span></span>
+<span id="lst-la_wx_fc_demo_all-2"><a href="#lst-la_wx_fc_demo_all-2"></a><span class="co">@discribe: demo for the Ernie-Bot-4 Function Calling.</span></span>
+<span id="lst-la_wx_fc_demo_all-3"><a href="#lst-la_wx_fc_demo_all-3"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-la_wx_fc_demo_all-4"><a href="#lst-la_wx_fc_demo_all-4"></a><span class="co">"""</span></span>
+<span id="lst-la_wx_fc_demo_all-5"><a href="#lst-la_wx_fc_demo_all-5"></a></span>
+<span id="lst-la_wx_fc_demo_all-6"><a href="#lst-la_wx_fc_demo_all-6"></a><span class="im">import</span> json</span>
+<span id="lst-la_wx_fc_demo_all-7"><a href="#lst-la_wx_fc_demo_all-7"></a></span>
+<span id="lst-la_wx_fc_demo_all-8"><a href="#lst-la_wx_fc_demo_all-8"></a><span class="im">from</span> langchain.chains <span class="im">import</span> LLMChain</span>
+<span id="lst-la_wx_fc_demo_all-9"><a href="#lst-la_wx_fc_demo_all-9"></a><span class="im">from</span> langchain.chains.ernie_functions <span class="im">import</span> (</span>
+<span id="lst-la_wx_fc_demo_all-10"><a href="#lst-la_wx_fc_demo_all-10"></a>    create_ernie_fn_chain,</span>
+<span id="lst-la_wx_fc_demo_all-11"><a href="#lst-la_wx_fc_demo_all-11"></a>)</span>
+<span id="lst-la_wx_fc_demo_all-12"><a href="#lst-la_wx_fc_demo_all-12"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
+<span id="lst-la_wx_fc_demo_all-13"><a href="#lst-la_wx_fc_demo_all-13"></a><span class="im">from</span> langchain.prompts.chat <span class="im">import</span> (</span>
+<span id="lst-la_wx_fc_demo_all-14"><a href="#lst-la_wx_fc_demo_all-14"></a>    ChatPromptTemplate,</span>
+<span id="lst-la_wx_fc_demo_all-15"><a href="#lst-la_wx_fc_demo_all-15"></a>)</span>
+<span id="lst-la_wx_fc_demo_all-16"><a href="#lst-la_wx_fc_demo_all-16"></a></span>
+<span id="lst-la_wx_fc_demo_all-17"><a href="#lst-la_wx_fc_demo_all-17"></a><span class="im">from</span> utils.call_function <span class="im">import</span> call_function</span>
+<span id="lst-la_wx_fc_demo_all-18"><a href="#lst-la_wx_fc_demo_all-18"></a></span>
+<span id="lst-la_wx_fc_demo_all-19"><a href="#lst-la_wx_fc_demo_all-19"></a><span class="kw">def</span> get_current_news(location: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="lst-la_wx_fc_demo_all-20"><a href="#lst-la_wx_fc_demo_all-20"></a>    <span class="co">"""Get the current news based on the location.'</span></span>
+<span id="lst-la_wx_fc_demo_all-21"><a href="#lst-la_wx_fc_demo_all-21"></a></span>
+<span id="lst-la_wx_fc_demo_all-22"><a href="#lst-la_wx_fc_demo_all-22"></a><span class="co">    Args:</span></span>
+<span id="lst-la_wx_fc_demo_all-23"><a href="#lst-la_wx_fc_demo_all-23"></a><span class="co">        location (str): The location to query.</span></span>
+<span id="lst-la_wx_fc_demo_all-24"><a href="#lst-la_wx_fc_demo_all-24"></a><span class="co">    </span></span>
+<span id="lst-la_wx_fc_demo_all-25"><a href="#lst-la_wx_fc_demo_all-25"></a><span class="co">    Returs:</span></span>
+<span id="lst-la_wx_fc_demo_all-26"><a href="#lst-la_wx_fc_demo_all-26"></a><span class="co">        str: Current news based on the location.</span></span>
+<span id="lst-la_wx_fc_demo_all-27"><a href="#lst-la_wx_fc_demo_all-27"></a><span class="co">    """</span></span>
+<span id="lst-la_wx_fc_demo_all-28"><a href="#lst-la_wx_fc_demo_all-28"></a></span>
+<span id="lst-la_wx_fc_demo_all-29"><a href="#lst-la_wx_fc_demo_all-29"></a>    news_info <span class="op">=</span> {</span>
+<span id="lst-la_wx_fc_demo_all-30"><a href="#lst-la_wx_fc_demo_all-30"></a>        <span class="st">"location"</span>: location,</span>
+<span id="lst-la_wx_fc_demo_all-31"><a href="#lst-la_wx_fc_demo_all-31"></a>        <span class="st">"news"</span>: [</span>
+<span id="lst-la_wx_fc_demo_all-32"><a href="#lst-la_wx_fc_demo_all-32"></a>            <span class="st">"I have a Book."</span>,</span>
+<span id="lst-la_wx_fc_demo_all-33"><a href="#lst-la_wx_fc_demo_all-33"></a>            <span class="st">"It's a nice day, today."</span></span>
+<span id="lst-la_wx_fc_demo_all-34"><a href="#lst-la_wx_fc_demo_all-34"></a>        ]</span>
+<span id="lst-la_wx_fc_demo_all-35"><a href="#lst-la_wx_fc_demo_all-35"></a>    }</span>
+<span id="lst-la_wx_fc_demo_all-36"><a href="#lst-la_wx_fc_demo_all-36"></a></span>
+<span id="lst-la_wx_fc_demo_all-37"><a href="#lst-la_wx_fc_demo_all-37"></a>    <span class="cf">return</span> json.dumps(news_info)</span>
+<span id="lst-la_wx_fc_demo_all-38"><a href="#lst-la_wx_fc_demo_all-38"></a></span>
+<span id="lst-la_wx_fc_demo_all-39"><a href="#lst-la_wx_fc_demo_all-39"></a><span class="kw">def</span> get_current_weather(location: <span class="bu">str</span>, unit: <span class="bu">str</span><span class="op">=</span><span class="st">"celsius"</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="lst-la_wx_fc_demo_all-40"><a href="#lst-la_wx_fc_demo_all-40"></a>    <span class="co">"""Get the current weather in a given location</span></span>
+<span id="lst-la_wx_fc_demo_all-41"><a href="#lst-la_wx_fc_demo_all-41"></a></span>
+<span id="lst-la_wx_fc_demo_all-42"><a href="#lst-la_wx_fc_demo_all-42"></a><span class="co">    Args:</span></span>
+<span id="lst-la_wx_fc_demo_all-43"><a href="#lst-la_wx_fc_demo_all-43"></a><span class="co">        location (str): location of the weather.</span></span>
+<span id="lst-la_wx_fc_demo_all-44"><a href="#lst-la_wx_fc_demo_all-44"></a><span class="co">        unit (str): unit of the tempuature.</span></span>
+<span id="lst-la_wx_fc_demo_all-45"><a href="#lst-la_wx_fc_demo_all-45"></a><span class="co">    </span></span>
+<span id="lst-la_wx_fc_demo_all-46"><a href="#lst-la_wx_fc_demo_all-46"></a><span class="co">    Returns:</span></span>
+<span id="lst-la_wx_fc_demo_all-47"><a href="#lst-la_wx_fc_demo_all-47"></a><span class="co">        str: weather in the given location.</span></span>
+<span id="lst-la_wx_fc_demo_all-48"><a href="#lst-la_wx_fc_demo_all-48"></a><span class="co">    """</span></span>
+<span id="lst-la_wx_fc_demo_all-49"><a href="#lst-la_wx_fc_demo_all-49"></a></span>
+<span id="lst-la_wx_fc_demo_all-50"><a href="#lst-la_wx_fc_demo_all-50"></a>    weather_info <span class="op">=</span> {</span>
+<span id="lst-la_wx_fc_demo_all-51"><a href="#lst-la_wx_fc_demo_all-51"></a>        <span class="st">"location"</span>: location,</span>
+<span id="lst-la_wx_fc_demo_all-52"><a href="#lst-la_wx_fc_demo_all-52"></a>        <span class="st">"temperature"</span>: <span class="st">"27"</span>,</span>
+<span id="lst-la_wx_fc_demo_all-53"><a href="#lst-la_wx_fc_demo_all-53"></a>        <span class="st">"unit"</span>: unit,</span>
+<span id="lst-la_wx_fc_demo_all-54"><a href="#lst-la_wx_fc_demo_all-54"></a>        <span class="st">"forecast"</span>: [<span class="st">"sunny"</span>, <span class="st">"windy"</span>],</span>
+<span id="lst-la_wx_fc_demo_all-55"><a href="#lst-la_wx_fc_demo_all-55"></a>    }</span>
+<span id="lst-la_wx_fc_demo_all-56"><a href="#lst-la_wx_fc_demo_all-56"></a>    <span class="cf">return</span> json.dumps(weather_info)</span>
+<span id="lst-la_wx_fc_demo_all-57"><a href="#lst-la_wx_fc_demo_all-57"></a></span>
+<span id="lst-la_wx_fc_demo_all-58"><a href="#lst-la_wx_fc_demo_all-58"></a>llm <span class="op">=</span> ErnieBotChat(model_name<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
+<span id="lst-la_wx_fc_demo_all-59"><a href="#lst-la_wx_fc_demo_all-59"></a></span>
+<span id="lst-la_wx_fc_demo_all-60"><a href="#lst-la_wx_fc_demo_all-60"></a>prompt <span class="op">=</span> ChatPromptTemplate.from_messages(</span>
+<span id="lst-la_wx_fc_demo_all-61"><a href="#lst-la_wx_fc_demo_all-61"></a>    [</span>
+<span id="lst-la_wx_fc_demo_all-62"><a href="#lst-la_wx_fc_demo_all-62"></a>        (<span class="st">"human"</span>, <span class="st">"</span><span class="sc">{query}</span><span class="st">"</span>),</span>
+<span id="lst-la_wx_fc_demo_all-63"><a href="#lst-la_wx_fc_demo_all-63"></a>    ]</span>
+<span id="lst-la_wx_fc_demo_all-64"><a href="#lst-la_wx_fc_demo_all-64"></a>)</span>
+<span id="lst-la_wx_fc_demo_all-65"><a href="#lst-la_wx_fc_demo_all-65"></a>chain <span class="op">=</span> create_ernie_fn_chain([get_current_weather, get_current_news], llm, prompt, verbose<span class="op">=</span><span class="va">True</span>)</span>
+<span id="lst-la_wx_fc_demo_all-66"><a href="#lst-la_wx_fc_demo_all-66"></a>res <span class="op">=</span> chain.run(<span class="st">"北京今天的新闻是什么？"</span>)</span>
+<span id="lst-la_wx_fc_demo_all-67"><a href="#lst-la_wx_fc_demo_all-67"></a></span>
+<span id="lst-la_wx_fc_demo_all-68"><a href="#lst-la_wx_fc_demo_all-68"></a><span class="cf">if</span> res:</span>
+<span id="lst-la_wx_fc_demo_all-69"><a href="#lst-la_wx_fc_demo_all-69"></a>    res_cf <span class="op">=</span> call_function([get_current_news, get_current_weather], res)</span>
+<span id="lst-la_wx_fc_demo_all-70"><a href="#lst-la_wx_fc_demo_all-70"></a>    prompt_2 <span class="op">=</span> ChatPromptTemplate.from_messages(</span>
+<span id="lst-la_wx_fc_demo_all-71"><a href="#lst-la_wx_fc_demo_all-71"></a>        [</span>
+<span id="lst-la_wx_fc_demo_all-72"><a href="#lst-la_wx_fc_demo_all-72"></a>            (<span class="st">"human"</span>, <span class="st">"从 </span><span class="sc">{function}</span><span class="st"> 中，我们得到如下信息：</span><span class="sc">{function_res}</span><span class="st">，那么 </span><span class="sc">{query}</span><span class="st">"</span>),</span>
+<span id="lst-la_wx_fc_demo_all-73"><a href="#lst-la_wx_fc_demo_all-73"></a>        ]</span>
+<span id="lst-la_wx_fc_demo_all-74"><a href="#lst-la_wx_fc_demo_all-74"></a>    )</span>
+<span id="lst-la_wx_fc_demo_all-75"><a href="#lst-la_wx_fc_demo_all-75"></a>    chain_2 <span class="op">=</span> LLMChain(llm<span class="op">=</span>llm, prompt<span class="op">=</span>prompt_2, verbose<span class="op">=</span><span class="va">True</span>)</span>
+<span id="lst-la_wx_fc_demo_all-76"><a href="#lst-la_wx_fc_demo_all-76"></a>    res_2 <span class="op">=</span> chain_2.run(function<span class="op">=</span>res[<span class="st">"name"</span>], function_res<span class="op">=</span>res_cf, query<span class="op">=</span><span class="st">"北京今天的新闻是什么？"</span>)</span>
+<span id="lst-la_wx_fc_demo_all-77"><a href="#lst-la_wx_fc_demo_all-77"></a>    <span class="bu">print</span>(res_2)</span>
+<span id="lst-la_wx_fc_demo_all-78"><a href="#lst-la_wx_fc_demo_all-78"></a></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="#lst-la_wx_fc_demo_all">列表&nbsp;<span>12.11</span></a> 的执行结果如下所示：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Entering <span class="ex">new</span> LLMChain chain...</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Prompt</span> after formatting:</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Human:</span> 北京今天的新闻是什么？</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Finished <span class="ex">chain.</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Entering <span class="ex">new</span> LLMChain chain...</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">Prompt</span> after formatting:</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ex">Human:</span> 从 get_current_news 中，我们得到如下信息：{<span class="st">"location"</span>: <span class="st">"\u5317\u4eac"</span>, <span class="st">"news"</span>: [<span class="st">"I have a Book."</span>, <span class="st">"It's a nice day, today."</span>]}，那么 北京今天的新闻是什么？</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Finished <span class="ex">chain.</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="ex">根据提供的信息，</span><span class="kw">`</span><span class="ex">get_current_news</span><span class="kw">`</span> 返回的数据中，<span class="st">"北京"</span>的新闻有两条，分别是 <span class="st">"I have a Book."</span> 和 <span class="st">"It's a nice day, today."</span>。所以，北京今天的新闻包括这两条信息。</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="参考文献" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="参考文献"><span class="header-section-number">12.6</span> 参考文献</h2>
 
 
 </section>
