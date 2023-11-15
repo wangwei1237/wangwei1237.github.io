@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Large Language Model in Action - 21&nbsp; Case1</title>
+<title>Large Language Model in Action - 9&nbsp; Assistant</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./references.html" rel="next">
-<link href="./embedchain_intro.html" rel="prev">
+<link href="./langchain_intro.html" rel="next">
+<link href="./agent_intro.html" rel="prev">
 <link href="./favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -63,8 +97,12 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="Large Language Model in Action - 21&nbsp; Case1">
+<meta property="og:title" content="Large Language Model in Action - 9&nbsp; Assistant">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/diagram-assistant.webp">
 <meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
@@ -131,7 +169,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./case1.html">Case Study</a></li><li class="breadcrumb-item"><a href="./case1.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Case1</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./llm_intro.html">LLM 基本概念</a></li><li class="breadcrumb-item"><a href="./assistants.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Assistant</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -222,7 +260,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./assistants.html" class="sidebar-item-text sidebar-link">
+  <a href="./assistants.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Assistant</span></span></a>
   </div>
 </li>
@@ -331,7 +369,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./case1.html" class="sidebar-item-text sidebar-link active">
+  <a href="./case1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Case1</span></span></a>
   </div>
 </li>
@@ -378,14 +416,22 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#assisant-api-的框架" id="toc-assisant-api-的框架" class="nav-link active" data-scroll-target="#assisant-api-的框架"><span class="header-section-number">9.1</span> Assisant API 的框架</a></li>
+  <li><a href="#assistant-运行状态" id="toc-assistant-运行状态" class="nav-link" data-scroll-target="#assistant-运行状态"><span class="header-section-number">9.2</span> Assistant 运行状态</a></li>
+  <li><a href="#assistant-api-示例" id="toc-assistant-api-示例" class="nav-link" data-scroll-target="#assistant-api-示例"><span class="header-section-number">9.3</span> Assistant API 示例</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/assistants.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Case1</span></h1>
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Assistant</span></h1>
 </div>
 
 
@@ -400,8 +446,171 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<p>2023 年，11 月 6 日，OpenAI 召开了第一次开发者大会——<a href="https://devday.openai.com/">OpenAI DevDay</a>，这次大会的相关内容可以参见：<a href="https://www.bilibili.com/video/BV1au4y1a78B/?spm_id_from=333.337.search-card.all.click&amp;vd_source=fbeb46d16d08ad900fac814e55c3f27f">OpenAI DevDay, Opening Keynote</a>。</p>
+<p>在这次大会上，为了简化使用大模型开发订制助理的步骤，OpenAI 正式发布了 <a href="https://platform.openai.com/docs/assistants/overview"><code>Assistant API</code></a>（视频中的第 1:02:47 处）。</p>
+<p>我们可以使用 <code>Assistant API</code> 在自己的应用程序中构建人工智能助手。助手由如下几部分构成：</p>
+<ul>
+<li><code>name</code>：用于指定助理的名字。</li>
+<li><code>instructions</code>：用于指定助手的个性并定义其目标，和 <code>system message</code> 有些类似。</li>
+<li><code>tools</code>：用于指定助手可以访问的工具。助手可以访问多达128个工具，可以访问 OpenAI 托管的工具，也可以通过 <code>函数调用</code> 访问第三方的工具。目前 OpenAI 提供了三个工具：代码解释器、检索、函数调用。</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+提示
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>更详细的文档可以参考 <a href="https://platform.openai.com/docs/assistants/overview">Assistant Overview</a>。</p>
+</div>
+</div>
+<p>助手可以根据说明并使用工具来响应用户的请求。实际上，OpenAI Assistant 其实和 <a href="agent_intro.html"><span>章节&nbsp;8</span></a> 中介绍的 Agent 的概念非常相似。在 LangChain 的官方文档中，<a href="https://python.langchain.com/docs/modules/agents/agent_types/openai_assistants">OpenAI Assistant</a> 也是作为一种 Agent 类型存在的，可见从 LangChain 的角度来看，OpenAI Assistant 本质上也是一种 Agent。而 <code>Assistant API</code> 的发布，则提高了我们开发 OpenAI Assistant 的效率。</p>
+<p>在 <a href="https://community.openai.com/">OpenAI 的技术论坛</a>上，也有用户表示自己的疑惑：<a href="https://community.openai.com/t/the-difference-of-assistant-api-and-langchain/496223"><code>Assistant API</code> 和 LangChain 究竟有什么区别呢？</a>。正如这个帖子下面的回复，Assistant API 和 LangChain Agent 都是在做同样的事情，只是在某些方面， Assistant API 更友好而已。</p>
+<blockquote class="blockquote">
+<p><code>Assistant API</code> and LangChain are basically doing the same thing. Both require programming. The <strong>only advantage of <code>Assistant API</code></strong> is that memory and context window are automatically managed where in LangChain you have explicitly set those things up.</p>
+</blockquote>
+<section id="assisant-api-的框架" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="assisant-api-的框架"><span class="header-section-number">9.1</span> Assisant API 的框架</h2>
+<p>OpenAI Assistant API 的架构图如 <a href="langchain_openai_assistant.html"><span>章节&nbsp;16</span></a> 所示。</p>
+<div id="fig-d_assistant" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/diagram-assistant.webp" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;9.1: OpenAI Assistant API 架构图</figcaption>
+</figure>
+</div>
+<p>在 <a href="https://platform.openai.com/docs/assistants/overview">Assistant Overview</a> 中，已经对该图做了非常多的解释，但是在我看来，最令人兴奋的能力是访问持久化线程的能力。</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注释
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>助理可以访问持久线程。线程通过存储消息历史记录来简化人工智能应用程序的开发，并在对话太长而超出模型的上下文长度时将其截断。</p>
+<p>使用 <code>Assistant API</code>，我们只需创建一次线程，然后我们可以在该线程内进行连续的多轮对话，而多轮对话需要的 <code>记忆</code> 功能，OpenAI 统统帮我们实现了（而如果使用 LangChain 或其他框架，这些都需要我们自己来实现）。我们可以轻松的实现如下的多轮会话：</p>
+<ul>
+<li>1 + 1 =?</li>
+<li>那么，再加10的结果是？</li>
+<li>……</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="assistant-运行状态" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="assistant-运行状态"><span class="header-section-number">9.2</span> Assistant 运行状态</h2>
+<p>和进程类似，<code>Assistant API</code> 创建的线程在回答用户的问题时（对应 <a href="#fig-d_assistant">图&nbsp;<span>9.1</span></a> 中的 Run 阶段），也会存在各种状态的转换。每一次执行的具体的状态转化如 <a href="#fig-openai_ass_status">图&nbsp;<span>9.2</span></a> 所示。</p>
+<div id="fig-openai_ass_status" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/diagram-status.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;9.2: Assistant API 线程每次执行的生命周期</figcaption>
+</figure>
+</div>
+<div id="tbl-ass_status" class="anchored">
+<table class="table">
+<caption>表格&nbsp;9.1: Assistant API 中不同的状态及其含义</caption>
+<thead>
+<tr class="header">
+<th>状态</th>
+<th>状态含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>queued</code></td>
+<td>首次创建助理并执行或完成 <code>required_action</code> 时，将转变为 <code>queued</code> 状态。<code>queued</code> 状态应该立即转到 <code>in_progress</code>。</td>
+</tr>
+<tr class="even">
+<td><code>in_progress</code></td>
+<td>在 <code>in_progress</code> 时，助理使用模型和工具执行相关操作。我们可以通过检 <a href="https://platform.openai.com/docs/api-reference/runs/step-object">Run Step</a> 来获取这次执行的具体进度。</td>
+</tr>
+<tr class="odd">
+<td><code>completed</code></td>
+<td>一旦这次执行成功，就会转到该状态，此时，我们可以查看助理返回的所有消息。我们还可以通过该线程继续进行下一轮的对话。</td>
+</tr>
+<tr class="even">
+<td><code>requires_action</code></td>
+<td>当使用 <code>函数调用</code> 时，一旦模型确定了要调用的函数的名称和参数，线程将转变为 <code>required_action</code> 状态。然后，我们必须运行这些函数并提交函数响应，才能继续运行。如果在 <code>expires_at</code> 时间戳达到时（创建后大约10分钟）还没有提交函数的运行结果，则此次执行将进入 <code>expired</code> 状态。</td>
+</tr>
+<tr class="odd">
+<td><code>expired</code></td>
+<td>当 <code>函数调用</code> 的输出未在 <code>expires_at</code> 之前提交时，就会发生这种情况。此外，如果此次执行时间过长，超过<code>expires_at</code> 规定的时间时，也会转换到该状态。</td>
+</tr>
+<tr class="even">
+<td><code>cancelling</code></td>
+<td>我们可以使用 <a href="https://platform.openai.com/docs/api-reference/runs/cancelRun">Cancel Run API</a> 取消 <code>in_progress</code> 中的某次执行。一旦取消成功，此次执行的状态将变为 <code>cancelled</code>。需要注意的是，<code>Assistant API</code> 仅仅是尝试取消，但不能保证取消成功。</td>
+</tr>
+<tr class="odd">
+<td><code>cancelled</code></td>
+<td>如果某次执行已经成功取消，则转到该状态。</td>
+</tr>
+<tr class="even">
+<td><code>failed</code></td>
+<td>执行失败是，转为该状态。可以通过 <code>last_error</code> 查看失败原因。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>因为 <code>Assistant API</code> 提供的线程是持久线程，因此，每当我们需要使用该线程处理用户需求时，我们最好及时的查询该线程当前的状态，以避免出现非预期的结果。</p>
+</section>
+<section id="assistant-api-示例" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="assistant-api-示例"><span class="header-section-number">9.3</span> Assistant API 示例</h2>
+<div id="lst-ass_code_demo" class="listing">
+<p>列表&nbsp;9.1: Assistant API 示例</p>
+<div class="sourceCode" id="lst-ass_code_demo" data-lst-cap="Assistant API 示例"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="lst-ass_code_demo-1"><a href="#lst-ass_code_demo-1"></a><span class="im">from</span> langchain.agents.openai_assistant <span class="im">import</span> OpenAIAssistantRunnable</span>
+<span id="lst-ass_code_demo-2"><a href="#lst-ass_code_demo-2"></a></span>
+<span id="lst-ass_code_demo-3"><a href="#lst-ass_code_demo-3"></a>interpreter_assistant <span class="op">=</span> OpenAIAssistantRunnable.create_assistant(</span>
+<span id="lst-ass_code_demo-4"><a href="#lst-ass_code_demo-4"></a>    name<span class="op">=</span><span class="st">"langchain assistant"</span>,</span>
+<span id="lst-ass_code_demo-5"><a href="#lst-ass_code_demo-5"></a>    instructions<span class="op">=</span><span class="st">"You are a personal math tutor. Write and run code to answer math questions."</span>,</span>
+<span id="lst-ass_code_demo-6"><a href="#lst-ass_code_demo-6"></a>    tools<span class="op">=</span>[{<span class="st">"type"</span>: <span class="st">"code_interpreter"</span>}],</span>
+<span id="lst-ass_code_demo-7"><a href="#lst-ass_code_demo-7"></a>    model<span class="op">=</span><span class="st">"gpt-4-1106-preview"</span>,</span>
+<a class="code-annotation-anchor" data-target-cell="lst-ass_code_demo" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-ass_code_demo-8" class="code-annotation-target"><a href="#lst-ass_code_demo-8"></a>)</span>
+<span id="lst-ass_code_demo-9"><a href="#lst-ass_code_demo-9"></a></span>
+<a class="code-annotation-anchor" data-target-cell="lst-ass_code_demo" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="lst-ass_code_demo-10" class="code-annotation-target"><a href="#lst-ass_code_demo-10"></a>output <span class="op">=</span> interpreter_assistant.invoke({<span class="st">"content"</span>: <span class="st">"What's 10 - 4 raised to the 2.7"</span>})</span>
+<span id="lst-ass_code_demo-11"><a href="#lst-ass_code_demo-11"></a><span class="bu">print</span>(output)</span>
+<span id="lst-ass_code_demo-12"><a href="#lst-ass_code_demo-12"></a></span>
+<span id="lst-ass_code_demo-13"><a href="#lst-ass_code_demo-13"></a><span class="co">"""</span></span>
+<span id="lst-ass_code_demo-14"><a href="#lst-ass_code_demo-14"></a><span class="co">[ThreadMessage(id='msg_6Gj48OdMV8dQrFUPTh17UvG4', assistant_id='asst_19av1lcBjSCQ5cEk4pWqugEU', content=[MessageContentText(text=Text(annotations=[], value='The result of the expression </span><span class="ch">\\</span><span class="co">(10 - 4^{2.7}</span><span class="ch">\\</span><span class="co">) is approximately </span><span class="ch">\\</span><span class="co">(-32.224</span><span class="ch">\\</span><span class="co">).'), type='text')], created_at=1700038489, file_ids=[], metadata={}, object='thread.message', role='assistant', run_id='run_4wK9GIK2W0iiJlLB86DKoMQQ', thread_id='thread_Ie874bQrsaakLMpOMZe2KUav')]</span></span>
+<a class="code-annotation-anchor" data-target-cell="lst-ass_code_demo" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="lst-ass_code_demo-15" class="code-annotation-target"><a href="#lst-ass_code_demo-15"></a><span class="co">"""</span></span>
+<span id="lst-ass_code_demo-16"><a href="#lst-ass_code_demo-16"></a></span>
+<a class="code-annotation-anchor" data-target-cell="lst-ass_code_demo" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="lst-ass_code_demo-17" class="code-annotation-target"><a href="#lst-ass_code_demo-17"></a>output_2 <span class="op">=</span> interpreter_assistant.invoke({<span class="st">"content"</span>: <span class="st">"Then, Add 10 to the result"</span>, <span class="st">"thread_id"</span>: <span class="st">"thread_Ie874bQrsaakLMpOMZe2KUav"</span>})</span>
+<span id="lst-ass_code_demo-18"><a href="#lst-ass_code_demo-18"></a><span class="bu">print</span>(output_2) </span>
+<span id="lst-ass_code_demo-19"><a href="#lst-ass_code_demo-19"></a></span>
+<span id="lst-ass_code_demo-20"><a href="#lst-ass_code_demo-20"></a><span class="co">"""</span></span>
+<span id="lst-ass_code_demo-21"><a href="#lst-ass_code_demo-21"></a><span class="co">[ThreadMessage(id='msg_xRoHzvCdtqW9NRWxmE36VMZG', assistant_id='asst_mEAcerOkTv1IyggYoU3jTNMn', content=[MessageContentText(text=Text(annotations=[], value='After adding 10 to the previous result, the new result is approximately -22.224.'), type='text')], created_at=1700038760, file_ids=[], metadata={}, object='thread.message', role='assistant', run_id='run_ubrOtRXh6ITIRQ4BbPMk5juV', thread_id='thread_Ie874bQrsaakLMpOMZe2KUav')]</span></span>
+<a class="code-annotation-anchor" data-target-cell="lst-ass_code_demo" data-target-annotation="5" onclick="event.preventDefault();">5</a><span id="lst-ass_code_demo-22" class="code-annotation-target"><a href="#lst-ass_code_demo-22"></a><span class="co">"""</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="lst-ass_code_demo" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="lst-ass_code_demo" data-code-lines="8" data-code-annotation="1">创建 Assistant 线程</span>
+</dd>
+<dt data-target-cell="lst-ass_code_demo" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="lst-ass_code_demo" data-code-lines="10" data-code-annotation="2">计算 <span class="math inline">\(10-4^{2.7}\)</span></span>
+</dd>
+<dt data-target-cell="lst-ass_code_demo" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="lst-ass_code_demo" data-code-lines="15" data-code-annotation="3">获得结果 -32.224，同时返回线程 id 等其他信息</span>
+</dd>
+<dt data-target-cell="lst-ass_code_demo" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="lst-ass_code_demo" data-code-lines="17" data-code-annotation="4">在当前结果基础上，继续用同一个线程执行 <span class="math inline">\(res + 10\)</span></span>
+</dd>
+<dt data-target-cell="lst-ass_code_demo" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="lst-ass_code_demo" data-code-lines="22" data-code-annotation="5">获得结果 -22.224</span>
+</dd>
+</dl>
+<p>更多的 <code>Assistant API</code> 的使用例子，我们在 <a href="langchain_openai_assistant.html"><span>章节&nbsp;16</span></a> 中再介绍。</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -641,13 +850,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./embedchain_intro.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Embedchain 简介</span></span>
+      <a href="./agent_intro.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Agent</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./references.html" class="pagination-link">
-        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./langchain_intro.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">LangChain 简介</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -657,7 +866,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/case1.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></div>
+    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
