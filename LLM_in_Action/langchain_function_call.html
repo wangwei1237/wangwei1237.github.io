@@ -534,7 +534,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>需要特别注意的是，大语言模型本身并不会调用我们预定的 <code>函数</code>，大语言模型仅仅是生成我们所要调用的函数的调用参数而言，具体调用函数的动作，需要我们在自己的应用代码中来实现。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>需要特别注意的是，大语言模型本身并不会调用我们预定的 <code>函数</code>，大语言模型仅仅是生成我们所要调用的函数的调用参数而已，具体调用函数的动作，需要我们在自己的应用代码中来实现。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 </div>
 </div>
 <div class="callout callout-style-default callout-important callout-titled" title="思考">
@@ -907,20 +907,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <dl class="code-annotation-container-grid">
 <dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-annotation="1" data-code-lines="5">指定采用的模型名称</span>
+<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="5" data-code-annotation="1">指定采用的模型名称</span>
 </dd>
 <dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-annotation="2" data-code-lines="6">和大模型交互的消息列表</span>
+<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="6" data-code-annotation="2">和大模型交互的消息列表</span>
 </dd>
 <dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-annotation="3" data-code-lines="7">告诉大模型我们有哪些函数可以调用，以及对应函数的具体描述，具体参见 <a href="#lst-la_fc_fd">列表&nbsp;<span>13.7</span></a></span>
+<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="7" data-code-annotation="3">告诉大模型我们有哪些函数可以调用，以及对应函数的具体描述，具体参见 <a href="#lst-la_fc_fd">列表&nbsp;<span>13.7</span></a></span>
 </dd>
 </dl>
 <p><a href="#lst-la_fc_fd_qf_demo">列表&nbsp;<span>13.8</span></a> 的运行结果如下：</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">QfResponse</span><span class="er">(</span><span class="va">code</span><span class="op">=</span>200, <span class="va">headers</span><span class="op">=</span>{...}, <span class="va">body</span><span class="op">=</span>{<span class="st">'id'</span>: <span class="st">'as-cvbbn9t0vq'</span><span class="ex">,</span> <span class="st">'object'</span>: <span class="st">'chat.completion'</span>, <span class="st">'created'</span>: 1699708273, <span class="st">'result'</span>: <span class="st">''</span>, <span class="st">'is_truncated'</span>: False, <span class="st">'need_clear_history'</span>: False, <span class="st">'function_call'</span>: {<span class="st">'name'</span>: <span class="st">'get_current_news'</span>, <span class="st">'thoughts'</span>: <span class="st">'用户想要知道北京的新闻。我可以使用get_current_news工具来获取这些信息。'</span>, <span class="st">'arguments'</span>: <span class="st">'{"location":"北京"}'</span>}, <span class="st">'usage'</span>: {...}<span class="kw">)</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>通过结果我们可以发现，文心大模型的 <code>函数调用</code> 和 OpenAI 的 <code>函数调用</code> 虽然有完全一致，但是还是非常相似的。对于有可以调用的函数时，文心大模型的返回结果中的 <code>resp.result</code> 为空，同时用 <code>resp.function_call</code> 存储针对当前问题，经过大模型分析后可以调用的函数以及调用函数时所用到的参数。具体接下来的函数调用过程，就和 OpenAI 一致了，可以参考 <a href="#lst-fc_openai">列表&nbsp;<span>13.1</span></a>。</p>
+<p>通过结果我们可以发现，文心大模型的 <code>函数调用</code> 和 OpenAI 的 <code>函数调用</code> 虽然不完全一致，但是还是非常相似的。对于有可以调用的函数时，文心大模型的返回结果中的 <code>resp.result</code> 为空，同时用 <code>resp.function_call</code> 存储针对当前问题，经过大模型分析后可以调用的函数以及调用函数时所用到的参数。具体接下来的函数调用过程，就和 OpenAI 一致了，可以参考 <a href="#lst-fc_openai">列表&nbsp;<span>13.1</span></a>。</p>
 </section>
 <section id="文心函数调用-llmchain" class="level3" data-number="13.4.2">
 <h3 data-number="13.4.2" class="anchored" data-anchor-id="文心函数调用-llmchain"><span class="header-section-number">13.4.2</span> 文心函数调用 LLMChain</h3>
