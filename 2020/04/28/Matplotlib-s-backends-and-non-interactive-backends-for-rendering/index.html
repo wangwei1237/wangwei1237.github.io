@@ -182,7 +182,7 @@
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import matplotlib</span><br><span class="line">matplotlib.use(&#39;qt5agg&#39;)</span><br></pre></td></tr></table></figure>
 <p>This should be done before any figure is created; otherwise Matplotlib may fail to switch the backend and raise an ImportError.</p>
 <p>Using use will require changes in your code if users want to use a different backend. Therefore, you should avoid explicitly calling use unless absolutely necessary.</p>
-<h2 id="matplotlib-use-agg-的作用">matplotlib.use(‘Agg’)的作用</h2>
+<h2 id="matplotlib-use-‘Agg’-的作用">matplotlib.use(‘Agg’)的作用</h2>
 <p>在介绍完整整体的matplotlib中的backends以及matplotlib中的绘图模式之后，就能明白为什么文章开始出现的迁移过程中会出现类似的错误。</p>
 <p>首先根据<a href="#matplotlib%E4%B8%ADbackend%E7%9A%84%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE">matplotlib中backend的默认配置</a>中的介绍可以知道，matplotlib会有一个默认的backend配置，并且该默认的backend会同时支持交互式绘图模式以及利用脚本绘图的模式。并且，交互式绘图还需要利用GUI工具来生成一个屏幕绘图的窗口。而迁移的Linux机器上缺乏tkinter这样的GUI工具，因此在<code>import matplotlib.pyplot as plt</code>的时候会产生错误。</p>
 <p>而利用<code>matplotlib.use('Agg')</code>可以切换matplotlib的backend，将其backend从默认的交互式模式切换为非交互式模式，此时，生成的图形会以图片的形式保存起来，而无需tkinter这样的GUI工具的支持，因此可以解决本文最开始出现的问题。</p>
