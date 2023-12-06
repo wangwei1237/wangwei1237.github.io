@@ -115,7 +115,7 @@
   <p>我们的服务有一个功能，该功能会限制同时使用的用户数，例如使用该功能的用户不能超过100个。就好像购买车票一样，可以购买到车票的人数不能超过该车次的对应区间的车票总数。然后，在并发测试中，我们发现，实际可以使用该功能的用户数达到了200。追查之后，我们发现，这是一个典型的“读后写“的模式带来并发问题。</p>
 <p><img src="/2020/09/07/keep-the-architecture-from-write-after-read/1.png" alt></p>
 <span id="more"></span>
-<h2 id="什么是“读后写”模式">什么是“读后写”模式</h2>
+<h2 id="什么是-读后写-模式">什么是“读后写”模式</h2>
 <p><code>读后写</code>是在并发场景下，针对同一数据记录的<strong>先读后写</strong>操作，并且数据写入的值依赖于数据读取的值。具体如下图所示：</p>
 <p><img src="/2020/09/07/keep-the-architecture-from-write-after-read/2.png" alt></p>
 <p>从定义中可以看出，只有在3个条件都具备的前提下，才会考虑<code>读后写</code>模式带来的问题：</p>
@@ -124,7 +124,7 @@
 <li>同一数据</li>
 <li>对数据的修改依赖于对数据的读取</li>
 </ul>
-<h2 id="显示的“读后写”模式的问题">显示的“读后写”模式的问题</h2>
+<h2 id="显示的-读后写-模式的问题">显示的“读后写”模式的问题</h2>
 <p>对于<code>redis</code>而言，典型的<code>读后写</code>逻辑如<strong><a target="_blank" rel="noopener" href="http://test.sh">test.sh</a></strong>所示：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">x=$(redis-cli -h 127.0.0.1 -p 8079 GET x)</span><br><span class="line">x=$(expr $&#123;x&#125; + 1)</span><br><span class="line">redis-cli -h 127.0.0.1 -p 8079 SET x $&#123;x&#125;</span><br></pre></td></tr></table></figure>
 <p>设置<code>x=0</code>在非并发场景下，多次运行<strong><a target="_blank" rel="noopener" href="http://test.sh">test.sh</a></strong>后不会存在问题：</p>
@@ -132,14 +132,14 @@
 <p>但是，对于如下的代码，我们则会发现，对<code>KEY x</code>的更新并没有按照预期的逻辑来更新：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="keyword">for</span> ((i=0; i&lt;100; i++)); <span class="keyword">do</span> sh test.sh &gt;/dev/null 2&gt;&amp;1 &amp;; <span class="keyword">done</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h 127.0.0.1 -p 8079 GET x</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="string">&quot;3&quot;</span></span></span><br></pre></td></tr></table></figure>
 <p>我称这种场景下导致的问题为：显示的“读后写”模式带来的问题。因为此时，并发是显而易见的，并且操作的是单一的redis实例。</p>
-<h2 id="隐式的“读后写”模式的问题">隐式的“读后写”模式的问题</h2>
+<h2 id="隐式的-读后写-模式的问题">隐式的“读后写”模式的问题</h2>
 <p>在实际的服务中，为了提升服务的性能，往往会采用<code>读写分离</code>的架构来设计数据存储，例如MySQL的主从架构，Redis的主从架构。在<code>读写分离</code>架构下，<code>写操作</code>一般均在<strong>主</strong>服务器上执行，而<code>读操作</code>则在<strong>从</strong>服务器上执行，而主从之间则通过某种方式来通信。具体如下所示：</p>
 <p><img src="/2020/09/07/keep-the-architecture-from-write-after-read/3.png" alt></p>
 <p>这种场景下，比较重要的问题就是“主从延迟”的问题。当“主从延迟”的时间，超过了请求间隔的时间时，虽然看起来并没有什么并发的场景，但是实际上也是一种“隐式的并发”。</p>
 <p>举个极端的例子——现实场景中可能不会有这么大的主从延迟——主从延迟的时间为5s，而当前服务的负载为2s一个请求。此时，虽然看起来没有什么“并发”的场景，但是实际上，当第2个请求到来时，由于主从延迟的存在，到时此时该请求获取的数据仍然为旧的数据，进而导致更新逻辑的异常。</p>
 <p>因为，这种场景下的并发实际上被“主从”架构隐藏了起来，因此，我称这种场景下导致的问题为：隐式的“读后写”模式的问题。</p>
 <p>很多时候，这两种模式会同时发生。在文章开始介绍的问题，就是这两种场景共同作用而产生的“读后写”的问题。</p>
-<h2 id="如何避免“读后写”带来的问题">如何避免“读后写”带来的问题</h2>
+<h2 id="如何避免-读后写-带来的问题">如何避免“读后写”带来的问题</h2>
 <p>解决该问题的具体方法需要视具体的应用场景。不要期待那种“放之四海而皆准”的解决方案，而要根据自己所面临的具体场景来选择最合适的解决方案。尽管如此，我们在解决该问题时，可以有一个总的指导原则：将“读后写”模式改为“事务写后写”模式。</p>
 <p>“写操作”都在“主”服务器上执行，因此，改为“写后写”模式首先避免了“主从”架构的问题。然后，在“写后写”的基础上，再使用“事务性的写操作”，就可以基本解决“读后写”的问题。</p>
 <p>例如，将<code>test.sh</code>稍作修改：</p>

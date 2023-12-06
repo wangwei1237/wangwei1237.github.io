@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Large Language Model in Action - 5&nbsp; 提示词工程</title>
+<title>Large Language Model in Action - 19&nbsp; Sematic Kernel 简介</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./hallucination.html" rel="next">
-<link href="./sft.html" rel="prev">
+<link href="./autogen.html" rel="next">
+<link href="./langchain_agent_pae.html" rel="prev">
 <link href="./favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -64,9 +64,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<meta property="og:title" content="Large Language Model in Action - 5&nbsp; 提示词工程">
-<meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/bd2023.jpg">
+<meta property="og:title" content="Large Language Model in Action - 19&nbsp; Sematic Kernel 简介">
 <meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
@@ -133,7 +131,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./llm_intro.html">LLM 基本概念</a></li><li class="breadcrumb-item"><a href="./prompt_engineer.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">提示词工程</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./sematickernel_intro.html">Sematic Kernel</a></li><li class="breadcrumb-item"><a href="./sematickernel_intro.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Sematic Kernel 简介</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -200,7 +198,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./prompt_engineer.html" class="sidebar-item-text sidebar-link active">
+  <a href="./prompt_engineer.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">提示词工程</span></span></a>
   </div>
 </li>
@@ -306,7 +304,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./sematickernel_intro.html" class="sidebar-item-text sidebar-link">
+  <a href="./sematickernel_intro.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Sematic Kernel 简介</span></span></a>
   </div>
 </li>
@@ -399,22 +397,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">目录</h2>
-   
-  <ul>
-  <li><a href="#什么是提示词" id="toc-什么是提示词" class="nav-link active" data-scroll-target="#什么是提示词"><span class="header-section-number">5.1</span> 什么是提示词</a></li>
-  <li><a href="#什么是提示词工程" id="toc-什么是提示词工程" class="nav-link" data-scroll-target="#什么是提示词工程"><span class="header-section-number">5.2</span> 什么是提示词工程</a></li>
-  <li><a href="#一种新的职业" id="toc-一种新的职业" class="nav-link" data-scroll-target="#一种新的职业"><span class="header-section-number">5.3</span> 一种新的职业</a></li>
-  </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/prompt_engineer.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-prompt_engineering" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">提示词工程</span></span></h1>
+<h1 class="title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Sematic Kernel 简介</span></h1>
 </div>
 
 
@@ -429,102 +419,8 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>在和 LLM 的交互中，<code>提示词</code> 发挥着至关重要的作用，<code>提示词</code> 是我们和 LLM 沟通的桥梁。</p>
-<section id="什么是提示词" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="什么是提示词"><span class="header-section-number">5.1</span> 什么是提示词</h2>
-<p>在 NLP 领域，<code>提示</code> 是一种用于引导预训练语言模型解决特定任务的方法。<code>提示</code> 通常是一段文本，用于构建问题或任务的描述，以便预训练语言模型可以根据其内在知识生成合适的输出。</p>
-<p>如果大语言模型是一个 5 岁的小孩，那么他基本上可以做非常多的事情了，关键是我们如何与一个 5 岁的小孩进行良好的沟通，以让他可以完成我们期望的任务？其中的关键就是 <code>提示词</code>。你是否还能记起你和孩子在一起的很多互动场景：</p>
-<ul>
-<li>出门的场景
-<ul>
-<li>快点，要迟到嘞，别磨蹭了</li>
-<li>紧急呼叫汪汪队到门口集合</li>
-</ul></li>
-<li>打扫卫生的场景
-<ul>
-<li>帮爸爸收拾一下桌子</li>
-<li>呼叫无敌小帮手，爸爸需要支援</li>
-</ul></li>
-<li>……</li>
-</ul>
-<p>不同的 <code>提示词</code>，既可以让孩子帮我们完成工作，又可以让孩子在这个过程中得到成长和锻炼。对于 LLM 而言，也是如此。</p>
-<p>从 <a href="#fig-bd_2023">图&nbsp;<span>5.1</span></a> 也能看出，<code>提示词</code> 的重要性。</p>
-<div id="fig-bd_2023" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/bd2023.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;5.1: 2023年百度世界大会主题</figcaption>
-</figure>
-</div>
-</section>
-<section id="什么是提示词工程" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="什么是提示词工程"><span class="header-section-number">5.2</span> 什么是提示词工程</h2>
-<p>提示工程起源于对预训练模型如何将知识应用于具体任务的探讨。</p>
-<p>预训练语言模型通常在大规模语料库上进行预训练，从而学习到大量的语言知识。然而，将这些知识应用于具体任务时，往往需要对模型进行微调（SFT：Supervised Fine Tuning）。微调过程中，模型需要根据标注的任务数据学习任务相关的知识。</p>
-<p>这种根据专有数据进行微调的方法，在许多情况下取得了很好的效果，但仍然存在一些问题。例如：</p>
-<ul>
-<li>微调过程可能需要大量的标注数据，而这些数据往往难以获得。</li>
-<li>微调后的模型可能会存在过拟合现象，导致模型的泛化能力下降。</li>
-</ul>
-<p>为了解决这些问题，研究人员开始关注如何通过优化输入和问题表述来引导模型产生更好的输出结果，而无须进行昂贵的微调，这种方法被称 <code>提示词工程</code>，如 <a href="#fig-pe_arch">图&nbsp;<span>5.2</span></a> 所示。</p>
-<div id="fig-pe_arch" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/pe_arch.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;5.2: 微调和提示词工程的关系</figcaption>
-</figure>
-</div>
-<p>通过精心设计 <code>提示词</code>，我们可以引导模型关注输入数据中的关键信息，从而提高模型在各种自然语言处理任务上的性能。<code>提示词工程</code> 的核心思想是: <strong>将问题表述为一种容易被模型理解和解答的形式</strong>。可以通过多种方式来实现 <code>提示词工程</code>，例如：重述问题，给出示例或采用渐进式提示等。<code>提示词工程</code> 的关键在于找到一种能够充分发挥模型潜力的问题表述方式。</p>
-<p><code>提示词工程</code> 是一种优化和设计 <code>提示词</code> 的技术，从而可以更好的应用预训练大语言模型，使其可以更好的解决各种任务。</p>
-</section>
-<section id="一种新的职业" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="一种新的职业"><span class="header-section-number">5.3</span> 一种新的职业</h2>
-<p><code>提示词工程</code> 对于任何使用 LLM 的人来说都是一项关键技能。随着越来越多的组织采用 LLM 来实现任务自动化并提高其生产效能，<code>提示词工程</code> 更是一项需求量很大的技能和职业。作为一个新兴的领域，<code>提示词工程</code> 特别需要创造力和对细节的关注。<code>提示词工程</code> 包括但不限于：选择正确的单词、短语、符号和格式，以指导模型生成高质量的、相关的文本。一个好的提示工程师可以通过设计产生所需输出的提示来帮助组织充分利用 LLM。</p>
-<p>如果大家已经使用过文心一言来和文心大模型互动，那么对于 <code>提示词</code> 应该比较熟悉。我们来看一下如下两个 <code>提示词</code> 的结果：</p>
-<div id="fig-wx_pe" class="quarto-layout-panel">
-<figure class="figure">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
-<div id="fig-pe_wx_1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/pe_wx_1.jpg" class="img-fluid figure-img" data-ref-parent="fig-wx_pe"></p>
-<figcaption class="figure-caption">(a) 请给出描述高兴的成语。</figcaption>
-</figure>
-</div>
-</div>
-<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
-<div id="fig-pe_wx_2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/pe_wx_2.jpg" class="img-fluid figure-img" data-ref-parent="fig-wx_pe"></p>
-<figcaption class="figure-caption">(b) 请给出5个描述高兴的成语，并给出其解释。</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p></p><figcaption class="figure-caption">图&nbsp;5.3: 不同提示词的结果差异</figcaption><p></p>
-</figure>
-</div>
-<div class="callout callout-style-default callout-note callout-titled" title="扩展资料">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-扩展资料
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>更多关于提示词工程的具体实践方法可以参考：Learn Prompting <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 和 Stabel Diffusion 提示词手册 <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
-</div>
-</div>
 
 
-</section>
-<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr>
-<ol>
-<li id="fn1"><p><a href="https://learnprompting.org/zh-Hans/docs/intro">Learn Prompting</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p><a href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q">Stabel Diffusion 提示词手册</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -764,13 +660,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./sft.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">微调</span></span>
+      <a href="./langchain_agent_pae.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">LangChain PlanAndExcute Agent</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./hallucination.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">幻觉</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./autogen.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">AutoGen</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -780,7 +676,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
+    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/sematickernel_intro.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

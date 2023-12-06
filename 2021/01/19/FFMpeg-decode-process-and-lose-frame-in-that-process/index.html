@@ -118,7 +118,7 @@
 <p>但是，我们发现，MP4文件转成YUV数据后，总是会发生<strong>丢失视频最后几帧</strong>的现象。</p>
 <p>为了弄清楚这个问题，查阅了FFmpeg的源码，并参考了网络上的资料，然后总结出了这篇文章。</p>
 <span id="more"></span>
-<h2 id="FFmpeg的编解码API">FFmpeg的编解码API</h2>
+<h2 id="ffmpeg的编解码api">FFmpeg的编解码API</h2>
 <p>从<a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/commit/7fc329e2dd6226dfecaa4a1d7adf353bf2773726">3.1版本</a>开始，FFmpeg提供了<a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/release/3.1/libavcodec/avcodec.h">新的编解码API</a>来对音视频数据进行编解码操作，从而实现对输入和输出的解耦：</p>
 <ul>
 <li>解码API
@@ -163,7 +163,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Flush remaining frames that are cached in the decoder</span></span><br><span class="line"><span class="keyword">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">av_init_packet</span>(pkt);</span><br><span class="line">pkt-&gt;data = <span class="literal">NULL</span>;</span><br><span class="line">pkt-&gt;size = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                     frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    i++;</span><br><span class="line">    packet_new = <span class="number">1</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>再次运行，我们发现，丢帧问题消失了。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> frame count: 252</span></span><br></pre></td></tr></table></figure>
-<h2 id="FFMPeg解码API状态机">FFMPeg解码API状态机</h2>
+<h2 id="ffmpeg解码api状态机">FFMPeg解码API状态机</h2>
 <h3 id="avcodec-send-packet返回值">avcodec_send_packet返回值</h3>
 <p>从FFmpeg的源码中，我们会发现，正常情况下，<code>avcodec_send_packet()</code>函数的返回值主要有以下三种：</p>
 <ul>
@@ -178,7 +178,7 @@
 <li><code>EAGAIN</code>: output is not available in this state - user must try to send new input.</li>
 <li><code>EOF</code>: the decoder has been fully flushed, and there will be no more output frames.</li>
 </ul>
-<h3 id="解码API状态机">解码API状态机</h3>
+<h3 id="解码api状态机">解码API状态机</h3>
 <p><code>avcodec_send_packet()</code>和<code>avcodec_receive_frame()</code>不同的返回值代表了解码器的不同的状态。</p>
 <p>对API的调用实际上是一种动作，而API的返回值则用来标志当前解码器的状态。因此，解码API的整个过程实际上就是一个状态机。</p>
 <p>根据<a href="#avcodec_send_packet%E8%BF%94%E5%9B%9E%E5%80%BC">avcodec_send_packet返回值</a>和<a href="#avcodec_receive_frame%E8%BF%94%E5%9B%9E%E5%80%BC">avcodec_receive_frame返回值</a>中的介绍，可以得到正常情况下，解码过程的状态机，如下图所示。</p>
