@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "没有结果",
     "search-matching-documents-text": "匹配的文档",
@@ -90,6 +96,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "更多匹配结果",
     "search-more-matches-text": "更多匹配结果",
     "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "取消",
     "search-submit-button-title": "提交",
     "search-label": "搜索"
@@ -99,17 +106,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <meta property="og:title" content="Large Language Model in Action - 附录 C — Milvus Beginner">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/milvus_cli_case.jpg">
-<meta property="og:site-name" content="Large Language Model in Action">
+<meta property="og:site_name" content="Large Language Model in Action">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     <img src="./favicon.png" alt="" class="navbar-logo">
     </a>
@@ -124,66 +130,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/" rel="" target=""><i class="bi bi-house-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/"> <i class="bi bi-house-fill" role="img">
 </i> 
- <span class="menu-text">博客</span></a>
+<span class="menu-text">博客</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-bookshelf" role="img">
 </i> 
  <span class="menu-text">书籍</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="https://zh.d2l.ai/" rel="" target="">
+    <a class="dropdown-item" href="https://zh.d2l.ai/">
  <span class="dropdown-text">动手学深度学习</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro" rel="" target="">
+    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro">
  <span class="dropdown-text">Learn Prompting</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q" rel="" target="">
+    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q">
  <span class="dropdown-text">Stabel Diffusion 提示词手册</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/" rel="" target=""><i class="bi bi-person-badge-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/"> <i class="bi bi-person-badge-fill" role="img">
 </i> 
- <span class="menu-text">关于</span></a>
+<span class="menu-text">关于</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-    <a href="https://github.com/wangwei1237/LLM_in_Action" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+    <a href="https://github.com/wangwei1237/LLM_in_Action" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glossary.html">附录</a></li><li class="breadcrumb-item"><a href="./milvus_install.html"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Milvus Beginner</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glossary.html">附录</a></li><li class="breadcrumb-item"><a href="./milvus_install.html"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Milvus Beginner</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="搜索"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -453,7 +451,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -473,12 +471,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#milvus-cli" id="toc-milvus-cli" class="nav-link" data-scroll-target="#milvus-cli"><span class="header-section-number">C.3</span> Milvus CLI</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/milvus_install.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/milvus_install.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glossary.html">附录</a></li><li class="breadcrumb-item"><a href="./milvus_install.html"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Milvus Beginner</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-milvus_install" class="quarto-section-identifier">附录 C — Milvus Beginner</span></h1>
 </div>
@@ -493,7 +491,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <section id="milvus-安装" class="level2" data-number="C.1">
 <h2 data-number="C.1" class="anchored" data-anchor-id="milvus-安装"><span class="header-section-number">C.1</span> Milvus 安装</h2>
@@ -532,10 +532,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>为了避免不同网络环境下的端口限制，可以使用 Nginx 的 TCP Proxy 功能代理 Milvus 默认的 <code>19530</code> 端口和 <code>9091</code> 端口。具体配置参见：<a href="#lst-milvus_port">列表&nbsp;<span>C.1</span></a>。</p>
-<div id="lst-milvus_port" class="listing">
-<p>列表&nbsp;C.1: Nginx 反向代理配置</p>
-<div class="sourceCode" id="lst-milvus_port" data-lst-cap="Nginx 反向代理配置"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-milvus_port-1"><a href="#lst-milvus_port-1" aria-hidden="true" tabindex="-1"></a><span class="ex">stream</span> {</span>
+<p>为了避免不同网络环境下的端口限制，可以使用 Nginx 的 TCP Proxy 功能代理 Milvus 默认的 <code>19530</code> 端口和 <code>9091</code> 端口。具体配置参见：<a href="#lst-milvus_port" class="quarto-xref">列表&nbsp;<span>C.1</span></a>。</p>
+<div id="lst-milvus_port" class="bash listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-milvus_port-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;C.1: Nginx 反向代理配置
+</figcaption>
+<div aria-describedby="lst-milvus_port-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-milvus_port"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-milvus_port-1"><a href="#lst-milvus_port-1" aria-hidden="true" tabindex="-1"></a><span class="ex">stream</span> {</span>
 <span id="lst-milvus_port-2"><a href="#lst-milvus_port-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">server</span> {</span>
 <span id="lst-milvus_port-3"><a href="#lst-milvus_port-3" aria-hidden="true" tabindex="-1"></a>        <span class="ex">listen</span> 8081<span class="kw">;</span></span>
 <span id="lst-milvus_port-4"><a href="#lst-milvus_port-4" aria-hidden="true" tabindex="-1"></a>        <span class="ex">proxy_pass</span> 127.0.0.1:19530<span class="kw">;</span></span>
@@ -546,6 +550,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="lst-milvus_port-9"><a href="#lst-milvus_port-9" aria-hidden="true" tabindex="-1"></a>        <span class="ex">proxy_pass</span> 127.0.0.1:9091<span class="kw">;</span></span>
 <span id="lst-milvus_port-10"><a href="#lst-milvus_port-10" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span></span>
 <span id="lst-milvus_port-11"><a href="#lst-milvus_port-11" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
 </div>
@@ -568,14 +574,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ['default', 'test']</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>执行 <code>docker-compose logs -f | grep 'test'</code> 可以看到 Milvus 创建 <code>test</code> 数据库的日志：</p>
-<div id="lst-milvus_test" class="listing">
-<p>列表&nbsp;C.2: 创建数据库日志</p>
-<div class="sourceCode" id="lst-milvus_test" data-lst-cap="创建数据库日志"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-milvus_test-1"><a href="#lst-milvus_test-1" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.922 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">proxy/impl.go:174</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"CreateDatabase received"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=proxy</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span></span>
+<div id="lst-milvus_test" class="bash listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-milvus_test-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;C.2: 创建数据库日志
+</figcaption>
+<div aria-describedby="lst-milvus_test-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-milvus_test"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-milvus_test-1"><a href="#lst-milvus_test-1" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.922 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">proxy/impl.go:174</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"CreateDatabase received"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=proxy</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span></span>
 <span id="lst-milvus_test-2"><a href="#lst-milvus_test-2" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.922 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">proxy/impl.go:182</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"CreateDatabase enqueued"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=proxy</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span></span>
 <span id="lst-milvus_test-3"><a href="#lst-milvus_test-3" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.923 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">rootcoord/root_coord.go:772</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"received request to create database"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=rootcoord</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">msgID=444519207108608004</span><span class="pp">]</span></span>
 <span id="lst-milvus_test-4"><a href="#lst-milvus_test-4" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.925 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">rootcoord/meta_table.go:272</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"create database"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">db=test</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">ts=444519207108608005</span><span class="pp">]</span></span>
 <span id="lst-milvus_test-5"><a href="#lst-milvus_test-5" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.925 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">rootcoord/root_coord.go:804</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"done to create database"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=rootcoord</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">msgID=444519207108608004</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">ts=444519207108608005</span><span class="pp">]</span></span>
 <span id="lst-milvus_test-6"><a href="#lst-milvus_test-6" aria-hidden="true" tabindex="-1"></a><span class="ex">milvus-standalone</span>  <span class="kw">|</span> <span class="ex">[2023/09/26</span> 05:30:03.925 +00:00] <span class="pp">[</span><span class="ss">INFO</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">proxy/impl.go:190</span><span class="pp">]</span> <span class="pp">[</span><span class="st">"CreateDatabase done"</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">traceID=91fb5dbbd0a5a8028b7c048552bbbbb9</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">role=proxy</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">dbName=test</span><span class="pp">]</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </section>
 </section>
@@ -584,11 +596,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>很多时候，使用类似 <a href="https://dev.mysql.com/doc/refman/8.0/en/mysql.html">mysql</a> 这样的客户端工具来连接数据库并进行相关操作会更便捷。Milvus 也提供了类似的客户端端工具 <code>milvus_cli</code>，来方便我们对 Milvus 进行相关操作。</p>
 <p>可以采用如下命令来安装 <code>milvus_cli</code> 客户端：</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install milvus-cli</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>具体的使用如图：<a href="#fig-milvus_cli">图&nbsp;<span>C.1</span></a>。</p>
-<div id="fig-milvus_cli" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/milvus_cli_case.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;C.1: 使用 milvus_cli 连接 Milvus</figcaption>
+<p>具体的使用如图：<a href="#fig-milvus_cli" class="quarto-xref">图&nbsp;<span>C.1</span></a>。</p>
+<div id="fig-milvus_cli" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-milvus_cli-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./images/milvus_cli_case.jpg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-milvus_cli-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;C.1: 使用 milvus_cli 连接 Milvus
+</figcaption>
 </figure>
 </div>
 <p><code>milvus_cli</code> 的使用命令参考：<a href="https://milvus.io/docs/cli_commands.md">Milvus Client Commands</a>。</p>
@@ -602,11 +618,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>在安装 <code>milvus_cli</code> 的时候，可能会存在依赖库的版本冲突，这可能会导致安装的 <code>milvus_cli</code> 无法正常使用，如图 <a href="#fig-milvus_cli_2">图&nbsp;<span>C.2</span></a> 所示。此时，更新相关依赖的版本，并重新安装 <code>milvus_cli</code> 即可。</p>
-<div id="fig-milvus_cli_2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/milvus_cli_2.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;C.2: milvus_cli 连接超时</figcaption>
+<p>在安装 <code>milvus_cli</code> 的时候，可能会存在依赖库的版本冲突，这可能会导致安装的 <code>milvus_cli</code> 无法正常使用，如图 <a href="#fig-milvus_cli_2" class="quarto-xref">图&nbsp;<span>C.2</span></a> 所示。此时，更新相关依赖的版本，并重新安装 <code>milvus_cli</code> 即可。</p>
+<div id="fig-milvus_cli_2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-milvus_cli_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./images/milvus_cli_2.jpg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-milvus_cli_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;C.2: milvus_cli 连接超时
+</figcaption>
 </figure>
 </div>
 </div>
@@ -695,10 +715,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -708,8 +727,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -722,6 +750,125 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -765,6 +912,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -790,6 +938,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -853,7 +1027,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./langchain_install.html" class="pagination-link">
+      <a href="./langchain_install.html" class="pagination-link  aria-label=" &lt;span="" 安装指南&lt;="" span&gt;"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">LangChain 安装指南</span></span>
       </a>          
   </div>
@@ -866,12 +1040,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
+    <div class="nav-footer-center">
+<p>Copyright VII-QA. All Rights Reserved.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/milvus_install.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
+
 
 
 

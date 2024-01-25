@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -48,7 +48,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "没有结果",
     "search-matching-documents-text": "匹配的文档",
@@ -57,6 +63,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "更多匹配结果",
     "search-more-matches-text": "更多匹配结果",
     "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "取消",
     "search-submit-button-title": "提交",
     "search-label": "搜索"
@@ -66,19 +73,16 @@ ul.task-list li input[type="checkbox"] {
 
 <meta property="og:title" content="Large Language Model in Action - 24&nbsp; AutoGen">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/autogen_agentchat.png">
-<meta property="og:site-name" content="Large Language Model in Action">
-<meta property="og:image:height" content="756">
-<meta property="og:image:width" content="1576">
+<meta property="og:site_name" content="Large Language Model in Action">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     <img src="./favicon.png" alt="" class="navbar-logo">
     </a>
@@ -93,66 +97,58 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/" rel="" target=""><i class="bi bi-house-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/"> <i class="bi bi-house-fill" role="img">
 </i> 
- <span class="menu-text">博客</span></a>
+<span class="menu-text">博客</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-bookshelf" role="img">
 </i> 
  <span class="menu-text">书籍</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="https://zh.d2l.ai/" rel="" target="">
+    <a class="dropdown-item" href="https://zh.d2l.ai/">
  <span class="dropdown-text">动手学深度学习</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro" rel="" target="">
+    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro">
  <span class="dropdown-text">Learn Prompting</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q" rel="" target="">
+    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q">
  <span class="dropdown-text">Stabel Diffusion 提示词手册</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/" rel="" target=""><i class="bi bi-person-badge-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/"> <i class="bi bi-person-badge-fill" role="img">
 </i> 
- <span class="menu-text">关于</span></a>
+<span class="menu-text">关于</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-    <a href="https://github.com/wangwei1237/LLM_in_Action" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+    <a href="https://github.com/wangwei1237/LLM_in_Action" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./autogen.html">其他框架</a></li><li class="breadcrumb-item"><a href="./autogen.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">AutoGen</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./autogen.html">其他框架</a></li><li class="breadcrumb-item"><a href="./autogen.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">AutoGen</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="搜索"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -422,7 +418,7 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -433,12 +429,12 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#autogen-生成股价趋势图" id="toc-autogen-生成股价趋势图" class="nav-link" data-scroll-target="#autogen-生成股价趋势图"><span class="header-section-number">24.2</span> AutoGen 生成股价趋势图</a></li>
   <li><a href="#autogen-vs-langchain" id="toc-autogen-vs-langchain" class="nav-link" data-scroll-target="#autogen-vs-langchain"><span class="header-section-number">24.3</span> AutoGen Vs LangChain</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/autogen.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/autogen.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./autogen.html">其他框架</a></li><li class="breadcrumb-item"><a href="./autogen.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">AutoGen</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">AutoGen</span></h1>
 </div>
@@ -453,14 +449,16 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
-<p>在看了 <a href="https://www.bilibili.com/video/BV1au4y1a78B/?spm_id_from=333.337.search-card.all.click&amp;vd_source=fbeb46d16d08ad900fac814e55c3f27f">OpenAI DevDay</a> 的相关直播后，我曾经认为，Assistant API（<a href="assistants.html"><span>章节&nbsp;9</span></a>） 完全可以秒杀 AutoGen 了。</p>
+
+<p>在看了 <a href="https://www.bilibili.com/video/BV1au4y1a78B/?spm_id_from=333.337.search-card.all.click&amp;vd_source=fbeb46d16d08ad900fac814e55c3f27f">OpenAI DevDay</a> 的相关直播后，我曾经认为，Assistant API（<a href="assistants.html" class="quarto-xref"><span>章节 9</span></a>） 完全可以秒杀 AutoGen 了。</p>
 <p>在 AutoGen 的讨论区中，我发现大家也有同样的思考。在 <a href="https://github.com/microsoft/autogen/discussions/575">New OpenAI Assistants / Assistants API</a> 的讨论中，有用户说到：</p>
 <blockquote class="blockquote">
 <p>I am trying to understand if the new OpenAI Assistants API is different conceptually or even technically from Autogen? Is it really the same idea and almost same approach, just packaged in a more accessible way?</p>
 </blockquote>
-<p>后来，我慢慢的明白了，如 <a href="agent_intro.html#sec-multiagent"><span>章节&nbsp;8.5</span></a> 所述，AutoGen 是一种 MultiAgent 框架，而 Assistant API 本质上是一种 Sigle Agent。AutoGen 引入了多 Agent 交互、协同的机制，并且还给人类干预提供了机会，使得人机结合成为可能，也更大程度的激发了 LLM 的能量。</p>
+<p>后来，我慢慢的明白了，如 <a href="agent_intro.html#sec-multiagent" class="quarto-xref"><span>章节 8.5</span></a> 所述，AutoGen 是一种 MultiAgent 框架，而 Assistant API 本质上是一种 Sigle Agent。AutoGen 引入了多 Agent 交互、协同的机制，并且还给人类干预提供了机会，使得人机结合成为可能，也更大程度的激发了 LLM 的能量。</p>
 <p>所以，Assistant API 的发布不但不会影响 AutoGen 的发展，反而会促进 AutoGen 的发展。</p>
 <section id="autogen-概述" class="level2" data-number="24.1">
 <h2 data-number="24.1" class="anchored" data-anchor-id="autogen-概述"><span class="header-section-number">24.1</span> AutoGen 概述</h2>
@@ -468,13 +466,17 @@ ul.task-list li input[type="checkbox"] {
 <p>我们可以在 <a href="https://github.com/microsoft/autogen">github/microsoft/autogen</a> 上获取最新的 AutoGen 版本，我们也可以在这个项目的 <a href="https://github.com/microsoft/autogen/discussions">讨论区</a> 来进行相关技术的探讨。</p>
 <p>AutoGen 框架中的 Agent 是可定制的、可交互的、可人工干预的，AutoGen 框架下的 Agents 既可以是 LLM 模式，也可以是人工操作或者工具集模式。</p>
 <p>在我看来，AutoGen 的最大魅力来在于其允许不同 Agent 之间的可交互性以及人工干预的能力，这最大程度的促进了人机结合的可能性，为实现最终的超级 AGI 智能体迈出了一大步。</p>
-<div id="fig-autogen_autogen" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/autogen_agentchat.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;24.1: AutoGen 示意图</figcaption>
+<div id="fig-autogen_autogen" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-autogen_autogen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./images/autogen_agentchat.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-autogen_autogen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;24.1: AutoGen 示意图
+</figcaption>
 </figure>
 </div>
-<p>根据 <a href="#fig-autogen_autogen">图&nbsp;<span>24.1</span></a>，AutoGen 有以下的几个特点：</p>
+<p>根据 <a href="#fig-autogen_autogen" class="quarto-xref">图&nbsp;<span>24.1</span></a>，AutoGen 有以下的几个特点：</p>
 <ul>
 <li><strong>构建效率高：</strong>AutoGen 简化了开发复杂 LLM 工作流所涉及到的编排、自动化、优化等工作，能够以最小的开发成本构建基于 Multi Agents 对话的下一代 LLM 应用程序。</li>
 <li><strong>可对话性：</strong>AutoGen 支持多个 Agents 之间的交互协同，并且不同的 Agents 都可以根据实际需求进行定制，我们可以使用 AutoGen 构建广泛的应用（例如，不同的 Agent 数量，不同的 Agent 拓扑结构……），以完成不同的任务。</li>
@@ -498,10 +500,14 @@ ul.task-list li input[type="checkbox"] {
 </blockquote>
 <p>从这里可以看出，LangChain 完全是基于实用目的而开发。AutoGen 是个好东西，但是是否有合适的场景必须采用 AutoGen 才能实现呢？目前 AutoGen 给的可以应用的场景，是否用 LangChain 也可以完成呢？</p>
 <p>就像编程语言有面向函数编程和面相对象编程一样，LangChain 和 AutoGen 各自都有各自的战场，很难说谁会完全替代谁。</p>
-<div id="fig-prog_and_agents" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./images/progandagents.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;24.2: 不同 Agents 之间的关系和编程语言元素之间关系的类比</figcaption>
+<div id="fig-prog_and_agents" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prog_and_agents-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./images/progandagents.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prog_and_agents-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;24.2: 不同 Agents 之间的关系和编程语言元素之间关系的类比
+</figcaption>
 </figure>
 </div>
 <p>从本质上讲，LangChain 是一个构建 Agent 的框架，它提供了创建和部署 Agent 所需的工具和基础设施；而 AutoGen 是一个可以与多个 Agent 进行对话、交互的 Agent。</p>
@@ -595,10 +601,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -608,8 +613,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -622,6 +636,125 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -665,6 +798,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -690,6 +824,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -753,12 +913,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./semantickernel_promptflow.html" class="pagination-link">
+      <a href="./semantickernel_promptflow.html" class="pagination-link  aria-label=" &lt;span="" flow="" 工具&lt;="" span&gt;"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Prompt flow 工具</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./embedchain_intro.html" class="pagination-link">
+      <a href="./embedchain_intro.html" class="pagination-link" aria-label="<span class='chapter-number'>25</span>&nbsp; <span class='chapter-title'>Embedchain 简介</span>">
         <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Embedchain 简介</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -769,12 +929,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
+    <div class="nav-footer-center">
+<p>Copyright VII-QA. All Rights Reserved.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/autogen.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
+
 
 
 

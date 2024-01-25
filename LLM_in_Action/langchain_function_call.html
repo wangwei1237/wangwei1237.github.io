@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -82,7 +82,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "没有结果",
     "search-matching-documents-text": "匹配的文档",
@@ -91,6 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "更多匹配结果",
     "search-more-matches-text": "更多匹配结果",
     "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "取消",
     "search-submit-button-title": "提交",
     "search-label": "搜索"
@@ -100,17 +107,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <meta property="og:title" content="Large Language Model in Action - 13&nbsp; LangChain 函数调用">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/weather_gpt.jpg">
-<meta property="og:site-name" content="Large Language Model in Action">
+<meta property="og:site_name" content="Large Language Model in Action">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     <img src="./favicon.png" alt="" class="navbar-logo">
     </a>
@@ -125,66 +131,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/" rel="" target=""><i class="bi bi-house-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/"> <i class="bi bi-house-fill" role="img">
 </i> 
- <span class="menu-text">博客</span></a>
+<span class="menu-text">博客</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-bookshelf" role="img">
 </i> 
  <span class="menu-text">书籍</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="https://zh.d2l.ai/" rel="" target="">
+    <a class="dropdown-item" href="https://zh.d2l.ai/">
  <span class="dropdown-text">动手学深度学习</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro" rel="" target="">
+    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro">
  <span class="dropdown-text">Learn Prompting</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q" rel="" target="">
+    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q">
  <span class="dropdown-text">Stabel Diffusion 提示词手册</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/" rel="" target=""><i class="bi bi-person-badge-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/"> <i class="bi bi-person-badge-fill" role="img">
 </i> 
- <span class="menu-text">关于</span></a>
+<span class="menu-text">关于</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-    <a href="https://github.com/wangwei1237/LLM_in_Action" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+    <a href="https://github.com/wangwei1237/LLM_in_Action" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_function_call.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">LangChain 函数调用</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_function_call.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">LangChain 函数调用</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="搜索"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -454,7 +452,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -476,12 +474,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#根据-llm-的返回调用对应函数" id="toc-根据-llm-的返回调用对应函数" class="nav-link" data-scroll-target="#根据-llm-的返回调用对应函数"><span class="header-section-number">13.5</span> 根据 LLM 的返回调用对应函数</a></li>
   <li><a href="#参考文献" id="toc-参考文献" class="nav-link" data-scroll-target="#参考文献"><span class="header-section-number">13.6</span> 参考文献</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_function_call.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_function_call.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_function_call.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">LangChain 函数调用</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">LangChain 函数调用</span></h1>
 </div>
@@ -496,7 +494,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <div class="callout callout-style-default callout-tip callout-titled" title="要点提示">
 <div class="callout-header d-flex align-content-center">
@@ -529,28 +529,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="大模型的时效性" class="level2" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="大模型的时效性"><span class="header-section-number">13.1</span> 大模型的时效性</h2>
-<p>当我们问大模型“明天天气怎么样”时，因为大模型训练语料的时效性问题，如果不依赖外部信息，大模型是很难回答这种问题的，如 <a href="#fig-weather">图&nbsp;<span>13.1</span></a> 所示。</p>
+<p>当我们问大模型“明天天气怎么样”时，因为大模型训练语料的时效性问题，如果不依赖外部信息，大模型是很难回答这种问题的，如 <a href="#fig-weather" class="quarto-xref">图&nbsp;<span>13.1</span></a> 所示。</p>
 <div id="fig-weather" class="quarto-layout-panel">
-<figure class="figure">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
-<div id="fig-weather_gpt" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/weather_gpt.jpg" class="img-fluid figure-img" data-ref-parent="fig-weather"></p>
-<figcaption class="figure-caption">(a) ChatGPT</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-weather-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-weather" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-weather_gpt" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-weather_gpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/weather_gpt.jpg" class="img-fluid figure-img" data-ref-parent="fig-weather">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-weather_gpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) ChatGPT
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
-<div id="fig-weather_ernie" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/weather_ernie.jpg" class="img-fluid figure-img" data-ref-parent="fig-weather"></p>
-<figcaption class="figure-caption">(b) 文心一言</figcaption>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-weather" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-weather_ernie" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-weather_ernie-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/weather_ernie.jpg" class="img-fluid figure-img" data-ref-parent="fig-weather">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-weather_ernie-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) 文心一言
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p></p><figcaption class="figure-caption">图&nbsp;13.1: 明天天气怎么样？</figcaption><p></p>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-weather-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.1: 明天天气怎么样？
+</figcaption>
 </figure>
 </div>
 <p>而 OpenAI 大语言模型提供的 <code>函数调用</code> 能力，恰恰非常完美的解决了类似的问题，从而使得大语言模型可以通过 <code>函数调用</code> 与外部系统通信，并获取更实时的信息，以解决类似的问题。</p>
@@ -558,11 +570,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="函数调用流程" class="level2" data-number="13.2">
 <h2 data-number="13.2" class="anchored" data-anchor-id="函数调用流程"><span class="header-section-number">13.2</span> 函数调用流程</h2>
 <p>OpenAI 开发的大语言模型（例如GPT-3.5-turbo-0613，GPT-4-0613）提供了一种名为 <code>Function Calling(函数调用)</code> 的创新功能。<code>函数调用</code> 使得开发人员能够在模型中对函数进行描述，然后模型可以利用这些描述来巧妙地为函数生成调用参数。</p>
-<p>在 OpenAI 中，函数调用的步骤可以参考：<a href="#fig-function_calling_step">图&nbsp;<span>13.2</span></a></p>
-<div id="fig-function_calling_step" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/function_calling_1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">图&nbsp;13.2: OpenAI 的函数调用流程</figcaption>
+<p>在 OpenAI 中，函数调用的步骤可以参考：<a href="#fig-function_calling_step" class="quarto-xref">图&nbsp;<span>13.2</span></a></p>
+<div id="fig-function_calling_step" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-function_calling_step-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/function_calling_1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-function_calling_step-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.2: OpenAI 的函数调用流程
+</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="注意">
@@ -597,9 +613,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="13.3" class="anchored" data-anchor-id="openai-函数调用"><span class="header-section-number">13.3</span> OpenAI 函数调用</h2>
 <section id="openai-api" class="level3" data-number="13.3.1">
 <h3 data-number="13.3.1" class="anchored" data-anchor-id="openai-api"><span class="header-section-number">13.3.1</span> OpenAI API</h3>
-<div id="lst-fc_openai" class="listing">
-<p>列表&nbsp;13.1: 使用 OpenAI API 进行函数调用示例</p>
-<div class="sourceCode" id="lst-fc_openai" data-lst-cap="使用 OpenAI API 进行函数调用示例"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-fc_openai-1"><a href="#lst-fc_openai-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openai</span>
+<div id="lst-fc_openai" class="python listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-fc_openai-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.1: 使用 OpenAI API 进行函数调用示例
+</figcaption>
+<div aria-describedby="lst-fc_openai-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-fc_openai"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-fc_openai-1"><a href="#lst-fc_openai-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openai</span>
 <span id="lst-fc_openai-2"><a href="#lst-fc_openai-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="lst-fc_openai-3"><a href="#lst-fc_openai-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="lst-fc_openai-4"><a href="#lst-fc_openai-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Example dummy function hard coded to return the same weather</span></span>
@@ -687,10 +707,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="lst-fc_openai-86"><a href="#lst-fc_openai-86" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"---------step 4. final LLMs response-----------"</span>)</span>
 <span id="lst-fc_openai-87"><a href="#lst-fc_openai-87" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#lst-fc_openai">列表&nbsp;<span>13.1</span></a> 的运行结果如 <a href="#lst-openai_fc_res">列表&nbsp;<span>13.2</span></a>：</p>
-<div id="lst-openai_fc_res" class="listing">
-<p>列表&nbsp;13.2: 运行结果</p>
-<div class="sourceCode" id="lst-openai_fc_res" data-lst-cap="运行结果"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="lst-openai_fc_res-1"><a href="#lst-openai_fc_res-1" aria-hidden="true" tabindex="-1"></a><span class="op">---------</span>step <span class="fl">1.</span> the <span class="dv">1</span><span class="er">st</span> LLMs response<span class="op">-----------</span></span>
+</figure>
+</div>
+<p><a href="#lst-fc_openai" class="quarto-xref">列表&nbsp;<span>13.1</span></a> 的运行结果如 <a href="#lst-openai_fc_res" class="quarto-xref">列表&nbsp;<span>13.2</span></a>：</p>
+<div id="lst-openai_fc_res" class="javascript listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-openai_fc_res-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.2: 运行结果
+</figcaption>
+<div aria-describedby="lst-openai_fc_res-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-openai_fc_res"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="lst-openai_fc_res-1"><a href="#lst-openai_fc_res-1" aria-hidden="true" tabindex="-1"></a><span class="op">---------</span>step <span class="fl">1.</span> the <span class="dv">1</span><span class="er">st</span> LLMs response<span class="op">-----------</span></span>
 <span id="lst-openai_fc_res-2"><a href="#lst-openai_fc_res-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="lst-openai_fc_res-3"><a href="#lst-openai_fc_res-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"id"</span><span class="op">:</span> <span class="st">"chatcmpl-7xnsEW2rSsec7Qd1FC60cKIT7TtuR"</span><span class="op">,</span></span>
 <span id="lst-openai_fc_res-4"><a href="#lst-openai_fc_res-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"object"</span><span class="op">:</span> <span class="st">"chat.completion"</span><span class="op">,</span></span>
@@ -750,13 +776,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="lst-openai_fc_res-58"><a href="#lst-openai_fc_res-58" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="lst-openai_fc_res-59"><a href="#lst-openai_fc_res-59" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</figure>
+</div>
 </section>
 <section id="openai-函数调用-llmchain" class="level3" data-number="13.3.2">
 <h3 data-number="13.3.2" class="anchored" data-anchor-id="openai-函数调用-llmchain"><span class="header-section-number">13.3.2</span> OpenAI 函数调用 LLMChain</h3>
 <p>可以参考 LangChain 官方文档以在 LangChain 中使用 OpenAI <code>函数调用</code> 的能力。<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
-<div id="lst-fc_langchain" class="listing">
-<p>列表&nbsp;13.3: 使用 LangChain 实现函数调用</p>
-<div class="sourceCode" id="lst-fc_langchain" data-lst-cap="使用 LangChain 实现函数调用"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-fc_langchain-1"><a href="#lst-fc_langchain-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ChatOpenAI</span>
+<div id="lst-fc_langchain" class="python listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-fc_langchain-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.3: 使用 LangChain 实现函数调用
+</figcaption>
+<div aria-describedby="lst-fc_langchain-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-fc_langchain"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-fc_langchain-1"><a href="#lst-fc_langchain-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ChatOpenAI</span>
 <span id="lst-fc_langchain-2"><a href="#lst-fc_langchain-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> ChatPromptTemplate</span>
 <span id="lst-fc_langchain-3"><a href="#lst-fc_langchain-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains.openai_functions <span class="im">import</span> (</span>
 <span id="lst-fc_langchain-4"><a href="#lst-fc_langchain-4" aria-hidden="true" tabindex="-1"></a>    create_openai_fn_chain,</span>
@@ -801,10 +833,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="lst-fc_langchain-43"><a href="#lst-fc_langchain-43" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> chain.run(<span class="st">"extract the tomorrow weather infomation from ：</span><span class="sc">%s</span><span class="st">， and answer the question: </span><span class="sc">%s</span><span class="st">"</span> <span class="op">%</span> (res_func, <span class="st">"What's the weather like in Beijing tomorrow?"</span>))</span>
 <span id="lst-fc_langchain-44"><a href="#lst-fc_langchain-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#lst-fc_langchain">列表&nbsp;<span>13.3</span></a> 的运行结果如下所示：</p>
-<div id="lst-fc_langchain_res" class="listing">
-<p>列表&nbsp;13.4: 运行结果</p>
-<div class="sourceCode" id="lst-fc_langchain_res" data-lst-cap="运行结果"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="lst-fc_langchain_res-1"><a href="#lst-fc_langchain_res-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Entering <span class="kw">new</span> LLMChain chain<span class="op">...</span></span>
+</figure>
+</div>
+<p><a href="#lst-fc_langchain" class="quarto-xref">列表&nbsp;<span>13.3</span></a> 的运行结果如下所示：</p>
+<div id="lst-fc_langchain_res" class="javascript listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-fc_langchain_res-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.4: 运行结果
+</figcaption>
+<div aria-describedby="lst-fc_langchain_res-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-fc_langchain_res"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="lst-fc_langchain_res-1"><a href="#lst-fc_langchain_res-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Entering <span class="kw">new</span> LLMChain chain<span class="op">...</span></span>
 <span id="lst-fc_langchain_res-2"><a href="#lst-fc_langchain_res-2" aria-hidden="true" tabindex="-1"></a>Prompt after formatting<span class="op">:</span></span>
 <span id="lst-fc_langchain_res-3"><a href="#lst-fc_langchain_res-3" aria-hidden="true" tabindex="-1"></a>Human<span class="op">:</span> What<span class="st">'s the weather like in Beijing tomorrow?</span></span>
 <span id="lst-fc_langchain_res-4"><a href="#lst-fc_langchain_res-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -819,6 +857,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="lst-fc_langchain_res-13"><a href="#lst-fc_langchain_res-13" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Finished chain<span class="op">.</span></span>
 <span id="lst-fc_langchain_res-14"><a href="#lst-fc_langchain_res-14" aria-hidden="true" tabindex="-1"></a>The weather <span class="kw">in</span> Beijing tomorrow is sunny and windy<span class="op">.</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</figure>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -832,9 +872,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>在 <code>create_openai_fn_chain</code> 中，其第一个参数是一个函数列表，如果该列表只有 1 个函数时，则 <code>create_openai_fn_chain</code> 仅会返回大语言模型构造的调用该函数对应的参数。例如如上的例子，<code>create_openai_fn_chain</code> 仅返回了 <code>{'location': 'Beijing', 'unit': 'metric'}</code>。 而如果函数列表存在多个函数时，则会返回大语言模型分析之后所需要调用的函数名以及对应的参数，例如： <code>{'name': 'get_current_weather', 'arguments': {'location': 'Beijing'}}</code>。</p>
 </div>
 </div>
-<div id="lst-fc_multi_fcs" class="listing">
-<p>列表&nbsp;13.5: create_openai_fn_chain() 传递多个函数调用示例</p>
-<div class="sourceCode" id="lst-fc_multi_fcs" data-lst-cap="create_openai_fn_chain() 传递多个函数调用示例"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-fc_multi_fcs-1"><a href="#lst-fc_multi_fcs-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<div id="lst-fc_multi_fcs" class="python listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-fc_multi_fcs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.5: create_openai_fn_chain() 传递多个函数调用示例
+</figcaption>
+<div aria-describedby="lst-fc_multi_fcs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-fc_multi_fcs"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-fc_multi_fcs-1"><a href="#lst-fc_multi_fcs-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
 <span id="lst-fc_multi_fcs-2"><a href="#lst-fc_multi_fcs-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_current_news(location: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
 <span id="lst-fc_multi_fcs-3"><a href="#lst-fc_multi_fcs-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Get the current news based on the location.'</span></span>
 <span id="lst-fc_multi_fcs-4"><a href="#lst-fc_multi_fcs-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -861,16 +905,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="lst-fc_multi_fcs-25"><a href="#lst-fc_multi_fcs-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-------------The 1-st langchain result-------------"</span>)</span>
 <span id="lst-fc_multi_fcs-26"><a href="#lst-fc_multi_fcs-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#lst-fc_multi_fcs">列表&nbsp;<span>13.5</span></a> 的运行结果如 <a href="#lst-fc_multi_res">列表&nbsp;<span>13.6</span></a> 所示：</p>
-<div id="lst-fc_multi_res" class="listing">
-<p>列表&nbsp;13.6: 运行结果</p>
-<div class="sourceCode" id="lst-fc_multi_res" data-lst-cap="运行结果"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="lst-fc_multi_res-1"><a href="#lst-fc_multi_res-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Entering <span class="kw">new</span> LLMChain chain<span class="op">...</span></span>
+</figure>
+</div>
+<p><a href="#lst-fc_multi_fcs" class="quarto-xref">列表&nbsp;<span>13.5</span></a> 的运行结果如 <a href="#lst-fc_multi_res" class="quarto-xref">列表&nbsp;<span>13.6</span></a> 所示：</p>
+<div id="lst-fc_multi_res" class="javascript listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-fc_multi_res-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.6: 运行结果
+</figcaption>
+<div aria-describedby="lst-fc_multi_res-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-fc_multi_res"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="lst-fc_multi_res-1"><a href="#lst-fc_multi_res-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Entering <span class="kw">new</span> LLMChain chain<span class="op">...</span></span>
 <span id="lst-fc_multi_res-2"><a href="#lst-fc_multi_res-2" aria-hidden="true" tabindex="-1"></a>Prompt after formatting<span class="op">:</span></span>
 <span id="lst-fc_multi_res-3"><a href="#lst-fc_multi_res-3" aria-hidden="true" tabindex="-1"></a>Human<span class="op">:</span> What<span class="st">'s the weather like in Beijing tomorrow?</span></span>
 <span id="lst-fc_multi_res-4"><a href="#lst-fc_multi_res-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="lst-fc_multi_res-5"><a href="#lst-fc_multi_res-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Finished chain<span class="op">.</span></span>
 <span id="lst-fc_multi_res-6"><a href="#lst-fc_multi_res-6" aria-hidden="true" tabindex="-1"></a><span class="op">-------------</span>The <span class="dv">1</span><span class="op">-</span>st langchain result<span class="op">-------------</span></span>
 <span id="lst-fc_multi_res-7"><a href="#lst-fc_multi_res-7" aria-hidden="true" tabindex="-1"></a>{<span class="st">'name'</span><span class="op">:</span> <span class="st">'get_current_weather'</span><span class="op">,</span> <span class="st">'arguments'</span><span class="op">:</span> {<span class="st">'location'</span><span class="op">:</span> <span class="st">'Beijing'</span>}}</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </section>
 </section>
@@ -881,96 +933,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>在使用 文心 4.0 的函数调用之前，首先需要安装 <code>qianfan</code> 库：</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install qianfan</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>我们首先对本章前面提到的 <code>get_current_news</code> 和 <code>get_current_weather</code> 这两个函数实现其 JSON-Schema 描述：</p>
-<div id="lst-la_fc_fd" class="listing">
-<p>列表&nbsp;13.7: 待调用函数的函数描述</p>
-<div class="sourceCode" id="lst-la_fc_fd" data-lst-cap="待调用函数的函数描述"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-la_fc_fd-1"><a href="#lst-la_fc_fd-1"></a><span class="co">"""</span></span>
-<span id="lst-la_fc_fd-2"><a href="#lst-la_fc_fd-2"></a><span class="co">@discribe: functions description.</span></span>
-<span id="lst-la_fc_fd-3"><a href="#lst-la_fc_fd-3"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
-<span id="lst-la_fc_fd-4"><a href="#lst-la_fc_fd-4"></a><span class="co">"""</span></span>
-<span id="lst-la_fc_fd-5"><a href="#lst-la_fc_fd-5"></a></span>
-<span id="lst-la_fc_fd-6"><a href="#lst-la_fc_fd-6"></a>functions <span class="op">=</span> [</span>
-<span id="lst-la_fc_fd-7"><a href="#lst-la_fc_fd-7"></a>    {</span>
-<span id="lst-la_fc_fd-8"><a href="#lst-la_fc_fd-8"></a>        <span class="st">"name"</span>: <span class="st">"get_current_news"</span>,</span>
-<span id="lst-la_fc_fd-9"><a href="#lst-la_fc_fd-9"></a>        <span class="st">"description"</span>: <span class="st">"Get the current news based on the location."</span>,</span>
-<span id="lst-la_fc_fd-10"><a href="#lst-la_fc_fd-10"></a>        <span class="st">"parameters"</span>: {</span>
-<span id="lst-la_fc_fd-11"><a href="#lst-la_fc_fd-11"></a>            <span class="st">"type"</span>: <span class="st">"object"</span>,</span>
-<span id="lst-la_fc_fd-12"><a href="#lst-la_fc_fd-12"></a>            <span class="st">"properties"</span>: {</span>
-<span id="lst-la_fc_fd-13"><a href="#lst-la_fc_fd-13"></a>                <span class="st">"location"</span>: {</span>
-<span id="lst-la_fc_fd-14"><a href="#lst-la_fc_fd-14"></a>                    <span class="st">"type"</span>: <span class="st">"string"</span>,</span>
-<span id="lst-la_fc_fd-15"><a href="#lst-la_fc_fd-15"></a>                    <span class="st">"description"</span>: <span class="st">"The city and state, e.g. San Francisco, CA"</span>,</span>
-<span id="lst-la_fc_fd-16"><a href="#lst-la_fc_fd-16"></a>                },</span>
-<span id="lst-la_fc_fd-17"><a href="#lst-la_fc_fd-17"></a>            },</span>
-<span id="lst-la_fc_fd-18"><a href="#lst-la_fc_fd-18"></a>            <span class="st">"required"</span>: [<span class="st">"location"</span>],</span>
-<span id="lst-la_fc_fd-19"><a href="#lst-la_fc_fd-19"></a>        },</span>
-<span id="lst-la_fc_fd-20"><a href="#lst-la_fc_fd-20"></a>        <span class="st">"responses"</span>: {</span>
-<span id="lst-la_fc_fd-21"><a href="#lst-la_fc_fd-21"></a>            <span class="st">"type"</span>: <span class="st">"object"</span>,</span>
-<span id="lst-la_fc_fd-22"><a href="#lst-la_fc_fd-22"></a>            <span class="st">"properties"</span>: {</span>
-<span id="lst-la_fc_fd-23"><a href="#lst-la_fc_fd-23"></a>                <span class="st">"news"</span>: {</span>
-<span id="lst-la_fc_fd-24"><a href="#lst-la_fc_fd-24"></a>                    <span class="st">"type"</span>: <span class="st">"string"</span>,</span>
-<span id="lst-la_fc_fd-25"><a href="#lst-la_fc_fd-25"></a>                    <span class="st">"description"</span>: <span class="st">"The current news based on the location."</span>,</span>
-<span id="lst-la_fc_fd-26"><a href="#lst-la_fc_fd-26"></a>                }</span>
-<span id="lst-la_fc_fd-27"><a href="#lst-la_fc_fd-27"></a>            }</span>
-<span id="lst-la_fc_fd-28"><a href="#lst-la_fc_fd-28"></a>        }</span>
-<span id="lst-la_fc_fd-29"><a href="#lst-la_fc_fd-29"></a>    },</span>
-<span id="lst-la_fc_fd-30"><a href="#lst-la_fc_fd-30"></a>    {</span>
-<span id="lst-la_fc_fd-31"><a href="#lst-la_fc_fd-31"></a>        <span class="st">"name"</span>: <span class="st">"get_current_weather"</span>,</span>
-<span id="lst-la_fc_fd-32"><a href="#lst-la_fc_fd-32"></a>        <span class="st">"description"</span>: <span class="st">"Get the current weather in a given location"</span>,</span>
-<span id="lst-la_fc_fd-33"><a href="#lst-la_fc_fd-33"></a>        <span class="st">"parameters"</span>: {</span>
-<span id="lst-la_fc_fd-34"><a href="#lst-la_fc_fd-34"></a>            <span class="st">"type"</span>: <span class="st">"object"</span>,</span>
-<span id="lst-la_fc_fd-35"><a href="#lst-la_fc_fd-35"></a>            <span class="st">"properties"</span>: {</span>
-<span id="lst-la_fc_fd-36"><a href="#lst-la_fc_fd-36"></a>                <span class="st">"location"</span>: {</span>
-<span id="lst-la_fc_fd-37"><a href="#lst-la_fc_fd-37"></a>                    <span class="st">"type"</span>: <span class="st">"string"</span>,</span>
-<span id="lst-la_fc_fd-38"><a href="#lst-la_fc_fd-38"></a>                    <span class="st">"description"</span>: <span class="st">"The city and state, e.g. San Francisco, CA"</span>,</span>
-<span id="lst-la_fc_fd-39"><a href="#lst-la_fc_fd-39"></a>                },</span>
-<span id="lst-la_fc_fd-40"><a href="#lst-la_fc_fd-40"></a>                <span class="st">"unit"</span>: {<span class="st">"type"</span>: <span class="st">"string"</span>, <span class="st">"enum"</span>: [<span class="st">"celsius"</span>, <span class="st">"fahrenheit"</span>]},</span>
-<span id="lst-la_fc_fd-41"><a href="#lst-la_fc_fd-41"></a>            },</span>
-<span id="lst-la_fc_fd-42"><a href="#lst-la_fc_fd-42"></a>            <span class="st">"required"</span>: [<span class="st">"location"</span>],</span>
-<span id="lst-la_fc_fd-43"><a href="#lst-la_fc_fd-43"></a>        },</span>
-<span id="lst-la_fc_fd-44"><a href="#lst-la_fc_fd-44"></a>        <span class="st">"responses"</span>: {</span>
-<span id="lst-la_fc_fd-45"><a href="#lst-la_fc_fd-45"></a>            <span class="st">"type"</span>: <span class="st">"object"</span>,</span>
-<span id="lst-la_fc_fd-46"><a href="#lst-la_fc_fd-46"></a>            <span class="st">"properties"</span>: {</span>
-<span id="lst-la_fc_fd-47"><a href="#lst-la_fc_fd-47"></a>                <span class="st">"temperature"</span>: {</span>
-<span id="lst-la_fc_fd-48"><a href="#lst-la_fc_fd-48"></a>                    <span class="st">"type"</span>: <span class="st">"string"</span>,</span>
-<span id="lst-la_fc_fd-49"><a href="#lst-la_fc_fd-49"></a>                    <span class="st">"description"</span>: <span class="st">"The temperature in the given location."</span>,</span>
-<span id="lst-la_fc_fd-50"><a href="#lst-la_fc_fd-50"></a>                }</span>
-<span id="lst-la_fc_fd-51"><a href="#lst-la_fc_fd-51"></a>            }</span>
-<span id="lst-la_fc_fd-52"><a href="#lst-la_fc_fd-52"></a>        }</span>
-<span id="lst-la_fc_fd-53"><a href="#lst-la_fc_fd-53"></a>    },</span>
-<span id="lst-la_fc_fd-54"><a href="#lst-la_fc_fd-54"></a>]</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-la_fc_fd" class="python listing quarto-float" data-include="./code/functions_desc.py" data-code-line-numbers="true">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-la_fc_fd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.7: 待调用函数的函数描述
+</figcaption>
+<div aria-describedby="lst-la_fc_fd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-la_fc_fd" data-include="./code/functions_desc.py" data-code-line-numbers="true"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="lst-la_fc_fd_qf_demo" class="listing">
-<p>列表&nbsp;13.8: 使用千帆 API 实现文心大模型的函数调用</p>
-<div class="sourceCode" id="lst-la_fc_fd_qf_demo" data-lst-cap="使用千帆 API 实现文心大模型的函数调用"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="lst-la_fc_fd_qf_demo-1"><a href="#lst-la_fc_fd_qf_demo-1"></a><span class="im">import</span> qianfan</span>
-<span id="lst-la_fc_fd_qf_demo-2"><a href="#lst-la_fc_fd_qf_demo-2"></a></span>
-<span id="lst-la_fc_fd_qf_demo-3"><a href="#lst-la_fc_fd_qf_demo-3"></a>chat_comp <span class="op">=</span> qianfan.ChatCompletion()</span>
-<span id="lst-la_fc_fd_qf_demo-4"><a href="#lst-la_fc_fd_qf_demo-4"></a></span>
-<a class="code-annotation-anchor" data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-la_fc_fd_qf_demo-5" class="code-annotation-target"><a href="#lst-la_fc_fd_qf_demo-5"></a>resp <span class="op">=</span> chat_comp.do(model<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>,</span>
-<a class="code-annotation-anchor" data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="lst-la_fc_fd_qf_demo-6" class="code-annotation-target"><a href="#lst-la_fc_fd_qf_demo-6"></a>                    messages<span class="op">=</span>[{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"北京的新闻是什么？"</span>}],</span>
-<a class="code-annotation-anchor" data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="lst-la_fc_fd_qf_demo-7" class="code-annotation-target"><a href="#lst-la_fc_fd_qf_demo-7"></a>                    functions<span class="op">=</span>functions)</span>
-<span id="lst-la_fc_fd_qf_demo-8"><a href="#lst-la_fc_fd_qf_demo-8"></a> </span>
-<span id="lst-la_fc_fd_qf_demo-9"><a href="#lst-la_fc_fd_qf_demo-9"></a><span class="bu">print</span>(resp)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</figure>
 </div>
-<dl class="code-annotation-container-grid">
-<dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="1">1</dt>
-<dd>
-<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="5" data-code-annotation="1">指定采用的模型名称</span>
-</dd>
-<dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="2">2</dt>
-<dd>
-<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="6" data-code-annotation="2">和大模型交互的消息列表</span>
-</dd>
-<dt data-target-cell="lst-la_fc_fd_qf_demo" data-target-annotation="3">3</dt>
-<dd>
-<span data-code-cell="lst-la_fc_fd_qf_demo" data-code-lines="7" data-code-annotation="3">告诉大模型我们有哪些函数可以调用，以及对应函数的具体描述，具体参见 <a href="#lst-la_fc_fd">列表&nbsp;<span>13.7</span></a></span>
-</dd>
-</dl>
-<p><a href="#lst-la_fc_fd_qf_demo">列表&nbsp;<span>13.8</span></a> 的运行结果如下：</p>
+<div id="lst-la_fc_fd_qf_demo" class="python listing quarto-float" data-code-line-numbers="true">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-la_fc_fd_qf_demo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.8: 使用千帆 API 实现文心大模型的函数调用
+</figcaption>
+<div aria-describedby="lst-la_fc_fd_qf_demo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-la_fc_fd_qf_demo" data-code-line-numbers="true"><pre class="sourceCode code-annotation-code python code-with-copy"><code class="sourceCode python"><span id="lst-la_fc_fd_qf_demo-1"><a href="#lst-la_fc_fd_qf_demo-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> qianfan</span>
+<span id="lst-la_fc_fd_qf_demo-2"><a href="#lst-la_fc_fd_qf_demo-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-la_fc_fd_qf_demo-3"><a href="#lst-la_fc_fd_qf_demo-3" aria-hidden="true" tabindex="-1"></a>chat_comp <span class="op">=</span> qianfan.ChatCompletion()</span>
+<span id="lst-la_fc_fd_qf_demo-4"><a href="#lst-la_fc_fd_qf_demo-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-la_fc_fd_qf_demo-5"><a href="#lst-la_fc_fd_qf_demo-5" aria-hidden="true" tabindex="-1"></a>resp <span class="op">=</span> chat_comp.do(model<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>,</span>
+<span id="lst-la_fc_fd_qf_demo-6"><a href="#lst-la_fc_fd_qf_demo-6" aria-hidden="true" tabindex="-1"></a>                    messages<span class="op">=</span>[{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"北京的新闻是什么？"</span>}],</span>
+<span id="lst-la_fc_fd_qf_demo-7"><a href="#lst-la_fc_fd_qf_demo-7" aria-hidden="true" tabindex="-1"></a>                    functions<span class="op">=</span>functions)</span>
+<span id="lst-la_fc_fd_qf_demo-8"><a href="#lst-la_fc_fd_qf_demo-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="lst-la_fc_fd_qf_demo-9"><a href="#lst-la_fc_fd_qf_demo-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(resp)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<ol type="1">
+<li>指定采用的模型名称</li>
+<li>和大模型交互的消息列表</li>
+<li>告诉大模型我们有哪些函数可以调用，以及对应函数的具体描述，具体参见 <a href="#lst-la_fc_fd" class="quarto-xref">列表&nbsp;<span>13.7</span></a></li>
+</ol>
+<p><a href="#lst-la_fc_fd_qf_demo" class="quarto-xref">列表&nbsp;<span>13.8</span></a> 的运行结果如下：</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">QfResponse</span><span class="er">(</span><span class="va">code</span><span class="op">=</span>200, <span class="va">headers</span><span class="op">=</span>{...}, <span class="va">body</span><span class="op">=</span>{<span class="st">'id'</span>: <span class="st">'as-cvbbn9t0vq'</span><span class="ex">,</span> <span class="st">'object'</span>: <span class="st">'chat.completion'</span>, <span class="st">'created'</span>: 1699708273, <span class="st">'result'</span>: <span class="st">''</span>, <span class="st">'is_truncated'</span>: False, <span class="st">'need_clear_history'</span>: False, <span class="st">'function_call'</span>: {<span class="st">'name'</span>: <span class="st">'get_current_news'</span>, <span class="st">'thoughts'</span>: <span class="st">'用户想要知道北京的新闻。我可以使用get_current_news工具来获取这些信息。'</span>, <span class="st">'arguments'</span>: <span class="st">'{"location":"北京"}'</span>}, <span class="st">'usage'</span>: {...}<span class="kw">)</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>通过结果我们可以发现，文心大模型的 <code>函数调用</code> 和 OpenAI 的 <code>函数调用</code> 虽然不完全一致，但是还是非常相似的。对于有可以调用的函数时，文心大模型的返回结果中的 <code>resp.result</code> 为空，同时用 <code>resp.function_call</code> 存储针对当前问题，经过大模型分析后可以调用的函数以及调用函数时所用到的参数。具体接下来的函数调用过程，就和 OpenAI 一致了，可以参考 <a href="#lst-fc_openai">列表&nbsp;<span>13.1</span></a>。</p>
+<p>通过结果我们可以发现，文心大模型的 <code>函数调用</code> 和 OpenAI 的 <code>函数调用</code> 虽然不完全一致，但是还是非常相似的。对于有可以调用的函数时，文心大模型的返回结果中的 <code>resp.result</code> 为空，同时用 <code>resp.function_call</code> 存储针对当前问题，经过大模型分析后可以调用的函数以及调用函数时所用到的参数。具体接下来的函数调用过程，就和 OpenAI 一致了，可以参考 <a href="#lst-fc_openai" class="quarto-xref">列表&nbsp;<span>13.1</span></a>。</p>
 </section>
 <section id="文心函数调用-llmchain" class="level3" data-number="13.4.2">
 <h3 data-number="13.4.2" class="anchored" data-anchor-id="文心函数调用-llmchain"><span class="header-section-number">13.4.2</span> 文心函数调用 LLMChain</h3>
-<p>目前，LangChain 并不支持像 <a href="#lst-fc_multi_fcs">列表&nbsp;<span>13.5</span></a> 那样，通过 <code>create_openai_fn_chain()</code> 来进行函数调用。如果要实现该通能，需要对 LangChain 进行扩展，增加 <code>create_ernie_fn_chai()</code>。可以参照 <code>create_openai_fn_chain()</code> 来实现 <code>create_ernie_fn_chain()</code>，具体需要修改的代码参考：<a href="https://github.com/langchain-ai/langchain/pull/13320">feat: add ERNIE-Bot-4 Function Calling</a>。</p>
+<p>目前，LangChain 并不支持像 <a href="#lst-fc_multi_fcs" class="quarto-xref">列表&nbsp;<span>13.5</span></a> 那样，通过 <code>create_openai_fn_chain()</code> 来进行函数调用。如果要实现该通能，需要对 LangChain 进行扩展，增加 <code>create_ernie_fn_chai()</code>。可以参照 <code>create_openai_fn_chain()</code> 来实现 <code>create_ernie_fn_chain()</code>，具体需要修改的代码参考：<a href="https://github.com/langchain-ai/langchain/pull/13320">feat: add ERNIE-Bot-4 Function Calling</a>。</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="GOOD NEWS">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1036,55 +1038,67 @@ GOOD NEWS
 </div>
 </div>
 </div>
-<p>完成如上的修改之后，可以像 <a href="#lst-fc_multi_fcs">列表&nbsp;<span>13.5</span></a> 那样来简化大语言模型的 <code>函数调用</code> 过程。</p>
+<p>完成如上的修改之后，可以像 <a href="#lst-fc_multi_fcs" class="quarto-xref">列表&nbsp;<span>13.5</span></a> 那样来简化大语言模型的 <code>函数调用</code> 过程。</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="ernie_fc_d">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">ErnieBotChat</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">QianfanChatEndpoint</a></li></ul>
 <div class="tab-content" data-group="ernie_fc_d">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
-<div id="lst-fc_multi_fcs_ernie" class="listing">
-<p>列表&nbsp;13.9: 使用 ErnieBotChat 执行文心大模型的函数调用</p>
-<div class="sourceCode" id="lst-fc_multi_fcs_ernie" data-lst-cap="使用 ErnieBotChat 执行文心大模型的函数调用"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-fc_multi_fcs_ernie-1"><a href="#lst-fc_multi_fcs_ernie-1"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
-<span id="lst-fc_multi_fcs_ernie-2"><a href="#lst-fc_multi_fcs_ernie-2"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> ChatPromptTemplate</span>
-<span id="lst-fc_multi_fcs_ernie-3"><a href="#lst-fc_multi_fcs_ernie-3"></a><span class="im">from</span> langchain.chains.ernie_functions <span class="im">import</span> (</span>
-<span id="lst-fc_multi_fcs_ernie-4"><a href="#lst-fc_multi_fcs_ernie-4"></a>    create_ernie_fn_chain,</span>
-<span id="lst-fc_multi_fcs_ernie-5"><a href="#lst-fc_multi_fcs_ernie-5"></a>)</span>
-<span id="lst-fc_multi_fcs_ernie-6"><a href="#lst-fc_multi_fcs_ernie-6"></a></span>
-<span id="lst-fc_multi_fcs_ernie-7"><a href="#lst-fc_multi_fcs_ernie-7"></a>llm <span class="op">=</span> ErnieBotChat(model_name<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
-<span id="lst-fc_multi_fcs_ernie-8"><a href="#lst-fc_multi_fcs_ernie-8"></a>prompt <span class="op">=</span> ChatPromptTemplate.from_messages(</span>
-<span id="lst-fc_multi_fcs_ernie-9"><a href="#lst-fc_multi_fcs_ernie-9"></a>    [</span>
-<span id="lst-fc_multi_fcs_ernie-10"><a href="#lst-fc_multi_fcs_ernie-10"></a>        (<span class="st">"human"</span>, <span class="st">"</span><span class="sc">{query}</span><span class="st">"</span>),</span>
-<span id="lst-fc_multi_fcs_ernie-11"><a href="#lst-fc_multi_fcs_ernie-11"></a>    ]</span>
-<span id="lst-fc_multi_fcs_ernie-12"><a href="#lst-fc_multi_fcs_ernie-12"></a>)</span>
-<span id="lst-fc_multi_fcs_ernie-13"><a href="#lst-fc_multi_fcs_ernie-13"></a></span>
-<span id="lst-fc_multi_fcs_ernie-14"><a href="#lst-fc_multi_fcs_ernie-14"></a>chain <span class="op">=</span> create_ernie_fn_chain([get_current_weather, get_current_news], llm, prompt, verbose<span class="op">=</span><span class="va">True</span>)</span>
-<span id="lst-fc_multi_fcs_ernie-15"><a href="#lst-fc_multi_fcs_ernie-15"></a>res <span class="op">=</span> chain.run(<span class="st">"北京今天新闻是什么？"</span>)</span>
-<span id="lst-fc_multi_fcs_ernie-16"><a href="#lst-fc_multi_fcs_ernie-16"></a><span class="bu">print</span>(res)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-fc_multi_fcs_ernie" class="python listing quarto-float" data-code-line-numbers="true">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-fc_multi_fcs_ernie-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.9: 使用 ErnieBotChat 执行文心大模型的函数调用
+</figcaption>
+<div aria-describedby="lst-fc_multi_fcs_ernie-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-fc_multi_fcs_ernie" data-code-line-numbers="true"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-fc_multi_fcs_ernie-1"><a href="#lst-fc_multi_fcs_ernie-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
+<span id="lst-fc_multi_fcs_ernie-2"><a href="#lst-fc_multi_fcs_ernie-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> ChatPromptTemplate</span>
+<span id="lst-fc_multi_fcs_ernie-3"><a href="#lst-fc_multi_fcs_ernie-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains.ernie_functions <span class="im">import</span> (</span>
+<span id="lst-fc_multi_fcs_ernie-4"><a href="#lst-fc_multi_fcs_ernie-4" aria-hidden="true" tabindex="-1"></a>    create_ernie_fn_chain,</span>
+<span id="lst-fc_multi_fcs_ernie-5"><a href="#lst-fc_multi_fcs_ernie-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="lst-fc_multi_fcs_ernie-6"><a href="#lst-fc_multi_fcs_ernie-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-fc_multi_fcs_ernie-7"><a href="#lst-fc_multi_fcs_ernie-7" aria-hidden="true" tabindex="-1"></a>llm <span class="op">=</span> ErnieBotChat(model_name<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
+<span id="lst-fc_multi_fcs_ernie-8"><a href="#lst-fc_multi_fcs_ernie-8" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> ChatPromptTemplate.from_messages(</span>
+<span id="lst-fc_multi_fcs_ernie-9"><a href="#lst-fc_multi_fcs_ernie-9" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="lst-fc_multi_fcs_ernie-10"><a href="#lst-fc_multi_fcs_ernie-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"human"</span>, <span class="st">"</span><span class="sc">{query}</span><span class="st">"</span>),</span>
+<span id="lst-fc_multi_fcs_ernie-11"><a href="#lst-fc_multi_fcs_ernie-11" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="lst-fc_multi_fcs_ernie-12"><a href="#lst-fc_multi_fcs_ernie-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="lst-fc_multi_fcs_ernie-13"><a href="#lst-fc_multi_fcs_ernie-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-fc_multi_fcs_ernie-14"><a href="#lst-fc_multi_fcs_ernie-14" aria-hidden="true" tabindex="-1"></a>chain <span class="op">=</span> create_ernie_fn_chain([get_current_weather, get_current_news], llm, prompt, verbose<span class="op">=</span><span class="va">True</span>)</span>
+<span id="lst-fc_multi_fcs_ernie-15"><a href="#lst-fc_multi_fcs_ernie-15" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> chain.run(<span class="st">"北京今天新闻是什么？"</span>)</span>
+<span id="lst-fc_multi_fcs_ernie-16"><a href="#lst-fc_multi_fcs_ernie-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
-<div id="lst-fc_multi_fcs_qianfan" class="listing">
-<p>列表&nbsp;13.10: 使用 QianfanChatEndpoint 执行文心大模型的函数调用</p>
-<div class="sourceCode" id="lst-fc_multi_fcs_qianfan" data-lst-cap="使用 QianfanChatEndpoint 执行文心大模型的函数调用"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-fc_multi_fcs_qianfan-1"><a href="#lst-fc_multi_fcs_qianfan-1"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> QianfanChatEndpoint</span>
-<span id="lst-fc_multi_fcs_qianfan-2"><a href="#lst-fc_multi_fcs_qianfan-2"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> ChatPromptTemplate</span>
-<span id="lst-fc_multi_fcs_qianfan-3"><a href="#lst-fc_multi_fcs_qianfan-3"></a><span class="im">from</span> langchain.chains.ernie_functions <span class="im">import</span> (</span>
-<span id="lst-fc_multi_fcs_qianfan-4"><a href="#lst-fc_multi_fcs_qianfan-4"></a>    create_ernie_fn_chain,</span>
-<span id="lst-fc_multi_fcs_qianfan-5"><a href="#lst-fc_multi_fcs_qianfan-5"></a>)</span>
-<span id="lst-fc_multi_fcs_qianfan-6"><a href="#lst-fc_multi_fcs_qianfan-6"></a></span>
-<span id="lst-fc_multi_fcs_qianfan-7"><a href="#lst-fc_multi_fcs_qianfan-7"></a>llm <span class="op">=</span> QianfanChatEndpoint(model<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
-<span id="lst-fc_multi_fcs_qianfan-8"><a href="#lst-fc_multi_fcs_qianfan-8"></a>prompt <span class="op">=</span> ChatPromptTemplate.from_messages(</span>
-<span id="lst-fc_multi_fcs_qianfan-9"><a href="#lst-fc_multi_fcs_qianfan-9"></a>    [</span>
-<span id="lst-fc_multi_fcs_qianfan-10"><a href="#lst-fc_multi_fcs_qianfan-10"></a>        (<span class="st">"human"</span>, <span class="st">"</span><span class="sc">{query}</span><span class="st">"</span>),</span>
-<span id="lst-fc_multi_fcs_qianfan-11"><a href="#lst-fc_multi_fcs_qianfan-11"></a>    ]</span>
-<span id="lst-fc_multi_fcs_qianfan-12"><a href="#lst-fc_multi_fcs_qianfan-12"></a>)</span>
-<span id="lst-fc_multi_fcs_qianfan-13"><a href="#lst-fc_multi_fcs_qianfan-13"></a></span>
-<span id="lst-fc_multi_fcs_qianfan-14"><a href="#lst-fc_multi_fcs_qianfan-14"></a>chain <span class="op">=</span> create_ernie_fn_chain([get_current_weather, get_current_news], llm, prompt, verbose<span class="op">=</span><span class="va">True</span>)</span>
-<span id="lst-fc_multi_fcs_qianfan-15"><a href="#lst-fc_multi_fcs_qianfan-15"></a>res <span class="op">=</span> chain.run(<span class="st">"北京今天新闻是什么？"</span>)</span>
-<span id="lst-fc_multi_fcs_qianfan-16"><a href="#lst-fc_multi_fcs_qianfan-16"></a><span class="bu">print</span>(res)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-fc_multi_fcs_qianfan" class="python listing quarto-float" data-code-line-numbers="true">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-fc_multi_fcs_qianfan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.10: 使用 QianfanChatEndpoint 执行文心大模型的函数调用
+</figcaption>
+<div aria-describedby="lst-fc_multi_fcs_qianfan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-fc_multi_fcs_qianfan" data-code-line-numbers="true"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-fc_multi_fcs_qianfan-1"><a href="#lst-fc_multi_fcs_qianfan-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> QianfanChatEndpoint</span>
+<span id="lst-fc_multi_fcs_qianfan-2"><a href="#lst-fc_multi_fcs_qianfan-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> ChatPromptTemplate</span>
+<span id="lst-fc_multi_fcs_qianfan-3"><a href="#lst-fc_multi_fcs_qianfan-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains.ernie_functions <span class="im">import</span> (</span>
+<span id="lst-fc_multi_fcs_qianfan-4"><a href="#lst-fc_multi_fcs_qianfan-4" aria-hidden="true" tabindex="-1"></a>    create_ernie_fn_chain,</span>
+<span id="lst-fc_multi_fcs_qianfan-5"><a href="#lst-fc_multi_fcs_qianfan-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="lst-fc_multi_fcs_qianfan-6"><a href="#lst-fc_multi_fcs_qianfan-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-fc_multi_fcs_qianfan-7"><a href="#lst-fc_multi_fcs_qianfan-7" aria-hidden="true" tabindex="-1"></a>llm <span class="op">=</span> QianfanChatEndpoint(model<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
+<span id="lst-fc_multi_fcs_qianfan-8"><a href="#lst-fc_multi_fcs_qianfan-8" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> ChatPromptTemplate.from_messages(</span>
+<span id="lst-fc_multi_fcs_qianfan-9"><a href="#lst-fc_multi_fcs_qianfan-9" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="lst-fc_multi_fcs_qianfan-10"><a href="#lst-fc_multi_fcs_qianfan-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"human"</span>, <span class="st">"</span><span class="sc">{query}</span><span class="st">"</span>),</span>
+<span id="lst-fc_multi_fcs_qianfan-11"><a href="#lst-fc_multi_fcs_qianfan-11" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="lst-fc_multi_fcs_qianfan-12"><a href="#lst-fc_multi_fcs_qianfan-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="lst-fc_multi_fcs_qianfan-13"><a href="#lst-fc_multi_fcs_qianfan-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-fc_multi_fcs_qianfan-14"><a href="#lst-fc_multi_fcs_qianfan-14" aria-hidden="true" tabindex="-1"></a>chain <span class="op">=</span> create_ernie_fn_chain([get_current_weather, get_current_news], llm, prompt, verbose<span class="op">=</span><span class="va">True</span>)</span>
+<span id="lst-fc_multi_fcs_qianfan-15"><a href="#lst-fc_multi_fcs_qianfan-15" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> chain.run(<span class="st">"北京今天新闻是什么？"</span>)</span>
+<span id="lst-fc_multi_fcs_qianfan-16"><a href="#lst-fc_multi_fcs_qianfan-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
 </div>
 </div>
-<p><a href="#lst-fc_multi_fcs_ernie">列表&nbsp;<span>13.9</span></a>，<a href="#lst-fc_multi_fcs_qianfan">列表&nbsp;<span>13.10</span></a> 的运行结果如下：</p>
+<p><a href="#lst-fc_multi_fcs_ernie" class="quarto-xref">列表&nbsp;<span>13.9</span></a>，<a href="#lst-fc_multi_fcs_qianfan" class="quarto-xref">列表&nbsp;<span>13.10</span></a> 的运行结果如下：</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Entering <span class="ex">new</span> LLMChain chain...</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Prompt</span> after formatting:</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Human:</span> 北京今天新闻是什么？</span>
@@ -1096,130 +1110,29 @@ GOOD NEWS
 </section>
 <section id="根据-llm-的返回调用对应函数" class="level2" data-number="13.5">
 <h2 data-number="13.5" class="anchored" data-anchor-id="根据-llm-的返回调用对应函数"><span class="header-section-number">13.5</span> 根据 LLM 的返回调用对应函数</h2>
-<p>如前所述，LLMs 会根据当前的信息返回它认为我们应该调用的函数以及函数对应的参数，具体的函数执行还是需要我们手动执行。为了进一步简化该过程，我们对这个过程进行了抽象，具体如 <a href="#lst-la_wx_fc_run">列表&nbsp;<span>13.11</span></a>。</p>
-<div id="lst-la_wx_fc_run" class="listing">
-<p>列表&nbsp;13.11: utils.call_function.call_function()</p>
-<div class="sourceCode" id="lst-la_wx_fc_run" data-lst-cap="utils.call_function.call_function()"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-la_wx_fc_run-1"><a href="#lst-la_wx_fc_run-1"></a><span class="co"># !/usr/bin/env python3</span></span>
-<span id="lst-la_wx_fc_run-2"><a href="#lst-la_wx_fc_run-2"></a><span class="co">"""</span></span>
-<span id="lst-la_wx_fc_run-3"><a href="#lst-la_wx_fc_run-3"></a><span class="co">@discribe: The function running for Ernie-Bot-4 Function Calling.</span></span>
-<span id="lst-la_wx_fc_run-4"><a href="#lst-la_wx_fc_run-4"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
-<span id="lst-la_wx_fc_run-5"><a href="#lst-la_wx_fc_run-5"></a><span class="co">"""</span></span>
-<span id="lst-la_wx_fc_run-6"><a href="#lst-la_wx_fc_run-6"></a></span>
-<span id="lst-la_wx_fc_run-7"><a href="#lst-la_wx_fc_run-7"></a><span class="im">from</span> typing <span class="im">import</span> (</span>
-<span id="lst-la_wx_fc_run-8"><a href="#lst-la_wx_fc_run-8"></a>    Any,</span>
-<span id="lst-la_wx_fc_run-9"><a href="#lst-la_wx_fc_run-9"></a>    Callable,</span>
-<span id="lst-la_wx_fc_run-10"><a href="#lst-la_wx_fc_run-10"></a>    Dict,</span>
-<span id="lst-la_wx_fc_run-11"><a href="#lst-la_wx_fc_run-11"></a>    Sequence,</span>
-<span id="lst-la_wx_fc_run-12"><a href="#lst-la_wx_fc_run-12"></a>    Type,</span>
-<span id="lst-la_wx_fc_run-13"><a href="#lst-la_wx_fc_run-13"></a>    Union,</span>
-<span id="lst-la_wx_fc_run-14"><a href="#lst-la_wx_fc_run-14"></a>)</span>
-<span id="lst-la_wx_fc_run-15"><a href="#lst-la_wx_fc_run-15"></a></span>
-<span id="lst-la_wx_fc_run-16"><a href="#lst-la_wx_fc_run-16"></a><span class="im">from</span> langchain.chains.ernie_functions <span class="im">import</span> (</span>
-<span id="lst-la_wx_fc_run-17"><a href="#lst-la_wx_fc_run-17"></a>    convert_to_ernie_function,</span>
-<span id="lst-la_wx_fc_run-18"><a href="#lst-la_wx_fc_run-18"></a>)</span>
-<span id="lst-la_wx_fc_run-19"><a href="#lst-la_wx_fc_run-19"></a><span class="im">from</span> langchain.pydantic_v1 <span class="im">import</span> BaseModel</span>
-<span id="lst-la_wx_fc_run-20"><a href="#lst-la_wx_fc_run-20"></a></span>
-<span id="lst-la_wx_fc_run-21"><a href="#lst-la_wx_fc_run-21"></a><span class="kw">def</span> call_function(functions: Sequence[Union[Dict[<span class="bu">str</span>, Any], Type[BaseModel], Callable]],</span>
-<span id="lst-la_wx_fc_run-22"><a href="#lst-la_wx_fc_run-22"></a>                  fc_by_llm: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="lst-la_wx_fc_run-23"><a href="#lst-la_wx_fc_run-23"></a>    <span class="co">"""Calling the function and return the result."""</span></span>
-<span id="lst-la_wx_fc_run-24"><a href="#lst-la_wx_fc_run-24"></a>    <span class="cf">if</span> <span class="kw">not</span> fc_by_llm <span class="kw">or</span> <span class="st">"name"</span> <span class="kw">not</span> <span class="kw">in</span> fc_by_llm <span class="kw">or</span> <span class="st">"arguments"</span> <span class="kw">not</span> <span class="kw">in</span> fc_by_llm:</span>
-<span id="lst-la_wx_fc_run-25"><a href="#lst-la_wx_fc_run-25"></a>        <span class="cf">return</span> <span class="st">""</span></span>
-<span id="lst-la_wx_fc_run-26"><a href="#lst-la_wx_fc_run-26"></a>    func_list <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> functions <span class="cf">if</span> f.<span class="va">__name__</span> <span class="op">==</span> fc_by_llm[<span class="st">"name"</span>]]</span>
-<span id="lst-la_wx_fc_run-27"><a href="#lst-la_wx_fc_run-27"></a>    <span class="cf">if</span> <span class="bu">len</span>(func_list) <span class="op">!=</span> <span class="dv">1</span>:</span>
-<span id="lst-la_wx_fc_run-28"><a href="#lst-la_wx_fc_run-28"></a>        <span class="cf">return</span> <span class="st">""</span></span>
-<span id="lst-la_wx_fc_run-29"><a href="#lst-la_wx_fc_run-29"></a>    func <span class="op">=</span> func_list[<span class="dv">0</span>]</span>
-<span id="lst-la_wx_fc_run-30"><a href="#lst-la_wx_fc_run-30"></a>    func_args_keys <span class="op">=</span> convert_to_ernie_function(func)[<span class="st">"parameters"</span>][<span class="st">"properties"</span>].keys()</span>
-<span id="lst-la_wx_fc_run-31"><a href="#lst-la_wx_fc_run-31"></a>    fc_args_by_llm <span class="op">=</span> fc_by_llm[<span class="st">"arguments"</span>]</span>
-<span id="lst-la_wx_fc_run-32"><a href="#lst-la_wx_fc_run-32"></a>    func_args <span class="op">=</span> {</span>
-<span id="lst-la_wx_fc_run-33"><a href="#lst-la_wx_fc_run-33"></a>        key: fc_args_by_llm[key] <span class="cf">for</span> key <span class="kw">in</span> func_args_keys <span class="cf">if</span> key <span class="kw">in</span> fc_args_by_llm</span>
-<span id="lst-la_wx_fc_run-34"><a href="#lst-la_wx_fc_run-34"></a>    }</span>
-<span id="lst-la_wx_fc_run-35"><a href="#lst-la_wx_fc_run-35"></a>    res <span class="op">=</span> func(<span class="op">**</span>func_args)</span>
-<span id="lst-la_wx_fc_run-36"><a href="#lst-la_wx_fc_run-36"></a>    <span class="cf">return</span> res</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>如前所述，LLMs 会根据当前的信息返回它认为我们应该调用的函数以及函数对应的参数，具体的函数执行还是需要我们手动执行。为了进一步简化该过程，我们对这个过程进行了抽象，具体如 <a href="#lst-la_wx_fc_run" class="quarto-xref">列表&nbsp;<span>13.11</span></a>。</p>
+<div id="lst-la_wx_fc_run" class="python listing quarto-float" data-include="./code/langchain/utils/call_function.py" data-code-line-numbers="true">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-la_wx_fc_run-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.11: utils.call_function.call_function()
+</figcaption>
+<div aria-describedby="lst-la_wx_fc_run-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-la_wx_fc_run" data-include="./code/langchain/utils/call_function.py" data-code-line-numbers="true"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>通过文心大模型的函数调用解决我们的问题的完整代码如 <a href="#lst-la_wx_fc_demo_all">列表&nbsp;<span>13.12</span></a> 所示。</p>
-<div id="lst-la_wx_fc_demo_all" class="listing">
-<p>列表&nbsp;13.12: 文心大模型利用函数调用解决问题</p>
-<div class="sourceCode" id="lst-la_wx_fc_demo_all" data-lst-cap="文心大模型利用函数调用解决问题"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-la_wx_fc_demo_all-1"><a href="#lst-la_wx_fc_demo_all-1"></a><span class="co"># !/usr/bin/env python3</span></span>
-<span id="lst-la_wx_fc_demo_all-2"><a href="#lst-la_wx_fc_demo_all-2"></a><span class="co">"""</span></span>
-<span id="lst-la_wx_fc_demo_all-3"><a href="#lst-la_wx_fc_demo_all-3"></a><span class="co">@discribe: demo for the Ernie-Bot-4 Function Calling.</span></span>
-<span id="lst-la_wx_fc_demo_all-4"><a href="#lst-la_wx_fc_demo_all-4"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
-<span id="lst-la_wx_fc_demo_all-5"><a href="#lst-la_wx_fc_demo_all-5"></a><span class="co">"""</span></span>
-<span id="lst-la_wx_fc_demo_all-6"><a href="#lst-la_wx_fc_demo_all-6"></a></span>
-<span id="lst-la_wx_fc_demo_all-7"><a href="#lst-la_wx_fc_demo_all-7"></a><span class="im">import</span> json</span>
-<span id="lst-la_wx_fc_demo_all-8"><a href="#lst-la_wx_fc_demo_all-8"></a></span>
-<span id="lst-la_wx_fc_demo_all-9"><a href="#lst-la_wx_fc_demo_all-9"></a><span class="im">from</span> langchain.chains <span class="im">import</span> LLMChain</span>
-<span id="lst-la_wx_fc_demo_all-10"><a href="#lst-la_wx_fc_demo_all-10"></a><span class="im">from</span> langchain.chains.ernie_functions <span class="im">import</span> (</span>
-<span id="lst-la_wx_fc_demo_all-11"><a href="#lst-la_wx_fc_demo_all-11"></a>    create_ernie_fn_chain,</span>
-<span id="lst-la_wx_fc_demo_all-12"><a href="#lst-la_wx_fc_demo_all-12"></a>)</span>
-<span id="lst-la_wx_fc_demo_all-13"><a href="#lst-la_wx_fc_demo_all-13"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
-<span id="lst-la_wx_fc_demo_all-14"><a href="#lst-la_wx_fc_demo_all-14"></a><span class="im">from</span> langchain.prompts.chat <span class="im">import</span> (</span>
-<span id="lst-la_wx_fc_demo_all-15"><a href="#lst-la_wx_fc_demo_all-15"></a>    ChatPromptTemplate,</span>
-<span id="lst-la_wx_fc_demo_all-16"><a href="#lst-la_wx_fc_demo_all-16"></a>)</span>
-<span id="lst-la_wx_fc_demo_all-17"><a href="#lst-la_wx_fc_demo_all-17"></a></span>
-<span id="lst-la_wx_fc_demo_all-18"><a href="#lst-la_wx_fc_demo_all-18"></a><span class="im">from</span> utils.call_function <span class="im">import</span> call_function</span>
-<span id="lst-la_wx_fc_demo_all-19"><a href="#lst-la_wx_fc_demo_all-19"></a></span>
-<span id="lst-la_wx_fc_demo_all-20"><a href="#lst-la_wx_fc_demo_all-20"></a><span class="kw">def</span> get_current_news(location: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="lst-la_wx_fc_demo_all-21"><a href="#lst-la_wx_fc_demo_all-21"></a>    <span class="co">"""Get the current news based on the location.'</span></span>
-<span id="lst-la_wx_fc_demo_all-22"><a href="#lst-la_wx_fc_demo_all-22"></a></span>
-<span id="lst-la_wx_fc_demo_all-23"><a href="#lst-la_wx_fc_demo_all-23"></a><span class="co">    Args:</span></span>
-<span id="lst-la_wx_fc_demo_all-24"><a href="#lst-la_wx_fc_demo_all-24"></a><span class="co">        location (str): The location to query.</span></span>
-<span id="lst-la_wx_fc_demo_all-25"><a href="#lst-la_wx_fc_demo_all-25"></a><span class="co">    </span></span>
-<span id="lst-la_wx_fc_demo_all-26"><a href="#lst-la_wx_fc_demo_all-26"></a><span class="co">    Returs:</span></span>
-<span id="lst-la_wx_fc_demo_all-27"><a href="#lst-la_wx_fc_demo_all-27"></a><span class="co">        str: Current news based on the location.</span></span>
-<span id="lst-la_wx_fc_demo_all-28"><a href="#lst-la_wx_fc_demo_all-28"></a><span class="co">    """</span></span>
-<span id="lst-la_wx_fc_demo_all-29"><a href="#lst-la_wx_fc_demo_all-29"></a></span>
-<span id="lst-la_wx_fc_demo_all-30"><a href="#lst-la_wx_fc_demo_all-30"></a>    news_info <span class="op">=</span> {</span>
-<span id="lst-la_wx_fc_demo_all-31"><a href="#lst-la_wx_fc_demo_all-31"></a>        <span class="st">"location"</span>: location,</span>
-<span id="lst-la_wx_fc_demo_all-32"><a href="#lst-la_wx_fc_demo_all-32"></a>        <span class="st">"news"</span>: [</span>
-<span id="lst-la_wx_fc_demo_all-33"><a href="#lst-la_wx_fc_demo_all-33"></a>            <span class="st">"I have a Book."</span>,</span>
-<span id="lst-la_wx_fc_demo_all-34"><a href="#lst-la_wx_fc_demo_all-34"></a>            <span class="st">"It's a nice day, today."</span></span>
-<span id="lst-la_wx_fc_demo_all-35"><a href="#lst-la_wx_fc_demo_all-35"></a>        ]</span>
-<span id="lst-la_wx_fc_demo_all-36"><a href="#lst-la_wx_fc_demo_all-36"></a>    }</span>
-<span id="lst-la_wx_fc_demo_all-37"><a href="#lst-la_wx_fc_demo_all-37"></a></span>
-<span id="lst-la_wx_fc_demo_all-38"><a href="#lst-la_wx_fc_demo_all-38"></a>    <span class="cf">return</span> json.dumps(news_info)</span>
-<span id="lst-la_wx_fc_demo_all-39"><a href="#lst-la_wx_fc_demo_all-39"></a></span>
-<span id="lst-la_wx_fc_demo_all-40"><a href="#lst-la_wx_fc_demo_all-40"></a><span class="kw">def</span> get_current_weather(location: <span class="bu">str</span>, unit: <span class="bu">str</span><span class="op">=</span><span class="st">"celsius"</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="lst-la_wx_fc_demo_all-41"><a href="#lst-la_wx_fc_demo_all-41"></a>    <span class="co">"""Get the current weather in a given location</span></span>
-<span id="lst-la_wx_fc_demo_all-42"><a href="#lst-la_wx_fc_demo_all-42"></a></span>
-<span id="lst-la_wx_fc_demo_all-43"><a href="#lst-la_wx_fc_demo_all-43"></a><span class="co">    Args:</span></span>
-<span id="lst-la_wx_fc_demo_all-44"><a href="#lst-la_wx_fc_demo_all-44"></a><span class="co">        location (str): location of the weather.</span></span>
-<span id="lst-la_wx_fc_demo_all-45"><a href="#lst-la_wx_fc_demo_all-45"></a><span class="co">        unit (str): unit of the tempuature.</span></span>
-<span id="lst-la_wx_fc_demo_all-46"><a href="#lst-la_wx_fc_demo_all-46"></a><span class="co">    </span></span>
-<span id="lst-la_wx_fc_demo_all-47"><a href="#lst-la_wx_fc_demo_all-47"></a><span class="co">    Returns:</span></span>
-<span id="lst-la_wx_fc_demo_all-48"><a href="#lst-la_wx_fc_demo_all-48"></a><span class="co">        str: weather in the given location.</span></span>
-<span id="lst-la_wx_fc_demo_all-49"><a href="#lst-la_wx_fc_demo_all-49"></a><span class="co">    """</span></span>
-<span id="lst-la_wx_fc_demo_all-50"><a href="#lst-la_wx_fc_demo_all-50"></a></span>
-<span id="lst-la_wx_fc_demo_all-51"><a href="#lst-la_wx_fc_demo_all-51"></a>    weather_info <span class="op">=</span> {</span>
-<span id="lst-la_wx_fc_demo_all-52"><a href="#lst-la_wx_fc_demo_all-52"></a>        <span class="st">"location"</span>: location,</span>
-<span id="lst-la_wx_fc_demo_all-53"><a href="#lst-la_wx_fc_demo_all-53"></a>        <span class="st">"temperature"</span>: <span class="st">"27"</span>,</span>
-<span id="lst-la_wx_fc_demo_all-54"><a href="#lst-la_wx_fc_demo_all-54"></a>        <span class="st">"unit"</span>: unit,</span>
-<span id="lst-la_wx_fc_demo_all-55"><a href="#lst-la_wx_fc_demo_all-55"></a>        <span class="st">"forecast"</span>: [<span class="st">"sunny"</span>, <span class="st">"windy"</span>],</span>
-<span id="lst-la_wx_fc_demo_all-56"><a href="#lst-la_wx_fc_demo_all-56"></a>    }</span>
-<span id="lst-la_wx_fc_demo_all-57"><a href="#lst-la_wx_fc_demo_all-57"></a>    <span class="cf">return</span> json.dumps(weather_info)</span>
-<span id="lst-la_wx_fc_demo_all-58"><a href="#lst-la_wx_fc_demo_all-58"></a></span>
-<span id="lst-la_wx_fc_demo_all-59"><a href="#lst-la_wx_fc_demo_all-59"></a>llm <span class="op">=</span> ErnieBotChat(model_name<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
-<span id="lst-la_wx_fc_demo_all-60"><a href="#lst-la_wx_fc_demo_all-60"></a></span>
-<span id="lst-la_wx_fc_demo_all-61"><a href="#lst-la_wx_fc_demo_all-61"></a>prompt <span class="op">=</span> ChatPromptTemplate.from_messages(</span>
-<span id="lst-la_wx_fc_demo_all-62"><a href="#lst-la_wx_fc_demo_all-62"></a>    [</span>
-<span id="lst-la_wx_fc_demo_all-63"><a href="#lst-la_wx_fc_demo_all-63"></a>        (<span class="st">"human"</span>, <span class="st">"</span><span class="sc">{query}</span><span class="st">"</span>),</span>
-<span id="lst-la_wx_fc_demo_all-64"><a href="#lst-la_wx_fc_demo_all-64"></a>    ]</span>
-<span id="lst-la_wx_fc_demo_all-65"><a href="#lst-la_wx_fc_demo_all-65"></a>)</span>
-<span id="lst-la_wx_fc_demo_all-66"><a href="#lst-la_wx_fc_demo_all-66"></a>chain <span class="op">=</span> create_ernie_fn_chain([get_current_weather, get_current_news], llm, prompt, verbose<span class="op">=</span><span class="va">True</span>)</span>
-<span id="lst-la_wx_fc_demo_all-67"><a href="#lst-la_wx_fc_demo_all-67"></a>res <span class="op">=</span> chain.run(<span class="st">"北京今天的新闻是什么？"</span>)</span>
-<span id="lst-la_wx_fc_demo_all-68"><a href="#lst-la_wx_fc_demo_all-68"></a></span>
-<span id="lst-la_wx_fc_demo_all-69"><a href="#lst-la_wx_fc_demo_all-69"></a><span class="cf">if</span> res:</span>
-<span id="lst-la_wx_fc_demo_all-70"><a href="#lst-la_wx_fc_demo_all-70"></a>    res_cf <span class="op">=</span> call_function([get_current_news, get_current_weather], res)</span>
-<span id="lst-la_wx_fc_demo_all-71"><a href="#lst-la_wx_fc_demo_all-71"></a>    prompt_2 <span class="op">=</span> ChatPromptTemplate.from_messages(</span>
-<span id="lst-la_wx_fc_demo_all-72"><a href="#lst-la_wx_fc_demo_all-72"></a>        [</span>
-<span id="lst-la_wx_fc_demo_all-73"><a href="#lst-la_wx_fc_demo_all-73"></a>            (<span class="st">"human"</span>, <span class="st">"从 </span><span class="sc">{function}</span><span class="st"> 中，我们得到如下信息：</span><span class="sc">{function_res}</span><span class="st">，那么 </span><span class="sc">{query}</span><span class="st">"</span>),</span>
-<span id="lst-la_wx_fc_demo_all-74"><a href="#lst-la_wx_fc_demo_all-74"></a>        ]</span>
-<span id="lst-la_wx_fc_demo_all-75"><a href="#lst-la_wx_fc_demo_all-75"></a>    )</span>
-<span id="lst-la_wx_fc_demo_all-76"><a href="#lst-la_wx_fc_demo_all-76"></a>    chain_2 <span class="op">=</span> LLMChain(llm<span class="op">=</span>llm, prompt<span class="op">=</span>prompt_2, verbose<span class="op">=</span><span class="va">True</span>)</span>
-<span id="lst-la_wx_fc_demo_all-77"><a href="#lst-la_wx_fc_demo_all-77"></a>    res_2 <span class="op">=</span> chain_2.run(function<span class="op">=</span>res[<span class="st">"name"</span>], function_res<span class="op">=</span>res_cf, query<span class="op">=</span><span class="st">"北京今天的新闻是什么？"</span>)</span>
-<span id="lst-la_wx_fc_demo_all-78"><a href="#lst-la_wx_fc_demo_all-78"></a>    <span class="bu">print</span>(res_2)</span>
-<span id="lst-la_wx_fc_demo_all-79"><a href="#lst-la_wx_fc_demo_all-79"></a></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</figure>
 </div>
-<p><a href="#lst-la_wx_fc_demo_all">列表&nbsp;<span>13.12</span></a> 的执行结果如下所示：</p>
+<p>通过文心大模型的函数调用解决我们的问题的完整代码如 <a href="#lst-la_wx_fc_demo_all" class="quarto-xref">列表&nbsp;<span>13.12</span></a> 所示。</p>
+<div id="lst-la_wx_fc_demo_all" class="python listing quarto-float" data-include="./code/test_ernie_fc.py" data-code-line-numbers="true">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-la_wx_fc_demo_all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.12: 文心大模型利用函数调用解决问题
+</figcaption>
+<div aria-describedby="lst-la_wx_fc_demo_all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-la_wx_fc_demo_all" data-include="./code/test_ernie_fc.py" data-code-line-numbers="true"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<p><a href="#lst-la_wx_fc_demo_all" class="quarto-xref">列表&nbsp;<span>13.12</span></a> 的执行结果如下所示：</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Entering <span class="ex">new</span> LLMChain chain...</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Prompt</span> after formatting:</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Human:</span> 北京今天的新闻是什么？</span>
@@ -1328,10 +1241,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1341,8 +1253,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1355,6 +1276,125 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1398,6 +1438,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1423,6 +1464,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1486,12 +1553,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./langchain_retrieval.html" class="pagination-link">
+      <a href="./langchain_retrieval.html" class="pagination-link  aria-label=" &lt;span="" retrieval&lt;="" span&gt;"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">LangChain Retrieval</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./langchain_agent_react.html" class="pagination-link">
+      <a href="./langchain_agent_react.html" class="pagination-link" aria-label="<span class='chapter-number'>14</span>&nbsp; <span class='chapter-title'>LangChain ReAct Agent</span>">
         <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">LangChain ReAct Agent</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1502,12 +1569,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
+    <div class="nav-footer-center">
+<p>Copyright VII-QA. All Rights Reserved.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_function_call.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
+
 
 
 
