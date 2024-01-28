@@ -148,7 +148,7 @@
 <p>可见，对于<code>SIGINT</code>信号而言，<code>subprocess.run()</code>函数会调用<code>Popen.kill()</code>来结束子进程。</p>
 <p>因此，对于多进程而言，当父进结束之前，需要通过某种机制来通知其子进程，进而让子进程知晓父进程的退出信息，并作出合理的后续行为。否则，就会出现本文中出现的孤儿进程的现象。</p>
 <p>因此，对于其他的信号，<code>subprocess</code>模块本身就无法处理了。</p>
-<h2 id="捕获SIGTERM信号">捕获SIGTERM信号</h2>
+<h2 id="捕获sigterm信号">捕获SIGTERM信号</h2>
 <p>如果要捕获<code>SIGTERM</code>信号，使得<code>kill -15</code>结束python任务的时候，同时也能结束子进程，那么就要耍点小聪明了，例如：在<code>python</code>中捕获其他信号，并将其转成<code>SIGINT</code>信号，具体可以参见<a target="_blank" rel="noopener" href="https://gitee.com/wangwei1237/wangwei1237/blob/master/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/timeout_1.py">timeout_1.py</a>。具体执行效果如下所示：</p>
 <p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/popen.jpg" alt></p>
 <p>此处，我用了一个偷懒的方法，也就是把<code>SIGTERM</code>信号捕获之后转成<code>SIGINT</code>信号，具体的代码如下：</p>

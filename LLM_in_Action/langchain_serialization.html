@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -82,13 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
-  "show-item-context": false,
+  "limit": 20,
   "language": {
     "search-no-results-text": "没有结果",
     "search-matching-documents-text": "匹配的文档",
@@ -97,7 +91,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "更多匹配结果",
     "search-more-matches-text": "更多匹配结果",
     "search-clear-button-title": "清除",
-    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "取消",
     "search-submit-button-title": "提交",
     "search-label": "搜索"
@@ -107,16 +100,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <meta property="og:title" content="Large Language Model in Action - 11&nbsp; LangChain 序列化">
 <meta property="og:description" content="">
-<meta property="og:site_name" content="Large Language Model in Action">
+<meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
+      <div class="navbar-brand-container">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     <img src="./favicon.png" alt="" class="navbar-logo">
     </a>
@@ -131,58 +124,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/"> <i class="bi bi-house-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/" rel="" target=""><i class="bi bi-house-fill" role="img">
 </i> 
-<span class="menu-text">博客</span></a>
+ <span class="menu-text">博客</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
       <i class="bi bi-bookshelf" role="img">
 </i> 
  <span class="menu-text">书籍</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="https://zh.d2l.ai/">
+    <a class="dropdown-item" href="https://zh.d2l.ai/" rel="" target="">
  <span class="dropdown-text">动手学深度学习</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro">
+    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro" rel="" target="">
  <span class="dropdown-text">Learn Prompting</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q">
+    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q" rel="" target="">
  <span class="dropdown-text">Stabel Diffusion 提示词手册</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/"> <i class="bi bi-person-badge-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/" rel="" target=""><i class="bi bi-person-badge-fill" role="img">
 </i> 
-<span class="menu-text">关于</span></a>
+ <span class="menu-text">关于</span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
-    <a href="https://github.com/wangwei1237/LLM_in_Action" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+            <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/wangwei1237/LLM_in_Action" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
+          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_serialization.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">LangChain 序列化</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_serialization.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">LangChain 序列化</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -452,7 +453,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -464,12 +465,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#langchainhub" id="toc-langchainhub" class="nav-link" data-scroll-target="#langchainhub"><span class="header-section-number">11.3</span> LangChainHub</a></li>
   <li><a href="#自定义-langchainhub" id="toc-自定义-langchainhub" class="nav-link" data-scroll-target="#自定义-langchainhub"><span class="header-section-number">11.4</span> 自定义 LangChainHub</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_serialization.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_serialization.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_serialization.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">LangChain 序列化</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title"><span id="sec-LS" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">LangChain 序列化</span></span></h1>
 </div>
@@ -484,19 +485,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
-
 </header>
-
 
 <p>使用 <a href="https://dockerhub.p2hp.com/">Docker Hub</a>，我们可以非常方便的查找、使用和共享容器，这简直是开发者的福音。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker pull ubuntu</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker run <span class="at">-it</span> ubuntu</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>正如 <a href="prompt_engineer.html" class="quarto-xref"><span>章节 5</span></a> 所述，prompt 在 AI 原生应用具有非常重要的地位。为了能够方便 prompt 的查找、使用和共享，LangChain 为我们提供了一系列的序列化的能力，包括 prompt 序列化，chain 序列化……</p>
+<p>正如 <a href="prompt_engineer.html"><span>章节&nbsp;5</span></a> 所述，prompt 在 AI 原生应用具有非常重要的地位。为了能够方便 prompt 的查找、使用和共享，LangChain 为我们提供了一系列的序列化的能力，包括 prompt 序列化，chain 序列化……</p>
 <p>序列化能力可以让我们实现代码模块化，并且会大大简化在团队内部或更广泛的组织之间共享 prompt 的过程，也更有利于 prompt 的壮大和发展。</p>
 <section id="prompt-序列化" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="prompt-序列化"><span class="header-section-number">11.1</span> prompt 序列化</h2>
 <p>在 LangChain 中，prompt 的序列化支持两种格式：<code>YAML</code>，<code>JSON</code>，可以使用文件扩展名来标识序列化的文件格式。</p>
-<p>我们可以用 <code>PromptTemplate.save()</code> 对 <a href="langchain_intro.html#lst-prompt" class="quarto-xref">列表&nbsp;<span>10.2</span></a> 所示的 prompt 进行序列化，并使用 <code>load_prompt</code> 从序列化文件中加载已经存储好的 prompt。</p>
+<p>我们可以用 <code>PromptTemplate.save()</code> 对 <a href="langchain_intro.html#lst-prompt">列表&nbsp;<span>10.2</span></a> 所示的 prompt 进行序列化，并使用 <code>load_prompt</code> 从序列化文件中加载已经存储好的 prompt。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain <span class="im">import</span> PromptTemplate</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>prompt_files <span class="op">=</span> [<span class="st">"prompt_template.json"</span>, <span class="st">"prompt_template.yaml"</span>]</span>
@@ -509,30 +508,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">YAML</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">JSON</a></li></ul>
 <div class="tab-content" data-group="prompt_save_types">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<div class="sourceCode" id="annotated-cell-6"><pre class="sourceCode yaml code-annotation-code code-with-copy code-annotated"><code class="sourceCode yaml"><a class="code-annotation-anchor" data-target-cell="annotated-cell-6" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-6-1" class="code-annotation-target"><a href="#annotated-cell-6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">_type</span><span class="kw">:</span><span class="at"> prompt</span></span>
-<span id="annotated-cell-6-2"><a href="#annotated-cell-6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">input_types</span><span class="kw">:</span><span class="at"> </span><span class="kw">{}</span></span>
-<a class="code-annotation-anchor" data-target-cell="annotated-cell-6" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-6-3" class="code-annotation-target"><a href="#annotated-cell-6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">input_variables</span><span class="kw">:</span></span>
-<span id="annotated-cell-6-4"><a href="#annotated-cell-6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> count</span></span>
-<span id="annotated-cell-6-5"><a href="#annotated-cell-6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> topic</span></span>
-<span id="annotated-cell-6-6"><a href="#annotated-cell-6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">output_parser</span><span class="kw">:</span><span class="at"> </span><span class="ch">null</span></span>
-<span id="annotated-cell-6-7"><a href="#annotated-cell-6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">partial_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">{}</span></span>
-<span id="annotated-cell-6-8"><a href="#annotated-cell-6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">template</span><span class="kw">:</span><span class="at"> </span><span class="st">"</span><span class="sc">\u8BF7\u4EE5\u8F7B\u677E\u6B22\u5FEB\u7684\u8BED\u6C14\u5199\u4E00\u7BC7</span><span class="st">\</span></span>
-<span id="annotated-cell-6-9"><a href="#annotated-cell-6-9" aria-hidden="true" tabindex="-1"></a><span class="st">  </span><span class="sc">\u63CF\u5199</span><span class="st"> {topic} </span><span class="sc">\u7684\u6587\u7AE0\uFF0C\u5B57\u6570\u4E0D\u8D85\u8FC7</span><span class="st"> {count}\</span></span>
-<a class="code-annotation-anchor" data-target-cell="annotated-cell-6" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-6-10" class="code-annotation-target"><a href="#annotated-cell-6-10" aria-hidden="true" tabindex="-1"></a><span class="st">  </span><span class="sc">\ \u5B57\u3002</span><span class="st">"</span></span>
-<span id="annotated-cell-6-11"><a href="#annotated-cell-6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">template_format</span><span class="kw">:</span><span class="at"> f-string</span></span>
-<span id="annotated-cell-6-12"><a href="#annotated-cell-6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">validate_template</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="annotated-cell-1"><pre class="sourceCode yaml code-annotation-code code-with-copy code-annotated"><code class="sourceCode yaml"><a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-1-1" class="code-annotation-target"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">_type</span><span class="kw">:</span><span class="at"> prompt</span></span>
+<span id="annotated-cell-1-2"><a href="#annotated-cell-1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">input_types</span><span class="kw">:</span><span class="at"> </span><span class="kw">{}</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-1-3" class="code-annotation-target"><a href="#annotated-cell-1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">input_variables</span><span class="kw">:</span></span>
+<span id="annotated-cell-1-4"><a href="#annotated-cell-1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> count</span></span>
+<span id="annotated-cell-1-5"><a href="#annotated-cell-1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> topic</span></span>
+<span id="annotated-cell-1-6"><a href="#annotated-cell-1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">output_parser</span><span class="kw">:</span><span class="at"> </span><span class="ch">null</span></span>
+<span id="annotated-cell-1-7"><a href="#annotated-cell-1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">partial_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">{}</span></span>
+<span id="annotated-cell-1-8"><a href="#annotated-cell-1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">template</span><span class="kw">:</span><span class="at"> </span><span class="st">"</span><span class="sc">\u8BF7\u4EE5\u8F7B\u677E\u6B22\u5FEB\u7684\u8BED\u6C14\u5199\u4E00\u7BC7</span><span class="st">\</span></span>
+<span id="annotated-cell-1-9"><a href="#annotated-cell-1-9" aria-hidden="true" tabindex="-1"></a><span class="st">  </span><span class="sc">\u63CF\u5199</span><span class="st"> {topic} </span><span class="sc">\u7684\u6587\u7AE0\uFF0C\u5B57\u6570\u4E0D\u8D85\u8FC7</span><span class="st"> {count}\</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-1-10" class="code-annotation-target"><a href="#annotated-cell-1-10" aria-hidden="true" tabindex="-1"></a><span class="st">  </span><span class="sc">\ \u5B57\u3002</span><span class="st">"</span></span>
+<span id="annotated-cell-1-11"><a href="#annotated-cell-1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">template_format</span><span class="kw">:</span><span class="at"> f-string</span></span>
+<span id="annotated-cell-1-12"><a href="#annotated-cell-1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">validate_template</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <dl class="code-annotation-container-grid">
-<dt data-target-cell="annotated-cell-6" data-target-annotation="1">1</dt>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-6" data-code-lines="1" data-code-annotation="1">该序列化的类型</span>
+<span data-code-annotation="1" data-code-cell="annotated-cell-1" data-code-lines="1">该序列化的类型</span>
 </dd>
-<dt data-target-cell="annotated-cell-6" data-target-annotation="2">2</dt>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-6" data-code-lines="3" data-code-annotation="2">prompt 模版中的变量名</span>
+<span data-code-annotation="2" data-code-cell="annotated-cell-1" data-code-lines="3">prompt 模版中的变量名</span>
 </dd>
-<dt data-target-cell="annotated-cell-6" data-target-annotation="3">3</dt>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-6" data-code-lines="10" data-code-annotation="3">prompt 模版内容</span>
+<span data-code-annotation="3" data-code-cell="annotated-cell-1" data-code-lines="10">prompt 模版内容</span>
 </dd>
 </dl>
 </div>
@@ -571,13 +570,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="11.3" class="anchored" data-anchor-id="langchainhub"><span class="header-section-number">11.3</span> LangChainHub</h2>
 <p>岁让 LangChain Hub 还在内测中，但是这点困难毫不影响我们分享 prompt 的决心。<a href="hwchase17/langchain-hub">hwchase17/langchain-hub</a> 这个项目就实现了 LangChain Hub 的功能，并且目前该项目也已经集成到了 LangChain，LangChain 可以原生支持从 <a href="hwchase17/langchain-hub">hwchase17/langchain-hub</a> 仓库中拉取 prompt。我们可以非常方便的将我们自己的 prompt 提交到该仓库以供其他人使用。</p>
 <p>为了研究 LangChain 是如何使用 <code>hwchase17/langchain-hub</code> 的，我们需要分析 <code>load_prompt()</code> 的底层原理。</p>
-<div id="lst-load_prompt_function" class="python listing quarto-float">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-load_prompt_function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;11.1: load_prompt() 的实现
-</figcaption>
-<div aria-describedby="lst-load_prompt_function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-load_prompt_function"><pre class="sourceCode code-annotation-code python code-with-copy"><code class="sourceCode python"><span id="lst-load_prompt_function-1"><a href="#lst-load_prompt_function-1" aria-hidden="true" tabindex="-1"></a>HUB_PATH_RE <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"lc(?P&lt;ref&gt;@[^:]+)?://(?P&lt;path&gt;.*)"</span>)</span>
+<div id="lst-load_prompt_function" class="listing">
+<p>列表&nbsp;11.1: load_prompt() 的实现</p>
+<div class="sourceCode" id="lst-load_prompt_function" data-lst-cap="load_prompt() 的实现"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><a class="code-annotation-anchor" data-target-cell="lst-load_prompt_function" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-load_prompt_function-1" class="code-annotation-target"><a href="#lst-load_prompt_function-1" aria-hidden="true" tabindex="-1"></a>HUB_PATH_RE <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"lc(?P&lt;ref&gt;@[^:]+)?://(?P&lt;path&gt;.*)"</span>)</span>
 <span id="lst-load_prompt_function-2"><a href="#lst-load_prompt_function-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="lst-load_prompt_function-3"><a href="#lst-load_prompt_function-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> try_load_from_hub(</span>
 <span id="lst-load_prompt_function-4"><a href="#lst-load_prompt_function-4" aria-hidden="true" tabindex="-1"></a>    path: Union[<span class="bu">str</span>, Path],</span>
@@ -587,7 +582,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="lst-load_prompt_function-8"><a href="#lst-load_prompt_function-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>kwargs: Any,</span>
 <span id="lst-load_prompt_function-9"><a href="#lst-load_prompt_function-9" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Optional[T]:</span>
 <span id="lst-load_prompt_function-10"><a href="#lst-load_prompt_function-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Load configuration from hub.  Returns None if path is not a hub path."""</span></span>
-<span id="lst-load_prompt_function-11"><a href="#lst-load_prompt_function-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(path, <span class="bu">str</span>) <span class="kw">or</span> <span class="kw">not</span> (match <span class="op">:=</span> HUB_PATH_RE.match(path)):</span>
+<a class="code-annotation-anchor" data-target-cell="lst-load_prompt_function" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="lst-load_prompt_function-11" class="code-annotation-target"><a href="#lst-load_prompt_function-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(path, <span class="bu">str</span>) <span class="kw">or</span> <span class="kw">not</span> (match <span class="op">:=</span> HUB_PATH_RE.match(path)):</span>
 <span id="lst-load_prompt_function-12"><a href="#lst-load_prompt_function-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
 <span id="lst-load_prompt_function-13"><a href="#lst-load_prompt_function-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#……</span></span>
 <span id="lst-load_prompt_function-14"><a href="#lst-load_prompt_function-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#……</span></span>
@@ -596,33 +591,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="lst-load_prompt_function-17"><a href="#lst-load_prompt_function-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Unified method for loading a prompt from LangChainHub or local fs."""</span></span>
 <span id="lst-load_prompt_function-18"><a href="#lst-load_prompt_function-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> hub_result <span class="op">:=</span> try_load_from_hub(</span>
 <span id="lst-load_prompt_function-19"><a href="#lst-load_prompt_function-19" aria-hidden="true" tabindex="-1"></a>        path, _load_prompt_from_file, <span class="st">"prompts"</span>, {<span class="st">"py"</span>, <span class="st">"json"</span>, <span class="st">"yaml"</span>}</span>
-<span id="lst-load_prompt_function-20"><a href="#lst-load_prompt_function-20" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<a class="code-annotation-anchor" data-target-cell="lst-load_prompt_function" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="lst-load_prompt_function-20" class="code-annotation-target"><a href="#lst-load_prompt_function-20" aria-hidden="true" tabindex="-1"></a>    ):</span>
 <span id="lst-load_prompt_function-21"><a href="#lst-load_prompt_function-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> hub_result</span>
 <span id="lst-load_prompt_function-22"><a href="#lst-load_prompt_function-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="lst-load_prompt_function-23"><a href="#lst-load_prompt_function-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> _load_prompt_from_file(path)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="lst-load_prompt_function-23"><a href="#lst-load_prompt_function-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> _load_prompt_from_file(path)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</figure>
-</div>
-<ol type="1">
-<li>加载的 <code>hwchase17/langchain-hub</code> 文件名的正则表达式</li>
-<li>如果 path 不符合 <code>lc://prompts/path/to/file.json</code> 的格式，直接返回</li>
-<li>如果 path 符合 <code>lc://prompts/path/to/file.json</code> 的格式，则尝试从 <code>hwchase17/langchain-hub</code> 下载对应文件，并通过 <code>_load_prompt_from_file()</code> 加载 prompt</li>
-</ol>
-<div id="lst-load_prompt_from_lc" class="python listing quarto-float">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-load_prompt_from_lc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;11.2: 加载 hwchase17/langchain-hub 中的 prompt
-</figcaption>
-<div aria-describedby="lst-load_prompt_from_lc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-load_prompt_from_lc"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-load_prompt_from_lc-1"><a href="#lst-load_prompt_from_lc-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> load_prompt</span>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="lst-load_prompt_function" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="lst-load_prompt_function" data-code-lines="1">加载的 <code>hwchase17/langchain-hub</code> 文件名的正则表达式</span>
+</dd>
+<dt data-target-cell="lst-load_prompt_function" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="lst-load_prompt_function" data-code-lines="11">如果 path 不符合 <code>lc://prompts/path/to/file.json</code> 的格式，直接返回</span>
+</dd>
+<dt data-target-cell="lst-load_prompt_function" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-annotation="3" data-code-cell="lst-load_prompt_function" data-code-lines="20">如果 path 符合 <code>lc://prompts/path/to/file.json</code> 的格式，则尝试从 <code>hwchase17/langchain-hub</code> 下载对应文件，并通过 <code>_load_prompt_from_file()</code> 加载 prompt</span>
+</dd>
+</dl>
+<div id="lst-load_prompt_from_lc" class="listing">
+<p>列表&nbsp;11.2: 加载 hwchase17/langchain-hub 中的 prompt</p>
+<div class="sourceCode" id="lst-load_prompt_from_lc" data-lst-cap="加载 hwchase17/langchain-hub 中的 prompt"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-load_prompt_from_lc-1"><a href="#lst-load_prompt_from_lc-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> load_prompt</span>
 <span id="lst-load_prompt_from_lc-2"><a href="#lst-load_prompt_from_lc-2" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> load_prompt(<span class="st">'lc://prompts/hello-world/prompt.yaml'</span>)</span>
 <span id="lst-load_prompt_from_lc-3"><a href="#lst-load_prompt_from_lc-3" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> prompt.<span class="bu">format</span>()</span>
 <span id="lst-load_prompt_from_lc-4"><a href="#lst-load_prompt_from_lc-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span>
 <span id="lst-load_prompt_from_lc-5"><a href="#lst-load_prompt_from_lc-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="lst-load_prompt_from_lc-6"><a href="#lst-load_prompt_from_lc-6" aria-hidden="true" tabindex="-1"></a><span class="co"># No `_type` key found, defaulting to `prompt`.</span></span>
 <span id="lst-load_prompt_from_lc-7"><a href="#lst-load_prompt_from_lc-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Say hello world.</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</figure>
 </div>
 </section>
 <section id="自定义-langchainhub" class="level2" data-number="11.4">
@@ -723,9 +719,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -735,17 +732,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -758,125 +746,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -920,7 +789,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -946,32 +814,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1035,12 +877,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./langchain_intro.html" class="pagination-link  aria-label=" &lt;span="" 简介&lt;="" span&gt;"="">
+      <a href="./langchain_intro.html" class="pagination-link">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">LangChain 简介</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./langchain_retrieval.html" class="pagination-link" aria-label="<span class='chapter-number'>12</span>&nbsp; <span class='chapter-title'>LangChain Retrieval</span>">
+      <a href="./langchain_retrieval.html" class="pagination-link">
         <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">LangChain Retrieval</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1051,15 +893,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">
-<p>Copyright VII-QA. All Rights Reserved.</p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_serialization.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
+    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
-
 
 
 

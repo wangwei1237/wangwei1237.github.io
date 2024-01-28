@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -82,13 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
-  "show-item-context": false,
+  "limit": 20,
   "language": {
     "search-no-results-text": "没有结果",
     "search-matching-documents-text": "匹配的文档",
@@ -97,7 +91,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "更多匹配结果",
     "search-more-matches-text": "更多匹配结果",
     "search-clear-button-title": "清除",
-    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "取消",
     "search-submit-button-title": "提交",
     "search-label": "搜索"
@@ -107,16 +100,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <meta property="og:title" content="Large Language Model in Action - 20&nbsp; Semantic Kernel 简介">
 <meta property="og:description" content="">
-<meta property="og:site_name" content="Large Language Model in Action">
+<meta property="og:image" content="https://wangwei1237.github.io/LLM_in_Action/images/code_freq_lc.jpg">
+<meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
+      <div class="navbar-brand-container">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     <img src="./favicon.png" alt="" class="navbar-logo">
     </a>
@@ -131,58 +125,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/"> <i class="bi bi-house-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/" rel="" target=""><i class="bi bi-house-fill" role="img">
 </i> 
-<span class="menu-text">博客</span></a>
+ <span class="menu-text">博客</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
       <i class="bi bi-bookshelf" role="img">
 </i> 
  <span class="menu-text">书籍</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="https://zh.d2l.ai/">
+    <a class="dropdown-item" href="https://zh.d2l.ai/" rel="" target="">
  <span class="dropdown-text">动手学深度学习</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro">
+    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro" rel="" target="">
  <span class="dropdown-text">Learn Prompting</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q">
+    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q" rel="" target="">
  <span class="dropdown-text">Stabel Diffusion 提示词手册</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/"> <i class="bi bi-person-badge-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/" rel="" target=""><i class="bi bi-person-badge-fill" role="img">
 </i> 
-<span class="menu-text">关于</span></a>
+ <span class="menu-text">关于</span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
-    <a href="https://github.com/wangwei1237/LLM_in_Action" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+            <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/wangwei1237/LLM_in_Action" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
+          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./semantickernel_intro.html">Semantic Kernel</a></li><li class="breadcrumb-item"><a href="./semantickernel_intro.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Semantic Kernel 简介</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./semantickernel_intro.html">Semantic Kernel</a></li><li class="breadcrumb-item"><a href="./semantickernel_intro.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Semantic Kernel 简介</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -452,7 +454,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -468,12 +470,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#memories" id="toc-memories" class="nav-link" data-scroll-target="#memories"><span class="header-section-number">20.4</span> Memories</a></li>
   <li><a href="#connectors" id="toc-connectors" class="nav-link" data-scroll-target="#connectors"><span class="header-section-number">20.5</span> Connectors</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/semantickernel_intro.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/semantickernel_intro.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./semantickernel_intro.html">Semantic Kernel</a></li><li class="breadcrumb-item"><a href="./semantickernel_intro.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Semantic Kernel 简介</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title"><span id="sec-SK" class="quarto-section-identifier"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Semantic Kernel 简介</span></span></h1>
 </div>
@@ -488,95 +490,65 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
-
 </header>
 
-
-<p>和 <a href="langchain_intro.html" class="quarto-xref"><span>章节 10</span></a> 中介绍的 LangChain 一样，Semantic Kernel 也是一种便于使用 LLM 开发应用的框架，如果特殊说明，当提到 SK 的时候，我们一般说的就是 Semantic Kernel 框架。使用 SK，我们可以更加轻松的将传统的编程语言和 LLM 技术结合在一起，并使用 SK 中提供的开箱即用的各种组件，更加便利的开发我们的 AI 原生应用。</p>
-<p>自 从 2023 年 3 月在 GitHub 开源以来，SK 已经获得了 <a href="https://github.com/microsoft/semantic-kernel">15.9K</a> 的 Starred，虽然比 <a href="https://github.com/langchain-ai/langchain">LangChain</a> 的 Starred 少，但是也足以看出 SK 在社区的流行度。从 <a href="#fig-code_freq_sdk" class="quarto-xref">图&nbsp;<span>20.1</span></a> 也可以看出，SK 的代码改动频率持续维持在相对较高的水平，这也表明 SK 的能力也在不断完善。</p>
+<p>和 <a href="langchain_intro.html"><span>章节&nbsp;10</span></a> 中介绍的 LangChain 一样，Semantic Kernel 也是一种便于使用 LLM 开发应用的框架，如果特殊说明，当提到 SK 的时候，我们一般说的就是 Semantic Kernel 框架。使用 SK，我们可以更加轻松的将传统的编程语言和 LLM 技术结合在一起，并使用 SK 中提供的开箱即用的各种组件，更加便利的开发我们的 AI 原生应用。</p>
+<p>自 从 2023 年 3 月在 GitHub 开源以来，SK 已经获得了 <a href="https://github.com/microsoft/semantic-kernel">15.9K</a> 的 Starred，虽然比 <a href="https://github.com/langchain-ai/langchain">LangChain</a> 的 Starred 少，但是也足以看出 SK 在社区的流行度。从 <a href="#fig-code_freq_sdk">图&nbsp;<span>20.1</span></a> 也可以看出，SK 的代码改动频率持续维持在相对较高的水平，这也表明 SK 的能力也在不断完善。</p>
 <div id="fig-code_freq_sdk" class="quarto-layout-panel">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-code_freq_sdk-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-code_freq_sdk" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-code_freq_lc" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-code_freq_lc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./images/code_freq_lc.jpg" class="img-fluid figure-img" data-ref-parent="fig-code_freq_sdk">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-code_freq_lc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(a) LangChain 的代码提交频率
-</figcaption>
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-code_freq_lc" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/code_freq_lc.jpg" class="img-fluid figure-img" data-ref-parent="fig-code_freq_sdk"></p>
+<figcaption class="figure-caption">(a) LangChain 的代码提交频率</figcaption>
 </figure>
 </div>
 </div>
-<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-code_freq_sdk" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-code_freq_sk" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-code_freq_sk-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./images/code_freq_sk.jpg" class="img-fluid figure-img" data-ref-parent="fig-code_freq_sdk">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-code_freq_sk-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(b) Semantic Kernel 的代码提交频率
-</figcaption>
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-code_freq_sk" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/code_freq_sk.jpg" class="img-fluid figure-img" data-ref-parent="fig-code_freq_sdk"></p>
+<figcaption class="figure-caption">(b) Semantic Kernel 的代码提交频率</figcaption>
 </figure>
 </div>
 </div>
 </div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-code_freq_sdk-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;20.1: LangChain 和 Semantic Kernel 的代码提交频率
-</figcaption>
+<p></p><figcaption class="figure-caption">图&nbsp;20.1: LangChain 和 Semantic Kernel 的代码提交频率</figcaption><p></p>
 </figure>
 </div>
-<p>在 2023 年 5 月 举办的 <a href="https://news.microsoft.com/build-2023/">Microsoft Build 2023</a> 大会上，微软 CTO——Kevin Scott 做了题为 <a href="https://build.microsoft.com/en-US/sessions/bb8f9d99-0c47-404f-8212-a85fffd3a59d?source=/speakers/ef864919-5fd1-4215-b611-61035a19db6b">The era of the AI Copilot</a> 的分享，在这次分享中，Kevin Scott 介绍了微软如何通过大模型技术堆栈（<a href="#fig-copilot_stack" class="quarto-xref">图&nbsp;<span>20.2</span></a>）来实现 AI Copilot 产品，并介绍了处于该技术堆栈中心的 AI 编排层，AI 编排层可以将 大模型和插件集成在一起，为用户创造全新的体验。</p>
+<p>在 2023 年 5 月 举办的 <a href="https://news.microsoft.com/build-2023/">Microsoft Build 2023</a> 大会上，微软 CTO——Kevin Scott 做了题为 <a href="https://build.microsoft.com/en-US/sessions/bb8f9d99-0c47-404f-8212-a85fffd3a59d?source=/speakers/ef864919-5fd1-4215-b611-61035a19db6b">The era of the AI Copilot</a> 的分享，在这次分享中，Kevin Scott 介绍了微软如何通过大模型技术堆栈（<a href="#fig-copilot_stack">图&nbsp;<span>20.2</span></a>）来实现 AI Copilot 产品，并介绍了处于该技术堆栈中心的 AI 编排层，AI 编排层可以将 大模型和插件集成在一起，为用户创造全新的体验。</p>
 <div id="fig-copilot_stack" class="quarto-layout-panel">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-copilot_stack-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-copilot_stack" style="flex-basis: 100.0%;justify-content: flex-start;">
-<div id="fig-copilot_stack_1" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-copilot_stack_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./images/copilot_stack_1.png" class="img-fluid figure-img" data-ref-parent="fig-copilot_stack">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-copilot_stack_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(a) Microsoft’s Copilot Stack
-</figcaption>
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 100.0%;justify-content: center;">
+<div id="fig-copilot_stack_1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/copilot_stack_1.png" class="img-fluid figure-img" data-ref-parent="fig-copilot_stack"></p>
+<figcaption class="figure-caption">(a) Microsoft’s Copilot Stack</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-copilot_stack" style="flex-basis: 100.0%;justify-content: flex-start;">
-<div id="fig-copilot_stack_2" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-copilot_stack_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./images/copilot_stack_2.png" class="img-fluid figure-img" data-ref-parent="fig-copilot_stack">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-copilot_stack_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(b) Copilot Stack 简图
-</figcaption>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 100.0%;justify-content: center;">
+<div id="fig-copilot_stack_2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/copilot_stack_2.png" class="img-fluid figure-img" data-ref-parent="fig-copilot_stack"></p>
+<figcaption class="figure-caption">(b) Copilot Stack 简图</figcaption>
 </figure>
 </div>
 </div>
 </div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-copilot_stack-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;20.2: Kevin Scott 分享中提到的 Microsoft Copilot 技术堆栈
-</figcaption>
+<p></p><figcaption class="figure-caption">图&nbsp;20.2: Kevin Scott 分享中提到的 Microsoft Copilot 技术堆栈</figcaption><p></p>
 </figure>
 </div>
 <p>而在微软的内部，Kevin Scott 提到的 AI 编排层指的就是 Semantic kernel。因此，虽然 SK 还比较年轻，但是他已经在微软的明星产品（Bing、Microsoft Copilot……）中发挥着重要的作用。</p>
-<p>如 <a href="#fig-sk_application_process" class="quarto-xref">图&nbsp;<span>20.3</span></a>，我们也可以利用 SK，非常方便的让我们的应用也具备大模型 AI 的能力。</p>
-<div id="fig-sk_application_process" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-sk_application_process-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./images/sk_application_process.jpg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sk_application_process-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;20.3: 利用 SK 把大模型能力加入到应用的过程
-</figcaption>
+<p>如 <a href="#fig-sk_application_process">图&nbsp;<span>20.3</span></a>，我们也可以利用 SK，非常方便的让我们的应用也具备大模型 AI 的能力。</p>
+<div id="fig-sk_application_process" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/sk_application_process.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;20.3: 利用 SK 把大模型能力加入到应用的过程</figcaption>
 </figure>
 </div>
 <p>当然，LangChain 的 联合创始人 &amp; CEO 也受邀参加了此次 Microsoft Build 大会，Kevin Scott 也在分享中提到（分享的第 28:20 处）：在 AI 编排层，LangChain 也是非常优秀的开源框架之一。</p>
@@ -597,13 +569,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="sk-中的五大概念" class="level2" data-number="20.1">
 <h2 data-number="20.1" class="anchored" data-anchor-id="sk-中的五大概念"><span class="header-section-number">20.1</span> SK 中的五大概念</h2>
 <p>LangChain 框架把整个编排的过程抽象出了 Chian 的概念，而为了更好的对 AI 能力进行编排，SK 抽象出了五大概念，因此从这个角度讲，了解 SK 的成本还是比 LangChain 要大一点的。但是，我认为，SK 从另外的视角给出了不同的看法，深入的了解不同框架的不同思想，对于我们后期的应用设计而言，也是有非常大的帮助的。因此，画一些时间来了解 SK 的相关概念，是一件非常值得的事情。</p>
-<div id="tbl-sk_5_concepts" class="quarto-float anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sk_5_concepts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-表格&nbsp;20.1: SK 中的五大概念
-</figcaption>
-<div aria-describedby="tbl-sk_5_concepts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div id="tbl-sk_5_concepts" class="anchored">
 <table class="table">
+<caption>表格&nbsp;20.1: SK 中的五大概念</caption>
 <colgroup>
 <col style="width: 50%">
 <col style="width: 50%">
@@ -638,8 +606,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </div>
-</figure>
-</div>
 <div class="callout callout-style-default callout-note callout-titled" title="SK SDK 的语言版本">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -657,75 +623,83 @@ SK SDK 的语言版本
 </section>
 <section id="kernel" class="level2" data-number="20.2">
 <h2 data-number="20.2" class="anchored" data-anchor-id="kernel"><span class="header-section-number">20.2</span> Kernel</h2>
-<p>我们可以用 <a href="#lst-sk_init_kernel" class="quarto-xref">列表&nbsp;<span>20.1</span></a> 所示的代码来初始化一个 <code>Kernl</code> 实例。是的，就是这么简单。</p>
-<div id="lst-sk_init_kernel" class="python listing quarto-float" data-code-line-numbers="true">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-sk_init_kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;20.1: 初始化 Kernel 实例
-</figcaption>
-<div aria-describedby="lst-sk_init_kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-sk_init_kernel" data-code-line-numbers="true"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="lst-sk_init_kernel-1"><a href="#lst-sk_init_kernel-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> semantic_kernel <span class="im">as</span> sk</span>
-<span id="lst-sk_init_kernel-2"><a href="#lst-sk_init_kernel-2" aria-hidden="true" tabindex="-1"></a>kernel <span class="op">=</span> sk.Kernel()</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>我们可以用 <a href="#lst-sk_init_kernel">列表&nbsp;<span>20.1</span></a> 所示的代码来初始化一个 <code>Kernl</code> 实例。是的，就是这么简单。</p>
+<div id="lst-sk_init_kernel" class="listing">
+<p>列表&nbsp;20.1: 初始化 Kernel 实例</p>
+<div class="sourceCode" id="lst-sk_init_kernel" data-lst-cap="初始化 Kernel 实例"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-sk_init_kernel-1"><a href="#lst-sk_init_kernel-1"></a><span class="im">import</span> semantic_kernel <span class="im">as</span> sk</span>
+<span id="lst-sk_init_kernel-2"><a href="#lst-sk_init_kernel-2"></a>kernel <span class="op">=</span> sk.Kernel()</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</figure>
-</div>
-<p>正如它的名字一样，<code>Kernel</code> 本身已经暗示着它在整个框架中的重要地位。我能脱口而出的另一个比较重要的 Kernl 就是 Linux Kernel 了。如 <a href="#fig-sk_kernel" class="quarto-xref">图&nbsp;<span>20.4</span></a>，与 Linxu Kernel 类似，SK 中的 <code>Kernl</code> 负责管理运行 AI 应用所需的资源，例如：所需要的大模型，服务，插件……</p>
-<div id="fig-sk_kernel" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-sk_kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./images/sk_kernel.png" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sk_kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;20.4: Kernl 在 AI 应用中的位置
-</figcaption>
+<p>正如它的名字一样，<code>Kernel</code> 本身已经暗示着它在整个框架中的重要地位。我能脱口而出的另一个比较重要的 Kernl 就是 Linux Kernel 了。如 <a href="#fig-sk_kernel">图&nbsp;<span>20.4</span></a>，与 Linxu Kernel 类似，SK 中的 <code>Kernl</code> 负责管理运行 AI 应用所需的资源，例如：所需要的大模型，服务，插件……</p>
+<div id="fig-sk_kernel" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/sk_kernel.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;20.4: Kernl 在 AI 应用中的位置</figcaption>
 </figure>
 </div>
 <p>为了实现 AI 应用的运行，我们会在 <code>Kernel</code> 中做某些必要的配置，同时我们还将在 <code>Kernel</code> 中注册所有可能用到的 <code>Connector</code> 和 <code>Plugin</code>，<code>Kernel</code> 会根据我们的配置来控制构造提示词、调用大模型、返回应用结果……等各个环节。</p>
-<p>虽然这里提前讲到了很多其他概念，但是也不用过分担心，本章接下来的部分会一步一步的对 <a href="#fig-sk_kernel" class="quarto-xref">图&nbsp;<span>20.4</span></a> 中的名词进行解释，并最终给出一个可运行的示例。</p>
+<p>虽然这里提前讲到了很多其他概念，但是也不用过分担心，本章接下来的部分会一步一步的对 <a href="#fig-sk_kernel">图&nbsp;<span>20.4</span></a> 中的名词进行解释，并最终给出一个可运行的示例。</p>
 </section>
 <section id="plugins" class="level2" data-number="20.3">
 <h2 data-number="20.3" class="anchored" data-anchor-id="plugins"><span class="header-section-number">20.3</span> Plugins</h2>
 <p>在介绍 <code>Plugin</code> 之前，我们有必要先介绍 <code>Function</code> 的概念。在 SK 中，<code>Function</code>（<code>SKFunctionBase</code>） 指代了所有的能力，这真是一个非常巧妙的设计理念。</p>
 <p>例如，我们可以使用如下的提示词让大模型帮助我们生成藏头诗：</p>
-<div id="lst-sk_prompt_function_poem" class="bash listing quarto-float" data-code-line-numbers="true">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-sk_prompt_function_poem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;20.2: 藏头诗的提示词
-</figcaption>
-<div aria-describedby="lst-sk_prompt_function_poem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-sk_prompt_function_poem" data-code-line-numbers="true"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-sk_prompt_function_poem-1"><a href="#lst-sk_prompt_function_poem-1" aria-hidden="true" tabindex="-1"></a><span class="ex">写一首包含</span> {topic} 的藏头诗</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-sk_prompt_function_poem" class="listing">
+<p>列表&nbsp;20.2: 藏头诗的提示词</p>
+<div class="sourceCode" id="lst-sk_prompt_function_poem" data-lst-cap="藏头诗的提示词"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="lst-sk_prompt_function_poem-1"><a href="#lst-sk_prompt_function_poem-1"></a><span class="ex">写一首包含</span> {topic} 的藏头诗</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>例如，利用文心大模型，我们可以使用 <a href="#lst-sk_prompt_function_poem">列表&nbsp;<span>20.2</span></a> 生成各种类型的藏头诗。</p>
+<div id="fig-waizg" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./images/waizg.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">图&nbsp;20.5: 利用大模型生成藏头诗</figcaption>
 </figure>
 </div>
-<p>例如，利用文心大模型，我们可以使用 <a href="#lst-sk_prompt_function_poem" class="quarto-xref">列表&nbsp;<span>20.2</span></a> 生成各种类型的藏头诗。</p>
-<div id="fig-waizg" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-waizg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./images/waizg.jpg" class="img-fluid figure-img">
+<p>在 SK 中，该 <a href="#lst-sk_prompt_function_poem">列表&nbsp;<span>20.2</span></a> 就是一个 <code>AcrosticPoetryFunction</code>，是一种可以生成藏头诗的能力。仔细想想，确实如此，不同的提示词不就是不同的能力吗？</p>
+<p>在 <a href="#lst-sk_init_kernel">列表&nbsp;<span>20.1</span></a> 的基础上，我们为 <code>Kernel</code> 增加编写藏头诗的能力。</p>
+<div id="lst-sk_add_function_for_kernel" class="listing">
+<p>列表&nbsp;20.3: Prompt &amp; Function</p>
+<div class="sourceCode" id="lst-sk_add_function_for_kernel" data-lst-cap="Prompt &amp; Function"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="lst-sk_add_function_for_kernel-1"><a href="#lst-sk_add_function_for_kernel-1"></a><span class="co">"""</span></span>
+<span id="lst-sk_add_function_for_kernel-2"><a href="#lst-sk_add_function_for_kernel-2"></a><span class="co">@discribe: Semantic Kernel Function.</span></span>
+<span id="lst-sk_add_function_for_kernel-3"><a href="#lst-sk_add_function_for_kernel-3"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-sk_add_function_for_kernel-4"><a href="#lst-sk_add_function_for_kernel-4"></a><span class="co">"""</span></span>
+<span id="lst-sk_add_function_for_kernel-5"><a href="#lst-sk_add_function_for_kernel-5"></a></span>
+<span id="lst-sk_add_function_for_kernel-6"><a href="#lst-sk_add_function_for_kernel-6"></a><span class="im">import</span> semantic_kernel <span class="im">as</span> sk</span>
+<span id="lst-sk_add_function_for_kernel-7"><a href="#lst-sk_add_function_for_kernel-7"></a><span class="im">from</span> semantic_kernel.connectors.ai.open_ai <span class="im">import</span> OpenAIChatCompletion</span>
+<span id="lst-sk_add_function_for_kernel-8"><a href="#lst-sk_add_function_for_kernel-8"></a><span class="im">import</span> asyncio</span>
+<span id="lst-sk_add_function_for_kernel-9"><a href="#lst-sk_add_function_for_kernel-9"></a></span>
+<span id="lst-sk_add_function_for_kernel-10"><a href="#lst-sk_add_function_for_kernel-10"></a>topic <span class="op">=</span> <span class="bu">input</span>(<span class="st">"Your Request: "</span>)</span>
+<a class="code-annotation-anchor" data-target-cell="lst-sk_add_function_for_kernel" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-sk_add_function_for_kernel-11" class="code-annotation-target"><a href="#lst-sk_add_function_for_kernel-11"></a>prompt <span class="op">=</span> <span class="ss">f"写一首包含 </span><span class="sc">{</span>topic<span class="sc">}</span><span class="ss"> 的藏头诗"</span></span>
+<span id="lst-sk_add_function_for_kernel-12"><a href="#lst-sk_add_function_for_kernel-12"></a></span>
+<a class="code-annotation-anchor" data-target-cell="lst-sk_add_function_for_kernel" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="lst-sk_add_function_for_kernel-13" class="code-annotation-target"><a href="#lst-sk_add_function_for_kernel-13"></a>kernel <span class="op">=</span> sk.Kernel()</span>
+<span id="lst-sk_add_function_for_kernel-14"><a href="#lst-sk_add_function_for_kernel-14"></a></span>
+<span id="lst-sk_add_function_for_kernel-15"><a href="#lst-sk_add_function_for_kernel-15"></a>api_key, org_id <span class="op">=</span> sk.openai_settings_from_dot_env()</span>
+<span id="lst-sk_add_function_for_kernel-16"><a href="#lst-sk_add_function_for_kernel-16"></a>kernel.add_text_completion_service(<span class="st">"chat-gpt"</span>, </span>
+<span id="lst-sk_add_function_for_kernel-17"><a href="#lst-sk_add_function_for_kernel-17"></a>                                   OpenAIChatCompletion(ai_model_id<span class="op">=</span><span class="st">"gpt-3.5-turbo"</span>, </span>
+<a class="code-annotation-anchor" data-target-cell="lst-sk_add_function_for_kernel" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="lst-sk_add_function_for_kernel-18" class="code-annotation-target"><a href="#lst-sk_add_function_for_kernel-18"></a>                                                        api_key<span class="op">=</span>api_key))</span>
+<span id="lst-sk_add_function_for_kernel-19"><a href="#lst-sk_add_function_for_kernel-19"></a></span>
+<a class="code-annotation-anchor" data-target-cell="lst-sk_add_function_for_kernel" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="lst-sk_add_function_for_kernel-20" class="code-annotation-target"><a href="#lst-sk_add_function_for_kernel-20"></a>semantic_function <span class="op">=</span> kernel.create_semantic_function(prompt)</span>
+<span id="lst-sk_add_function_for_kernel-21"><a href="#lst-sk_add_function_for_kernel-21"></a>result <span class="op">=</span> asyncio.run(kernel.run_async(semantic_function))</span>
+<span id="lst-sk_add_function_for_kernel-22"><a href="#lst-sk_add_function_for_kernel-22"></a><span class="bu">print</span>(result)</span>
+<span id="lst-sk_add_function_for_kernel-23"><a href="#lst-sk_add_function_for_kernel-23"></a></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-waizg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;20.5: 利用大模型生成藏头诗
-</figcaption>
-</figure>
-</div>
-<p>在 SK 中，该 <a href="#lst-sk_prompt_function_poem" class="quarto-xref">列表&nbsp;<span>20.2</span></a> 就是一个 <code>AcrosticPoetryFunction</code>，是一种可以生成藏头诗的能力。仔细想想，确实如此，不同的提示词不就是不同的能力吗？</p>
-<p>在 <a href="#lst-sk_init_kernel" class="quarto-xref">列表&nbsp;<span>20.1</span></a> 的基础上，我们为 <code>Kernel</code> 增加编写藏头诗的能力。</p>
-<div id="lst-sk_add_function_for_kernel" class="python listing quarto-float" data-code-line-numbers="true" data-include="./code/test_sk_acrosticpoetry.py">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-sk_add_function_for_kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;20.3: Prompt &amp; Function
-</figcaption>
-<div aria-describedby="lst-sk_add_function_for_kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-sk_add_function_for_kernel" data-code-line-numbers="true" data-include="./code/test_sk_acrosticpoetry.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</figure>
-</div>
-<ol type="1">
-<li>构造提示词</li>
-<li>初始化 <code>Kernel</code></li>
-<li>为 <code>Kernel</code> 选择大模型</li>
-<li>根据提示词生成 <code>AcrosticPoetryFunction</code></li>
-</ol>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="lst-sk_add_function_for_kernel" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="lst-sk_add_function_for_kernel" data-code-lines="11">构造提示词</span>
+</dd>
+<dt data-target-cell="lst-sk_add_function_for_kernel" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="lst-sk_add_function_for_kernel" data-code-lines="13">初始化 <code>Kernel</code></span>
+</dd>
+<dt data-target-cell="lst-sk_add_function_for_kernel" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-annotation="3" data-code-cell="lst-sk_add_function_for_kernel" data-code-lines="18">为 <code>Kernel</code> 选择大模型</span>
+</dd>
+<dt data-target-cell="lst-sk_add_function_for_kernel" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-annotation="4" data-code-cell="lst-sk_add_function_for_kernel" data-code-lines="20">根据提示词生成 <code>AcrosticPoetryFunction</code></span>
+</dd>
+</dl>
 <p>无论是由提示词和大模型驱动的能力（Semantic Function），还是由类似 <code>def add(a:int, b:int) -&gt; int</code> 这种原生函数（Native Function）<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>驱动的能力，在 SK 中，统称为 <code>Function</code>。当然，为了能够让 Native Function 具备 <code>Function</code> 的作用，需要使用 <code>@sk_function</code> 装饰器为其增加函数功能相关的语义描述。</p>
 <ul>
 <li><strong>Semantic Function</strong>：使用自然语言来和用户交互，并将用户的请求以提示词的形式提交给大模型，并将大模型返回的自然语言形式的结果返回给用户。</li>
@@ -747,8 +721,8 @@ SK SDK 的语言版本
 <p>在 SK 中，<code>Plugin</code> 就是一系列 <code>Function</code> 的集合。可以利用 SK 暴漏出来的各种 API 为 <code>Kernel</code> 增加能力支持，而大模型可以根据 <code>Function</code> 的语义描述来选择合适的能力以解决用户的提问。</p>
 <section id="planner" class="level3" data-number="20.3.1">
 <h3 data-number="20.3.1" class="anchored" data-anchor-id="planner"><span class="header-section-number">20.3.1</span> Planner</h3>
-<p><code>Planner</code> 的概念有点类似 <a href="langchain_agent_react.html" class="quarto-xref"><span>章节 14</span></a> 中介绍的基于 ReAct 模式的 LangChain Agent，但是和 LangChain Agent 的概念又不完全一致。</p>
-<p><code>Planner</code> 可以接受用户请求并返回完成用户请求的步骤，<code>Planner</code> 通过 LLMs 来分析 <code>Kernel</code> 中注册的插件以及用户请求，然后根据任务目标把插件重新组合成一系列步骤，最终通过执行这一些列步骤的来完成用户请求。因此，<code>Planner</code> 更类似 <a href="agent_intro.html#sec-agent_pae" class="quarto-xref"><span>章节 8.4</span></a> 中介绍的 PlanAndExecute 模式的 Agent。</p>
+<p><code>Planner</code> 的概念有点类似 <a href="langchain_agent_react.html"><span>章节&nbsp;14</span></a> 中介绍的基于 ReAct 模式的 LangChain Agent，但是和 LangChain Agent 的概念又不完全一致。</p>
+<p><code>Planner</code> 可以接受用户请求并返回完成用户请求的步骤，<code>Planner</code> 通过 LLMs 来分析 <code>Kernel</code> 中注册的插件以及用户请求，然后根据任务目标把插件重新组合成一系列步骤，最终通过执行这一些列步骤的来完成用户请求。因此，<code>Planner</code> 更类似 <a href="agent_intro.html#sec-agent_pae"><span>章节&nbsp;8.4</span></a> 中介绍的 PlanAndExecute 模式的 Agent。</p>
 <p>和 LangChain Agent 相比，<code>Planner</code> 的优势在于我们可以通过其拆解的步骤来评估大模型的能力，而不需要像 LangChain Agent 那样得等到运行结束才知道大模型是否解决的我们的请求。对于大模型调优以及稳定性而言，<code>Planner</code> 的方式会更胜一筹。</p>
 <p>SK 提供了如下的预定义的 <code>Planner</code>：</p>
 <ul>
@@ -770,48 +744,65 @@ SK SDK 的语言版本
 <p>从 Python 版本的代码看，Handlebars calling stepwise 以及 Function calling stepwise 这两种类型的 <code>Planner</code> 还未实现。</p>
 </div>
 </div>
-<p>我们可以使用 <code>Planner</code> 来解决 <a href="#lst-sk_planner_math_question" class="quarto-xref">列表&nbsp;<span>20.4</span></a> 所示的问题。</p>
-<div id="lst-sk_planner_math_question" class="bash listing quarto-float">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-sk_planner_math_question-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;20.4: 一个需要解决的数学问题
-</figcaption>
-<div aria-describedby="lst-sk_planner_math_question-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-sk_planner_math_question"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-sk_planner_math_question-1"><a href="#lst-sk_planner_math_question-1" aria-hidden="true" tabindex="-1"></a><span class="ex">If</span> my investment of 2130.23 dollars increased by 23%, how much would I have after I spent <span class="va">$5</span> on a latte<span class="pp">?</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>我们可以使用 <code>Planner</code> 来解决 <a href="#lst-sk_planner_math_question">列表&nbsp;<span>20.4</span></a> 所示的问题。</p>
+<div id="lst-sk_planner_math_question" class="listing">
+<p>列表&nbsp;20.4: 一个需要解决的数学问题</p>
+<div class="sourceCode" id="lst-sk_planner_math_question" data-lst-cap="一个需要解决的数学问题"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="lst-sk_planner_math_question-1"><a href="#lst-sk_planner_math_question-1" aria-hidden="true" tabindex="-1"></a><span class="ex">If</span> my investment of 2130.23 dollars increased by 23%, how much would I have after I spent <span class="va">$5</span> on a latte<span class="pp">?</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</figure>
+<div id="lst-sk_planner_math_problem" class="listing">
+<p>列表&nbsp;20.5: 使用 Planner 解决复杂的数学问题</p>
+<div class="sourceCode" id="lst-sk_planner_math_problem" data-lst-cap="使用 Planner 解决复杂的数学问题"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="lst-sk_planner_math_problem-1"><a href="#lst-sk_planner_math_problem-1"></a><span class="co">"""</span></span>
+<span id="lst-sk_planner_math_problem-2"><a href="#lst-sk_planner_math_problem-2"></a><span class="co">@discribe: Semantic Kernel Planner.</span></span>
+<span id="lst-sk_planner_math_problem-3"><a href="#lst-sk_planner_math_problem-3"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-sk_planner_math_problem-4"><a href="#lst-sk_planner_math_problem-4"></a><span class="co">"""</span></span>
+<span id="lst-sk_planner_math_problem-5"><a href="#lst-sk_planner_math_problem-5"></a></span>
+<span id="lst-sk_planner_math_problem-6"><a href="#lst-sk_planner_math_problem-6"></a><span class="im">import</span> asyncio</span>
+<span id="lst-sk_planner_math_problem-7"><a href="#lst-sk_planner_math_problem-7"></a><span class="im">import</span> semantic_kernel <span class="im">as</span> sk</span>
+<span id="lst-sk_planner_math_problem-8"><a href="#lst-sk_planner_math_problem-8"></a><span class="im">from</span> plugins.Math <span class="im">import</span> MathPlugin</span>
+<span id="lst-sk_planner_math_problem-9"><a href="#lst-sk_planner_math_problem-9"></a><span class="im">from</span> semantic_kernel.connectors.ai.open_ai <span class="im">import</span> OpenAIChatCompletion</span>
+<span id="lst-sk_planner_math_problem-10"><a href="#lst-sk_planner_math_problem-10"></a><span class="im">from</span> semantic_kernel.planning.sequential_planner <span class="im">import</span> SequentialPlanner</span>
+<span id="lst-sk_planner_math_problem-11"><a href="#lst-sk_planner_math_problem-11"></a></span>
+<span id="lst-sk_planner_math_problem-12"><a href="#lst-sk_planner_math_problem-12"></a>kernel <span class="op">=</span> sk.Kernel()</span>
+<span id="lst-sk_planner_math_problem-13"><a href="#lst-sk_planner_math_problem-13"></a></span>
+<span id="lst-sk_planner_math_problem-14"><a href="#lst-sk_planner_math_problem-14"></a>api_key, org_id <span class="op">=</span> sk.openai_settings_from_dot_env()</span>
+<span id="lst-sk_planner_math_problem-15"><a href="#lst-sk_planner_math_problem-15"></a>kernel.add_chat_service(<span class="st">"chat-gpt"</span>, </span>
+<span id="lst-sk_planner_math_problem-16"><a href="#lst-sk_planner_math_problem-16"></a>                        OpenAIChatCompletion(ai_model_id<span class="op">=</span><span class="st">"gpt-3.5-turbo"</span>, </span>
+<span id="lst-sk_planner_math_problem-17"><a href="#lst-sk_planner_math_problem-17"></a>                                             api_key<span class="op">=</span>api_key))</span>
+<span id="lst-sk_planner_math_problem-18"><a href="#lst-sk_planner_math_problem-18"></a></span>
+<a class="code-annotation-anchor" data-target-cell="lst-sk_planner_math_problem" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-sk_planner_math_problem-19" class="code-annotation-target"><a href="#lst-sk_planner_math_problem-19"></a>math_plugins <span class="op">=</span> kernel.import_skill(MathPlugin(), <span class="st">"MathPlugin"</span>)</span>
+<a class="code-annotation-anchor" data-target-cell="lst-sk_planner_math_problem" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="lst-sk_planner_math_problem-20" class="code-annotation-target"><a href="#lst-sk_planner_math_problem-20"></a>planner <span class="op">=</span> SequentialPlanner(kernel)</span>
+<span id="lst-sk_planner_math_problem-21"><a href="#lst-sk_planner_math_problem-21"></a></span>
+<span id="lst-sk_planner_math_problem-22"><a href="#lst-sk_planner_math_problem-22"></a>ask <span class="op">=</span> <span class="st">"If my investment of 2130.23 dollars increased by 23%, how much would I have after I spent $5 on a latte?"</span></span>
+<a class="code-annotation-anchor" data-target-cell="lst-sk_planner_math_problem" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="lst-sk_planner_math_problem-23" class="code-annotation-target"><a href="#lst-sk_planner_math_problem-23"></a>plan <span class="op">=</span> asyncio.run(planner.create_plan_async(ask))</span>
+<a class="code-annotation-anchor" data-target-cell="lst-sk_planner_math_problem" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="lst-sk_planner_math_problem-24" class="code-annotation-target"><a href="#lst-sk_planner_math_problem-24"></a>result <span class="op">=</span> plan.invoke()</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="lst-sk_planner_math_problem" class="python listing quarto-float" data-code-line-numbers="true" data-include="./code/test_sk_planner.py">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-sk_planner_math_problem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;20.5: 使用 Planner 解决复杂的数学问题
-</figcaption>
-<div aria-describedby="lst-sk_planner_math_problem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-sk_planner_math_problem" data-code-line-numbers="true" data-include="./code/test_sk_planner.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</figure>
-</div>
-<ol type="1">
-<li>为 Kernel 增加数学计算能力</li>
-<li>创建 SequentialPlanner 类型的 <code>Planner</code></li>
-<li>为任务生成拆解步骤和计划</li>
-<li>逐步执行第 3 步生成的计划</li>
-</ol>
-<p><a href="#lst-sk_planner_math_problem" class="quarto-xref">列表&nbsp;<span>20.5</span></a> 会为 <a href="#lst-sk_planner_math_question" class="quarto-xref">列表&nbsp;<span>20.4</span></a> 生成如下的计算步骤，并且会最终给出正确的结果：2615.1829。</p>
-<div id="lst-sk_planner_math_problem_step" class="xml listing quarto-float" data-code-line-numbers="true">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-sk_planner_math_problem_step-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;20.6: SK 对复杂问题的拆解计划
-</figcaption>
-<div aria-describedby="lst-sk_planner_math_problem_step-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-sk_planner_math_problem_step" data-code-line-numbers="true"><pre class="sourceCode xml code-with-copy"><code class="sourceCode xml"><span id="lst-sk_planner_math_problem_step-1"><a href="#lst-sk_planner_math_problem_step-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">plan</span>&gt;</span>
-<span id="lst-sk_planner_math_problem_step-2"><a href="#lst-sk_planner_math_problem_step-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&lt;!-- Calculate the increased amount after the investment --&gt;</span></span>
-<span id="lst-sk_planner_math_problem_step-3"><a href="#lst-sk_planner_math_problem_step-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">function.MathPlugin.Multiply</span><span class="ot"> input=</span><span class="st">"2130.23"</span><span class="ot"> number2=</span><span class="st">"1.23"</span><span class="ot"> setContextVariable=</span><span class="st">"INCREASED_AMOUNT"</span>/&gt;</span>
-<span id="lst-sk_planner_math_problem_step-4"><a href="#lst-sk_planner_math_problem_step-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">&lt;!-- Calculate the remaining amount after spending on a latte --&gt;</span></span>
-<span id="lst-sk_planner_math_problem_step-5"><a href="#lst-sk_planner_math_problem_step-5" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">function.MathPlugin.Subtract</span><span class="ot"> input=</span><span class="st">"$INCREASED_AMOUNT"</span><span class="ot"> number2=</span><span class="st">"5"</span><span class="ot"> appendToResult=</span><span class="st">"RESULT__FINAL_AMOUNT"</span>/&gt;</span>
-<span id="lst-sk_planner_math_problem_step-6"><a href="#lst-sk_planner_math_problem_step-6" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">plan</span>&gt;</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</figure>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="lst-sk_planner_math_problem" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="lst-sk_planner_math_problem" data-code-lines="19">为 Kernel 增加数学计算能力</span>
+</dd>
+<dt data-target-cell="lst-sk_planner_math_problem" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="lst-sk_planner_math_problem" data-code-lines="20">创建 SequentialPlanner 类型的 <code>Planner</code></span>
+</dd>
+<dt data-target-cell="lst-sk_planner_math_problem" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-annotation="3" data-code-cell="lst-sk_planner_math_problem" data-code-lines="23">为任务生成拆解步骤和计划</span>
+</dd>
+<dt data-target-cell="lst-sk_planner_math_problem" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-annotation="4" data-code-cell="lst-sk_planner_math_problem" data-code-lines="24">逐步执行第 3 步生成的计划</span>
+</dd>
+</dl>
+<p><a href="#lst-sk_planner_math_problem">列表&nbsp;<span>20.5</span></a> 会为 <a href="#lst-sk_planner_math_question">列表&nbsp;<span>20.4</span></a> 生成如下的计算步骤，并且会最终给出正确的结果：2615.1829。</p>
+<div id="lst-sk_planner_math_problem_step" class="listing">
+<p>列表&nbsp;20.6: SK 对复杂问题的拆解计划</p>
+<div class="sourceCode" id="lst-sk_planner_math_problem_step" data-lst-cap="SK 对复杂问题的拆解计划"><pre class="sourceCode numberSource xml number-lines code-with-copy"><code class="sourceCode xml"><span id="lst-sk_planner_math_problem_step-1"><a href="#lst-sk_planner_math_problem_step-1"></a>&lt;<span class="kw">plan</span>&gt;</span>
+<span id="lst-sk_planner_math_problem_step-2"><a href="#lst-sk_planner_math_problem_step-2"></a>    <span class="co">&lt;!-- Calculate the increased amount after the investment --&gt;</span></span>
+<span id="lst-sk_planner_math_problem_step-3"><a href="#lst-sk_planner_math_problem_step-3"></a>    &lt;<span class="kw">function.MathPlugin.Multiply</span><span class="ot"> input=</span><span class="st">"2130.23"</span><span class="ot"> number2=</span><span class="st">"1.23"</span><span class="ot"> setContextVariable=</span><span class="st">"INCREASED_AMOUNT"</span>/&gt;</span>
+<span id="lst-sk_planner_math_problem_step-4"><a href="#lst-sk_planner_math_problem_step-4"></a>    <span class="co">&lt;!-- Calculate the remaining amount after spending on a latte --&gt;</span></span>
+<span id="lst-sk_planner_math_problem_step-5"><a href="#lst-sk_planner_math_problem_step-5"></a>    &lt;<span class="kw">function.MathPlugin.Subtract</span><span class="ot"> input=</span><span class="st">"$INCREASED_AMOUNT"</span><span class="ot"> number2=</span><span class="st">"5"</span><span class="ot"> appendToResult=</span><span class="st">"RESULT__FINAL_AMOUNT"</span>/&gt;</span>
+<span id="lst-sk_planner_math_problem_step-6"><a href="#lst-sk_planner_math_problem_step-6"></a>&lt;/<span class="kw">plan</span>&gt;</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -823,12 +814,12 @@ SK SDK 的语言版本
 <ul>
 <li><strong>传统的 KV 键值对方式</strong>：存储方式和搜索方式与环境变量一致，这意味着待搜索的 <code>Key</code> 与用户输入的文本之间必须存在严格匹配的关系。</li>
 <li><strong>传统的本地存储方式</strong>：当我们有大量的 KV 信息时，最好将其保存在磁盘上，此时就是本地存储的方式。</li>
-<li><strong>语义检索方式</strong>：采用 <a href="embedding.html" class="quarto-xref"><span>章节 3</span></a> 中的 <code>embedding</code> 方式进行信息的存储和检索，和 <a href="langchain_retrieval.html#sec-LC_RAG_vector" class="quarto-xref"><span>章节 12.4</span></a> 中介绍的基于 LangChain 和 VectorDB 实现的 RAG 类似。</li>
+<li><strong>语义检索方式</strong>：采用 <a href="embedding.html"><span>章节&nbsp;3</span></a> 中的 <code>embedding</code> 方式进行信息的存储和检索，和 <a href="langchain_retrieval.html#sec-LC_RAG_vector"><span>章节&nbsp;12.4</span></a> 中介绍的基于 LangChain 和 VectorDB 实现的 RAG 类似。</li>
 </ul>
 </section>
 <section id="connectors" class="level2" data-number="20.5">
 <h2 data-number="20.5" class="anchored" data-anchor-id="connectors"><span class="header-section-number">20.5</span> Connectors</h2>
-<p>如 <a href="#fig-sk_application_process" class="quarto-xref">图&nbsp;<span>20.3</span></a>，在 SK 中，<code>Connectors</code> 是不同组件之间的桥梁，使得 SK 中的不同组件可以交换彼此的信息，因此，<code>Connectors</code> 有着非常重要的作用。<code>Connectors</code> 类似 Linux 中的 <code>pipe</code> 的概念，利用 <code>pipe</code>，我们可以把各种不同的命令组合起来，以实现更加强大的能力。</p>
+<p>如 <a href="#fig-sk_application_process">图&nbsp;<span>20.3</span></a>，在 SK 中，<code>Connectors</code> 是不同组件之间的桥梁，使得 SK 中的不同组件可以交换彼此的信息，因此，<code>Connectors</code> 有着非常重要的作用。<code>Connectors</code> 类似 Linux 中的 <code>pipe</code> 的概念，利用 <code>pipe</code>，我们可以把各种不同的命令组合起来，以实现更加强大的能力。</p>
 <p><code>Connectors</code> 可以用于和外部系统交互——例如与 HuggingFace 模型交互，也可以用于和外部数据交互——例如与 SQLite 交互以使其作为 <code>Memories</code>。</p>
 <p>SK 提供了很多预定义的 <code>Connectors</code>，这些预定义的 <code>Connectors</code> 主要用于两大领域：大模型集成，外部数据集成，具体可以参考 <a href="https://github.com/microsoft/semantic-kernel/tree/main/python/semantic_kernel/connectors">semantic_kernel/connectors</a> 的代码实现。</p>
 
@@ -921,9 +912,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -933,17 +925,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -956,125 +939,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1118,7 +982,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1144,32 +1007,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1233,12 +1070,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./langsmith_intro.html" class="pagination-link  aria-label=" &lt;span="" 简介&lt;="" span&gt;"="">
+      <a href="./langsmith_intro.html" class="pagination-link">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">LangSmith 简介</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./semantickernel_prompt.html" class="pagination-link" aria-label="<span class='chapter-number'>21</span>&nbsp; <span class='chapter-title'>SK 中的 Prompt</span>">
+      <a href="./semantickernel_prompt.html" class="pagination-link">
         <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">SK 中的 Prompt</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1249,15 +1086,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">
-<p>Copyright VII-QA. All Rights Reserved.</p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/semantickernel_intro.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
+    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
-
 
 
 

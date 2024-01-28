@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -82,13 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
-  "show-item-context": false,
+  "limit": 20,
   "language": {
     "search-no-results-text": "没有结果",
     "search-matching-documents-text": "匹配的文档",
@@ -97,7 +91,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "更多匹配结果",
     "search-more-matches-text": "更多匹配结果",
     "search-clear-button-title": "清除",
-    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "取消",
     "search-submit-button-title": "提交",
     "search-label": "搜索"
@@ -107,16 +100,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <meta property="og:title" content="Large Language Model in Action - 15&nbsp; LangChain Chat Agent">
 <meta property="og:description" content="">
-<meta property="og:site_name" content="Large Language Model in Action">
+<meta property="og:site-name" content="Large Language Model in Action">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
+      <div class="navbar-brand-container">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     <img src="./favicon.png" alt="" class="navbar-logo">
     </a>
@@ -131,58 +124,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/"> <i class="bi bi-house-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/" rel="" target=""><i class="bi bi-house-fill" role="img">
 </i> 
-<span class="menu-text">博客</span></a>
+ <span class="menu-text">博客</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
       <i class="bi bi-bookshelf" role="img">
 </i> 
  <span class="menu-text">书籍</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="https://zh.d2l.ai/">
+    <a class="dropdown-item" href="https://zh.d2l.ai/" rel="" target="">
  <span class="dropdown-text">动手学深度学习</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro">
+    <a class="dropdown-item" href="https://learnprompting.org/zh-Hans/docs/intro" rel="" target="">
  <span class="dropdown-text">Learn Prompting</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q">
+    <a class="dropdown-item" href="https://pan.baidu.com/s/1dciwgbhO-lfKyRo8lOqW9Q?pwd=cm9q" rel="" target="">
  <span class="dropdown-text">Stabel Diffusion 提示词手册</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/"> <i class="bi bi-person-badge-fill" role="img">
+    <a class="nav-link" href="https://wangwei1237.github.io/aboutme/" rel="" target=""><i class="bi bi-person-badge-fill" role="img">
 </i> 
-<span class="menu-text">关于</span></a>
+ <span class="menu-text">关于</span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
-    <a href="https://github.com/wangwei1237/LLM_in_Action" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+            <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/wangwei1237/LLM_in_Action" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
+          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_agent_chat.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">LangChain Chat Agent</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_agent_chat.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">LangChain Chat Agent</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -452,7 +453,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -463,12 +464,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#chatconversationagent" id="toc-chatconversationagent" class="nav-link" data-scroll-target="#chatconversationagent"><span class="header-section-number">15.2</span> ChatConversationAgent</a></li>
   <li><a href="#messagesplaceholder" id="toc-messagesplaceholder" class="nav-link" data-scroll-target="#messagesplaceholder"><span class="header-section-number">15.3</span> MessagesPlaceholder</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_agent_chat.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_agent_chat.qmd" class="toc-action">编辑该页面</a></p><p><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action">报告问题</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./langchain_intro.html">LangChain</a></li><li class="breadcrumb-item"><a href="./langchain_agent_chat.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">LangChain Chat Agent</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">LangChain Chat Agent</span></h1>
 </div>
@@ -483,14 +484,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
-
 </header>
 
-
-<p>在 <a href="langchain_agent_react.html" class="quarto-xref"><span>章节 14</span></a> 中，除了 <code>Structured Chat Agent</code> 外，我们所介绍的 Agent 都是非 <code>Chat</code> 模式的 Agent。这里的 <code>Chat</code> 模式类似 <a href="langchain_intro.html#sec-LLMs" class="quarto-xref"><span>章节 10.2.2</span></a> 中介绍的 LLM 的 <code>Chat</code> 模式，其最主要的特点就是：他们以聊天消息列表格式的提示词作为输入。</p>
+<p>在 <a href="langchain_agent_react.html"><span>章节&nbsp;14</span></a> 中，除了 <code>Structured Chat Agent</code> 外，我们所介绍的 Agent 都是非 <code>Chat</code> 模式的 Agent。这里的 <code>Chat</code> 模式类似 <a href="langchain_intro.html#sec-LLMs"><span>章节&nbsp;10.2.2</span></a> 中介绍的 LLM 的 <code>Chat</code> 模式，其最主要的特点就是：他们以聊天消息列表格式的提示词作为输入。</p>
 <section id="修改-chat-agent-的提示词逻辑" class="level2" data-number="15.1">
 <h2 data-number="15.1" class="anchored" data-anchor-id="修改-chat-agent-的提示词逻辑"><span class="header-section-number">15.1</span> 修改 Chat Agent 的提示词逻辑</h2>
-<p>因为文心大模型 <code>Chat</code> 模式的 message 消息类型和 <code>OpenAI</code> 的不同——缺少 <code>SystemMessage</code> 类型，因此，如果要让 <code>Chat Agent</code> 支持文心，需要按照 <a href="langchain_agent_react.html#lst-lc_struct_agent_fixed_for_ernine" class="quarto-xref">列表&nbsp;<span>14.23</span></a> 的思路对其 Prompt 的生成方式进行修改。</p>
+<p>因为文心大模型 <code>Chat</code> 模式的 message 消息类型和 <code>OpenAI</code> 的不同——缺少 <code>SystemMessage</code> 类型，因此，如果要让 <code>Chat Agent</code> 支持文心，需要按照 <a href="langchain_agent_react.html#lst-lc_struct_agent_fixed_for_ernine">列表&nbsp;<span>14.23</span></a> 的思路对其 Prompt 的生成方式进行修改。</p>
 <div class="sourceCode" id="annotated-cell-1"><pre class="sourceCode python code-annotation-code code-with-copy"><code class="sourceCode python"><span id="annotated-cell-1-1"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a><span class="at">@classmethod</span></span>
 <span id="annotated-cell-1-2"><a href="#annotated-cell-1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_prompt_for_ernie(</span>
 <span id="annotated-cell-1-3"><a href="#annotated-cell-1-3" aria-hidden="true" tabindex="-1"></a>    ......</span>
@@ -506,18 +505,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="chatconversationagent" class="level2" data-number="15.2">
 <h2 data-number="15.2" class="anchored" data-anchor-id="chatconversationagent"><span class="header-section-number">15.2</span> ChatConversationAgent</h2>
-<p>参照 <a href="langchain_agent_react.html#lst-map_agent_type_class" class="quarto-xref">列表&nbsp;<span>14.9</span></a> 和 <span class="quarto-unresolved-ref">?lst-la_conversation_demo</span>，我们可以构建一个 <code>chat-conversational-react-description</code>。</p>
-<div id="lst-la_chat_conversation_demo" class="python listing quarto-float" data-code-line-numbers="true" data-include="./code/test_chat_coversation_agent.py">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-la_chat_conversation_demo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;15.1: Chat Conversation Agent
-</figcaption>
-<div aria-describedby="lst-la_chat_conversation_demo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-la_chat_conversation_demo" data-code-line-numbers="true" data-include="./code/test_chat_coversation_agent.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>参照 <a href="langchain_agent_react.html#lst-map_agent_type_class">列表&nbsp;<span>14.9</span></a> 和 <a href="langchain_agent_react.html#lst-la_conversation_demo_n">列表&nbsp;<span>14.15</span></a>，我们可以构建一个 <code>chat-conversational-react-description</code>。</p>
+<div id="lst-la_chat_conversation_demo" class="listing">
+<p>列表&nbsp;15.1: Chat Conversation Agent</p>
+<div class="sourceCode" id="lst-la_chat_conversation_demo" data-lst-cap="Chat Conversation Agent"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="lst-la_chat_conversation_demo-1"><a href="#lst-la_chat_conversation_demo-1"></a><span class="co">#encoding: utf-8</span></span>
+<span id="lst-la_chat_conversation_demo-2"><a href="#lst-la_chat_conversation_demo-2"></a></span>
+<span id="lst-la_chat_conversation_demo-3"><a href="#lst-la_chat_conversation_demo-3"></a><span class="co">"""</span></span>
+<span id="lst-la_chat_conversation_demo-4"><a href="#lst-la_chat_conversation_demo-4"></a><span class="co">@discribe: example for chat conversation agent.</span></span>
+<span id="lst-la_chat_conversation_demo-5"><a href="#lst-la_chat_conversation_demo-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-la_chat_conversation_demo-6"><a href="#lst-la_chat_conversation_demo-6"></a><span class="co">"""</span></span>
+<span id="lst-la_chat_conversation_demo-7"><a href="#lst-la_chat_conversation_demo-7"></a></span>
+<span id="lst-la_chat_conversation_demo-8"><a href="#lst-la_chat_conversation_demo-8"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
+<span id="lst-la_chat_conversation_demo-9"><a href="#lst-la_chat_conversation_demo-9"></a><span class="im">from</span> langchain.chains <span class="im">import</span> LLMMathChain</span>
+<span id="lst-la_chat_conversation_demo-10"><a href="#lst-la_chat_conversation_demo-10"></a><span class="im">from</span> langchain.agents <span class="im">import</span> Tool</span>
+<span id="lst-la_chat_conversation_demo-11"><a href="#lst-la_chat_conversation_demo-11"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferMemory</span>
+<span id="lst-la_chat_conversation_demo-12"><a href="#lst-la_chat_conversation_demo-12"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent</span>
+<span id="lst-la_chat_conversation_demo-13"><a href="#lst-la_chat_conversation_demo-13"></a></span>
+<span id="lst-la_chat_conversation_demo-14"><a href="#lst-la_chat_conversation_demo-14"></a>memory <span class="op">=</span> ConversationBufferMemory(memory_key<span class="op">=</span><span class="st">"chat_history"</span>)</span>
+<span id="lst-la_chat_conversation_demo-15"><a href="#lst-la_chat_conversation_demo-15"></a></span>
+<span id="lst-la_chat_conversation_demo-16"><a href="#lst-la_chat_conversation_demo-16"></a>llm <span class="op">=</span> ErnieBotChat(model_name<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
+<span id="lst-la_chat_conversation_demo-17"><a href="#lst-la_chat_conversation_demo-17"></a></span>
+<span id="lst-la_chat_conversation_demo-18"><a href="#lst-la_chat_conversation_demo-18"></a><span class="co"># initialize the math tool</span></span>
+<span id="lst-la_chat_conversation_demo-19"><a href="#lst-la_chat_conversation_demo-19"></a>llm_math <span class="op">=</span> LLMMathChain(llm<span class="op">=</span>llm)</span>
+<span id="lst-la_chat_conversation_demo-20"><a href="#lst-la_chat_conversation_demo-20"></a>math_tool <span class="op">=</span> Tool(</span>
+<span id="lst-la_chat_conversation_demo-21"><a href="#lst-la_chat_conversation_demo-21"></a>    name<span class="op">=</span><span class="st">'Calculator'</span>,</span>
+<span id="lst-la_chat_conversation_demo-22"><a href="#lst-la_chat_conversation_demo-22"></a>    func<span class="op">=</span>llm_math.run,</span>
+<span id="lst-la_chat_conversation_demo-23"><a href="#lst-la_chat_conversation_demo-23"></a>    description<span class="op">=</span><span class="st">'Useful for when you need to answer questions about math.'</span></span>
+<span id="lst-la_chat_conversation_demo-24"><a href="#lst-la_chat_conversation_demo-24"></a>)</span>
+<span id="lst-la_chat_conversation_demo-25"><a href="#lst-la_chat_conversation_demo-25"></a></span>
+<span id="lst-la_chat_conversation_demo-26"><a href="#lst-la_chat_conversation_demo-26"></a><span class="co"># when giving tools to LLM, we must pass as list of tools</span></span>
+<span id="lst-la_chat_conversation_demo-27"><a href="#lst-la_chat_conversation_demo-27"></a>tools <span class="op">=</span> [math_tool]</span>
+<span id="lst-la_chat_conversation_demo-28"><a href="#lst-la_chat_conversation_demo-28"></a></span>
+<span id="lst-la_chat_conversation_demo-29"><a href="#lst-la_chat_conversation_demo-29"></a>chat_conversation_agent <span class="op">=</span> initialize_agent(</span>
+<span id="lst-la_chat_conversation_demo-30"><a href="#lst-la_chat_conversation_demo-30"></a>    agent<span class="op">=</span><span class="st">"chat-conversational-react-description"</span>,</span>
+<span id="lst-la_chat_conversation_demo-31"><a href="#lst-la_chat_conversation_demo-31"></a>    tools<span class="op">=</span>tools,</span>
+<span id="lst-la_chat_conversation_demo-32"><a href="#lst-la_chat_conversation_demo-32"></a>    llm<span class="op">=</span>llm,</span>
+<span id="lst-la_chat_conversation_demo-33"><a href="#lst-la_chat_conversation_demo-33"></a>    verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="lst-la_chat_conversation_demo-34"><a href="#lst-la_chat_conversation_demo-34"></a>    max_iterations<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="lst-la_chat_conversation_demo-35"><a href="#lst-la_chat_conversation_demo-35"></a>    memory<span class="op">=</span>memory</span>
+<span id="lst-la_chat_conversation_demo-36"><a href="#lst-la_chat_conversation_demo-36"></a>)</span>
+<span id="lst-la_chat_conversation_demo-37"><a href="#lst-la_chat_conversation_demo-37"></a></span>
+<span id="lst-la_chat_conversation_demo-38"><a href="#lst-la_chat_conversation_demo-38"></a>chat_conversation_agent(<span class="st">"4.1*7.9=?"</span>)</span>
+<span id="lst-la_chat_conversation_demo-39"><a href="#lst-la_chat_conversation_demo-39"></a>chat_conversation_agent(<span class="st">"2 * 2"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</figure>
-</div>
-<p>但是，执行 <a href="#lst-la_chat_conversation_demo" class="quarto-xref">列表&nbsp;<span>15.1</span></a> 时，却报错了：</p>
+<p>但是，执行 <a href="#lst-la_chat_conversation_demo">列表&nbsp;<span>15.1</span></a> 时，却报错了：</p>
 <div class="sourceCode" id="annotated-cell-2"><pre class="sourceCode bash code-annotation-code code-with-copy code-annotated"><code class="sourceCode bash"><span id="annotated-cell-2-1"><a href="#annotated-cell-2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Traceback</span> <span class="er">(</span><span class="ex">most</span> recent call last<span class="kw">)</span><span class="bu">:</span></span>
 <span id="annotated-cell-2-2"><a href="#annotated-cell-2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"code/test_chat_coversation_agent.py"</span>, line 38, in <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
 <span id="annotated-cell-2-3"><a href="#annotated-cell-2-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">chat_conversation_agent</span><span class="er">(</span><span class="st">"4.1*7.9=?"</span><span class="kw">)</span></span>
@@ -526,13 +557,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <dl class="code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-2" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-2" data-code-lines="5" data-code-annotation="1">chat_history 变量必须是一个消息列表</span>
+<span data-code-annotation="1" data-code-lines="5" data-code-cell="annotated-cell-2">chat_history 变量必须是一个消息列表</span>
 </dd>
 </dl>
 </section>
 <section id="messagesplaceholder" class="level2" data-number="15.3">
 <h2 data-number="15.3" class="anchored" data-anchor-id="messagesplaceholder"><span class="header-section-number">15.3</span> MessagesPlaceholder</h2>
-<p>我们说过，Agent 本质上就是 LLM，既然 <a href="#lst-la_chat_conversation_demo" class="quarto-xref">列表&nbsp;<span>15.1</span></a> 执行有异常，那我们就看下他的提示词究竟是怎么实现的（具体实现位于 <code>langchain/agents/conversation_chat/base.py</code> 的 <code>create_prompt()</code>）。</p>
+<p>我们说过，Agent 本质上就是 LLM，既然 <a href="#lst-la_chat_conversation_demo">列表&nbsp;<span>15.1</span></a> 执行有异常，那我们就看下他的提示词究竟是怎么实现的（具体实现位于 <code>langchain/agents/conversation_chat/base.py</code> 的 <code>create_prompt()</code>）。</p>
 <div class="sourceCode" id="annotated-cell-3"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-3-1"><a href="#annotated-cell-3-1" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
 <span id="annotated-cell-3-2"><a href="#annotated-cell-3-2" aria-hidden="true" tabindex="-1"></a>    SystemMessagePromptTemplate.from_template(system_message),</span>
 <a class="code-annotation-anchor" data-target-cell="annotated-cell-3" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-3-3" class="code-annotation-target"><a href="#annotated-cell-3-3" aria-hidden="true" tabindex="-1"></a>    MessagesPlaceholder(variable_name<span class="op">=</span><span class="st">"chat_history"</span>),</span>
@@ -542,7 +573,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <dl class="code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-3" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-lines="3" data-code-annotation="1">从提示词的构造方式上，<code>chat_history</code> 是通过 <code>MessagesPlaceholder</code> 构造的。而此处的 <code>chat_history</code> 又是通过 <code>ConversationBufferMemory</code> 获取的。</span>
+<span data-code-annotation="1" data-code-lines="3" data-code-cell="annotated-cell-3">从提示词的构造方式上，<code>chat_history</code> 是通过 <code>MessagesPlaceholder</code> 构造的。而此处的 <code>chat_history</code> 又是通过 <code>ConversationBufferMemory</code> 获取的。</span>
 </dd>
 </dl>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationBufferMemory(memory_key<span class="op">=</span><span class="st">"chat_history"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -554,24 +585,59 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <dl class="code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-5" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-5" data-code-lines="4" data-code-annotation="1">根据 <code>return_messages</code> 来返回不同格式的记忆。</span>
+<span data-code-annotation="1" data-code-lines="4" data-code-cell="annotated-cell-5">根据 <code>return_messages</code> 来返回不同格式的记忆。</span>
 </dd>
 </dl>
 <p>而在 LangChain 中，<code>return_messages</code> 默认值为 <code>False</code>，因此，实际上 <code>buffer()</code> 返回的是<strong>字符串格式</strong>的内容。这就是导致执行异常的根本原因。</p>
 <p>为了解决这个问题，我们需要在初始化 <code>ConversationBufferMemory</code> 时，配置 <code>return_messages</code> = <code>True</code>。</p>
-<div id="lst-la_chat_conversation_demo_1" class="python listing quarto-float" data-code-line-numbers="true" data-include="./code/test_chat_coversation_agent_1.py">
-<figure class="quarto-float quarto-float-lst figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-la_chat_conversation_demo_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-列表&nbsp;15.2: Chat Conversation Agent
-</figcaption>
-<div aria-describedby="lst-la_chat_conversation_demo_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode" id="lst-la_chat_conversation_demo_1" data-code-line-numbers="true" data-include="./code/test_chat_coversation_agent_1.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-la_chat_conversation_demo_1" class="listing">
+<p>列表&nbsp;15.2: Chat Conversation Agent</p>
+<div class="sourceCode" id="lst-la_chat_conversation_demo_1" data-lst-cap="Chat Conversation Agent"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="lst-la_chat_conversation_demo_1-1"><a href="#lst-la_chat_conversation_demo_1-1"></a><span class="co">#encoding: utf-8</span></span>
+<span id="lst-la_chat_conversation_demo_1-2"><a href="#lst-la_chat_conversation_demo_1-2"></a></span>
+<span id="lst-la_chat_conversation_demo_1-3"><a href="#lst-la_chat_conversation_demo_1-3"></a><span class="co">"""</span></span>
+<span id="lst-la_chat_conversation_demo_1-4"><a href="#lst-la_chat_conversation_demo_1-4"></a><span class="co">@discribe: example for chat conversation agent.</span></span>
+<span id="lst-la_chat_conversation_demo_1-5"><a href="#lst-la_chat_conversation_demo_1-5"></a><span class="co">@author: wangwei1237@gmail.com</span></span>
+<span id="lst-la_chat_conversation_demo_1-6"><a href="#lst-la_chat_conversation_demo_1-6"></a><span class="co">"""</span></span>
+<span id="lst-la_chat_conversation_demo_1-7"><a href="#lst-la_chat_conversation_demo_1-7"></a></span>
+<span id="lst-la_chat_conversation_demo_1-8"><a href="#lst-la_chat_conversation_demo_1-8"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ErnieBotChat</span>
+<span id="lst-la_chat_conversation_demo_1-9"><a href="#lst-la_chat_conversation_demo_1-9"></a><span class="im">from</span> langchain.chains <span class="im">import</span> LLMMathChain</span>
+<span id="lst-la_chat_conversation_demo_1-10"><a href="#lst-la_chat_conversation_demo_1-10"></a><span class="im">from</span> langchain.agents <span class="im">import</span> Tool</span>
+<span id="lst-la_chat_conversation_demo_1-11"><a href="#lst-la_chat_conversation_demo_1-11"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferMemory</span>
+<span id="lst-la_chat_conversation_demo_1-12"><a href="#lst-la_chat_conversation_demo_1-12"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent</span>
+<span id="lst-la_chat_conversation_demo_1-13"><a href="#lst-la_chat_conversation_demo_1-13"></a></span>
+<a class="code-annotation-anchor" data-target-cell="lst-la_chat_conversation_demo_1" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="lst-la_chat_conversation_demo_1-14" class="code-annotation-target"><a href="#lst-la_chat_conversation_demo_1-14"></a>memory <span class="op">=</span> ConversationBufferMemory(memory_key<span class="op">=</span><span class="st">"chat_history"</span>, return_messages<span class="op">=</span><span class="va">True</span>)</span>
+<span id="lst-la_chat_conversation_demo_1-15"><a href="#lst-la_chat_conversation_demo_1-15"></a></span>
+<span id="lst-la_chat_conversation_demo_1-16"><a href="#lst-la_chat_conversation_demo_1-16"></a>llm <span class="op">=</span> ErnieBotChat(model_name<span class="op">=</span><span class="st">"ERNIE-Bot-4"</span>)</span>
+<span id="lst-la_chat_conversation_demo_1-17"><a href="#lst-la_chat_conversation_demo_1-17"></a></span>
+<span id="lst-la_chat_conversation_demo_1-18"><a href="#lst-la_chat_conversation_demo_1-18"></a><span class="co"># initialize the math tool</span></span>
+<span id="lst-la_chat_conversation_demo_1-19"><a href="#lst-la_chat_conversation_demo_1-19"></a>llm_math <span class="op">=</span> LLMMathChain(llm<span class="op">=</span>llm)</span>
+<span id="lst-la_chat_conversation_demo_1-20"><a href="#lst-la_chat_conversation_demo_1-20"></a>math_tool <span class="op">=</span> Tool(</span>
+<span id="lst-la_chat_conversation_demo_1-21"><a href="#lst-la_chat_conversation_demo_1-21"></a>    name<span class="op">=</span><span class="st">'Calculator'</span>,</span>
+<span id="lst-la_chat_conversation_demo_1-22"><a href="#lst-la_chat_conversation_demo_1-22"></a>    func<span class="op">=</span>llm_math.run,</span>
+<span id="lst-la_chat_conversation_demo_1-23"><a href="#lst-la_chat_conversation_demo_1-23"></a>    description<span class="op">=</span><span class="st">'Useful for when you need to answer questions about math.'</span></span>
+<span id="lst-la_chat_conversation_demo_1-24"><a href="#lst-la_chat_conversation_demo_1-24"></a>)</span>
+<span id="lst-la_chat_conversation_demo_1-25"><a href="#lst-la_chat_conversation_demo_1-25"></a></span>
+<span id="lst-la_chat_conversation_demo_1-26"><a href="#lst-la_chat_conversation_demo_1-26"></a><span class="co"># when giving tools to LLM, we must pass as list of tools</span></span>
+<span id="lst-la_chat_conversation_demo_1-27"><a href="#lst-la_chat_conversation_demo_1-27"></a>tools <span class="op">=</span> [math_tool]</span>
+<span id="lst-la_chat_conversation_demo_1-28"><a href="#lst-la_chat_conversation_demo_1-28"></a></span>
+<span id="lst-la_chat_conversation_demo_1-29"><a href="#lst-la_chat_conversation_demo_1-29"></a>chat_conversation_agent <span class="op">=</span> initialize_agent(</span>
+<span id="lst-la_chat_conversation_demo_1-30"><a href="#lst-la_chat_conversation_demo_1-30"></a>    agent<span class="op">=</span><span class="st">"chat-conversational-react-description"</span>,</span>
+<span id="lst-la_chat_conversation_demo_1-31"><a href="#lst-la_chat_conversation_demo_1-31"></a>    tools<span class="op">=</span>tools,</span>
+<span id="lst-la_chat_conversation_demo_1-32"><a href="#lst-la_chat_conversation_demo_1-32"></a>    llm<span class="op">=</span>llm,</span>
+<span id="lst-la_chat_conversation_demo_1-33"><a href="#lst-la_chat_conversation_demo_1-33"></a>    verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="lst-la_chat_conversation_demo_1-34"><a href="#lst-la_chat_conversation_demo_1-34"></a>    max_iterations<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="lst-la_chat_conversation_demo_1-35"><a href="#lst-la_chat_conversation_demo_1-35"></a>    memory<span class="op">=</span>memory</span>
+<span id="lst-la_chat_conversation_demo_1-36"><a href="#lst-la_chat_conversation_demo_1-36"></a>)</span>
+<span id="lst-la_chat_conversation_demo_1-37"><a href="#lst-la_chat_conversation_demo_1-37"></a></span>
+<span id="lst-la_chat_conversation_demo_1-38"><a href="#lst-la_chat_conversation_demo_1-38"></a>chat_conversation_agent(<span class="st">"4.1*7.9=?"</span>)</span>
+<span id="lst-la_chat_conversation_demo_1-39"><a href="#lst-la_chat_conversation_demo_1-39"></a>chat_conversation_agent(<span class="st">"2 * 2"</span>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</figure>
-</div>
-<ol type="1">
-<li>通过设置 <code>return_messages</code> 为 <code>True</code> 以返回消息列表格式的记忆内容。</li>
-</ol>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="lst-la_chat_conversation_demo_1" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-lines="14" data-code-cell="lst-la_chat_conversation_demo_1">通过设置 <code>return_messages</code> 为 <code>True</code> 以返回消息列表格式的记忆内容。</span>
+</dd>
+</dl>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -669,9 +735,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -681,17 +748,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -704,125 +762,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -866,7 +805,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -892,32 +830,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -981,12 +893,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./langchain_agent_react.html" class="pagination-link  aria-label=" &lt;span="" react="" agent&lt;="" span&gt;"="">
+      <a href="./langchain_agent_react.html" class="pagination-link">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">LangChain ReAct Agent</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./langchain_openai_assistant.html" class="pagination-link" aria-label="<span class='chapter-number'>16</span>&nbsp; <span class='chapter-title'>LangChain OpenAI Assistant</span>">
+      <a href="./langchain_openai_assistant.html" class="pagination-link">
         <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">LangChain OpenAI Assistant</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -997,15 +909,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">
-<p>Copyright VII-QA. All Rights Reserved.</p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/LLM_in_Action/edit/main/langchain_agent_chat.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/LLM_in_Action/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
+    <div class="nav-footer-center">Copyright VII-QA. All Rights Reserved.</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
-
 
 
 
