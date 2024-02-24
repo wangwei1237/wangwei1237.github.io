@@ -58,7 +58,17 @@
 <li>Sora 还可能会混淆用户提示词中的空间细节（混淆左右）。</li>
 </ul>
 <video poster="/2024/02/22/Sora-the-starlight-in-the-long-night-of-AGI/2.jpg" autoplay="autoplay" id="videojs2" class="video-js vjs-16-9" controls preload="auto"><source src="https://cdn.openai.com/sora/videos/grandma-birthday.mp4" type="video/mp4"></video><link href="/libs/videojs2/videojs.css" rel="stylesheet"><script src="/libs/videojs2/video.min.js"></script><script src="/libs/videojs2/zh-CN.min.js"></script><script src="/libs/videojs2/videojs.hotkeys.min.js"></script><script>player2=videojs("videojs2",{language:"zh-CN",responsive:true,plugins:{hotkeys:{alwaysCaptureHotkeys:true},},});</script><link rel="stylesheet" href="/libs/videojs2/mytoast.css"><script src="/libs/videojs2/mytoast.js"></script><script>toast_init(player2)</script><link rel="stylesheet" href="/libs/videojs2/videojs-mobile-ui.css"><script src="/libs/videojs2/videojs-mobile-ui.min.js"></script><script>player2.mobileUi();</script><script src="/libs/videojs2/videojs-remember.min.js"></script><script>videojs(document.querySelector("video")).remember({"localStorageKey": "videojs.remember.myvideo"});</script>
+<h2 id="sora-的相关技术">Sora 的相关技术</h2>
+<p>在 Sora 的技术文档 <a href="https://openai.com/research/video-generation-models-as-world-simulators">Video generation models as world simulators</a> 中，OpenAI 介绍了 Sora 模型的能力和用到的相关技术，但是对于 Sora 模型的具体技术细节并没有进行过多的披露。</p>
+<ul>
+<li>把 Visual Patches 作为 Visual Tokens，进而统一了文本、图像、视频的生成式模型架构。不过 Visual Tokens 并非是 OpenAI 的原创，而是借鉴了谷歌的 magvit<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup> <sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup> 的思路。</li>
+<li>Diffusion Models，正如技术报告中所述：<em>Sora is a diffusion model21, given input noisy patches (and conditioning information like text prompts), it’s trained to predict the original “clean” patches. <strong>Importantly, Sora is a diffusion transformer.</strong></em> 而这个技术最初是由 Bill 和 谢赛宁在论文 <a href="https://arxiv.org/abs/2212.09748">Scalable Diffusion Models with Transformers</a> 提出的。这也导致当 Sora 刚发布的的时候，网上有自媒体误传 Sora 的作者是 谢赛宁的乌龙事件，之后 谢赛宁也在 Twitter 上对此作了解释和回应。</li>
+<li>Autoregressive Transformers，为了让 DiT 支持自回归 Diffusion，Sora 借鉴了谷歌在 <a href="https://arxiv.org/abs/2312.06662">Photorealistic Video Generation with Diffusion Models</a> 中提到的 W.A.L.T 方案。</li>
+</ul>
+<p>更多的技术解读可以参考红博士的 <a href="https://mp.weixin.qq.com/s/H8UYQ27nNPbW2jetseJgYQ">去魅 Sora: OpenAI 鲜肉小组的小试牛刀</a>，此处不再一一介绍。</p>
 <h2 id="sora-的思考">Sora 的思考</h2>
+<p>所以，整体上看 Sora 并没有发明新的技术，只是对原有技术的整合而已。但是这恰恰是我们该认真思考的最重要的点。都是原有的技术，这些技术论文也都是公开的，为什么在 Sora 之前，却没有出现如此惊艳的 TTV 效果呢？单纯的技术拼凑可以拼凑出 类似 Sora 的突破性产品吗？同样是用乐高的零件，为什么有的大牛就能<a href="https://zhuanlan.zhihu.com/p/336748815">用 84000 片乐高拼成宏伟的紫禁城呢</a>，而有些人离开了图纸就什么也拼不出来呢？</p>
+<p>我想，之所以是 OpenAI 首先发布了 Sora，这里面肯定是有某些特殊的原因的。在我看来 <code>用实践检验真理</code> 是最重要的原因之一。</p>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -72,6 +82,10 @@
 <li id="fn4" class="footnote-item"><p><a href="https://openai.com/sora">Creating video from text</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn5" class="footnote-item"><p><a href="https://openai.com/research/video-generation-models-as-world-simulators">Video generation models as world simulators</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a href="https://github.com/google-research/magvit">google-research/magvit</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a href="https://arxiv.org/abs/2212.05199">MAGVIT: Masked Generative Video Transformer</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
