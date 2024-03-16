@@ -10,7 +10,7 @@ import utils
 
 mosA = "mosA"
 mosB = "mosB"
-mosA, mosB = utils.getAcrPairMos(mosA, mosB)
+mosA, mosB = utils.getAcrPairMos(mosA, mosA)
 A, B = utils.get_bootstrap_acr_result(mosA, mosB, utils.compute_elo_acr, 5000)
 utils.visual_bootstrap_scores(A, B)
 plt.show()
