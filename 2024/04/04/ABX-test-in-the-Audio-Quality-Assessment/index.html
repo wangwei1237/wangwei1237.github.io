@@ -13,7 +13,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>集群时间戳不一致导致的问题及其分析和思考 |  17哥</title>
+      <title>音频质量评估中的 ABX 测试 |  17哥</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +57,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-problem-caused-by-timestamp-s-difference-in-cluster-and-analysis"
+  id="post-ABX-test-in-the-Audio-Quality-Assessment"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -68,7 +68,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  集群时间戳不一致导致的问题及其分析和思考
+  音频质量评估中的 ABX 测试
 </h1>
  
 
@@ -76,11 +76,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/" class="article-date">
-  <time datetime="2020-05-29T09:23:18.000Z" itemprop="datePublished">2020-05-29</time>
+      <a href="/2024/04/04/ABX-test-in-the-Audio-Quality-Assessment/" class="article-date">
+  <time datetime="2024-04-04T22:05:15.000Z" itemprop="datePublished">2024-04-04</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%80%BB%E7%BB%93/">总结</a>
+    <a class="article-category-link" href="/categories/%E9%9F%B3%E9%A2%91%E6%8A%80%E6%9C%AF/">音频技术</a>
   </div>
   
 <div class="word_count">
@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">0</span>
         </span>
     </span>
 
@@ -97,69 +97,21 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">1 分钟</span>
         </span>
     </span>
 </div>
  
     </div>
       
-    <div class="tocbot"></div>
-
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <blockquote>
-<p>1883年11月18日，美国第一个全国统一铁路时刻表诞生，这一天的正午时分，美国东部的时钟全部回拨。从此，上帝的时间被改用人间的指针来度量。 ——<strong>公司的力量</strong></p>
-</blockquote>
-<h2 id="背景">背景</h2>
-<p>最近遇到的业务上的问题涉及：<em>在一个集群中，存在部分机器的<code>时间戳</code>和其它机器不一致而导致的重大问题</em>。为了不泄露业务的相关信息，文中会用一个类似的场景来对这个问题进行分析。</p>
-<span id="more"></span>
-<h2 id="时间戳-unix-time-stamp">时间戳（unix time stamp）</h2>
-<p>需要注意的是，这里涉及到的问题是集群<code>时间戳</code>不一致而不是<code>时间</code>不一致。</p>
-<p><a target="_blank" rel="noopener" href="https://www.unixtimestamp.com">The unix time stamp</a> is a way to track time as a running total of seconds. This count starts at the Unix Epoch on January 1st, 1970 at UTC. Therefore, the unix time stamp is merely the number of seconds between a particular date and the Unix Epoch. It should also be pointed out (thanks to the comments from visitors to this site) that <strong><code>this point in time technically does not change no matter where you are located on the globe</code></strong>. This is very useful to computer systems for tracking and sorting dated information in dynamic and distributed applications both online and client side.</p>
-<p>由此可知，<code>时间戳</code>和<code>时间</code>不同，是一个和时区无关的全球一致的时间计量方式。不同集群会因为其所在的时区不同而存在时间不同的问题，但是其时间戳是一致的。</p>
-<p>Linux系统而言，时间戳可以利用<a target="_blank" rel="noopener" href="https://www.gnu.org/software/shellutils/shellutils.html"><code>GNU shell utilities</code></a>提供的<a target="_blank" rel="noopener" href="https://github.com/coreutils/coreutils/blob/master/src/date.c"><code>date</code>命令</a>来获取。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ date +%s</span><br><span class="line">$ 1590719825</span><br></pre></td></tr></table></figure>
-<h2 id="时间戳不一致带来的问题">时间戳不一致带来的问题</h2>
-<p>考虑如下的一个购物站点的活动场景，如下的场景可能不会在现实的电商活动中存在，该场景仅仅是为了说明本文的问题而抽象的一个场景。</p>
-<blockquote>
-<p>原价100￥的商品，现价10￥元销售，但前提是下单的用户需要在1分钟内完成支付。如果下单用户未能在1分钟内完成支付，则该订单无效，同时该用户无法继续以折扣价下单。</p>
-</blockquote>
-<p>为了方便问题说明，下单和支付等功能合并在<code>trade</code>，产生的相关数据则存储于<code>DB</code>。简化之后的架构如下所示：</p>
-<p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/1.png" alt></p>
-<p>当<code>trade</code>为单机部署时，不会存在问题。但是当<code>trade</code>作为集群部署时，则会存在集群时间戳不一致导致用户支付失败的问题。具体如下所示：</p>
-<p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/2.png" alt></p>
-<p>如图所示，<code>m1</code>和<code>m2</code>的时间戳是一致的，但是<code>m3</code>的时间戳比其它机器正好快了<strong>60s</strong>。因此，如果<code>支付</code>的流量由<code>m3</code>机器的<code>trade</code>处理，则即便是在1分钟内支付，因为<code>m3</code>机器的时间戳快60s而导致支付超时，进而导致用户支付失败，影响用户体验。</p>
-<p>这就是我们要讲的：在一个集群中，部分机器的<code>时间戳</code>和其它机器不一致而导致的重大问题。</p>
-<h2 id="问题如何解决">问题如何解决</h2>
-<p>在不修改系统架构的前提下，则可以利用同一时钟同步集群中所有机器的时钟，从而让集群的时钟保持同步，进而解决该问题。具体的方案如下图所示。</p>
-<p><img src="/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/3.png" alt></p>
-<h3 id="ntp">ntp</h3>
-<p>对Linux而言，可以使用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Network_Time_Protocol"><code>ntp</code></a>来实现集群的时间同步。</p>
-<p>同步时间，可以使用<code>ntpdate</code>命令，也可以使用<code>ntpd</code>服务。</p>
-<h3 id="ntpdate">ntpdate</h3>
-<p>使用<code>ntpdate</code>比较简单。格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ntpdate [-nv] [NTP IP&#x2F;hostname]</span><br><span class="line">$ ntpdate 192.168.0.1</span><br><span class="line">$ ntpdate time.ntp.org</span><br></pre></td></tr></table></figure>
-<p><code>ntpdate</code>只是强制将系统时间设置为ntp服务器时间。如果机器cpu tick有问题，这种同步治标不治本。此时，一般配合<code>cron</code>任务来定期同步。例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 12 * * * * &#x2F;usr&#x2F;sbin&#x2F;ntpdate 192.168.0.1</span><br></pre></td></tr></table></figure>
-<h3 id="ntpd">ntpd</h3>
-<p>使用<code>ntpd</code>服务，要好于使用<code>ntpdate+cron</code>。</p>
-<p><code>ntpdate</code>同步时间，会造成时间的跳跃，对一些依赖时间的程序和服务会造成影响，比如sleep，timer等。</p>
-<p><code>ntpd</code>服务可以在修正时间的同时，修正cpu tick。</p>
-<p>理想的做法为，在开机的时候，使用<code>ntpdate</code>强制同步时间，在其他时候使用<code>ntpd</code>服务来同步时间。</p>
-<p>需要注意的是，<code>ntpd</code>有一个自我保护设置: 如果本机时间与源时间相差太大, 则<code>ntpd</code>不运行。所以新设置的时间服务器一定要先利用<code>ntpdate</code>命令获取初始时间, 然后启动<code>ntpd</code>服务。</p>
-<p>关于ntpd的使用，网上已经有很多资料了，这里就不做过多的介绍了。</p>
-<h3 id="ntpstat">ntpstat</h3>
-<p><code>ntpstat</code>用于显示网络时间的同步状态。<code>ntpstat</code>会给出本地计算机上运行的<code>ntpd</code>的同步状态。如果本地系统与参考时间源同步，则<code>ntpstat</code>会给出近似的时间精度。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ntpstat</span><br><span class="line">synchronised to NTP server (192.168.0.1) at stratum 3</span><br><span class="line">   time correct to within 43 ms</span><br><span class="line">   polling server every 1024 s</span><br></pre></td></tr></table></figure>
-<h2 id="问题引申">问题引申</h2>
-<p>虽然可以利用<code>ntp</code>来同步集群时间，但是有一个问题是值的思考的：<strong>如何在集群时钟不同的情况下，解决<a href="#%E6%97%B6%E9%97%B4%E6%88%B3%E4%B8%8D%E4%B8%80%E8%87%B4%E5%B8%A6%E6%9D%A5%E7%9A%84%E9%97%AE%E9%A2%98">时间戳不一致带来的问题</a>一节中描述的问题</strong>。</p>
-<p>系统在架构上要做何种优化，才能避免业务对集群时钟同步的依赖？而这种优化所带来的系统架构的复杂度和成本又将如何？</p>
- 
+  <p><img src="/2024/04/04/ABX-test-in-the-Audio-Quality-Assessment/1.jpeg" alt></p>
+<span id="more"></span> 
       <!-- reward -->
       
     </div>
@@ -223,12 +175,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2020/05/29/problem-caused-by-timestamp-s-difference-in-cluster-and-analysis/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2024/04/04/ABX-test-in-the-Audio-Quality-Assessment/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ntp/" rel="tag">ntp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%B6%E9%97%B4%E6%88%B3%E4%B8%8D%E5%90%8C%E6%AD%A5/" rel="tag">时间戳不同步</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ABX/" rel="tag">ABX</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E9%A2%91%E8%B4%A8%E9%87%8F%E8%AF%84%E4%BC%B0/" rel="tag">音频质量评估</a></li></ul>
 
     </footer>
   </div>
@@ -236,19 +188,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2020/06/13/write-python-library-using-c-with-boost-python/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            使用Boost::Python用C++开发Python库
-          
-        </div>
-      </a>
     
-    
-      <a href="/2020/05/20/Software-Entropy-and-A-Broken-Window/" class="article-nav-link">
+      <a href="/2024/03/13/How-to-calculate-the-ELO-ratings-for-multiple-sets-of-ACR-scores/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">软件的熵和破窗原理</div>
+        <div class="article-nav-title">如何计算多组 ACR 打分的 ELO 积分</div>
       </a>
     
   </nav>
