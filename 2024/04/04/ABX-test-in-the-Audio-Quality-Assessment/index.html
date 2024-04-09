@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">0</span>
+            <span class="post-count">647</span>
         </span>
     </span>
 
@@ -97,13 +97,15 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">2 分钟</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
@@ -111,7 +113,94 @@
     <div class="article-entry" itemprop="articleBody">
        
   <p><img src="/2024/04/04/ABX-test-in-the-Audio-Quality-Assessment/1.jpeg" alt></p>
-<span id="more"></span> 
+<p>在音频编解码中，经常需要判断经过不同的编解码算法、参数而生成的音频在人的感知层面是否存在差异。虽然 <a href="2023/08/12/the-interesting-elo-rating-system/">成对打分</a> 也可以用于这种场景，但是成对比较的结果可能会涉及到很多无意识的影响因素，例如不同受试者的经验、心情等。如果受试者采用随机选择的策略，对于成对比较而言，则缺乏有效的手段来对其进行识别。</p>
+<span id="more"></span>
+<h2 id="成对打分法的缺点">成对打分法的缺点</h2>
+<p>我们可以在成对打分中引入<strong>锚点样本</strong>来评估受试者的打分是否置信，但是为了避免评估过程中的感知疲劳对受试者带来干扰，我们引入的<strong>锚点样本</strong>必须控制在一定量级，比如 2 个。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">锚点样本
+</p><p>锚点样本指的是在一个待评估的样本序列中，随机插入的、有明显质量差异的、有预先设定好打分的样本。</p>
+</div>
+<p>在评估过程中，一组样本（A，B）要么是有差异的，要么是没有差异的，因此结果是一个典型的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/0%E2%80%941%E5%88%86%E5%B8%83">伯努利分布</a>。当锚点样本数量为 2 时，我们可以使用如下的代码来计算随机因素下的打分正确的概率：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> binom</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    x = binom.pmf(k, <span class="number">2</span>, <span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 0.25 0.5 0.25</span></span><br></pre></td></tr></table></figure>
+<p>可知，即便两个锚点样本的打分都是正确的，那么也可能有 25% 的概率是受试者在随机打分的情况下做出的选择。</p>
+<h2 id="abx-测试">ABX 测试</h2>
+ 
       <!-- reward -->
       
     </div>
