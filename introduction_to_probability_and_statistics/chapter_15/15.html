@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="王伟（17哥）">
-<meta name="dcterms.date" content="2024-04-20">
 
-<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
+<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 15&nbsp; Simulation, bootstrap statistical methods, and permutation tests</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,61 +20,28 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./preface_17.html" rel="next">
-<link href="./favicon.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapter_16/16.html" rel="next">
+<link href="../chapter_14/14.html" rel="prev">
+<link href="../favicon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -106,12 +71,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
-<meta property="og:description" content="">
-<meta property="og:image" content="https://wangwei1237.github.io/introduction_to_probability_and_statistics/cover.png">
+<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 15&nbsp; Simulation, bootstrap statistical methods, and permutation tests">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
-<meta property="og:image:height" content="1382">
-<meta property="og:image:width" content="1092">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -121,10 +82,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./favicon.png" alt="" class="navbar-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../favicon.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Introduction to Probability and Statistics for Engineers and Scientists（中文版）</span>
     </a>
   </div>
@@ -177,7 +138,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">欢迎阅读</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_15/15.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Simulation, bootstrap statistical methods, and permutation tests</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -191,127 +152,127 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">欢迎阅读</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./preface_17.html" class="sidebar-item-text sidebar-link">
+  <a href="../preface_17.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">译者序</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+  <a href="../preface.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">序言</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_1/1.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_1/1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">统计学简介</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_2/2.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_2/2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Descriptive statistics</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_3/3.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_3/3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Elements of probability</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_4/4.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_4/4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Random variables and expectation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_5/5.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_5/5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Special random variables</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_6/6.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_6/6.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Distributions of sampling statistics</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_7/7.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_7/7.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Parameter estimation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_8/8.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_8/8.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Hypothesis testing</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_9/9.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_9/9.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_10/10.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_10/10.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of variance</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_11/11.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_11/11.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Goodness of fit tests and categorical data analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_12/12.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_12/12.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Nonparametric hypothesis tests</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_13/13.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_13/13.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_14/14.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_14/14.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Life testing</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_15/15.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_15/15.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Simulation, bootstrap statistical methods, and permutation tests</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./chapter_16/16.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapter_16/16.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Machine learning and big data</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./test.html" class="sidebar-item-text sidebar-link">
+  <a href="../test.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">测试脚本</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link">
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
 </li>
@@ -326,7 +287,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./appendices.html" class="sidebar-item-text sidebar-link">
+  <a href="../appendices.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">APPENDIX OF TABLES</span></span></a>
   </div>
 </li>
@@ -342,37 +303,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#欢迎阅读" id="toc-欢迎阅读" class="nav-link active" data-scroll-target="#欢迎阅读">欢迎阅读</a></li>
-  <li><a href="#翻译进度" id="toc-翻译进度" class="nav-link" data-scroll-target="#翻译进度">翻译进度</a></li>
-  <li><a href="#版权声明" id="toc-版权声明" class="nav-link" data-scroll-target="#版权声明">版权声明</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">15.1</span> Introduction</a></li>
+  <li><a href="#random-numbers" id="toc-random-numbers" class="nav-link" data-scroll-target="#random-numbers"><span class="header-section-number">15.2</span> Random numbers</a></li>
+  <li><a href="#the-bootstrap-method" id="toc-the-bootstrap-method" class="nav-link" data-scroll-target="#the-bootstrap-method"><span class="header-section-number">15.3</span> The bootstrap method</a></li>
+  <li><a href="#permutation-tests" id="toc-permutation-tests" class="nav-link" data-scroll-target="#permutation-tests"><span class="header-section-number">15.4</span> Permutation tests</a></li>
+  <li><a href="#generating-discrete-random-variables" id="toc-generating-discrete-random-variables" class="nav-link" data-scroll-target="#generating-discrete-random-variables"><span class="header-section-number">15.5</span> Generating discrete random variables</a></li>
+  <li><a href="#generating-continuous-random-variables" id="toc-generating-continuous-random-variables" class="nav-link" data-scroll-target="#generating-continuous-random-variables"><span class="header-section-number">15.6</span> Generating continuous random variables</a></li>
+  <li><a href="#determining-the-number-of-simulation-runs-in-a-monte-carlo-study" id="toc-determining-the-number-of-simulation-runs-in-a-monte-carlo-study" class="nav-link" data-scroll-target="#determining-the-number-of-simulation-runs-in-a-monte-carlo-study"><span class="header-section-number">15.7</span> Determining the number of simulation runs in a Monte Carlo study</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_15/15.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Introduction to Probability and Statistics for Engineers and Scientists（中文版）</h1>
+<h1 class="title"><span id="sec-15" class="quarto-section-identifier"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Simulation, bootstrap statistical methods, and permutation tests</span></span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">作者</div>
-    <div class="quarto-title-meta-contents">
-             <p>王伟（17哥） </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">发布日期</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">2024-04-20</p>
-    </div>
-  </div>
   
     
   </div>
@@ -382,31 +336,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-
-<section id="欢迎阅读" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="欢迎阅读">欢迎阅读</h2><p><img src="cover.png" title="Introduction to Probability and Statistics for Engineers and Scientists（中文版）" class="quarto-cover-image img-fluid"></p>
-<p>Introduction to Probability and Statistics for Engineers and Scientists (<em>Sixth Edition</em>) 是一本为工程师和科学家而作的有关概率论和数理统计方面的书籍。</p>
-<p>本书的第六版继续展示了如何应用概率论来洞察现实生活中的统计问题和情况。与之前的版本一样，本书精心设计的概率论相关的内容将真实现象的概率模型和其统计程序关联起来，以便读者能够更直观的理解实践工程师和科学家最常用的统计程序和策略。</p>
-<p>本书是为工程学、计算机科学、数学、统计学和自然科学专业的学生编写的统计学和概率统计入门课程。当然，科学家、工程师和其他专业人员也可以从本书中找到灵感。</p>
+<section id="introduction" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">15.1</span> Introduction</h2>
 </section>
-<section id="翻译进度" class="level2">
-<h2 class="anchored" data-anchor-id="翻译进度">翻译进度</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">1/16</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="random-numbers" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="random-numbers"><span class="header-section-number">15.2</span> Random numbers</h2>
 </section>
-<section id="版权声明" class="level2">
-<h2 class="anchored" data-anchor-id="版权声明">版权声明</h2>
-<p>本翻译稿是笔者在阅读原书过程中的笔记，采用“保持署名—非商用”创意共享 4.0 许可证。只要保持署名和非商用，您可以自由地阅读、分享本书。</p>
-<p>您可以：</p>
-<ul>
-<li>下载、保存以及打印本翻译稿</li>
-<li>网络链接、转载本翻译稿的部分或者全部内容，但是必须在明显处提供读者访问本翻译稿发布网站的链接</li>
-</ul>
-<p><strong>您不可以：</strong></p>
-<ul>
-<li>以任何形式出售本翻译稿的电子版或者打印版</li>
-<li>擅自印刷、出版本翻译稿</li>
-<li>以纸媒出版为目的，改写、改编以及摘抄本翻译稿的内容</li>
-</ul>
+<section id="the-bootstrap-method" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="the-bootstrap-method"><span class="header-section-number">15.3</span> The bootstrap method</h2>
+</section>
+<section id="permutation-tests" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="permutation-tests"><span class="header-section-number">15.4</span> Permutation tests</h2>
+</section>
+<section id="generating-discrete-random-variables" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="generating-discrete-random-variables"><span class="header-section-number">15.5</span> Generating discrete random variables</h2>
+</section>
+<section id="generating-continuous-random-variables" class="level2" data-number="15.6">
+<h2 data-number="15.6" class="anchored" data-anchor-id="generating-continuous-random-variables"><span class="header-section-number">15.6</span> Generating continuous random variables</h2>
+</section>
+<section id="determining-the-number-of-simulation-runs-in-a-monte-carlo-study" class="level2" data-number="15.7">
+<h2 data-number="15.7" class="anchored" data-anchor-id="determining-the-number-of-simulation-runs-in-a-monte-carlo-study"><span class="header-section-number">15.7</span> Determining the number of simulation runs in a Monte Carlo study</h2>
+</section>
+<section id="problems" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
 
 
 </section>
@@ -825,10 +777,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="../chapter_14/14.html" class="pagination-link" aria-label="Life testing">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Life testing</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./preface_17.html" class="pagination-link" aria-label="译者序">
-        <span class="nav-page-text">译者序</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapter_16/16.html" class="pagination-link" aria-label="Machine learning and big data">
+        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Machine learning and big data</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -840,7 +795,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
 <p>Copyright Wang Wei. All Rights Reserved.</p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_15/15.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
