@@ -70,8 +70,38 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 序言">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
@@ -299,7 +329,15 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本书的组织结构和内容范围" id="toc-本书的组织结构和内容范围" class="nav-link active" data-scroll-target="#本书的组织结构和内容范围">本书的组织结构和内容范围</a></li>
+  <li><a href="#补充材料" id="toc-补充材料" class="nav-link" data-scroll-target="#补充材料">补充材料</a></li>
+  <li><a href="#致谢" id="toc-致谢" class="nav-link" data-scroll-target="#致谢">致谢</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/preface.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -323,8 +361,50 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>本书的第六版继续展示了如何应用概率论来洞察现实生活中的统计问题。与之前的版本一样，本书精心设计的概率论相关的内容将真实现象的概率模型和其统计程序关联起来，以便读者能够更直观的理解实践工程师和科学家最常用的统计程序和策略。</p>
+<p>本书是为工程学、计算机科学、数学、统计学和自然科学专业的学生编写的统计学和概率统计入门课程。因此，我们假定读者具备一定的微积分知识。</p>
+<section id="本书的组织结构和内容范围" class="level2">
+<h2 class="anchored" data-anchor-id="本书的组织结构和内容范围">本书的组织结构和内容范围</h2>
+<p><a href="chapter_1/1.html" class="quarto-xref"><span>1&nbsp; 统计学简介</span></a> 对 <strong>统计学</strong> 进行了简要介绍，介绍了 <strong>统计学</strong> 的两大分支：<strong>描述统计</strong>、<strong>推论统计</strong>，然后介绍了 <strong>统计学</strong> 的一小段历史和为当今统计学的发展奠定基础的先驱人物。</p>
+<p><a href="chapter_2/2.html" class="quarto-xref"><span>2&nbsp; Descriptive statistics</span></a> 的主要内容是 <strong>描述统计</strong>。本章介绍了描述数据集的图表，以及用于总结数据集某些关键属性的统计量（<em>quantities</em>）。</p>
+<p><a href="chapter_3/3.html" class="quarto-xref"><span>3&nbsp; Elements of probability</span></a> 的内容主要是概率实验，事件概率的基本概念，概率的相关公理。我们必须了解数据的来源，以从数据中得出结论。例如，我们通常假设，数据是从某个群体中抽取的 “随机样本”。为了准确理解这样的假设意味着什么，也为了准确理解将样本数据的属性与总体的属性联系起来会产生什么结果，我们有必要了解一些概率知识。</p>
+<p><a href="chapter_4/4.html" class="quarto-xref"><span>4&nbsp; Random variables and expectation</span></a> 将继续研究概率，本章会进一步介绍随机变量（<em>random variables</em>）和期望（<em>expectation</em>）等重要概念。</p>
+<p><a href="chapter_5/5.html" class="quarto-xref"><span>5&nbsp; Special random variables</span></a> 会介绍应用中经常出现的一些特殊类型的随机变量，包括：二项分布、泊松分布、超几何分布、正态分布、均匀分布、伽马分布、卡方分布、<span class="math inline">\(t\)</span> 分布和 <span class="math inline">\(F\)</span> 分布……</p>
+<p><a href="chapter_6/6.html" class="quarto-xref"><span>6&nbsp; Distributions of sampling statistics</span></a> 会研究样本均值（<em>mean</em>）和样本方差（<em>variance</em>）等抽样统计数据的概率分布。本章将介绍如何使用显著概率理论结果（中心极限定理）来近似样本均值的概率分布。此外，在某些重要的特殊场景下，当抽样的数据来自符合正态分布的总体时，本章也给出了样本均值和样本方差的联合概率分布。</p>
+<p><a href="chapter_7/7.html" class="quarto-xref"><span>7&nbsp; Parameter estimation</span></a> 介绍了如何使用数据来估计感兴趣的参数。例如，科学家可能想要确定受到酸雨影响的中西部湖泊的比例。本章会研究两种参数估计方法。第一种估计方法用一个数字来估计感兴趣的统计量（例如，中西部湖泊中有 47% 的湖泊受到了酸雨的影响）。第二种则是以一个数值区间的形式来估计总体参数的范围（例如，中西部湖泊中有 45% ~ 49% 的湖泊受到了酸雨的影响）。第二种估计方法还告诉我们对其估计结果的 “置信水平”（<em>level of confidence</em>）。例如，尽管我们并不能肯定 47% 就是受影响的湖泊的确切比例，但我们很可能有 95% 的信心认为实际受影响的湖泊比例在 45% ~ 49% 之间。</p>
+<p><a href="chapter_8/8.html" class="quarto-xref"><span>8&nbsp; Hypothesis testing</span></a> 介绍了统计假设检验这一重要内容，该部分关注的是利用数据来检验特定假设的合理性。例如，假设检验可能会拒绝 “中西部受酸雨影响的湖泊少于 44%” 这样的假设。本章引入了 <span class="math inline">\(p\)</span> 值的概念来衡量在观察到数据后假设的合理性程度。本章还会介绍关于一个和两个正态总体参数的各种假设检验方法，以及关于伯努利分布和泊松分布的参数的假设检验。</p>
+<p><a href="chapter_9/9.html" class="quarto-xref"><span>9&nbsp; Regression</span></a> 会涉及 <strong>回归</strong>（<em>regression</em>） 这个重要的课题。简单线性回归（包括平均数回归、残差分析、加权最小二乘法等）和多元线性回归的内容都将在本章中进行介绍。</p>
+<p><a href="chapter_10/10.html" class="quarto-xref"><span>10&nbsp; Analysis of variance</span></a> 介绍了方差分析。本章具体介绍了一维方差分析（<em>one-way analysis of variance</em>）和二维方差分析（<em>two-way analysis of variance</em>）。</p>
+<p><a href="chapter_11/11.html" class="quarto-xref"><span>11&nbsp; Goodness of fit tests and categorical data analysis</span></a> 关注的是拟合优度检验（<em>goodness of fit tests</em>）。拟合优度检验可以用来检验所提出的模型是否与观察到的数据一致。在本章中，我们介绍了经典的卡方拟合优度检验（<em>Chi-squared goodness of fit test</em>），并将其应用于检验列联表（<em>contingency tables</em>）中变量的独立性。本章的最后一节介绍了可用于检验数据是否来自特定连续概率分布的 Kolmogorov-Smirnov 检验方法。</p>
+<p><a href="chapter_12/12.html" class="quarto-xref"><span>12&nbsp; Nonparametric hypothesis tests</span></a> 涉及到非参数假设检验，当我们无法假设潜在的数据分布具有某种特定的参数形式（如正态分布）时，可以使用非参数假设检验。</p>
+<p><a href="chapter_13/13.html" class="quarto-xref"><span>13&nbsp; Quality control</span></a> 主要考虑质量控制（<em>quality control</em>）这一主题。质量控制是制造和生产过程中的一项关键统计技术。本章会介绍多种控制图，不仅包括 Shewhart 控制图，还包括基于 <strong>移动平均</strong>（<em>Moving Averages</em>） 和 <strong>累积和</strong>（<em>Cumulative Sums</em>）的更复杂的控制图。</p>
+<p><a href="chapter_14/14.html" class="quarto-xref"><span>14&nbsp; Life testing</span></a> 介绍了与寿命测试相关的问题。在寿命测试中，起关键作用的不是正态分布，而是指数分布。</p>
+<p><a href="chapter_15/15.html" class="quarto-xref"><span>15&nbsp; Simulation, bootstrap statistical methods, and permutation tests</span></a> 介绍了 bootstrap 统计方法和排列检验（<em>permutation tests</em>）的统计推断技术。本章首先介绍了如何通过模拟（<em>simulation</em>）获得概率，然后介绍了如何在这些统计推断方法中使用模拟。</p>
+<p><a href="chapter_16/16.html" class="quarto-xref"><span>16&nbsp; Machine learning and big data</span></a> 是本书第 6 版中新增的内容，本章介绍了机器学习和大数据的相关技术。当拥有较大的数据量时，我们可以使用机器学习和大数据技术在无需假设任何特定概率模型下来估计概率。例如，我们想要估计一个由向量 <span class="math inline">\((x_1, ..., x_n)\)</span> 表示的实验成功的概率。当该特征向量是对自然属性（<em>qualitative in nature</em>）（例如，动物的分类）的描述时，可以使用朴素贝叶斯方法和最近邻规则等技术。当特征向量的是量化数据（<em>quantitative</em>）（例如身高、体重）时，我们还研究了逻辑回归模型。</p>
+<p>本书的第六版不但新增了 <a href="chapter_16/16.html" class="quarto-xref"><span>16&nbsp; Machine learning and big data</span></a> ，最重要的变化是引入了统计软件 R。我们会在书中介绍 R 的使用方法，因此没有 R 使用经验的读者也无需担心。除此之外，我们还新增了 <a href="chapter_2/2.html#sec-2_7" class="quarto-xref"><span>2.7 The Lorenz curve and Gini index</span></a> 来讨论 <strong>洛伦兹曲线</strong>（<em>Lorenz Curves</em>）和 <strong>基尼指数</strong>（<em>Gini Index</em>）。第六版还增加了很多新的示例和问题。为了进一步提高本书文本表述和论证的清晰度，该版本对书中很多内容作了些许调整。</p>
+</section>
+<section id="补充材料" class="level2">
+<h2 class="anchored" data-anchor-id="补充材料">补充材料</h2>
+<p>可以从 <a href="https://educate.elsevier.com/book/details/9780128243466">https://educate.elsevier.com/book/details/9780128243466</a> 处获取教师解答手册。</p>
+</section>
+<section id="致谢" class="level2">
+<h2 class="anchored" data-anchor-id="致谢">致谢</h2>
+<p>感谢对第六版的内容提出有益意见的人们：</p>
+<ul>
+<li>Gideon Weiss, University of Haifa</li>
+<li>N. Balakrishnan, McMaster University</li>
+<li>Mark Brown, Columbia University</li>
+<li>Rohitha Goonatilake, Texas A and M University</li>
+<li>Steve From, University of Nebraska at Omaha</li>
+<li>Subhash Kochar, Portland State University</li>
+<li>Sumona Mondal, Mathematics, Clarkson University</li>
+<li>Kamel Belbahri, Mathematics and Statistics, Université de Montréal</li>
+<li>Anil Aswani, Industrial Engineering and Operations Research, University of California, Berkeley</li>
+</ul>
+<p>对于希望保持匿名的所有审稿人，也在此表示感谢。</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -758,7 +838,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
 <p>Copyright Wang Wei. All Rights Reserved.</p>
-<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/preface.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/preface.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
