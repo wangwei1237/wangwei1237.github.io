@@ -204,7 +204,7 @@
 <p>每次说到这个的时候，大家普遍反馈：道理是这个道理，理论我们也都懂呀，但是就是做不到呀，怎么办呢？</p>
 <p>“鉴于往事，有资于治道”。</p>
 <p>为了能够让大家有比较真实的体验，我准备将自己工作中遇到的类似的问题进行梳理。在梳理的过程中，由于各种原因，我无法将原始问题涉及到的内容原样呈现，我需要对原始的问题进行一定的抽象。但是，对问题抽象并不会对问题的原貌和本质进行修改，并力求做到尽量保证问题的原样呈现。</p>
-<h2 id="1-为什么容器不能暴露服务的uri呢？">1. 为什么容器不能暴露服务的URI呢？</h2>
+<h2 id="1-为什么容器不能暴露服务的URI呢？">1. 为什么容器不能暴露服务的URI呢？</h2>
 <h4 id="问题背景">问题背景</h4>
 <p>我们的 CI/CD 服务类似 <a target="_blank" rel="noopener" href="https://docs.github.com/en/actions">GitHub Actions</a>，当然和 GitHub Actions 的差异非常大（例如整个任务的编排机制、容器的底层机制、容器的托管机制……），但是使用起来是类似的。</p>
 <p><img src="/2021/09/16/Define-The-Problem-Rightly-Before-Solve-It/actions-workflow.svg" alt></p>
@@ -213,7 +213,7 @@
 <p>有一天，我们团队需要一个功能：<strong>开放容器中部署的 HTTP 服务，以便其他的容器可以通过 URL 来访问这个 HTTP 服务，因为这样的话就可以避免这个 HTTP 服务的多次部署（部署一次，然后供其他的多个任务来使用），从而提升效率。</strong></p>
 <p>我安排了一个同事来解决这个问题。同事告诉我说，<strong>从平台的配置上看，是有暴露容器PORT的功能的，但是这个功能目前没有实现，所以需要推动平台方实现这个功能。</strong></p>
 <h4 id="问题的变化">问题的变化</h4>
-<p>不知道大家发现没有，到目前为止，这个案例中的问题已经发生了变化。问题从<code>在其他容器中访问另外容器中的 HTTP 服务</code> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>  </mtext><mo>⟹</mo><mtext>  </mtext></mrow><annotation encoding="application/x-tex">\implies</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.549em;vertical-align:-0.024em;"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span></span></span> <code>CI/CD 平台方需要提供暴露容器 PORT 的能力</code>。</p>
+<p>不知道大家发现没有，到目前为止，这个案例中的问题已经发生了变化。问题从<code>在其他容器中访问另外容器中的 HTTP 服务</code> $\implies$ <code>CI/CD 平台方需要提供暴露容器 PORT 的能力</code>。</p>
 <p>这个问题的转化看起来是多么的自然而又正常。接下来，为了实现我们的目标，我们和平台方组织了一个技术讨论会，专门讨论平台方何时可以实现<strong>暴露容器 PORT</strong>的功能。</p>
 <p>经过和平台方的讨论，因为涉及到端口分配、端口冲突等端口管理问题，<strong>暴露容器 PORT</strong>这个功能短时间内无法实现。</p>
 <p>讨论之后，我们发现，我们需要的功能看起来是无法实现了。不是吗？</p>
@@ -223,7 +223,7 @@
 <p>这时，我的同事说，之前用 <code>ifconfig</code> 命令拿到的 IP 和容器中启动的 HTTP 服务的 PORT 测试过，是没办法访问容器内的服务的。</p>
 <p>到这里，我想我大概知道问题究竟出在哪里了。<code>ifconfig</code> 获取的是宿主机的网卡 IP 地址，而对于服务器而言，一般会有多个网卡，因此该命令会得到多个 IP 地址。而对于容器的 IP 地址，我们需要使用特定的指令才能够拿到正确的容器 IP。</p>
 <p>最后，我们按照平台方的技术同学提供的方法完美的实现了我们所要的功能。</p>
-<h4 id="从这个案例中-发现了什么？">从这个案例中，发现了什么？</h4>
+<h4 id="从这个案例中，发现了什么？">从这个案例中，发现了什么？</h4>
 <ul>
 <li><code>错把假设当证据</code>。在定位 BUG，尤其是一些比较复杂的 BUG，往往需要提出各种假设，并通过逻辑推理、寻找数据证据对其进行检验，然后再根据检验的结果提出新的假设，再对这些新假设逐一验证，不断迭代这个过程以逐步靠近 BUG 的真相。但是，提出假设时，可能已经忘了那仅仅是个假设而已，便在这个假设的基础上展开分析，最后得到一个所谓的“结论”。我的同事一开始利用 <code>ifconfig</code> 获取到的 IP 无法访问到容器内部的 HTTP 服务就得到了错误的结论，而这个结论实际上是源自使用了错误命令的一个假设而已。</li>
 <li><code>给专业的人提供解决方案</code>。在一个错误的假设上，我们给平台方提出了一个解决方案。很多时候，这种解决方案可能会实现，但是更多的时候，这种解决方案大概率没法实现。但是，我们忽略了，解决方案不是问题，只是我们以为是个问题而已。这在平台方帮助我们解决真正的问题时会带来很大的干扰。我们不应该<strong>给专业的人提供解决方案</strong>，而应该<strong>给出原始问题描述，向专业人士寻求解决方案</strong>。</li>
@@ -310,8 +310,8 @@
 <li>给专业的人提供解决方案</li>
 </ul>
 </div>
-<h2 id="2-nginx-为什么会自动抢占某个被释放的端口？">2. Nginx 为什么会自动抢占某个被释放的端口？</h2>
-<h4 id="问题背景">问题背景</h4>
+<h2 id="2-Nginx-为什么会自动抢占某个被释放的端口？">2. Nginx 为什么会自动抢占某个被释放的端口？</h2>
+<h4 id="问题背景-2">问题背景</h4>
 <p>我个人对 Nginx 比较了解，在工作中也解决了很多业务中遇到的 Nginx 的线上问题。</p>
 <p>有一天，一个同事兴致冲冲的来找我，说：</p>
 <blockquote>
@@ -330,7 +330,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 5315#0: exiting</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 5313#0: gracefully shutting down</span><br><span class="line">2021/09/20 10:41:34 [notice] 5313#0: exiting</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 20 (SIGCHLD) received from 5315</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: cache loader process 5315 exited with code 0</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: cache manager process 5314 exited with code 0</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 20 (SIGCHLD) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received from 5321</span><br><span class="line">2021/09/20 10:41:34 [notice] 5313#0: exit</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received from 5313</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received from 5313</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 20 (SIGCHLD) received from 5313</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: worker process 5313 exited with code 0</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br><span class="line">2021/09/20 10:41:34 [notice] 4943#0: signal 23 (SIGIO) received</span><br></pre></td></tr></table></figure>
 <p>直到这个时候我们才发现，原来同事说的有趣的特性是 Nginx 不断的 reload 进程导致的。在 Nginx reload 时，会加载最新的配置，然后按照最新的配置启动新的 worker 进程并处理新的请求。于是，就发生了同事所说的 Nginx 的有趣的特性。</p>
 <h4 id="回归问题的本质">回归问题的本质</h4>
-<p>于是，经过排查，我们把一个假设转变成了假设背后的问题：<code>Nginx 为什么会自动抢占被释放的端口？</code> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>  </mtext><mo>⟹</mo><mtext>  </mtext></mrow><annotation encoding="application/x-tex">\implies</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.549em;vertical-align:-0.024em;"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span></span></span> <code>Nginx 为什么会不停的 reload？</code>。</p>
+<p>于是，经过排查，我们把一个假设转变成了假设背后的问题：<code>Nginx 为什么会自动抢占被释放的端口？</code> $\implies$ <code>Nginx 为什么会不停的 reload？</code>。</p>
 <p>因为找不到编译这个 Nginx 的源代码了，所以没办法确定是否是在源码层面进行了修改。</p>
 <p>为了查清这个问题：</p>
 <ul>
