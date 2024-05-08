@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 3&nbsp; Elements of probability</title>
+<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 3&nbsp; 概率论基础</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,8 +70,38 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 3&nbsp; Elements of probability">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 3&nbsp; 概率论基础">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
@@ -138,7 +168,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_3/3.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Elements of probability</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_3/3.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">概率论基础</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -183,7 +213,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_3/3.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Elements of probability</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">概率论基础</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -303,14 +333,18 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">3.1</span> Introduction</a></li>
-  <li><a href="#sample-space-and-events" id="toc-sample-space-and-events" class="nav-link" data-scroll-target="#sample-space-and-events"><span class="header-section-number">3.2</span> Sample space and events</a></li>
-  <li><a href="#venn-diagrams-and-the-algebra-of-events" id="toc-venn-diagrams-and-the-algebra-of-events" class="nav-link" data-scroll-target="#venn-diagrams-and-the-algebra-of-events"><span class="header-section-number">3.3</span> Venn diagrams and the algebra of events</a></li>
-  <li><a href="#axioms-of-probability" id="toc-axioms-of-probability" class="nav-link" data-scroll-target="#axioms-of-probability"><span class="header-section-number">3.4</span> Axioms of probability</a></li>
-  <li><a href="#sample-spaces-having-equally-likely-outcomes" id="toc-sample-spaces-having-equally-likely-outcomes" class="nav-link" data-scroll-target="#sample-spaces-having-equally-likely-outcomes"><span class="header-section-number">3.5</span> Sample spaces having equally likely outcomes</a></li>
-  <li><a href="#conditional-probability" id="toc-conditional-probability" class="nav-link" data-scroll-target="#conditional-probability"><span class="header-section-number">3.6</span> Conditional probability</a></li>
-  <li><a href="#bayes-formula" id="toc-bayes-formula" class="nav-link" data-scroll-target="#bayes-formula"><span class="header-section-number">3.7</span> Bayes’ formula</a></li>
-  <li><a href="#independent-events" id="toc-independent-events" class="nav-link" data-scroll-target="#independent-events"><span class="header-section-number">3.8</span> Independent events</a></li>
+  <li><a href="#sec-3_1" id="toc-sec-3_1" class="nav-link active" data-scroll-target="#sec-3_1"><span class="header-section-number">3.1</span> 引言</a></li>
+  <li><a href="#sec-3_2" id="toc-sec-3_2" class="nav-link" data-scroll-target="#sec-3_2"><span class="header-section-number">3.2</span> 样本空间和事件</a></li>
+  <li><a href="#sec-3_3" id="toc-sec-3_3" class="nav-link" data-scroll-target="#sec-3_3"><span class="header-section-number">3.3</span> 事件的代数运算和韦恩图表示</a></li>
+  <li><a href="#sec-3_4" id="toc-sec-3_4" class="nav-link" data-scroll-target="#sec-3_4"><span class="header-section-number">3.4</span> 概率论公理</a></li>
+  <li><a href="#sec-3_5" id="toc-sec-3_5" class="nav-link" data-scroll-target="#sec-3_5"><span class="header-section-number">3.5</span> 等概率样本空间</a>
+  <ul class="collapse">
+  <li><a href="#计数的基本原理" id="toc-计数的基本原理" class="nav-link" data-scroll-target="#计数的基本原理"><span class="header-section-number">3.5.1</span> 计数的基本原理</a></li>
+  <li><a href="#组合的符号和术语" id="toc-组合的符号和术语" class="nav-link" data-scroll-target="#组合的符号和术语"><span class="header-section-number">3.5.2</span> 组合的符号和术语</a></li>
+  </ul></li>
+  <li><a href="#sec-3_6" id="toc-sec-3_6" class="nav-link" data-scroll-target="#sec-3_6"><span class="header-section-number">3.6</span> Conditional probability</a></li>
+  <li><a href="#sec-3_7" id="toc-sec-3_7" class="nav-link" data-scroll-target="#sec-3_7"><span class="header-section-number">3.7</span> Bayes’ formula</a></li>
+  <li><a href="#sec-3_8" id="toc-sec-3_8" class="nav-link" data-scroll-target="#sec-3_8"><span class="header-section-number">3.8</span> Independent events</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_3/3.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
@@ -320,7 +354,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-3" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Elements of probability</span></span></h1>
+<h1 class="title"><span id="sec-3" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">概率论基础</span></span></h1>
 </div>
 
 
@@ -337,29 +371,411 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">3.1</span> Introduction</h2>
+<section id="sec-3_1" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-3_1"><span class="header-section-number">3.1</span> 引言</h2>
+<p>对于一个实验中特定 <strong>事件</strong>（<em>event</em>）发生的概率（<em>probability</em>）而言，<strong>概率</strong> 这个概念具有多种含义或解释。例如，如果一位地质学家说 “某地区有 60% 的可能性存在石油”，对于地质学家的这一说法，我们可能都会有一些先入为主的观点。事实上，我们中的大多数人可能会用以下两种方式中的一种来解释地质学家的这一说法：</p>
+<ol type="1">
+<li><p>地质学家认为，从长远来看，在外部环境与所考虑地区非常相似的地区中，有 60% 的地区存在石油。</p></li>
+<li><p>地质学家认为该地区含有石油的可能性大于不含有石油的可能性，而且实际上，60% 是地质学家对该地区含有石油这一假设的信心度量。</p></li>
+</ol>
+<p>对事件概率（<em>the probability of an event </em>）的上述两种解释分别是：<strong>频率解释</strong>（<em>frequency interpretation</em>）和 <strong>主观解释</strong>（<em>subjective interpretation</em>）。</p>
+<ul>
+<li>在 <strong>频率解释</strong> 中，我们把实验中一个给定结果的概率看作是该结果的一个 “属性”（<em>property</em>）。我们认为，可以通过不断的、重复实验来确定结果出现的”概率”——在实验中，观察到的、该结果出现的比例就是其概率。普遍情况下，科学家眼中的概率就是 <strong>频率解释</strong>。</li>
+<li>在 <strong>主观解释</strong> 中，我们并不把概率看作是给定实验结果的“属性”，而是看作引用该概率的人对结果发生的可能性的信念。因此，在 <strong>主观解释</strong> 中，概率成了一个主观概念，此时，概率除了表达个人的信心程度外并没有其他意义。哲学家和某些经济决策者往往对 <strong>主观解释</strong> 青睐有加。</li>
+</ul>
+<p>然而，无论给予概率哪种解释，人们一致认为在这两种情况下概率的数学理论都是相同的。例如，如果你认为明天下雨的概率是 0.3，明天多云但不下雨的概率是 0.2，那么你会认为明天多云或下雨的概率就是 0.5。并且 0.5 的结果与我们对概率的主观解释无关。</p>
+<p>在本章中，我们会先研究如下的概念：<strong>样本空间</strong>（<em>sample space</em>）、实验中的 <strong>事件</strong>（<em>events</em>），然后介绍概率论中公认的规则（<em>rules</em>）和公理（<em>axioms</em>）。</p>
 </section>
-<section id="sample-space-and-events" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="sample-space-and-events"><span class="header-section-number">3.2</span> Sample space and events</h2>
+<section id="sec-3_2" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-3_2"><span class="header-section-number">3.2</span> 样本空间和事件</h2>
+<p>让我们思考这样的一个实验，在该实验中，我们无法提前确切的预测实验结果。虽然我们无法提前知晓实验结果，但我们可以假定该实验的、所有可能的、结果集合是已知的。所有可能的实验结果的集合，我们称之为实验的 <strong>样本空间</strong>（<em>sample space</em>），并用 <span class="math inline">\(S\)</span> 来表示 <strong>样本空间</strong>。</p>
+<p><strong>样本空间</strong> 的例子如下所示：</p>
+<div id="exm-3_2_1" class="theorem example">
+<p><span class="theorem-title"><strong>例子 3.1</strong></span> 对于确定新生儿性别的实验，<span class="math inline">\(S=\{g,\ b\}\)</span>，其中，<span class="math inline">\(g\)</span> 表示小孩为女孩，<span class="math inline">\(b\)</span> 表示小孩为男孩。</p>
+</div>
+<div id="exm-3_2_2" class="theorem example">
+<p><span class="theorem-title"><strong>例子 3.2</strong></span> 对于确定已编号的 7 匹马（编号为 1~7 号）之间的赛马实验，<span class="math inline">\(S=\{(1, 2, 3, 4, 5, 6, 7)的所有排序\}\)</span>。(2, 3, 1, 6, 5, 4, 7) 的实验结果意味着 2 号马排在第一名，3 号马排在第二名，然后是 1 号马，依此类推……</p>
+</div>
+<div id="exm-3_2_3" class="theorem example">
+<p><span class="theorem-title"><strong>例子 3.3</strong></span> 假如我们想确定患者的最小有效用药剂量，则这个实验的一个可能的样本空间就是让 <span class="math inline">\(S\)</span> 包含所有的正数，即 <span class="math inline">\(S=(0,\ \infty)\)</span>。如果用药剂量为 <span class="math inline">\(x\)</span> 时开始对患者有效，但是任何低于 <span class="math inline">\(x\)</span> 的用药剂量均对患者无效，那么此次试验的结果就是 <span class="math inline">\(x\)</span>。</p>
+</div>
+<p><strong>样本空间</strong> 的任何子集 <span class="math inline">\(E\)</span> 称之为一个 <strong>事件</strong>（<em>event</em>）。也就是说，一个 <strong>事件</strong> 是由实验的可能结果组成的集合。如果实验的结果存在于 <span class="math inline">\(E\)</span> 中，那么我们就说， <span class="math inline">\(E\)</span> 已经发生。如下是 <strong>事件</strong> 的一些例子：</p>
+<ul>
+<li>在 <a href="#exm-3_2_1" class="quarto-xref">例子&nbsp;<span>3.1</span></a> 中，如果 <span class="math inline">\(E = \{g\}\)</span>，那么 <span class="math inline">\(E\)</span> 表示的事件为：新生儿为女孩。类似的，如果 <span class="math inline">\(F = \{b\}\)</span>，那么 <span class="math inline">\(F\)</span> 表示的事件为：新生儿为男孩。</li>
+<li>在 <a href="#exm-3_2_2" class="quarto-xref">例子&nbsp;<span>3.2</span></a> 中，如果 <span class="math inline">\(E=\{以 3 为首的所有排序\}\)</span>，则 <span class="math inline">\(E\)</span> 表示的事件为：3 号马赢得比赛。</li>
+</ul>
+<p>对于样本空间 <span class="math inline">\(S\)</span> 中的任意两个事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span>，我们定义一个新事件 <span class="math inline">\(E \cup F\)</span>，并称其为事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 的并集。<span class="math inline">\(E \cup F\)</span> 由所有属于 <span class="math inline">\(E\)</span> 或 <span class="math inline">\(F\)</span> 或同时属于 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 的结果组成。也就是说，如果 事件 <span class="math inline">\(E\)</span> 或 事件 <span class="math inline">\(F\)</span> 发生，那么事件 <span class="math inline">\(E \cup F\)</span> 就会发生。例如，在 <a href="#exm-3_2_1" class="quarto-xref">例子&nbsp;<span>3.1</span></a> 中，如果 <span class="math inline">\(E = \{g\}\)</span> 且 <span class="math inline">\(F = \{b\}\)</span>，那么 <span class="math inline">\(E \cup F = \{g, b\}\)</span>。也就是说，<span class="math inline">\(E \cup F\)</span> 是整个样本空间 <span class="math inline">\(S\)</span>。在 <a href="#exm-3_2_2" class="quarto-xref">例子&nbsp;<span>3.2</span></a> 中，如果 <span class="math inline">\(E = \{所有以 6 为首的比赛结果\}\)</span> 是 6 号马赢得比赛的事件，而 <span class="math inline">\(F = \{所有第二名是 6 的比赛结果\}\)</span> 是 6 号马获得第二名的事件，那么 <span class="math inline">\(E \cup F\)</span> 就是6 号马获得前两名的事件。</p>
+<p>类似地，对于样本空间 <span class="math inline">\(S\)</span> 中的任意两个事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span>，我们也可以定义一个新事件 <span class="math inline">\(EF\)</span>（有时也记作 <span class="math inline">\(E \cap F\)</span>），并称之为事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 的交集。<span class="math inline">\(E \cap F\)</span> 由属于 <span class="math inline">\(E\)</span> 并且同时属于 <span class="math inline">\(F\)</span> 的所有结果组成。也就是说，只有当事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 都发生时，事件 <span class="math inline">\(EF\)</span> 才会发生。例如，在 <a href="#exm-3_2_3" class="quarto-xref">例子&nbsp;<span>3.3</span></a> 中，如果 <span class="math inline">\(E = (0, 5)\)</span> 是药品所需剂量小于 5 的事件，而 <span class="math inline">\(F = (2, 10)\)</span> 是所需剂量在 2~10 之间的事件，那么 <span class="math inline">\(EF = (2, 5)\)</span> 就是所需剂量在 2~5 之间的事件。在 <a href="#exm-3_2_2" class="quarto-xref">例子&nbsp;<span>3.2</span></a> 中，如果 <span class="math inline">\(E = \{所有以 5 结尾的结果\}\)</span> 是5 号马获得最后一名的事件，而 <span class="math inline">\(F = \{所有以 5 为首的结果\}\)</span> 是 5 号马获得第一名的事件，那么事件 <span class="math inline">\(EF\)</span> 则不包含任何结果，因此事件 <span class="math inline">\(EF\)</span> 不可能发生。对于不可能发生的事件，我们称其为 <strong>空事件</strong>，并用 <span class="math inline">\(\emptyset\)</span> 表示。因此，<span class="math inline">\(\emptyset\)</span> 指的是不包含任何实验结果的事件。如果 <span class="math inline">\(EF = \emptyset\)</span>，则意味着 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 不能同时发生，此时我们称 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 为 <strong>互斥事件</strong>。</p>
+<p>对于 <span class="math inline">\(\forall E\)</span>，我们定义事件 <span class="math inline">\(E^c\)</span> 为事件 <span class="math inline">\(E\)</span> 的补集。事件 <span class="math inline">\(E^c\)</span> 由样本空间 <span class="math inline">\(S\)</span> 中不属于 <span class="math inline">\(E\)</span> 的所有结果组成。也就是说，当且仅当事件 <span class="math inline">\(E\)</span> 不发生时，<span class="math inline">\(E^c\)</span> 才会发生。在 <a href="#exm-3_2_1" class="quarto-xref">例子&nbsp;<span>3.1</span></a> 中，如果 <span class="math inline">\(E = \{b\}\)</span> 是小孩为男孩的事件，那么 <span class="math inline">\(E^c = \{g\}\)</span> 就是小孩为女孩的事件。需要注意，由于实验必须会产生某种结果，因此 <span class="math inline">\(S^c = \emptyset\)</span>。</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注释
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(E^c=\{\forall F \subset S,\ E \cap F = \emptyset 且 E \cup F = S\}\)</span></p>
+</div>
+</div>
+<p>对于任意两个事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span>，如果事件 <span class="math inline">\(E\)</span> 中的所有结果在事件 <span class="math inline">\(F\)</span> 中都存在，那么我们说事件 <span class="math inline">\(E\)</span> 包含在事件 <span class="math inline">\(F\)</span> 中，并记作 <span class="math inline">\(E \subset F\)</span>。因此，如果 <span class="math inline">\(E \subset F\)</span>，那么事件 <span class="math inline">\(E\)</span> 的发生意味着事件 <span class="math inline">\(F\)</span> 必然发生。如果 <span class="math inline">\(E \subset F\)</span> 且 <span class="math inline">\(F \subset E\)</span>，那么我们说 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 相等（或相同），并记作 <span class="math inline">\(E = F\)</span>。</p>
+<p>我们也可以定义超过两个事件的并集和交集。特别是，事件 <span class="math inline">\(E_1, E_2, ..., E_n\)</span> 的并集，记作 <span class="math inline">\(E_1 \cup E_2 \cup ... \cup E_n\)</span> 或者 <span class="math inline">\(\cup_1^n{E_i}\)</span>。事件 <span class="math inline">\(\cup_1^n{E_i}\)</span> 至少包含一个 <span class="math inline">\(E_i(i = 1, 2, ..., n)\)</span> 中的所有结果。类似地，事件 <span class="math inline">\(E_i(i = 1, 2, ..., n)\)</span>的交集，记作 <span class="math inline">\(E_1E_2...E_n\)</span>，为同时出现在所有事件 <span class="math inline">\(E_i(i = 1, 2, ..., n)\)</span> 中的结果组成的事件。换句话说，当至少有一个事件 <span class="math inline">\(E_i\)</span> 发生时，<span class="math inline">\(E_i\)</span> 的并集就会发生；当所有事件 <span class="math inline">\(E_i\)</span> 都发生时，则 <span class="math inline">\(E_i\)</span> 的交集就会发生。</p>
 </section>
-<section id="venn-diagrams-and-the-algebra-of-events" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="venn-diagrams-and-the-algebra-of-events"><span class="header-section-number">3.3</span> Venn diagrams and the algebra of events</h2>
+<section id="sec-3_3" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="sec-3_3"><span class="header-section-number">3.3</span> 事件的代数运算和韦恩图表示</h2>
+<p>韦恩图（<em>Venn DIagram</em>）是一种用来描述事件之间逻辑关系的、非常有用的图形化表示。用一个矩形表示样本空间 <span class="math inline">\(S\)</span>，而用矩形内的圆表示样本空间中的事件 <span class="math inline">\(E\)</span>, <span class="math inline">\(F\)</span>, <span class="math inline">\(G\)</span>,… 对图中的特定区域进行着色以表示我们感兴趣的事件。例如，在 <a href="#fig-3_1" class="quarto-xref">图&nbsp;<span>3.1</span></a> 所示的三个韦恩图中，着色区域分别表示事件 <span class="math inline">\(E \cup F\)</span>（<span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 的并集），<span class="math inline">\(EF\)</span>（<span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 的交集），以及 <span class="math inline">\(E^c\)</span>（<span class="math inline">\(E\)</span> 的补集）。<a href="#fig-3_2" class="quarto-xref">图&nbsp;<span>3.2</span></a> 所示的韦恩图表示 <span class="math inline">\(E \subset F\)</span>（<span class="math inline">\(E\)</span> 是 <span class="math inline">\(F\)</span> 的子集）。</p>
+<div id="fig-3_1" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-3_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-3_1" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-3_1_a" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-3_1_a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_1_a.png" class="img-fluid figure-img" data-ref-parent="fig-3_1">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-3_1_a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) <span class="math inline">\(E \cup F\)</span>
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-3_1" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-3_1_b" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-3_1_b-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_1_b.png" class="img-fluid figure-img" data-ref-parent="fig-3_1">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-3_1_b-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) <span class="math inline">\(EF\)</span>
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-3_1" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-3_1_c" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-3_1_c-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_1_c.png" class="img-fluid figure-img" data-ref-parent="fig-3_1">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-3_1_c-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) <span class="math inline">\(E^c\)</span>
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3.1: 韦恩图
+</figcaption>
+</figure>
+</div>
+<div id="fig-3_2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-3_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3.2: <span class="math inline">\(E \subset F\)</span> 的韦恩图
+</figcaption>
+</figure>
+</div>
+<p>事件的并集、交集和补集操作类似于代数中的规则，例如：</p>
+<ul>
+<li>交换律：<span class="math inline">\(E \cup F = F \cup E\)</span>，<span class="math inline">\(EF=FE\)</span></li>
+<li>结合律：<span class="math inline">\((E \cup F) \cup G = E \cup (F \cup G)\)</span>，<span class="math inline">\((EF)G=E(FG)\)</span></li>
+<li>分配率：<span class="math inline">\((E \cup F)G = EG \cup FG\)</span>，<span class="math inline">\(E(F \cup G) = (E \cup G)(F \cup G)\)</span></li>
+</ul>
+<p>可以通过证明等式左侧事件中的任何结果也包含在等式右侧的事件中来验证如上的事件操作规则。可以通过韦恩图来证明这如上的规则，例如，可以通过 <a href="#fig-3_3" class="quarto-xref">图&nbsp;<span>3.3</span></a> 中所示的一系列韦恩图来证明分配率。</p>
+<div id="fig-3_3" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-3_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-3_3" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-3_3_a" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-3_3_a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_3_a.png" class="img-fluid figure-img" data-ref-parent="fig-3_3">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-3_3_a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) <span class="math inline">\(EG\)</span>
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-3_3" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-3_3_b" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-3_3_b-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_3_b.png" class="img-fluid figure-img" data-ref-parent="fig-3_3">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-3_3_b-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) <span class="math inline">\(FG\)</span>
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-3_3" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-3_3_c" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-3_3_c-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_3_c.png" class="img-fluid figure-img" data-ref-parent="fig-3_3">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-3_3_c-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) <span class="math inline">\((E \cup F )G\)</span>
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3.3: 利用韦恩图证明分配率： <span class="math inline">\((E \cup F )G = EG \cup FG\)</span>
+</figcaption>
+</figure>
+</div>
+<p>基于事件的并集、交集和补集形成的如下的关系称之为德摩根定律（<em>DeMorgan’s laws</em>）。</p>
+<ul>
+<li><span class="math inline">\((E \cup F)^c = E^cF^c\)</span></li>
+<li><span class="math inline">\((FE)^c = E^c \cup F^c\)</span></li>
+</ul>
 </section>
-<section id="axioms-of-probability" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="axioms-of-probability"><span class="header-section-number">3.4</span> Axioms of probability</h2>
+<section id="sec-3_4" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="sec-3_4"><span class="header-section-number">3.4</span> 概率论公理</h2>
+<p>如果一个实验在完全相同的条件下不断重复，那么对于任何事件 <span class="math inline">\(E\)</span>，随着重复次数的增加，包含与 <span class="math inline">\(E\)</span> 中结果的比例会接近某个常数。例如，如果不断抛一枚硬币，随着抛掷次数的增加，正面​向上的比例将接近某个值。当我们谈到某个事件的概率时，我们通常指的是这种恒定的极限频率（<em>constant limiting frequency</em>）。</p>
+<p>纯从数学观点来看，对于具有样本空间 <span class="math inline">\(S\)</span> 的实验中的每个事件 <span class="math inline">\(E\)</span>，我们都假设存在一个数字 <span class="math inline">\(P (E)\)</span> ，<span class="math inline">\(P(E)\)</span> 满足以下三个公理（<em>axiom</em>）：</p>
+<ul>
+<li><strong>公理1</strong>：<span class="math inline">\(0 \le P(E) \le 1\)</span></li>
+<li><strong>公理2</strong>：<span class="math inline">\(P(S) = 1\)</span></li>
+<li><strong>公理3</strong>：对于任何的互斥事件序列 <span class="math inline">\(E_1\)</span>，<span class="math inline">\(E_2\)</span>，……，<span class="math inline">\(P\bigg(\bigcup_{i=1}^{n}E_i\bigg) = \sum_{i=1}^{n}{P(E_i)}\)</span>，<span class="math inline">\(n = 1,2,...,\infty\)</span></li>
+</ul>
+<p>我们称 <span class="math inline">\(P(E)\)</span> 为事件 <span class="math inline">\(E\)</span> 的概率。</p>
+<p>因此，<strong>公理 1</strong> 表明实验的结果位于 <span class="math inline">\(E\)</span> 中的概率是一个介于 0 和 1 之间的数。<strong>公理 2</strong> 表明实验结果将是样本空间 <span class="math inline">\(S\)</span>（概率为 1） 的一中情况。<strong>公理 3</strong> 表明，对于任何一组互斥事件，至少一个事件发生的概率等于这组事件各自概率的和。</p>
+<p>应该注意的是，如果我们把 <span class="math inline">\(P(E)\)</span> 看作大量重复执行实验时事件 <span class="math inline">\(E\)</span> 的相对频率，那么 <span class="math inline">\(P(E)\)</span> 确实会满足上述公理。例如，位于 <span class="math inline">\(E\)</span> 中的实验结果的比例显然在 0 和 1 之间，而位于 <span class="math inline">\(S\)</span> 中实验结果的比例是 1（因为所有结果都在 <span class="math inline">\(S\)</span> 中）。此外，如果位于 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 中的结果没有交集，那么结果在 <span class="math inline">\(E\)</span> 或 <span class="math inline">\(F\)</span> 中的比例是它们各自频率的和。对于 <strong>公理 3</strong>，例如，假设实验为抛掷一对骰子，同时假设事件 <span class="math inline">\(E\)</span> 为两枚骰子的点数总和是 2、3 或 12，事件 <span class="math inline">\(F\)</span> 为点数总和是 7 或 11。如果 <span class="math inline">\(E\)</span> 发生的概率为 11%，<span class="math inline">\(F\)</span> 发生的概率为 22%，那么有 33% 的结果将是 2、3、12、7 或 11。</p>
+<p>现在，我们将使用这些公理来证明关于概率的两个简单命题（<em>proposition</em>）。首先，<span class="math inline">\(E\)</span> 和 <span class="math inline">\(E^c\)</span> 始终是互斥的，并且由于 <span class="math inline">\(E \cup E^c = S\)</span>，根据 <strong>公理 2</strong> 和 <strong>公理 3</strong> 有：</p>
+<p><span class="math display">\[
+1 = P(S) = P(E \cup E^c) = P(E) + P(E^c)
+\]</span></p>
+<p>根据如上等式，我们有：</p>
+<div id="prp-3_4_1" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3.1</strong></span> <span class="math inline">\(P(E^c) = 1 - P(E)\)</span></p>
+</div>
+<p>换句话说，<a href="#prp-3_4_1" class="quarto-xref">命题&nbsp;<span>3.1</span></a> 表明，一个事件不发生的概率等于 1 减去它发生的概率。例如，如果抛一枚硬币，正面向上的概率是 3/8，那么反面向上的概率必须是 5/8。</p>
+<p>我们将证明的第二个命题给出了两个事件并集的概率与它们各自的概率以及他们的交集的概率之间的关系。</p>
+<div id="prp-3_4_2" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3.2</strong></span> <span class="math inline">\(P(E \cup F) = P(E) + P(F) - P(EF)\)</span></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="证明 @prp-3_4_2">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+证明 <a href="#prp-3_4_2" class="quarto-xref">命题&nbsp;<span>3.2</span></a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#fig-3_4" class="quarto-xref">图&nbsp;<span>3.4</span></a> 所示的韦恩图是证明 <span class="citation" data-cites="pro-3_4_2">[<a href="../references.html#ref-pro-3_4_2" role="doc-biblioref"><strong>pro-3_4_2?</strong></a>]</span> 的最简单的方法。在 <a href="#fig-3_4" class="quarto-xref">图&nbsp;<span>3.4</span></a> 中，区域 I、II、III 是互斥的，因此：</p>
+<p><span class="math display">\[
+\begin{align}
+P(E \cup F) &amp;= P(I) + P(II) + P(III) \\
+P(E) &amp;= P(I) + P(II) \\
+P(F) &amp; = P(II) + P(III) \\
+\therefore P(E \cup F) &amp;= P(E) +P(F) - P(II) \\
+\because P(II) &amp;= P(EF) \\
+\therefore P(E \cup F) &amp;= P(E) +P(F) - P(EF)
+\end{align}
+\]</span></p>
+<div id="fig-3_4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-3_4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3_4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3.4: 韦恩图
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="exr-3_4_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.1</strong></span> 内华达州有 28% 的男性吸烟，6% 的男性吸雪茄，3% 的男性既吸雪茄又吸烟。那么，有既不吸雪茄也不吸烟的男性占比是多少？</p>
+</div>
+<div id="sol-3_4_a" class="proof solution">
+<p><span class="proof-title"><em>答案 3.1</em>. </span>设 <span class="math inline">\(E\)</span> 为事件——随机选择的一名男性吸香烟，设 <span class="math inline">\(F\)</span> 为事件——该男性吸雪茄。那么，这个人要么吸香烟，要么吸雪茄的概率是：</p>
+<p><span class="math display">\[
+P(E \cup F ) = P (E) + P (F ) − P (EF) = 0.28 + 0.06 − 0.03 = 0.31
+\]</span></p>
+<p>则，该男性既不吸雪茄也不吸烟的概率为 1 - 0.31 = 0.69，这意味着有 69% 的男性既不吸雪茄也不吸烟。</p>
+</div>
+<p>事件 A 的 <strong>赔率</strong>（<em>odds</em>）定义如下：</p>
+<p><span class="math display">\[
+\frac{P(A)}{P(A^c)} = \frac{P(A)}{1 - P(A)}
+\]</span></p>
+<p>因此，事件 <span class="math inline">\(A\)</span> 的赔率表示 <span class="math inline">\(A\)</span> 发生的可能性比它不发生的可能性多多少。例如，如果 <span class="math inline">\(P(A) = \frac{3}{4}\)</span>，那么 <span class="math inline">\(\frac{P(A)}{1 − P (A)} = 3\)</span>，所以其赔率是 3。因此，<span class="math inline">\(A\)</span> 发生的可能性是它不发生的可能性的 3 倍。（通常的说法是，事件 <span class="math inline">\(A\)</span> 的赔率是 3 比 1。）</p>
 </section>
-<section id="sample-spaces-having-equally-likely-outcomes" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="sample-spaces-having-equally-likely-outcomes"><span class="header-section-number">3.5</span> Sample spaces having equally likely outcomes</h2>
+<section id="sec-3_5" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="sec-3_5"><span class="header-section-number">3.5</span> 等概率样本空间</h2>
+<p>对于执行大量次数的实验来说，我们会很自然地假设：样本空间中的每个结果发生的可能性是相等的。也就是说，对于许多实验而言，其样本空间 <span class="math inline">\(S\)</span> 是一个有限集合，<span class="math inline">\(S = \{1,2,...,N\}\)</span>，通常很自然地假设：</p>
+<p><span class="math display">\[
+P(\{1\}) = P(\{2\}) = ··· = P(\{N\}) = p
+\]</span></p>
+<p>根据 <strong>公理 2</strong> 和 <strong>公理 3</strong>，我们有：<span class="math inline">\(1 = P(S) = P(\{1\}) + P(\{2\}) + ··· + P(\{N\}) = Np\)</span>，故而有：</p>
+<p><span class="math display">\[
+P(\{i\}) = p = \frac{1}{N}
+\]</span></p>
+<p>由此，根据 <strong>公理 3</strong>，对于任意事件 <span class="math inline">\(E\)</span>：<span class="math inline">\(P(E)=\frac{位于\ E\ 中的结果数}{N}\)</span>。</p>
+<p>也就是说，如果我们假设实验的每个结果发生的可能性是相等的，那么任何事件 <span class="math inline">\(E\)</span> 的概率就等于样本空间中包含在 <span class="math inline">\(E\)</span> 中的结果的比例。</p>
+<p>因此，为了计算概率，通常需要有效地计算出给定事件可以以多少种不同的方式发生。为此，我们将使用以下规则。</p>
+<section id="计数的基本原理" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="计数的基本原理"><span class="header-section-number">3.5.1</span> 计数的基本原理</h3>
+<p>假设要执行两个实验，如果实验 1 可能有 <span class="math inline">\(m\)</span> 种可能的结果，并且对于实验 1 的每一种结果，实验 2 都有 <span class="math inline">\(n\)</span> 种可能的结果，那么这两个实验总共有 <span class="math inline">\(mn\)</span> 种可能的结果。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="计数的基本原理的证明">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+计数的基本原理的证明
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>可以使用如下的方式来枚举所有可能的实验结果：</p>
+<p><span class="math display">\[
+\begin{array}{ccc}
+    (1,1), &amp; (1,2), &amp; ..., &amp;(1,n) \\
+    (2,1), &amp; (2,2), &amp; ..., &amp;(2,n) \\
+    \ \ \ ... &amp; \\
+    (m,1), &amp; (m,2), &amp; ..., &amp;(m,n) \\
+\end{array}
+\]</span></p>
+<p>如果实验 1 产生了第 <span class="math inline">\(i\)</span> 种可能的结果，并且实验 2 产生了第 <span class="math inline">\(j\)</span> 种可能的结果，我们称实验结果为 <span class="math inline">\((i, j)\)</span>。因此，可能的结果集由 <span class="math inline">\(m\)</span> 行组成，其中每行包含 <span class="math inline">\(n\)</span> 个元素。</p>
+</div>
+</div>
+<div id="exr-3_5_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.2</strong></span> 从一个包含 6 个白球和 5 个黑球的碗中 “随机抽取” 两个球。其中一个球是白色的，另一个是黑色的概率是多少？</p>
+</div>
+<div id="sol-3_5_a" class="proof solution">
+<p><span class="proof-title"><em>答案 3.2</em>. </span>如果我们认为选球的顺序非常重要，那么第一个抽取的球可能是 11 个中的任何一个，第二个抽取的球可能是剩下的 10 个中的任何一个，因此样本空间包含 11 × 10 = 110 个点。此外，有 6 × 5 = 30 种方式使得第一个球是白色的，第二个球是黑色的。同样地，有 5 × 6 = 30 种方式使得第一个球是黑色的，第二个球是白色的。因此，假设 “随机抽取” 意味着样本空间中的每个点都有相同的可能性，那么我们可以看出需要计算的概率是：</p>
+<p><span class="math display">\[
+\frac{30 + 30}{110} = \frac{6}{11}
+\]</span></p>
+</div>
+<p>对于两个以上的实验，<strong>计数的基本原理</strong> 可以按如下的方式泛化（<em>generalized</em>）：</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="计数基本原理的泛化">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+计数基本原理的泛化
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>如果要执行 <span class="math inline">\(r\)</span> 个实验，其中第一个实验有 <span class="math inline">\(n_1\)</span> 种可能的结果，如果对于这 <span class="math inline">\(n_1\)</span> 种可能的结果，第二个实验有 <span class="math inline">\(n_2\)</span> 种可能的结果，如果对于前两个实验的每种可能的结果，第三个实验有 <span class="math inline">\(n_3\)</span> 种可能的结果，以此类推，那么这 <span class="math inline">\(r\)</span> 个实验总共有 <span class="math inline">\(n_1 \cdot n_2 \cdot \cdot \cdot n_r\)</span> 种可能的结果。</p>
+</div>
+</div>
+<p>为了说明 <strong>基本计数原理</strong>，让我们来确定 <span class="math inline">\(n\)</span> 个不同对象的线性序（<em>linear order</em>）排列的方式的数量。例如，字母 a、b、c 有多少种不同的排列方式？</p>
+<p>通过直接枚举，我们可以发现有 6 种，即 abc、acb、bac、bca、cab、cba，其中的每一个都称为一个 <strong>排列</strong>（<em>permutation</em>）。因此，3 个对象有 6 种可能的 <strong>排列</strong>。如上的结果也可以从基本原理中得出，因为第一个对象可以是 3 个字母中的任何一个，第二个对象可以从剩下的 2 个字母中选择，第三个对象则从剩下的一个字母中选择。因此，有 3・2・1 = 6 种可能的 <strong>排列</strong>。</p>
+<p>以此类推，对于 <span class="math inline">\(n\)</span> 个对象，其不同的排列种类为：<span class="math inline">\(n \cdot (n-1) \cdot (n-2) \cdot \cdot \cdot 3 \cdot 2 \cdot 1\)</span>。为了方便，我们将如上的式子记为 <span class="math inline">\(n!\)</span>，读作“<span class="math inline">\(n\)</span> 的阶乘”。为了方便，我们令 <span class="math inline">\(0!=1\)</span>。</p>
+<p><span class="math display">\[
+n! = n \cdot (n-1) \cdot (n-2) \cdot \cdot \cdot 3 \cdot 2 \cdot 1
+\]</span></p>
+<p>例如：</p>
+<ul>
+<li><span class="math inline">\(1! = 1\)</span></li>
+<li><span class="math inline">\(2! = 2 \cdot 1 = 2\)</span></li>
+<li><span class="math inline">\(3! = 3 \cdot 2 \cdot 1 = 6\)</span></li>
+<li><span class="math inline">\(4! = 4 \cdot 3 \cdot 2 \cdot 1 = 24\)</span></li>
+</ul>
+<div id="exr-3_5_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.3</strong></span> 琼斯先生有 10 本书要放在他的书架上。其中，有 4 本是数学书，3 本是化学书，2 本是历史书，还有 1 本是语言书。琼斯想把这些书按主题分类放在一起排列在书架上。有多少种不同的排列方式？</p>
+</div>
+<div id="sol-3_5_b" class="proof solution">
+<p><span class="proof-title"><em>答案 3.3</em>. </span>有 4! 3! 2! 1! 种排列方式使得数学书排在最前面，然后是化学书，接着是历史书，最后是语言书。同样地，对于每个可能的主题顺序，都有 4! 3! 2! 1! 种可能的排列方式。因此，由于有 4! 种可能的主题顺序，所以所求的答案是 4! × 4! × 3! × 2! × 1! = 6912。</p>
+</div>
+<div id="exr-3_5_c" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.4</strong></span> 一个概率论课程的班级由 6 名男生和 4 名女生组成。在一次考试中，根据学生的考试成绩进行了排名。假设 10 名学生的考试成绩都不相同：</p>
+<ul>
+<li>（a）学生的排名有多少种不同的可能？</li>
+<li>（b）如果所有排名的可能性都相同，那么女生获得前 4 名的概率是多少？</li>
+</ul>
+</div>
+<div id="sol-3_5_c" class="proof solution">
+<p><span class="proof-title"><em>答案 3.4</em>. </span></p>
+<ul>
+<li>（a）因为每个排名都对应着 10 个人的一个特定有序排列，所以学生的排名可能性有 10! = 3,628,800 种。</li>
+<li>（b）由于女生有 4! 种可能的排名方式，男生有 6! 种可能的排名方式，根据 <strong>基本计数原理</strong>，女生获得前 4 名的可能排名有 (6!)(4!) = (720)(24) = 17,280 种。因此，所求的概率为：<span class="math inline">\(\frac{6!4!}{10!}=\frac{4 \cdot 3 \cdot 2 \cdot 1}{10 \cdot 9 \cdot 8 \cdot 7} = \frac{1}{210}\)</span>。</li>
+</ul>
+</div>
+<p>现在，假设我们想要从 <span class="math inline">\(n\)</span> 个对象中选择 <span class="math inline">\(r\)</span> 个对象，并确定这 <span class="math inline">\(r\)</span> 个不同对象所形成的排列方式的数量。例如，从五个物品 A、B、C、D、E 中选择 3 个物品，总共有多少种不同的选择方式？为了回答这个问题，由于有 5 种方式来选择第一个物品，4 种方式来选择下一个物品，3 种方式来选择最后一个物品。因此，当选择的物品存在顺序依赖时，有 5・4・3 种方式来选择这 3 个物品。然而，在存在顺序依赖时，任意选择的 3 个物品（比如 A、B 和 C ）都会被计算 6 次（ABC、ACB、BAC、BCA、CAB、CBA），因此可以形成的不同选择的总数是：(5・4・3)/(3・2・1) = 10。</p>
+<p>一般来说，<span class="math inline">\(n (n − 1)・・・(n − r + 1)\)</span> 表示在顺序依赖条件下，从 <span class="math inline">\(n\)</span> 个物品中选择 <span class="math inline">\(r\)</span> 个物品的不同选择方式的数量。由于在这种计数中，每 <span class="math inline">\(r\)</span> 个物品的选择方式都会被计算 <span class="math inline">\(r!\)</span> 次，因此，从 <span class="math inline">\(n\)</span> 个物品中可以形成的 <span class="math inline">\(r\)</span> 个不同物品的数量是：</p>
+<p><span class="math display">\[
+\frac{n \cdot (n-1) \cdot \cdot \cdot(n-r+1)}{r!} = \frac{n!}{(n-r)!r!}
+\]</span></p>
 </section>
-<section id="conditional-probability" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="conditional-probability"><span class="header-section-number">3.6</span> Conditional probability</h2>
+<section id="组合的符号和术语" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="组合的符号和术语"><span class="header-section-number">3.5.2</span> 组合的符号和术语</h3>
+<div id="def-3_5_001" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3.1</strong></span> 定义 <span class="math inline">\(\left(\begin{array}{cc} n \\ r  \end{array}\right), \forall r \le n\)</span> 为一次性从 <span class="math inline">\(n\)</span> 个物品中选择 <span class="math inline">\(r\)</span> 个物品的组合数量，则：</p>
+<p><span class="math display">\[
+\left(\begin{array}{cc}
+n \\
+r  
+\end{array}\right) = \frac{n!}{(n-r)!r!}
+\]</span></p>
+</div>
+<p><span class="math inline">\(\left(\begin{array}{cc} n \\ r  \end{array}\right)\)</span> 表示在不考虑抽取顺序的情况下，从 <span class="math inline">\(n\)</span> 个元素中选择 <span class="math inline">\(r\)</span> 个元素的不同组合数。例如：</p>
+<ul>
+<li>从 8 个人中选择 2 个人的方式：<span class="math inline">\(\left(\begin{array}{cc} 8 \\ 2  \end{array}\right) = \frac{8 \cdot 7}{2 \cdot 1}=28\)</span>。</li>
+<li>从 10 个人中选择 2 个人的方式：<span class="math inline">\(\left(\begin{array}{cc} 10 \\ 2  \end{array}\right) = \frac{10 \cdot 9}{2 \cdot 1}=45\)</span>。</li>
+</ul>
+<p>特别注意的是，<span class="math inline">\(\left(\begin{array}{cc} n \\ 0  \end{array}\right)\)</span> = <span class="math inline">\(\left(\begin{array}{cc} n \\ n  \end{array}\right)\)</span> = 1。</p>
+<div id="exr-3_5_d" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.5</strong></span> 要从 6 名男性和 9 名女性中随机选取 5 人组成一个委员会。如果是随机选择的话，这个委员会由 3 名男性和 2 名女性组成的概率是多少？</p>
+</div>
+<div id="sol-3_5_d" class="proof solution">
+<p><span class="proof-title"><em>答案 3.5</em>. </span>随机选取意味着 <span class="math inline">\(\left(\begin{array}{cc} 15 \\ 5  \end{array}\right)\)</span> 种可能的组合数中的任何一组被选取的可能性都是一致的。因为，3 名男性的选择方式有 <span class="math inline">\(\left(\begin{array}{cc} 6 \\ 3  \end{array}\right)\)</span> 种，2 名女性的选择方式有 <span class="math inline">\(\left(\begin{array}{cc} 9 \\ 2  \end{array}\right)\)</span> 种，根据 <strong>基本计数原理</strong>，委员会由 3 名男性和 2 名女性组成的概率为：</p>
+<p><span class="math display">\[
+\frac{\left(\begin{array}{cc} 6 \\ 3  \end{array}\right) \cdot \left(\begin{array}{cc} 9 \\ 2  \end{array}\right)}{\left(\begin{array}{cc} 15 \\ 5  \end{array}\right)} = \frac{240}{1001}
+\]</span></p>
+</div>
+<div id="exr-3_5_e" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.6</strong></span> 从一个具有 <span class="math inline">\(n\)</span> 个物品的集合中随机抽取大小为 <span class="math inline">\(k\)</span> 的样本，则某个给定的物品被抽取到的概率是多少？</p>
+</div>
+<div id="sol-3_5_e" class="proof solution">
+<p><span class="proof-title"><em>答案 3.6</em>. </span>如果某个给定的物品位于 <span class="math inline">\(k\)</span> 中，则意味着 <span class="math inline">\(k\)</span> 由给定的 1 个物品和剩余的 <span class="math inline">\(k-1\)</span> 个物品（从 <span class="math inline">\(n-1\)</span> 个物品中抽取的）组成，则 <span class="math inline">\(k\)</span> 个物品的抽取方式为 <span class="math inline">\(\left(\begin{array}{cc}  {n-1} \\ {k-1}  \end{array}\right)\)</span>。另外，从 <span class="math inline">\(n\)</span> 个物品中抽取 <span class="math inline">\(k\)</span> 个物品的方式总共有 <span class="math inline">\(\left(\begin{array}{cc}  n \\ k  \end{array}\right)\)</span>。因此，从 <span class="math inline">\(n\)</span> 个物品的集合中随机抽取大小为 <span class="math inline">\(k\)</span> 的样本，则某个给定的物品被抽取到的概率为：</p>
+<p><span class="math display">\[
+\frac{\left(\begin{array}{cc}  {n-1} \\ {k-1}  \end{array}\right)}{\left(\begin{array}{cc}  n \\ k  \end{array}\right)} = \frac{\frac{(n-1)!}{(n-k)!(k-1)!}}{\frac{n!}{(n-k)!k!}} = \frac{k}{n}
+\]</span></p>
+</div>
+<div id="exr-3_5_f" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.7</strong></span> 一个篮球队由 6 名黑人球员和 6 名白人球员组成。需要对这些球员随机地两两配对，以确定他们的室友。如果配对是随机进行的，那么黑人球员与白人球员不是室友的概率是多少？</p>
+</div>
+<div id="sol-3_5_f" class="proof solution">
+<p><span class="proof-title"><em>答案 3.7</em>. </span>首先，我们设想对这 6 对球员进行编号，分别是：第 1 对，第 2 对，……。对于第 1 对 球员，有 <span class="math inline">\(\left(\begin{array}{cc}  12 \\ 2  \end{array}\right)\)</span> 种配对方式。然后，第 2 对球员则有 <span class="math inline">\(\left(\begin{array}{cc}  10 \\ 2  \end{array}\right)\)</span> 种配对方式。对于第 3 对球员，则有 <span class="math inline">\(\left(\begin{array}{cc}  8 \\ 2  \end{array}\right)\)</span> 种配对方式，……因此，根据 <strong>基本计数原理的泛化规则</strong>，这 6 对球员的配对方式总共有 <span class="math inline">\(\left(\begin{array}{cc}  12 \\ 2  \end{array}\right) \left(\begin{array}{cc}  10 \\ 2  \end{array}\right) \left(\begin{array}{cc}  8 \\  2 \end{array}\right) \left(\begin{array}{cc}  6 \\ 2  \end{array}\right) \left(\begin{array}{cc}  4 \\ 2  \end{array}\right) \left(\begin{array}{cc}  2 \\ 2  \end{array}\right) = \frac{12!}{(2!)^6}\)</span>。所以，不考虑分组序号的情况下，配对方式总共有 <span class="math inline">\(\frac{12!}{2^6 \cdot 6!}\)</span>。</p>
+<p>同理，6 名黑（白）人球员之间配对的方式均有 <span class="math inline">\(\frac{ 6! }{ 2^3 \cdot 3! }\)</span>。因此，黑人球员与白人球员不是室友的概率为：<span class="math inline">\(\frac{ (\frac{ 6! }{ 2^3 \cdot 3! })^2 }{ \frac{ 12! }{ 2^6 \cdot 6! } } = \frac{ 5 }{ 231 } = 0.0216\)</span></p>
+</div>
+<div id="exr-3_5_g" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.8</strong></span> 房间里有 <span class="math inline">\(n\)</span> 个人，则他们的生日不在同一天的概率是多少？如果这个概率要低于 50%，那么 <span class="math inline">\(n\)</span> 至少是多少？</p>
+</div>
+<div id="sol-3_5_g" class="proof solution">
+<p><span class="proof-title"><em>答案 3.8</em>. </span>在不考虑闰年的情况下，每个人的生日可以为一年 365 天中的任何一天，所以 <span class="math inline">\(n\)</span> 个人的生日的可能性为 <span class="math inline">\(365^n\)</span>。如果他们的生日均不在同一天，则其可能性为 <span class="math inline">\(365 \cdot 364 \cdot \cdot \cdot (365 - n + 1)\)</span>。这是因为第一个人的生日可以是 365 天中的任何一天，第二个人的生日可以是剩下的 364 天中的任何一天，第三个人的生日可以是剩下的 363 天中的任何一天，以此类推。因此，他们的生日不在同一天的概率为 <span class="math inline">\(\frac{ 365 \cdot 364 \cdot \cdot \cdot (365 - n + 1) }{ (365)^n }\)</span>。</p>
+<p>令人惊讶的事实是，当 <span class="math inline">\(n \ge 23\)</span> 时，这个概率小于 50%。也就是说，如果房间里至少有 23 个人的时候，那么他们之中至少有两个人的生日相同的概率将超过 50%。对这个结果，许多人最初会感到惊讶，因为与 365（一年的天数）相比，23 这个数字显得如此之小。然而，每两个人其生日相同的概率是 <span class="math inline">\(\frac{ 365 }{ (365)^2 }=\frac{ 1 }{ 365 }\)</span>。而在一个由 23 人组成的群体中，有 <span class="math inline">\(\left(\begin{array}{cc}  23 \\ 2  \end{array}\right) = 253\)</span> 对不同的分组。从这个角度来看，这个结果就不再那么令人惊讶了。</p>
+</div>
 </section>
-<section id="bayes-formula" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="bayes-formula"><span class="header-section-number">3.7</span> Bayes’ formula</h2>
 </section>
-<section id="independent-events" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="independent-events"><span class="header-section-number">3.8</span> Independent events</h2>
+<section id="sec-3_6" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="sec-3_6"><span class="header-section-number">3.6</span> Conditional probability</h2>
+</section>
+<section id="sec-3_7" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="sec-3_7"><span class="header-section-number">3.7</span> Bayes’ formula</h2>
+</section>
+<section id="sec-3_8" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="sec-3_8"><span class="header-section-number">3.8</span> Independent events</h2>
 </section>
 <section id="problems" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
