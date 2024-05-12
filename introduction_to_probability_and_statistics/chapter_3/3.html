@@ -342,9 +342,9 @@ window.Quarto = {
   <li><a href="#计数的基本原理" id="toc-计数的基本原理" class="nav-link" data-scroll-target="#计数的基本原理"><span class="header-section-number">3.5.1</span> 计数的基本原理</a></li>
   <li><a href="#组合的符号和术语" id="toc-组合的符号和术语" class="nav-link" data-scroll-target="#组合的符号和术语"><span class="header-section-number">3.5.2</span> 组合的符号和术语</a></li>
   </ul></li>
-  <li><a href="#sec-3_6" id="toc-sec-3_6" class="nav-link" data-scroll-target="#sec-3_6"><span class="header-section-number">3.6</span> Conditional probability</a></li>
-  <li><a href="#sec-3_7" id="toc-sec-3_7" class="nav-link" data-scroll-target="#sec-3_7"><span class="header-section-number">3.7</span> Bayes’ formula</a></li>
-  <li><a href="#sec-3_8" id="toc-sec-3_8" class="nav-link" data-scroll-target="#sec-3_8"><span class="header-section-number">3.8</span> Independent events</a></li>
+  <li><a href="#sec-3_6" id="toc-sec-3_6" class="nav-link" data-scroll-target="#sec-3_6"><span class="header-section-number">3.6</span> 条件概率</a></li>
+  <li><a href="#sec-3_7" id="toc-sec-3_7" class="nav-link" data-scroll-target="#sec-3_7"><span class="header-section-number">3.7</span> 贝叶斯公式</a></li>
+  <li><a href="#sec-3_8" id="toc-sec-3_8" class="nav-link" data-scroll-target="#sec-3_8"><span class="header-section-number">3.8</span> 独立事件</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_3/3.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
@@ -578,7 +578,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><a href="#fig-3_4" class="quarto-xref">图&nbsp;<span>3.4</span></a> 所示的韦恩图是证明 <span class="citation" data-cites="pro-3_4_2">[<a href="../references.html#ref-pro-3_4_2" role="doc-biblioref"><strong>pro-3_4_2?</strong></a>]</span> 的最简单的方法。在 <a href="#fig-3_4" class="quarto-xref">图&nbsp;<span>3.4</span></a> 中，区域 I、II、III 是互斥的，因此：</p>
+<p><a href="#fig-3_4" class="quarto-xref">图&nbsp;<span>3.4</span></a> 所示的韦恩图是证明 <a href="#prp-3_4_2" class="quarto-xref">命题&nbsp;<span>3.2</span></a> 的最简单的方法。在 <a href="#fig-3_4" class="quarto-xref">图&nbsp;<span>3.4</span></a> 中，区域 I、II、III 是互斥的，因此：</p>
 <p><span class="math display">\[
 \begin{align}
 P(E \cup F) &amp;= P(I) + P(II) + P(III) \\
@@ -769,16 +769,405 @@ r
 </section>
 </section>
 <section id="sec-3_6" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="sec-3_6"><span class="header-section-number">3.6</span> Conditional probability</h2>
+<h2 data-number="3.6" class="anchored" data-anchor-id="sec-3_6"><span class="header-section-number">3.6</span> 条件概率</h2>
+<p>在本节中，我们将介绍概率论中最重要的概念之一 ——<strong>条件概率</strong>（<em>conditional probability</em>）。<strong>条件概率</strong> 的重要性体现在两个方面。首先，当涉及到实验结果的部分信息可用时，或者需要根据额外信息重新计算概率时，我们经常需要利用 <strong>条件概率</strong> 来计算概率。其次，事实证明，计算事件概率的最简单的方法通常是以另一事件是否发生作为先决条件。</p>
+<p>如下是一个 <strong>条件概率</strong> 的例子：假设某人抛了一对骰子，该实验的样本空间 <span class="math inline">\(S\)</span> 可以看作是以下 36 个结果的集合：</p>
+<p><span class="math display">\[
+S = \{(i, j), \ \ i,j \in [1,6] \}
+\]</span></p>
+<p>当第一个骰子为 <span class="math inline">\(i\)</span> 点并且第二个骰子为 <span class="math inline">\(j\)</span> 点时，我们称对应的实验结果为 <span class="math inline">\((i,j)\)</span>。假设这 36 个结果发生的可能性都是一样的，则其概率为 <span class="math inline">\(\frac{ 1 }{ 36 }\)</span>。接下来，我们观察到第一个骰子的点数是 3，那么在这种情况下，两个骰子的点数之和为 8 的概率是多少？为了计算概率，我们做如下的推理：</p>
+<ul>
+<li>在第一个骰子的点数是 3 的情况下，我们的实验结果最多有 6 种可能：(3,1)，(3,2)，(3,3)，(3,4)，(3,5)，(3,6)。</li>
+<li>因为每种结果出现的概率都是相同的，因此在第一个骰子为 3 点的条件下，其 6 种可能出现的结果的每种结果出现的概率都是 <span class="math inline">\(\frac{ 1 }{ 6 }\)</span>。</li>
+<li>因此，两个骰子的点数之和为 8 的结果为 (3, 5)，其概率为 <span class="math inline">\(\frac{ 1 }{ 6 }\)</span>。</li>
+</ul>
+<p>如果我们令 <span class="math inline">\(E\)</span> 表示两个骰子的点数之和为 8 这一事件，令 <span class="math inline">\(F\)</span> 表示第一个骰子的点数为 3 这一事件，则我们刚才获取到的概率称之为在 <span class="math inline">\(F\)</span> 发生的条件下，<span class="math inline">\(E\)</span> 的 <strong>条件概率</strong>，并记作 <span class="math inline">\(P(E|F)\)</span>。</p>
+<p>作为一个通用的公式，<span class="math inline">\(P(E|F)\)</span> 可以应用于所有的事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span>。具体来说，如果事件 <span class="math inline">\(F\)</span> 发生，那么为了使得 <span class="math inline">\(E\)</span> 也发生，则实际发生的事件必须同时位于 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 中，也就是说，必须在 <span class="math inline">\(EF\)</span> 中。然而，由于我们知道 <span class="math inline">\(F\)</span> 已经发生，因此我们可以将 <span class="math inline">\(F\)</span> 视为新的样本空间，因此事件 <span class="math inline">\(P(E|F)\)</span> 发生的概率将等于 <span class="math inline">\(EF\)</span> 相对于 <span class="math inline">\(F\)</span> 的概率。即：</p>
+<p><span id="eq-3_6_001"><span class="math display">\[
+p(E|F)=\frac{ P(EF) }{ P(F) }
+\tag{3.1}\]</span></span></p>
+<p>如 <a href="#fig-3_5" class="quarto-xref">图&nbsp;<span>3.5</span></a> 所示，仅当 <span class="math inline">\(P(F) &gt; 0\)</span> 时，<a href="#eq-3_6_001" class="quarto-xref">方程式&nbsp;<span>3.1</span></a> 才有意义，这意味着，当且仅当 <span class="math inline">\(P(F) &gt; 0\)</span> 时，<span class="math inline">\(P(E|F)\)</span> 才有意义。</p>
+<div id="fig-3_5" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-3_5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_5.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3_5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3.5: <span class="math inline">\(P(E|F)=\frac{ EF }{ F }\)</span>
+</figcaption>
+</figure>
+</div>
+<p><a href="#eq-3_6_001" class="quarto-xref">方程式&nbsp;<span>3.1</span></a> 给出的条件概率的定义与在大量重复试验下使用相对频率作为概率的解释是一致的。为了理解这一点，假设重复执行实验 <span class="math inline">\(n\)</span> 次，由于 <span class="math inline">\(P(F)\)</span> 是多次执行条件下 <span class="math inline">\(F\)</span> 发生的比例，因此 <span class="math inline">\(F\)</span> 大约会发生 <span class="math inline">\(n \cdot P(F)\)</span> 次。类似地，在实验中，大约有 <span class="math inline">\(n \cdot P(EF)\)</span> 次实验会出现 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 都发生的情况。因此，在大约 <span class="math inline">\(n \cdot P (F)\)</span> 次 <span class="math inline">\(F\)</span> 发生的实验中，大约有 <span class="math inline">\(n \cdot P(EF)\)</span> 次 <span class="math inline">\(E\)</span> 也会发生。也就是说，对于那些结果属于事件 <span class="math inline">\(F\)</span> 的实验，其结果也属于事件 <span class="math inline">\(E\)</span> 的比例大约是：<span class="math inline">\(\frac{ n \cdot P(EF) }{ n \cdot P(F) } = \frac{ P(EF) }{ P(F) }\)</span>。</p>
+<p>由于当 <span class="math inline">\(n\)</span> 变得越来越大时，如上的近似计算会变得越来越精确，因此 <a href="#eq-3_6_001" class="quarto-xref">方程式&nbsp;<span>3.1</span></a> 给出了在 <span class="math inline">\(F\)</span> 已经发生的情况下 <span class="math inline">\(E\)</span> 也发生的 <strong>条件概率</strong> 的适当定义。</p>
+<div id="exr-3_6_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.9</strong></span> 一个箱子里有 40 个晶体管，其中有 5 个残品（一开始就无法使用），10 个次品（使用几个小时后才无法使用），以及 25 个合格品。从箱子里随机选取一个晶体管并投入使用，如果该晶体管没有立即失效，那么它是合格品的概率是多少？</p>
+</div>
+<div id="sol-3_6_a" class="proof solution">
+<p><span class="proof-title"><em>答案 3.9</em>. </span>因为抽取的晶体管没有立即失效，因此该晶体管不属于 5 个残品，因此待求解的概率为：</p>
+<p><span class="math display">\[
+\begin{align}
+P(合格品|非残品) &amp;= \frac{ P(合格品, 非残品) }{ P(非残品) } \\
+&amp;= \frac{ P(合格品) }{ P(非残品) } \\
+&amp;= \frac{ \frac{ 25 }{ 40 } }{ \frac{ 35 }{ 40 } } \\
+&amp;= \frac{ 5 }{ 7 }
+\end{align}
+\]</span></p>
+<p>应该注意的是，我们也可以通过直接处理缩减后的样本空间来获得结果。也就是说，由于我们知道所选的晶体管不是残品，问题就简化为：从包含 25 个合格品和 10 个次品的箱子中随机选择一个晶体管，该晶体管是合格品的概率是多少？显然，概率等于 <span class="math inline">\(\frac{ 25 }{ 35 }\)</span>。</p>
+</div>
+<div id="exr-3_6_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.10</strong></span> 琼斯所在的部门正在为那些至少有一个儿子的员工举办一场父子晚宴。这些员工都将受邀参加该晚宴，并会带上他们最小的儿子一起参加晚宴。如果已知琼斯有两个孩子，那么在他受邀参加晚宴的条件下，他的两个孩子都是男孩的概率是多少？假设样本空间为 <span class="math inline">\(S\)</span> 且 <span class="math inline">\(S =\{(b,b),(b,g),(g,b),(g,g)\}\)</span>，同时所有结果出现的可能性都相等（例如，<span class="math inline">\((b,g)\)</span> 表示较小的孩子是男孩，较大的孩子是女孩）。</p>
+</div>
+<div id="sol-3_6_b" class="proof solution">
+<p><span class="proof-title"><em>答案 3.10</em>. </span>琼斯受邀参加晚宴这一事实相当于知道他至少有一个儿子。因此，设 <span class="math inline">\(B\)</span> 为两个孩子都是男孩的事件，<span class="math inline">\(A\)</span> 为至少有一个孩子是男孩的事件，我们要求的概率 <span class="math inline">\(P(B|A)\)</span> 为：<span class="math inline">\(P(B|A)=\frac{ P(AB) }{ P(A) }\)</span> <span class="math inline">\(=\)</span> <span class="math inline">\(\frac{ P(\{(b, b)\}) }{ P(\{(b, b), (b, g), (g, b)\}) }\)</span> <span class="math inline">\(=\)</span> <span class="math inline">\(\frac{ \frac{ 1 }{ 4 } }{ \frac{ 3 }{ 4 } }\)</span> <span class="math inline">\(=\)</span> <span class="math inline">\(\frac{ 1 }{ 3 }\)</span>。</p>
+<p>许多读者错误地认为，在至少有一个男孩的条件下，有两个男孩的概率是 <span class="math inline">\(\frac{1}{2}\)</span>，而不是正确答案 <span class="math inline">\(\frac{1}{3}\)</span>。因为他们认为琼斯无法参加晚宴等价于其孩子是男孩或女孩的概率。然而，这个假设本身就是错误的。务必记住，最初有四种等可能的结果，现在，至少有一个孩子是男孩的信息等价于知道结果不是 <span class="math inline">\((g, g)\)</span>。因此，我们只剩下三种等可能的结果：<span class="math inline">\((b, b)\)</span>、<span class="math inline">\((b, g)\)</span>、<span class="math inline">\((g, b)\)</span>，从而表明琼斯参加晚宴时其另外一个孩子为女孩的可能性是为男孩的两倍。</p>
+</div>
+<p>对 <a href="#eq-3_6_001" class="quarto-xref">方程式&nbsp;<span>3.1</span></a> 的两边都乘以 <span class="math inline">\(P(F)\)</span>，我们得到：</p>
+<p><span id="eq-3_6_002"><span class="math display">\[
+P(EF) = P(F) \cdot P(E|F)
+\tag{3.2}\]</span></span></p>
+<p><a href="#eq-3_6_002" class="quarto-xref">方程式&nbsp;<span>3.2</span></a> 表明事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 同时发生的概率等于 <span class="math inline">\(F\)</span> 发生的概率乘以在 <span class="math inline">\(F\)</span> 发生条件下 <span class="math inline">\(E\)</span> 发生的条件概率。在计算事件交集的概率时，<a href="#eq-3_6_002" class="quarto-xref">方程式&nbsp;<span>3.2</span></a> 通常非常有用。<a href="#exr-3_6_c" class="quarto-xref">练习&nbsp;<span>3.11</span></a> 所示的例子说明了这一点。</p>
+<div id="exr-3_6_c" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.11</strong></span> 佩雷斯女士估计，她所在的公司有 30% 的可能性会在菲尼克斯设立分公司。如果设立了公司真的在菲尼克斯设立分公司，她有 60% 的把握让公司任命其为新的分公司的经理。那么，佩雷斯女士成为菲尼克斯分公司经理的概率是多少？</p>
+</div>
+<div id="sol-3_6_c" class="proof solution">
+<p><span class="proof-title"><em>答案 3.11</em>. </span>令 <span class="math inline">\(B\)</span> 表示公司会在菲尼克斯设立分公司，<span class="math inline">\(M\)</span> 表示任命佩雷斯女士为新的分公司的经理，则待求解的概率为 <span class="math inline">\(P(BM)\)</span>，根据 <a href="#eq-3_6_002" class="quarto-xref">方程式&nbsp;<span>3.2</span></a> 有：<span class="math inline">\(P(BM) = P(B)P(M|B) = 0.3 \cdot 0.6 = 0.18\)</span>。因此，佩雷斯女士有 18% 的概率成为菲尼克斯分公司的经理。</p>
+</div>
 </section>
 <section id="sec-3_7" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="sec-3_7"><span class="header-section-number">3.7</span> Bayes’ formula</h2>
+<h2 data-number="3.7" class="anchored" data-anchor-id="sec-3_7"><span class="header-section-number">3.7</span> 贝叶斯公式</h2>
+<p>令 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 为事件，则我们可以用如下的式子表示 <span class="math inline">\(E\)</span>：<span class="math inline">\(E = EF \cup EF^c\)</span>。如 <a href="#fig-3_6" class="quarto-xref">图&nbsp;<span>3.6</span></a> 为了让一个点位于 <span class="math inline">\(E\)</span> 中，要么这个点即位于 <span class="math inline">\(E\)</span> 又位于 <span class="math inline">\(F\)</span> 中，要么这个点位于 <span class="math inline">\(E\)</span> 中但是不位于 <span class="math inline">\(F\)</span> 中。</p>
+<div id="fig-3_6" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-3_6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_6.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3_6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3.6: <span class="math inline">\(E=EF \cup EF^c\)</span>
+</figcaption>
+</figure>
+</div>
+<p>因为 <span class="math inline">\(EF\)</span> 和 <span class="math inline">\(EF^c\)</span> 是互斥的，根据 <strong>公理3</strong> 有：</p>
+<p><span id="eq-3_7_001"><span class="math display">\[
+\begin{align}
+P(E)&amp;=P(EF) + P(EF^c) \\
+&amp;=P(E|F)P(F) + P(E|F^c)P(F^c) \\
+&amp;=P(E|F)P(F) + P(E|F^c)[1 - P(F)]
+\end{align}
+\tag{3.3}\]</span></span></p>
+<p><a href="#eq-3_7_001" class="quarto-xref">方程式&nbsp;<span>3.3</span></a> 表明，事件 <span class="math inline">\(E\)</span> 的概率是 <span class="math inline">\(F\)</span> 发生时 <span class="math inline">\(E\)</span> 发生的条件概率和 <span class="math inline">\(F\)</span> 不发生时 <span class="math inline">\(E\)</span> 发生的条件概率的加权平均数，其中，每个条件概率的权重与它所基于的事件发生的概率相同。<a href="#eq-3_7_001" class="quarto-xref">方程式&nbsp;<span>3.3</span></a> 是一个极其有用的公式，因为 <a href="#eq-3_7_001" class="quarto-xref">方程式&nbsp;<span>3.3</span></a> 允许我们通过某个事件的先决条件事件是否发生来计算该事件的概率。也就是说，在许多情况下，直接计算事件的概率非常困难，但一旦我们知道某个第二事件是否发生，计算该事件的概率就变得比较简单了。</p>
+<div id="exr-3_7_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.12</strong></span> 一家保险公司认为人可以分为两类——容易出意外的人和不容易出意外的人。他们的统计数据显示，一个容易出意外的人在固定的 1 年期内某个时间点发生意外的概率是 0.4，而对于一个不容易出意外的人来说，这个概率则降低到了 0.2。如果我们假设 30% 的人容易出意外，那么新购买保险的人在购买保险后一年内发生意外的概率是多少？</p>
+</div>
+<div id="sol-3_7_a" class="proof solution">
+<p><span class="proof-title"><em>答案 3.12</em>. </span>首先根据新购买保险的人是否容易出意外进行条件化，以获得所需的概率。设 <span class="math inline">\(A_1\)</span> 表示事件：新购买保险的人在购买后一年内会发生意外，设 <span class="math inline">\(A\)</span> 表示新购买保险的人容易出意外事件。因此：<span class="math inline">\(P(A_1)=P(A_1|A)P(A) + P(A_1|A^c)P(A^c) = 0.26\)</span>。</p>
+</div>
+<p>在接下来的一系列示例中，我们将展示如何根据新的信息重新评估初始概率。也就是说，我们将展示如何将新信息与初始概率相结合，以获得新的概率。</p>
+<div id="exr-3_7_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.13</strong></span> 双胞胎可以是同卵双胞胎，也可以是异卵双胞胎。同卵双胞胎，也称为单卵双胞胎，是由一个受精卵分裂成两个遗传上完全相同的胚胎。因此，同卵双胞胎总是拥有相同的基因组。异卵双胞胎，也称为双卵双胞胎，是由两个单独的卵子受精并进入到子宫所形成。异卵双胞胎之间的遗传联系与在不同时间出生的兄弟姐妹一样。洛杉矶某县的一位科学家想知道：目前该县出生的双胞胎中同卵双胞胎的比例，于是他委托该县的一位统计学家来研究这个问题。该统计学家最初要求县里的每家医院记录所有双胞胎的出生情况，并注明这些双胞胎是否是同卵双胞胎。然而，医院告诉她，确定新生双胞胎是否为同卵双胞胎并不是一项简单的任务，因为这需要双胞胎父母的许可，并执行复杂且昂贵的 DNA 研究，但是医院无力承担这些研究费用。经过一些讨论，统计学家只要求医院提供所有双胞胎出生情况的清单数据，并注明这些双胞胎是否是同性别。当统计学家收集到的数据表明，大约 64% 的双胞胎出生时是同性别时，统计学家宣称：大约 28% 的双胞胎是同卵双胞胎。统计学家是怎么得出这个结论的？</p>
+</div>
+<div id="sol-3_7_b" class="proof solution">
+<p><span class="proof-title"><em>答案 3.13</em>. </span>统计学家认为同卵双胞胎总是同性别，而异卵双胞胎，就像任何一对兄弟姐妹一样，有 <span class="math inline">\(\frac{1}{2}\)</span> 的概率是同性别。设 <span class="math inline">\(I\)</span> 为一对双胞胎是同卵双胞胎的事件，<span class="math inline">\(SS\)</span> 为一对双胞胎是同性别的事件。则，</p>
+<p><span class="math display">\[
+\begin{align}
+P(SS) &amp;= P(SS|I)P(I) + P(SS|I^c)P(I^c) \\
+&amp;=1 \cdot P(I) + \frac{1}{2} \cdot \bigg(1 - P(I)\bigg) \\
+&amp;= \frac{1}{2} + \frac{1}{2}P(I) \\
+&amp;\approx 0.64 \\
+\therefore P(I) &amp;\approx 0.28
+\end{align}
+\]</span></p>
+</div>
+<div id="exr-3_7_c" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.14</strong></span> 让我们重新思考 <a href="#exr-3_7_a" class="quarto-xref">练习&nbsp;<span>3.12</span></a>，假设一名新购买保险的人在购买保险后一年内发生了意外，则该人属于容易出意外的分类的概率是多少？</p>
+</div>
+<div id="sol-3_7_c" class="proof solution">
+<p><span class="proof-title"><em>答案 3.14</em>. </span>最初，在购买保险的那一刻，我们假设他有 30% 的几率是属于容易出意外的分类。也就是说，<span class="math inline">\(P(A) = 0.3\)</span>。然而，基于他在一年内发生了意外的事实，我们现在需要重新评估他容易出意外的概率：</p>
+<p><span class="math display">\[
+\begin{align}
+P(A|A_1)&amp;=\frac{ P(AA_1) }{ P(A_1) } \\
+&amp;= \frac{ P(A)P(A_1|A) }{ P(A_1) } \\
+&amp;= \frac{ 0.3 \cdot 0.4 }{ 0.26 } \\
+&amp;= 0.4615
+\end{align}
+\]</span></p>
+</div>
+<div id="exr-3_7_d" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.15</strong></span> 在回答一个多项选择题时，一个学生要么知道答案，要么猜答案。设 <span class="math inline">\(p\)</span> 为她知道答案的概率，<span class="math inline">\(1-p\)</span> 为她猜答案的概率。假设一个学生猜对的概率是 <span class="math inline">\(\frac{1}{m}\)</span>，其中 <span class="math inline">\(m\)</span> 是多项选择题的选项数量。如果一个学生的回答是正确的，那么她知道问题答案的概率是多少？</p>
+</div>
+<div id="sol-3_7_d" class="proof solution">
+<p><span class="proof-title"><em>答案 3.15</em>. </span>令 <span class="math inline">\(C\)</span> 为事件：该学生回答对了该问题，<span class="math inline">\(K\)</span> 为事件：该学生知道答案，则该学生回答正确时，她知道问题答案的概率为：<span class="math inline">\(P(K|C) = \frac{P(KC)}{P(C)}\)</span>。</p>
+<p><span class="math display">\[
+\begin{align}
+\because P(KC) &amp;= P(C|K)P(K) \\
+&amp;=1 \cdot p \\
+&amp;=p
+\end{align}
+\]</span></p>
+<p>为了计算最终的概率，我们还需要计算 <span class="math inline">\(P(C)\)</span> （该学生可以回答正确的概率）： <span class="math display">\[
+\begin{align}
+P(C) &amp;= P(C|K)P(K) + P(C|K^c)P(K^c) \\
+&amp;=p + \frac{1}{m} \cdot (1-p) \\
+\therefore P(K|C)&amp;= \frac{p}{p + \frac{1}{m} \cdot (1-p)} \\
+&amp;=\frac{mp}{1+(m-1)p}
+\end{align}
+\]</span></p>
+<p>因此，如果 <span class="math inline">\(m=5\)</span>，<span class="math inline">\(p=\frac{1}{2}\)</span>，则如果该学生回答正确时，他知道答案的概率为 <span class="math inline">\(\frac{5}{6}\)</span>。</p>
+</div>
+<div id="exr-3_7_e" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.16</strong></span> 对于某种疾病的检测而言，实验室的血液检测有 99% 的准确率。然而，该血液检测也会对 1% 的健康受检者产生 “假阳性” 结果（也就是说，如果一个健康的人接受检测，那么检测结果会有 0.01 的概率显示他或她患有该疾病）。如果人群中有 0.5% 的人确实患有这种疾病，那么一个人的检测结果为阳性时，他患有这种疾病的概率是多少？</p>
+</div>
+<div id="sol-3_7_e" class="proof solution">
+<p><span class="proof-title"><em>答案 3.16</em>. </span>令 <span class="math inline">\(D\)</span> 为事件：受检测的人患有该疾病，<span class="math inline">\(E\)</span> 为事件：检测结果为阳性。则：</p>
+<p><span class="math display">\[
+\begin{align}
+P(D|E) &amp;= \frac{P(DE)}{P(E)} \\
+&amp;= \frac{P(E|D)P(D)}{P(E|D)P(D) + P(E|D^c)P(D^c)} \\
+&amp;=\frac{0.99 \cdot 0.005}{0.99 \cdot 0.005 + 0.01 \cdot 0.995} \\
+&amp;= 0.3322
+\end{align}
+\]</span></p>
+<p>因此，如果检测结果为阳性，则该人实际上患有该疾病的概率只有 33%。因为血液检测似乎是一种很好的方式，因此很多学生认为这个比例应该会更高，所以他们经常对这个结果感到惊讶。因此是时候提出第二个论点了，尽管第二个论点不如前面的论点严格，但它可能更具启发性。</p>
+<p>由于实际患有这种疾病的人口比例为 0.5%，因此平均而言，每 200 个接受检测的人中就有 1 人患有这种疾病。该检测将以 0.99 的概率确认这个人患有疾病。因此，平均而言，每 200 个接受检测的人中，该检测将确认 0.99 人患有疾病。另一方面，在（平均）199 个健康人中，该检测将错误地认为有 <span class="math inline">\(199 \cdot 0.01\)</span> 的人患有疾病。因此，对于该检测确认的患有疾病的每 0.99 个病人而言，平均有 1.99 个健康人被错误地认为患有该疾病。因此，当检测结果显示一个人患病时，其结果是正确的比例是：<span class="math inline">\(\frac{0.99}{0.99 + 1.99}=0.3322\)</span></p>
+</div>
+<p>当需要根据新的信息更新概率时，<a href="#eq-3_7_001" class="quarto-xref">方程式&nbsp;<span>3.3</span></a> 非常有用。本章接下来的例子将体现这一点。</p>
+<div id="exr-3_7_f" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.17</strong></span> 在刑事调查的某个阶段，负责调查的警官有 60% 的信心认为某个嫌疑人有罪。假设现在发现了新的证据，显示罪犯具有某种特征（如左撇子、秃头、棕色头发等）。如果有 20% 的人具有这种特征，那么如果嫌疑人具有犯罪特征时，警官对嫌疑人有罪的信心应该是多少？</p>
+</div>
+<div id="sol-3_7_f" class="proof solution">
+<p><span class="proof-title"><em>答案 3.17</em>. </span>令 <span class="math inline">\(G\)</span> 表示事件：嫌疑人有罪，<span class="math inline">\(C\)</span> 表示事件：嫌疑人具有罪犯特征。则：</p>
+<p><span class="math display">\[
+\begin{align}
+P(G|C)&amp;=\frac{P(GC)}{P(C)} \\
+\because P(GC) &amp;= P(G)P(C|G) \\
+&amp;= 0.6 \cdot 1 \\
+&amp;= 0.6 \\
+\because P(C) &amp;= P(C|G)P(G) + P(C|G^c)P(G^c) \\
+&amp;=1 \cdot 0.6 + 0.2 \cdot 0.4 \\
+&amp;=0.68
+\end{align}
+\]</span></p>
+<p><span class="math inline">\(P(C|G^c)\)</span> 表示如果嫌疑人实际上是清白的，那么他具有犯罪特征的概率，我们假设该概率和等于具有这种特征的人比例一致，也就是 0.2。于是：<span class="math inline">\(P(G|C) = \frac{0.6}{0.68} = 0.882\)</span>。</p>
+</div>
+<div id="exr-3_7_fc" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.18</strong></span> 现在让我们假设犯罪者拥有犯罪特定的可能性为 90%，那么在这种情况下，嫌疑人犯罪的可能性有多大？</p>
+</div>
+<div id="sol-3_7_fc" class="proof solution">
+<p><span class="proof-title"><em>答案 3.18</em>. </span>在这种情况下，情况与以前相同，只是现在嫌疑人在犯罪的情况下具有该特征的概率是0.9，而不是1。于是：</p>
+<p><span class="math display">\[
+\begin{align}
+P(G|C)&amp;=\frac{P(GC)}{P(C)} \\
+\because P(GC) &amp;= P(G)P(C|G) \\
+&amp;= 0.6 \cdot 0.9 \\
+&amp;= 0.54 \\
+\because P(C) &amp;= P(C|G)P(G) + P(C|G^c)P(G^c) \\
+&amp;=0.9 \cdot 0.6 + 0.2 \cdot 0.4 \\
+&amp;=0.62 \\
+\therefore P(G|C) &amp;= \frac{0.54}{0.62} \\
+&amp;=0.871
+\end{align}
+\]</span></p>
+</div>
+<p>假设 <span class="math inline">\(F_1, F_2, ..., F_n\)</span> 是互斥事件，则 <span class="math inline">\(\bigcup_{i=1}^{n}{F_i} = S\)</span>。换句话说，<span class="math inline">\(F_i\)</span> 中有且仅有一个事件会发生。则有：</p>
+<p><span class="math display">\[
+E = \bigcup_{i=1}^{n}{(EF_i)}
+\]</span></p>
+<p>基于 <span class="math inline">\(EF_i\)</span> 为互斥事件的事实，我们有：</p>
+<p><span id="eq-3_7_002"><span class="math display">\[
+\begin{align}
+P(E)&amp;=\sum_{i=1}^{n}{P(EF_i)} \\
+&amp;=\sum_{i=1}^{n}{\big(P(E|F_i)P(F_i)\big)}
+\end{align}
+\tag{3.4}\]</span></span></p>
+<p>对于 <span class="math inline">\(n\)</span> 个互斥事件而言，<a href="#eq-3_7_001" class="quarto-xref">方程式&nbsp;<span>3.3</span></a> 可以泛化为 <a href="#eq-3_7_002" class="quarto-xref">方程式&nbsp;<span>3.4</span></a>。<a href="#eq-3_7_002" class="quarto-xref">方程式&nbsp;<span>3.4</span></a> 表示在给定一组互斥事件 <span class="math inline">\(F_1,F_2,...,F_n\)</span> 时，我们如何通过 <span class="math inline">\(F_i\)</span> 发生时的 <span class="math inline">\(E\)</span> 的条件概率来计算 <span class="math inline">\(P(E)\)</span>。也就是说，<span class="math inline">\(P(E)\)</span> 等于 <span class="math inline">\(P(E|F_i)\)</span> 的加权平均值，其权重为对应的 <span class="math inline">\(F_i\)</span> 发生的概率。</p>
+<p>现在假设 <span class="math inline">\(E\)</span> 已经发生，我们希望确定哪一个 <span class="math inline">\(F_j\)</span> 发生了。根据 <a href="#eq-3_7_002" class="quarto-xref">方程式&nbsp;<span>3.4</span></a>，我们有：</p>
+<p><span id="eq-3_7_003"><span class="math display">\[
+\begin{align}
+P(F_j|E)&amp;=\frac{P(EF_j)}{P(E)} \\
+&amp;=\frac{P(E|F_j)P(F_j)}{\sum_{i=1}^{n}{\big(P(E|F_i)P(F_i)\big)}}
+\end{align}
+\tag{3.5}\]</span></span></p>
+<p><a href="#eq-3_7_003" class="quarto-xref">方程式&nbsp;<span>3.5</span></a> 就是 <strong>贝叶斯公式</strong>（<em>Bayes’ formula</em>），其以英国哲学家 Thomas Bayes 的名字命名。 如果我们把事件 <span class="math inline">\(F_j\)</span> 看作是关于某个主题的可能的“假设”（<em>hypotheses</em>），那么 <strong>贝叶斯公式</strong> 可以解释为：如何通过实验的证据来修改实验前对这些假设（<span class="math inline">\(P(F_j)\)</span>）的看法。</p>
+<div id="exr-3_7_g" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.19</strong></span> 一架飞机失踪了，人们推测它坠毁在三个可能区域的概率是相等的。假设 <span class="math inline">\(1 - \alpha_i\)</span> 表示当飞机确实坠毁在区域 <span class="math inline">\(i\)</span> 时，搜索该区域能发现飞机的概率，其中 <span class="math inline">\(i = 1, 2, 3\)</span>。（常数 <span class="math inline">\(\alpha_i\)</span> 被称为 <strong>忽视概率</strong>（<em>overlook probabilities</em>），因为它们代表忽视飞机的概率。<span class="math inline">\(\alpha_i\)</span> 通常归因于这些区域的地理和环境条件。在区域 1 没有搜索到飞机的情况下，飞机位于区域 <span class="math inline">\(i\)</span> 的条件概率是多少（<span class="math inline">\(i = 1, 2, 3\)</span>）？</p>
+</div>
+<div id="sol-3_7_g" class="proof solution">
+<p><span class="proof-title"><em>答案 3.19</em>. </span>令 <span class="math inline">\(R_i\)</span> 为事件：飞机位于区域 <span class="math inline">\(i\)</span>，令 <span class="math inline">\(E\)</span> 为事件：在区域 1 没有搜索到飞机。根据贝叶斯公式，我们有：</p>
+<p><span class="math display">\[
+\begin{align}
+P(R_1|E)&amp;=\frac{P(ER_1)}{P(E)} \\
+&amp;=\frac{P(E|R_1)P(R1)}{\sum_{i=1}^{3}(P(E|R_i)P(R_i))} \\
+&amp;=\frac{\alpha_1 \cdot \frac{1}{3}}{\alpha_1 \cdot \frac{1}{3} + 1 \cdot \frac{1}{3} + 1 \cdot \frac{1}{3}} \\
+&amp;=\frac{\alpha_1}{\alpha_2 + 2} \\
+For\ j=&amp;2,3: \\
+P(R_j|E)&amp;=\frac{P(E|R_j)P(R_j)}{P(E)} \\
+&amp;=\frac{1 \cdot \frac{1}{3}}{\alpha_1 \cdot \frac{1}{3} + \frac{1}{3} + \frac{1}{3}} \\
+&amp;=\frac{1}{\alpha_1 + 2}
+\end{align}
+\]</span></p>
+<p>因此，例如，如果 <span class="math inline">\(\alpha_1\)</span> = 0.4，那么在该区域搜索后未发现飞机的情况下，飞机位于区域 1 的条件概率为 <span class="math inline">\(\frac{1}{6}\)</span>，而飞机位于区域 2 和区域 3 的条件概率都等于 <span class="math inline">\(\frac{1}{2.4}=\frac{5}{12}\)</span>。</p>
+</div>
 </section>
 <section id="sec-3_8" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="sec-3_8"><span class="header-section-number">3.8</span> Independent events</h2>
+<h2 data-number="3.8" class="anchored" data-anchor-id="sec-3_8"><span class="header-section-number">3.8</span> 独立事件</h2>
+<p>本章之前的例子表明，给定 <span class="math inline">\(F\)</span> 时，<span class="math inline">\(E\)</span> 的条件概率 <span class="math inline">\(P(E|F)\)</span> 通常不等于 <span class="math inline">\(E\)</span> 的无条件概率 <span class="math inline">\(P(E)\)</span>。换句话说，如果 <span class="math inline">\(F\)</span> 发生了，那么通常会改变 <span class="math inline">\(E\)</span> 发生的可能性。对于特殊的场景下，当 <span class="math inline">\(P(E|F)\)</span> 等于 <span class="math inline">\(P(E)\)</span> 时，我们说 <span class="math inline">\(E\)</span> 与 <span class="math inline">\(F\)</span> 是 <strong>独立</strong> 的。也就是说，如果 <span class="math inline">\(F\)</span> 是否发生不会改变 <span class="math inline">\(E\)</span> 发生的概率，那么 <span class="math inline">\(E\)</span> 就是 <strong>独立</strong> 于 <span class="math inline">\(F\)</span> 的。</p>
+<p>因为 <span class="math inline">\(P(E|F)=\frac{ P(EF) }{ P(F) }\)</span>，如果</p>
+<p><span id="eq-3_8_001"><span class="math display">\[
+P(EF)=P(E)P(F)
+\tag{3.6}\]</span></span></p>
+<p>则 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是 <strong>独立</strong> 的。</p>
+<p>因为 <a href="#eq-3_8_001" class="quarto-xref">方程式&nbsp;<span>3.6</span></a> 中，<span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是对称的，因此如果 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是 <strong>独立</strong> 的，那么 <span class="math inline">\(F\)</span> 和 <span class="math inline">\(E\)</span> 也是 <strong>独立</strong> 的。</p>
+<div id="def-3_8_001" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3.2</strong></span> 如果两个事件 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 满足 <span class="math inline">\(P(EF)=P(E)P(F)\)</span>，则 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是 <strong>独立事件</strong>（<em>independent events</em>）。如果两个事件不是 <strong>独立事件</strong>，则他们之间是 <strong>相关的</strong>（<em>dependent</em>）。</p>
+</div>
+<div id="exm-3_8_a" class="theorem example">
+<p><span class="theorem-title"><strong>例子 3.4</strong></span> 从一副普通的扑克牌（52 张，去掉大小王）中随机抽取一张牌。如果 <span class="math inline">\(A\)</span> 表示抽到的牌是 A，<span class="math inline">\(H\)</span> 表示抽到的牌是红桃，那么 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(H\)</span> 是独立的，因为 <span class="math inline">\(P(AH) = \frac{1}{52}\)</span>，而 <span class="math inline">\(P(A) = \frac{4}{52}\)</span> 且 <span class="math inline">\(P(H) = \frac{13}{52}\)</span>。</p>
+</div>
+<div id="exm-3_8_b" class="theorem example">
+<p><span class="theorem-title"><strong>例子 3.5</strong></span> 如果我们用 <span class="math inline">\(E\)</span> 来表示下一任美国总统是共和党人，用 <span class="math inline">\(F\)</span> 来表示未来一年内会发生大地震，那么大多数人可能都会假设 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是独立的。然而，如果 <span class="math inline">\(G\)</span> 表示未来两年内会发生经济衰退，则 <span class="math inline">\(E\)</span> 与 <span class="math inline">\(G\)</span> 是否是 <strong>独立事件</strong> 可能就会存在一些争议。</p>
+</div>
+<p>接下来我们将说明：如果 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是独立的，则 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F^c\)</span> 也是独立的。</p>
+<div id="prp-3_8_1" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3.3</strong></span> 如果 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是 <strong>独立</strong> 的，则 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F^c\)</span> 也是 <strong>独立</strong> 的。</p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="@prp-3_8_1 的证明过程">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<a href="#prp-3_8_1" class="quarto-xref">命题&nbsp;<span>3.3</span></a> 的证明过程
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>假设 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是 <strong>独立事件</strong>。因为 <span class="math inline">\(E = EF \cup EF^c\)</span>，并且显然， <span class="math inline">\(EF\)</span> 和 <span class="math inline">\(EF^c\)</span> 是互斥事件，于是有：</p>
+<p><span class="math display">\[
+\begin{align}
+P(E)&amp;=P(EF) + P(EF^c) \\
+&amp;=P(E)P(F) + P(EF^c) \\
+\therefore P(EF^c)&amp;= P(E)(1-P(F)) \\
+&amp;=P(E)P(F^c)
+\end{align}
+\]</span></p>
+</div>
+</div>
+<p>因此，如果 <span class="math inline">\(E\)</span> 独立于 <span class="math inline">\(F\)</span>，那么 <span class="math inline">\(E\)</span> 发生的概率不会因 <span class="math inline">\(F\)</span> 是否发生而改变。</p>
+<p>现在假设 <span class="math inline">\(E\)</span> 即独立于 <span class="math inline">\(F\)</span>，也独立于 <span class="math inline">\(G\)</span>。那么 <span class="math inline">\(E\)</span> 是否肯定独立于 <span class="math inline">\(FG\)</span>？令人惊讶的是，答案是否定的。</p>
+<div id="exm-3_8_c" class="theorem example">
+<p><span class="theorem-title"><strong>例子 3.6</strong></span> 抛两颗公平（骰子的点是等概率事件）的骰子。令 <span class="math inline">\(E_7\)</span> 表示两颗骰子的点数之和为 7，令 <span class="math inline">\(F\)</span> 表示第一颗骰子的点数为 4，令 <span class="math inline">\(T\)</span> 表示第二颗骰子的点数为 3。可以证明（问题 36）<span class="math inline">\(E_7\)</span> 独立于 <span class="math inline">\(F\)</span>，且 <span class="math inline">\(E_7\)</span> 也独立于 <span class="math inline">\(T\)</span>，但显然 <span class="math inline">\(E_7\)</span> 不独立于 <span class="math inline">\(FT\)</span>（因为 <span class="math inline">\(P(E_7|FT) = 1\)</span>）。</p>
+</div>
+<p>根据 <a href="#exm-3_8_c" class="quarto-xref">例子&nbsp;<span>3.6</span></a>，看起来，对于 3 个事件之间的独立性的定义，仅仅满足 <span class="math inline">\(\left(\begin{array}{cc}  3 \\ 2  \end{array}\right)\)</span> 对事件之间是独立的是不够的。</p>
+<div id="def-3_8_002" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3.3</strong></span> 对于三个事件：<span class="math inline">\(E\)</span>, <span class="math inline">\(F\)</span>, <span class="math inline">\(G\)</span>，如果他们满足：</p>
+<p><span class="math display">\[
+\begin{align}
+P(EFG) &amp;= P(E)P(F)P(G) \\
+P(EF) &amp;= P(E)P(F) \\
+P(EG) &amp;= P(E)P(G) \\
+P(FG) &amp;= P(F)P(G)
+\end{align}
+\]</span></p>
+<p>则 <span class="math inline">\(E\)</span>，<span class="math inline">\(F\)</span>，<span class="math inline">\(G\)</span> 是相互独立的。</p>
+</div>
+<p>需要注意的是，如果事件 <span class="math inline">\(E\)</span>、<span class="math inline">\(F\)</span>、<span class="math inline">\(G\)</span> 是独立的，那么 <span class="math inline">\(E\)</span> 和由 <span class="math inline">\(F\)</span> 和 <span class="math inline">\(G\)</span> 形成的任何事件之间也是独立的。例如，<span class="math inline">\(E\)</span> 与 <span class="math inline">\(F \cup G\)</span> 独立，因为：</p>
+<p><span class="math display">\[
+\begin{align}
+P\bigg(E(F \cup G)\bigg) &amp;= P(EF \cup EG) \\
+&amp;=P(EF) + P(EG) - P(EFG) \\
+&amp;=P(E)P(F) + P(E)P(G) - P(E)P(FG) \\
+&amp;=P(E)\bigg(P(F) + P(G) - P(FG)\bigg) \\
+&amp;=P(E)P(F \cup G)
+\end{align}
+\]</span></p>
+<p>当然，我们可以将 <a href="#def-3_8_002" class="quarto-xref">定义&nbsp;<span>3.3</span></a> 扩展到大于 3 个事件的范围。对于 <span class="math inline">\(n\)</span> 个事件 <span class="math inline">\(E_1, E_2, ..., E_n\)</span>，如果这 <span class="math inline">\(n\)</span> 个事件的所有的子集 <span class="math inline">\(E_{1}, E_{2}, ..., E_{r},\ r \le n\)</span> 都满足 <span class="math inline">\(P(E_{1}E_{2}...E_{r})\)</span> = <span class="math inline">\(P(E_1)P(E_2)...P(E_r)\)</span>，则这 n 个事件是相互独立的。</p>
+<p>有时，我们所考虑的实验需要执行一系列子实验。例如，如果实验为连续抛掷硬币，那么我们可以将每次抛掷都视为一个子实验。在许多情况下，我们会假设任何一个子实验的结果对其他子实验没有影响，此时，我们说这些子实验之间是 <strong>独立</strong> 的。</p>
+<div id="exr-3_8_d" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.20</strong></span> 如果一个系统由 <span class="math inline">\(n\)</span> 个独立组件构成，且当至少有一个组件工作时，该系统就能工作，那么我们就称这个系统为并行系统，如 <a href="#fig-3_7" class="quarto-xref">图&nbsp;<span>3.7</span></a>。对于这样一个系统，如果组件 <span class="math inline">\(i\)</span> 与其他组件独立，并以<span class="math inline">\(p_i, i=1,2,...,n\)</span> 的概率发挥作用，那么整个系统可工作的概率是多少？</p>
+<div id="fig-3_7" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-3_7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_3/f_3_7.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3_7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3.7: 并行系统示意图
+</figcaption>
+</figure>
+</div>
+</div>
+<div id="sol-3_8_d" class="proof solution">
+<p><span class="proof-title"><em>答案 3.20</em>. </span>令 <span class="math inline">\(A_i\)</span> 表示事件：组件 <span class="math inline">\(i\)</span> 可以工作，则：</p>
+<p><span class="math display">\[
+\begin{align}
+P(系统可工作) &amp;= 1 - P(系统不可工作) \\
+&amp;= 1 - P(所有组件均无法工作) \\
+&amp;= 1 - P(A_1^c A_2^c \cdot \cdot \cdot A_n^c) \\
+&amp;= 1 - \prod_{i=1}^{n}{P(A_i^c)} \\
+&amp;= 1 - \prod_{i=1}^{n}{(1-p_i)}
+\end{align}
+\]</span></p>
+</div>
+<div id="exr-3_8_e" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 3.21</strong></span> 有 <span class="math inline">\(n\)</span> 张优惠券，每张优惠券的类型均不同且相互独立，第 <span class="math inline">\(j\)</span> 张优惠券的类型为 <span class="math inline">\(j\)</span>，且其出现的概率为 <span class="math inline">\(p_j\)</span>，<span class="math inline">\(\sum_{j=1}^{n}{p_j}=1\)</span>。我们从其中选取 <span class="math inline">\(k\)</span> 张优惠券，计算在第 <span class="math inline">\(i\)</span> 类优惠券存在的情况下，第 <span class="math inline">\(j\)</span> 类优惠券也存在的概率（<span class="math inline">\(i \ne j\)</span>）。</p>
+</div>
+<div id="sol-3_8_e" class="proof solution">
+<p><span class="proof-title"><em>答案 3.21</em>. </span>令 <span class="math inline">\(A_r\)</span> 为事件：我们收集的优惠券中存在类型为 <span class="math inline">\(r\)</span> 的优惠券，则 <span class="math inline">\(P(A_j|A_i)=\frac{ P(A_jA_i) }{ P(A_i) }\)</span>。可以考虑使用补集来计算 <span class="math inline">\(P(A_i)\)</span> 和 <span class="math inline">\(P(A_jA_i)\)</span>：</p>
+<p><span class="math display">\[
+\begin{align}
+P(A_i) &amp;= 1-P(A_i^c) \\
+&amp;= 1-P\{k张优惠券均不是第 i 类优惠券\} \\
+&amp;= 1 - \prod_{l=1}^{k}{\big(1 - P(A_i)\big)} \\
+&amp;= 1 - (1 - p_i)^k \\
+P(A_iA_j) &amp;= 1 - P(A_i^c \cup A_j^c) \\
+&amp;= 1 - \bigg(P(A_i^c) + P(A_j^c) - P(A_i^c A_j^c)\bigg) \\
+&amp;= 1 - (1-p_i)^k - (1 - p_j)^k + (1 - p_i - p_j)^k
+\end{align}
+\]</span></p>
+<p>因此，<span class="math inline">\(P(A_j|A_i)=\frac{ 1 - (1-p_i)^k - (1 - p_j)^k + (1 - p_i - p_j)^k }{ 1 - (1 - p_i)^k }\)</span>。</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="务必区分 **独立事件** 和 **互斥事件**">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+务必区分 <strong>独立事件</strong> 和 <strong>互斥事件</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在 <a href="#sec-3_2" class="quarto-xref"><span>章节 3.2</span></a> 中，我们提到：</p>
+<blockquote class="blockquote">
+<p>如果 <span class="math inline">\(EF = \emptyset\)</span>，则意味着 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 不能同时发生，此时我们称 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 为 <strong>互斥事件</strong>。</p>
+</blockquote>
+<p>在本节中，我们提到：</p>
+<blockquote class="blockquote">
+<p>如果 <span class="math inline">\(F\)</span> 是否发生不会改变 <span class="math inline">\(E\)</span> 发生的概率，那么 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 就是 <strong>相互独立</strong> 的。且 <span class="math inline">\(P(EF)=P(E)P(F)\)</span>。</p>
+</blockquote>
+<p>我们往往会混淆 <strong>独立事件</strong> 和 <strong>互斥事件</strong> 的概念，互斥指的是两个随机事件没有共同的基本事件，也即这两个事件不可能同时发生。从集合观点看，即两个事件没有交集，即 <span class="math inline">\(EF = \emptyset\)</span>。</p>
+<p>那么，如果 <span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 独立，是否意味着：</p>
+<p><span class="math display">\[
+E和F相互独立 \Longleftrightarrow E和F没有关联 \Longleftrightarrow E \cap F = \emptyset
+\]</span></p>
+<p>显然，这是不对的。比如，生一个孩子，现有两事件：</p>
+<ul>
+<li><span class="math inline">\(E\)</span>：孩子是男孩</li>
+<li><span class="math inline">\(F\)</span>：孩子是女孩</li>
+</ul>
+<p>显然，<span class="math inline">\(E\)</span> 和 <span class="math inline">\(F\)</span> 是互斥的。</p>
+<p>如果生两个孩子，也有两个事件：</p>
+<ul>
+<li><span class="math inline">\(A\)</span>：第一个孩子是男孩</li>
+<li><span class="math inline">\(B\)</span>：第二个孩子是女孩</li>
+</ul>
+<p>此时，<span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 是相互独立的，因为第一个孩子的性别肯定和第二个孩子的性别是没有关联的。那么事件 <span class="math inline">\(AB\)</span>（也就是生两个孩子，第一个孩子是男孩且第二个孩子是女孩）的概率是多少 呢？</p>
+<p>显然，<span class="math inline">\(P(AB)=\frac{ 1 }{ 4 }\)</span>。此时，即 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 是相互独立的，<span class="math inline">\(A \cap B\)</span> 也是存在的。</p>
+</div>
+</div>
 </section>
 <section id="problems" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
+<ol type="1">
+<li><p>问题1。</p></li>
+<li><p>问题。</p></li>
+</ol>
 
 
 </section>
