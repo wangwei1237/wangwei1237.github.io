@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 6&nbsp; Distributions of sampling statistics</title>
+<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 6&nbsp; 抽样分布</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -70,8 +104,38 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 6&nbsp; Distributions of sampling statistics">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 6&nbsp; 抽样分布">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
@@ -138,7 +202,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_6/6.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Distributions of sampling statistics</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_6/6.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">抽样分布</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -201,7 +265,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_6/6.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Distributions of sampling statistics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">抽样分布</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -303,12 +367,16 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">6.1</span> Introduction</a></li>
-  <li><a href="#the-sample-mean" id="toc-the-sample-mean" class="nav-link" data-scroll-target="#the-sample-mean"><span class="header-section-number">6.2</span> The sample mean</a></li>
-  <li><a href="#the-central-limit-theorem" id="toc-the-central-limit-theorem" class="nav-link" data-scroll-target="#the-central-limit-theorem"><span class="header-section-number">6.3</span> The central limit theorem</a></li>
-  <li><a href="#the-sample-variance" id="toc-the-sample-variance" class="nav-link" data-scroll-target="#the-sample-variance"><span class="header-section-number">6.4</span> The sample variance</a></li>
-  <li><a href="#sampling-distributions-from-a-normal-population" id="toc-sampling-distributions-from-a-normal-population" class="nav-link" data-scroll-target="#sampling-distributions-from-a-normal-population"><span class="header-section-number">6.5</span> Sampling distributions from a normal population</a></li>
-  <li><a href="#sampling-from-a-finite-population" id="toc-sampling-from-a-finite-population" class="nav-link" data-scroll-target="#sampling-from-a-finite-population"><span class="header-section-number">6.6</span> Sampling from a finite population</a></li>
+  <li><a href="#sec-6_1" id="toc-sec-6_1" class="nav-link active" data-scroll-target="#sec-6_1"><span class="header-section-number">6.1</span> 引言</a></li>
+  <li><a href="#sec-6_2" id="toc-sec-6_2" class="nav-link" data-scroll-target="#sec-6_2"><span class="header-section-number">6.2</span> 样本均值</a></li>
+  <li><a href="#sec-6_3" id="toc-sec-6_3" class="nav-link" data-scroll-target="#sec-6_3"><span class="header-section-number">6.3</span> 中心极限定理</a>
+  <ul class="collapse">
+  <li><a href="#样本均值的近似分布" id="toc-样本均值的近似分布" class="nav-link" data-scroll-target="#样本均值的近似分布"><span class="header-section-number">6.3.1</span> 样本均值的近似分布</a></li>
+  <li><a href="#需要多大的样本" id="toc-需要多大的样本" class="nav-link" data-scroll-target="#需要多大的样本"><span class="header-section-number">6.3.2</span> 需要多大的样本？</a></li>
+  </ul></li>
+  <li><a href="#sec-6_4" id="toc-sec-6_4" class="nav-link" data-scroll-target="#sec-6_4"><span class="header-section-number">6.4</span> The sample variance</a></li>
+  <li><a href="#sec-6_5" id="toc-sec-6_5" class="nav-link" data-scroll-target="#sec-6_5"><span class="header-section-number">6.5</span> Sampling distributions from a normal population</a></li>
+  <li><a href="#sec-6_6" id="toc-sec-6_6" class="nav-link" data-scroll-target="#sec-6_6"><span class="header-section-number">6.6</span> Sampling from a finite population</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_6/6.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
@@ -318,7 +386,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-6" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Distributions of sampling statistics</span></span></h1>
+<h1 class="title"><span id="sec-6" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">抽样分布</span></span></h1>
 </div>
 
 
@@ -335,23 +403,391 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">6.1</span> Introduction</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注释
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>样本统计量的分布（<em>Distributions of Sampling Statistics</em>）也称为抽样分布，是指样本的统计指标的分布。例如，样本平均数是总体平均数的一个估计量，如果按照相同的样本容量，相同的抽样方式，反复地抽取样本，每次抽样可以得到一个平均数，所有可能样本的平均数所形成的分布，就是样本平均数的抽样分布。</p>
+</div>
+</div>
+<section id="sec-6_1" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-6_1"><span class="header-section-number">6.1</span> 引言</h2>
+<p>统计学是一门从观测数据中得出结论的科学。例如，在技术研究中，经常遇到的一种情况是：我们可能会面对数量庞大的、具有可测量值（<em>measurable values</em>）的对象的集合。我们希望通过对这些数量庞大的对象适当抽样（<em>sampling</em>）并分析抽样得到的样本对象，从而得到一些和全部对象相关的结论。</p>
+<p>为了使用样本数据（<em>sample data</em>）推断总体（<em>pupulation</em>），必须对样本与总体之间的关系作某些假设。通常，非常合理的一个假设是：总体会存在一个潜在的概率分布，因此可以认为，从总体中抽取的对象的测量值是独立随机变量并且其分布于总体分布一致。如果通过随机抽取的方式来获得样本数据，那么样本数据是独立、同总体分布一致这样的假设是合理的。</p>
+<div id="def-6_1_1" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 6.1</strong></span> 如果 <span class="math inline">\(X_1, ..., X_n\)</span> 是独立同分布的随机变量，其分布函数为 <span class="math inline">\(F\)</span>，我们称 <span class="math inline">\(X_1, ..., X_n\)</span> 构成了来自于 <span class="math inline">\(F\)</span> 的 <strong>样本</strong>（<em>sample</em>）（有时也称其为随机样本）。</p>
+</div>
+<p>在大多数应用中，总体的分布 <span class="math inline">\(F\)</span> 并非总是事先指定的（事实是，在大多数情况下，<span class="math inline">\(F\)</span> 是未知的），因此我们会尝试使用数据来推断 <span class="math inline">\(F\)</span>。</p>
+<ul>
+<li>有时，我们会假设 <span class="math inline">\(F\)</span> 由一些未知的参数来确定。例如，我们可以假设 <span class="math inline">\(F\)</span> 是一个均值和方差都未知的正态分布，或者是一个均值未知的泊松分布。</li>
+<li>有时，我们会假设，除了是一个连续分布或者离散分布外，<span class="math inline">\(F\)</span> 几乎没有任何的已知信息。</li>
+</ul>
+<p>在使用样本数据推断总体分布的过程中，如果假定总体的潜在分布 <span class="math inline">\(F\)</span> 是由一组未知参数确定的，则称其为 <strong>参数推断</strong>（<em>parametric inference</em>）；而如果对总体的潜在分布 <span class="math inline">\(F\)</span> 没有任何假设，则称其为 <strong>非参数推断</strong>（<em>nonparametric inference</em>）。</p>
+<div id="exm-6_1_a" class="theorem example">
+<p><span class="theorem-title"><strong>例子 6.1</strong></span> 假设刚刚安装了一个新工艺以用来生产计算机芯片，并且假设这个新工艺生产的连续芯片的使用寿命是独立、同分布的，其分布是一个未知分布 <span class="math inline">\(F\)</span>。</p>
+<p>物理原因有时会暗示分布 <span class="math inline">\(F\)</span> 的参数形式。例如，物理原因可能会让我们相信 <span class="math inline">\(F\)</span> 是一个正态分布或者是一个指数分布。在这种情况下，我们面对的将是一个 <strong>参数统计</strong> 问题，我们希望使用观察到的数据来估计 <span class="math inline">\(F\)</span> 的参数。例如，如果假设 <span class="math inline">\(F\)</span> 是正态分布，我们将希望估计其 <strong>均值</strong> 和 <strong>方差</strong>；如果假设 <span class="math inline">\(F\)</span> 是指数分布，我们将希望估计其 <strong>均值</strong>。</p>
+<p>在其他情况下，可能没有任何物理依据来假设 <span class="math inline">\(F\)</span> 具有某种特定分布形式。在这种情况下，关于 <span class="math inline">\(F\)</span> 的推断问题将构成一个 <strong>非参数推断</strong> 问题。</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注释
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>物理原因（<em>Physical reasons</em>）指的是基于物理学原理或物理现象的原因。在统计学和概率论中，物理原因通常涉及使用物理理论或实验结果来推导或假设某些统计分布的形式。例如，在某些情况下，物理现象可能会暗示数据遵循某种特定的分布：</p>
+<ol type="1">
+<li>正态分布：如果某个过程受到大量小的、独立的随机影响，那么根据中心极限定理，最终的结果可能会接近正态分布。比如，测量误差通常假定为正态分布。</li>
+<li>指数分布：在某些情况下，事件的发生是完全随机的，且时间间隔独立且服从相同分布，那么这些时间间隔可能符合指数分布。比如，放射性衰变事件的时间间隔通常假设为指数分布。</li>
+<li>泊松分布：当在固定时间间隔内的事件发生是独立的，且事件发生的概率很小，次数很多时，事件的发生次数通常会服从泊松分布。比如，电话交换机中每小时接收到的呼叫数可能服从泊松分布。 <span class="math inline">\(\blacksquare\)</span></li>
+</ol>
+</div>
+</div>
+</div>
+<p>在本章中，我们将关注由样本产生的某些统计量（或统计指标）的概率分布，其中 <strong>统计量</strong>（<em>statistic</em>）是一个随机变量，统计量的值由样本数据决定。我们将讨论的两个重要的统计量：<strong>样本均值</strong> 和 <strong>样本方差</strong>。</p>
+<ul>
+<li>在 <a href="#sec-6_2" class="quarto-xref"><span>章节 6.2</span></a> 中，我们将介绍 <strong>样本均值</strong>，并推导 <strong>样本均值</strong> 的期望和方差。我们注意到，当样本量至少为中等大小时，样本均值的分布近似正态分布。如上的结论来自于 <strong>中心极限定理</strong>（<em>the central limit theorem</em>）。</li>
+<li>中心极限定理是概率论中最重要的理论之一，我们将在 <a href="#sec-6_3" class="quarto-xref"><span>章节 6.3</span></a> 中对其进行讨论。</li>
+<li>在 <a href="#sec-6_4" class="quarto-xref"><span>章节 6.4</span></a> 中，我们将介绍 <strong>样本方差</strong> 并确定其期望。</li>
+<li>在 <a href="#sec-6_5" class="quarto-xref"><span>章节 6.5</span></a> 中，我们假设总体符合正态分布，并给出样本均值和样本方差的联合分布。</li>
+<li>在 <a href="#sec-6_6" class="quarto-xref"><span>章节 6.6</span></a> 中，我们假设从有限元素的总体中采样，并解释采样所得到的样本是“随机样本”的含义。当总体大小相对于样本大小很大时，我们通常将总体视为是无限大的。</li>
+</ul>
 </section>
-<section id="the-sample-mean" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="the-sample-mean"><span class="header-section-number">6.2</span> The sample mean</h2>
+<section id="sec-6_2" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sec-6_2"><span class="header-section-number">6.2</span> 样本均值</h2>
+<p>考虑一个总体，总体中的每个元素都有一个数字类型的值（<em>value</em>）。例如，总体可能由特定社区的成年人构成，总体中和每个成年人相关的数字类型的值可能是其年收入、身高或年龄等。我们经常假设，与总体中的任何成员相关的值都可以看作期望为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的随机变量的取值。我们称 <span class="math inline">\(\mu\)</span> 为总体均值，称 <span class="math inline">\(\sigma^2\)</span> 为总体方差。令 <span class="math inline">\(X_1, X_2, ..., X_n\)</span> 是从该总体中抽取的样本的值，则样本均值的定义为：</p>
+<p><span class="math display">\[
+\overline{X} = \frac{X_1 + ... + X_n}{n}
+\]</span></p>
+<p>因为样本均值 <span class="math inline">\(\overline{X}\)</span> 的值取决于样本中的各随机变量的值，因此 <span class="math inline">\(\overline{X}\)</span> 也是一个随机变量。<span class="math inline">\(\overline{X}\)</span> 的期望和方差分别为：</p>
+<p><span id="eq-6_2_001"><span class="math display">\[
+\begin{align}
+E[\overline{X}] &amp;= E\bigg[\frac{X_1 + ... + X_n}{n}\bigg] \\
+&amp;= \frac{1}{n}(E[X_1] + ... + E[X_n]) \\
+&amp;= \mu \\
+\textup{Var}(\overline{X}) &amp;= \textup{Var}\bigg(\frac{X_1 + ... + X_n}{n}\bigg) \\
+&amp;= \frac{1}{n^2}\bigg(\textup{Var}(X_1) + ... + \textup{Var}(X_n) \bigg) \\
+&amp;= \frac{n\sigma^2}{n^2} \\
+&amp;= \frac{\sigma^2}{n}
+\end{align}
+\tag{6.1}\]</span></span></p>
+<p>其中，<span class="math inline">\(\mu\)</span> 和 <span class="math inline">\(\sigma^2\)</span> 分别为总体的均值和方差。因此，样本均值的期望就是总体均值 <span class="math inline">\(\mu\)</span>，而样本均值的方差就是总体方差的 <span class="math inline">\(\frac{1}{n}\)</span> 倍。因此，我们可以得出结论：<span class="math inline">\(\overline{X}\)</span> 也是以总体均值 <span class="math inline">\(\mu\)</span> 为中心，但是其波动会随着样本量的增加而变得越来越小。<a href="#fig-6_1" class="quarto-xref">图&nbsp;<span>6.1</span></a> 绘制了来自标准正态分布总体的、不同样本量的样本均值的概率密度函数。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>distributions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length =</span> <span class="dv">1000</span>), <span class="dv">4</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="at">each =</span> <span class="dv">1000</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.25</span>, <span class="fl">0.1</span>), <span class="at">each =</span> <span class="dv">1000</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">n  =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">10</span>), <span class="at">each =</span> <span class="dv">1000</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 计算每个分布的概率密度</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>distributions<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">with</span>(distributions, <span class="fu">dnorm</span>(x, <span class="at">mean=</span>mean, <span class="at">sd=</span>sd))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 绘制多个正态分布的曲线</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(distributions, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y, <span class="at">color=</span><span class="fu">factor</span>(n))) <span class="sc">+</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color=</span><span class="st">"n"</span>) <span class="sc">+</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-6_1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="6_files/figure-html/fig-6_1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.1: 来自标准正态分布的不同样本量的样本均值的概率密度
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="the-central-limit-theorem" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="the-central-limit-theorem"><span class="header-section-number">6.3</span> The central limit theorem</h2>
+<section id="sec-6_3" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="sec-6_3"><span class="header-section-number">6.3</span> 中心极限定理</h2>
+<p>在本节中，我们将讨论概率论中最为显著的一个结果——即中心极限定理（<em>the central limit theorem</em>）。简单的说，中心极限定理断言：大量的、独立随机变量的和的分布近似于正态分布。因此，对于独立随机变量的和而言，中心极限定理不仅提供了一种计算其近似概率的简单方法，而且还有助于解释许多自然总体的经验频率呈现钟形曲线（即正态分布）的这一显著现象。</p>
+<p>中心极限定理的最简单的形式如下：</p>
+<div id="thm-6_3_1" class="theorem">
+<p><span class="theorem-title"><strong>定理 6.1</strong></span> 中心极限定理：令 <span class="math inline">\(X_1, X_2, ..., X_n\)</span> 是一个独立、同分布的随机变量的序列，其中每个随机变量的均值和方差均为 <span class="math inline">\(\mu\)</span> 和 <span class="math inline">\(\sigma^2\)</span>。对于一个比较大的 <span class="math inline">\(n\)</span>，</p>
+<p><span class="math inline">\(X_1 + X_2 + \cdots + X_n\)</span></p>
+<p>的分布近似于均值为 <span class="math inline">\(n\mu\)</span>、方差为 <span class="math inline">\(n\sigma^2\)</span> 的正态分布。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>根据 <a href="#thm-6_3_1" class="quarto-xref">定理&nbsp;<span>6.1</span></a>，<span class="math inline">\(\frac{X_1 + X_2 + \cdots + X_n - n\mu}{\sqrt{n}\sigma}\)</span> 的分布近似于标准正态分布 <span class="math inline">\(\mathcal{N}(0,1)\)</span>。因此，如果 <span class="math inline">\(Z \thicksim \mathcal{N}(0, 1)\)</span>，对于一个比较大的 <span class="math inline">\(n\)</span>，有：</p>
+<p><span class="math display">\[
+P\bigg\{\frac{X_1 + X_2 + \cdots + X_n - n\mu}{\sqrt{n}\sigma} \lt x \bigg\} \approx P\{Z \lt x\}
+\]</span></p>
+<div id="exr-6_3_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 6.1</strong></span> 一家保险公司有 25000 名汽车保险的投保人。如果投保人的年度索赔额是均值为 320、标准差为 540 的随机变量，则投保人年度索赔总额超过 830 万元的概率是多少？</p>
+</div>
+<div id="sol-6_3_a" class="proof solution">
+<p><span class="proof-title"><em>答案 6.1</em>. </span>令 <span class="math inline">\(X\)</span> 表示年度索赔总额。对投保人进行编号，令 <span class="math inline">\(X_i\)</span> 表示第 <span class="math inline">\(i\)</span> 位投保人的年度索赔额。当 <span class="math inline">\(n = 25000\)</span> 时，根据中心极限定理，<span class="math inline">\(X = \sum_{i=1}^{n}{X_i}\)</span> 将近似于均值为 <span class="math inline">\(320 \times 25000 = 8 \times 10^6\)</span>、标准差为 <span class="math inline">\(540 \sqrt{25000} = 8.5381 \times 10^4\)</span> 的正态分布。因此：</p>
+<p><span class="math display">\[
+\begin{align}
+P\{X &gt; 8.3 \times 10^6\} &amp;= P\bigg\{\frac{X - 8 \times 10^6}{8.5381 \times 10^4} \gt \frac{8.3 \times 10^6 - 8 \times 10^6}{8.5381 \times 10^4} \bigg\} \\
+&amp;= P\bigg\{\frac{X - 8 \times 10^6}{8.5381 \times 10^4} \gt \frac{0.3 \times 10^6}{8.5381 \times 10^4} \bigg\} \\
+&amp; \approx P\{Z \gt 3.51 \} \\
+&amp; \approx 0.00023
+\end{align}
+\]</span></p>
+<p>因此，年索赔额超过 830 万元的概率仅仅只有万分之 2.2。当然我们也可以使用 R 来计算待求的概率：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="fl">8.3</span> <span class="sc">*</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>, <span class="dv">320</span> <span class="sc">*</span> <span class="dv">25000</span>, <span class="dv">540</span> <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">25000</span>))</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="fl">8.3</span> <span class="sc">*</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>, <span class="dv">320</span> <span class="sc">*</span> <span class="dv">25000</span>, <span class="dv">540</span> <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">25000</span>))</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0002210042</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-6_3_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 6.2</strong></span> 土木工程师认为：在没有结构性损坏的情况下，某跨度的桥所能承受的重量（单位为 1000 磅）<span class="math inline">\(W\)</span> 是一个均值为 400、标准差为 40 的正态分布。假设一辆汽车的重量（同样以 1000 磅为单位）是一个均值为 3、标准差为 0.3 的随机变量。该桥上必须有多少辆汽车才能使其发生结构性损坏的概率超过 0.1？</p>
+</div>
+<div id="sol-6_3_b" class="proof solution">
+<p><span class="proof-title"><em>答案 6.2</em>. </span>令 <span class="math inline">\(P_n\)</span> 表示当桥上有 <span class="math inline">\(n\)</span> 辆车时桥发生结构性损坏的概率。令 <span class="math inline">\(X_i\)</span> 表示桥上第 <span class="math inline">\(i\)</span> 辆汽车的重量，于是有：</p>
+<p><span class="math inline">\(\begin{align} P_n &amp;= P\{X_1 + \cdots + X_n \ge W\} \\ &amp;= P\{X_1 + \cdots + X_n - W \ge 0\} \end{align}\)</span></p>
+</div>
+<p>根据中心极限定理（<a href="#thm-6_3_1" class="quarto-xref">定理&nbsp;<span>6.1</span></a>），<span class="math inline">\(\sum_{i=1}^{n}{X_i}\)</span> 近似于均值为 <span class="math inline">\(3n\)</span>、方差为 <span class="math inline">\(0.09n\)</span> 的正态分布。因为 <span class="math inline">\(W\)</span> 是与 <span class="math inline">\(X_i\)</span> 之间相互独立的正态分布，因此 <span class="math inline">\((\sum_{i=1}^{n}{X_i}) - W\)</span> 也是一个正态分布，并且其均值和方差分别为：</p>
+<p><span class="math inline">\(E\bigg[(\sum_{i=1}^{n}{X_i}) - W\bigg] = 3n - 400\)</span></p>
+<p><span class="math inline">\(\textup{Var}\bigg((\sum_{i=1}^{n}{X_i}) - W\bigg) = \textup{Var}\bigg(\sum_{i=1}^{n}{X_i}\bigg) + \textup{Var}(W) = 0.09n + 1600\)</span></p>
+<p>令 <span class="math inline">\(Z\)</span> 表示标准正态分布的随机变量，所以有：</p>
+<p><span class="math inline">\(\begin{align} P_n &amp;= P\bigg\{\frac{X_1 + \cdots + X_n - W - (3n - 400)}{\sqrt{0.09n + 1600}} \ge \frac{0 - (3n - 400)}{\sqrt{0.09n + 1600}}\bigg\} \\ &amp; \approx P\bigg\{Z \ge \frac{400 - 3n}{\sqrt{0.09n + 1600}} \bigg\} \end{align}\)</span></p>
+<p>在 R 语言中，利用 <code>qnorm(0.1, lower.tail = FALSE)</code> 求解 <span class="math inline">\(P\{X \gt x\}\)</span> 的概率可得到 <span class="math inline">\(P\{Z \ge 1.28\} \approx 0.1\)</span>。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qnorm</span>(<span class="fl">0.1</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.281552</code></pre>
+</div>
+</div>
+<p>所以当汽车数量满足 <span class="math inline">\(\frac{400 - 3n}{\sqrt{0.09n + 1600}} \le 1.28\)</span> 时，即 <span class="math inline">\(n \ge 117\)</span> 时，桥会有 10% 的概率发生结构性损坏。<span class="math inline">\(\blacksquare\)</span></p>
+<p>对二项随机变量的研究是中心极限定理最重要的应用之一。由于二项随机变量 <span class="math inline">\(X\)</span> 以参数 <span class="math inline">\((n, p)\)</span> 表示在试验成功概率为 <span class="math inline">\(p\)</span> 时 <span class="math inline">\(n\)</span> 个独立试验的成功次数。如果令</p>
+<p><span class="math inline">\(X_i = \begin{cases} 1, \quad &amp; 第 i 次试验成功\\ 0, \quad &amp; 其它 \end{cases}\)</span></p>
+<p>则我们可以将 <span class="math inline">\(X\)</span> 表示为：</p>
+<p><span class="math inline">\(X = X_1 + \cdots + X_n\)</span></p>
+<p>因为 <span class="math inline">\(E[X_i] = p\)</span>，<span class="math inline">\(\textup{Var}(X_i) = p(1-p)\)</span>，所以根据中心极限定理，当 <span class="math inline">\(n\)</span> 比较大时：</p>
+<p><span class="math inline">\(\frac{X - np}{\sqrt{np(1-p)}}\)</span> 近似于标准正态分布。</p>
+<p><a href="#fig-6_2" class="quarto-xref">图&nbsp;<span>6.2</span></a> 以图形的方式给出了参数为 <span class="math inline">\((n,p)\)</span> 的二项随机变量的概率质量函数是如何随着 <span class="math inline">\(n\)</span> 的增大而变得越来越趋向于正态分布。</p>
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>n_seq <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">50</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fl">0.7</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>g_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (n <span class="cf">in</span> n_seq) {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, n, <span class="dv">1</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(x, n, p)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">y_start =</span> <span class="fu">rep</span>(<span class="dv">0</span>, n <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y_start, <span class="at">yend =</span> y)) <span class="sc">+</span>  </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_segment</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, n, n <span class="sc">/</span> <span class="dv">10</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, n)) <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      <span class="co">#labs(title = paste("(", n, ",", p, ")")) + </span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    g_list[[i]] <span class="ot">&lt;-</span> plot</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (g <span class="cf">in</span> g_list) {</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(g)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-6_2" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-6_2" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-6_2-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-6_2-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="6_files/figure-html/fig-6_2-1.png" class="img-fluid figure-img" data-ref-parent="fig-6_2" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-6_2-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) (10, 0.7)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-6_2" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-6_2-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-6_2-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="6_files/figure-html/fig-6_2-2.png" class="img-fluid figure-img" data-ref-parent="fig-6_2" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-6_2-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) (20, 0.7)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-6_2" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-6_2-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-6_2-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="6_files/figure-html/fig-6_2-3.png" class="img-fluid figure-img" data-ref-parent="fig-6_2" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-6_2-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) (30, 0.7)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-6_2" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-6_2-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-6_2-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="6_files/figure-html/fig-6_2-4.png" class="img-fluid figure-img" data-ref-parent="fig-6_2" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-6_2-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(d) (50, 0.7)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.2: 逐步收敛到正态分布的二项概率质量函数
+</figcaption>
+</figure>
+</div>
+<div id="exr-6_3_c" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 6.3</strong></span> 某所大学的一年级学生的理想人数是 150。根据过去的经验，平均而言，收到录取通知书的学生中，只有 30% 会真正入学，因此该学校采用发放 450 份录取通知书的政策。计算该学校的一年级学生人数超过 150 的概率？</p>
+</div>
+<div id="sol-6_3_c" class="proof solution">
+<p><span class="proof-title"><em>答案 6.3</em>. </span>令 <span class="math inline">\(X\)</span> 表示入学的学生数量，假定每个收到入学通知书的学生最终是否入学是相互独立的，因此 <span class="math inline">\(X\)</span> 是一个参数为 <span class="math inline">\((450, 0.3)\)</span> 的二项随机变量。因为二项分布是离散分布，而正态分布是连续分布，因此当使用正态分布来近似计算时，最好使用 <span class="math inline">\(P\{i - 0.5 &lt; X &lt; i + 0.5\}\)</span> 来计算 <span class="math inline">\(P\{X=i\}\)</span>（也称为连续性校正（<em>Continuity Correction</em>））。令 <span class="math inline">\(Z \thicksim \mathcal{N}(0,1)\)</span>，则近似概率为：</p>
+<p><span class="math inline">\(\begin{align} P\{X \gt 150.5\} &amp;= P\bigg\{\frac{X - 450 \cdot 0.3}{\sqrt{450 \cdot 0.3 \cdot 0.7}} \gt \frac{150.5 - 450 \cdot 0.3}{\sqrt{450 \cdot 0.3 \cdot 0.7}} \bigg\} \\ &amp; \approx P\{Z \gt 1.59\} \\ &amp; \approx 0.06 \end{align}\)</span></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="fl">1.59</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="fl">1.59</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0559174</code></pre>
+</div>
+</div>
+</div>
+<p>因此，在收到录取通知书的 450 名学生中，实际入学超过 150 名学生的概率只有 6%。<span class="math inline">\(\blacksquare\)</span></p>
+<div class="callout callout-style-default callout-note callout-titled" title="连续性校正">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+连续性校正
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>连续性校正（<em>Continuity Correction</em>），有时也称为 Yates 连续性校正，是统计学中用于修正离散分布（如二项分布）和连续分布（如正态分布）之间差异的一种方法。具体来说，当我们使用连续的正态分布来近似离散的二项分布时，连续性校正可以提高近似的精确度。</p>
+</div>
+</div>
+<p>需要注意的是，对于二项分布，我们现在有两种可能的近似方式：</p>
+<ul>
+<li>泊松分布近似，当 <span class="math inline">\(n\)</span> 很大而 <span class="math inline">\(p\)</span> 很小时，使用泊松分布来逼近二项分布的效果比较好。</li>
+<li>正态分布近似，当 <span class="math inline">\(np(1−p)\)</span> 很大时，可以证明正态分布来逼近二项分布的效果会非常好。一般而言，如果 <span class="math inline">\(n\)</span> 满足 <span class="math inline">\(np(1−p) \ge 10\)</span> 时，正态分布的近似效果会非常好。</li>
+</ul>
+<section id="样本均值的近似分布" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="样本均值的近似分布"><span class="header-section-number">6.3.1</span> 样本均值的近似分布</h3>
+<p>令 <span class="math inline">\(X_1, ..., X_n\)</span> 是从均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的总体中抽取的样本。可以使用中心极限定理来近似样本均值 <span class="math inline">\(\overline{X}\)</span> 的分布：</p>
+<p><span class="math inline">\(\overline{X} = \sum_{i=1}^{n}{\frac{X_i}{n}}\)</span></p>
+<p>根据中心极限定理，当 <span class="math inline">\(n\)</span> 比较大时，<span class="math inline">\(\overline{X}\)</span> 近似于正态分布。根据 <a href="#eq-6_2_001" class="quarto-xref">方程式&nbsp;<span>6.1</span></a>，<span class="math inline">\(\overline{X}\)</span> 的期望和标准差分别为 <span class="math inline">\(\mu\)</span> 和 <span class="math inline">\(\frac{\sigma}{\sqrt{n}}\)</span>，因此：</p>
+<p><span class="math display">\[
+\frac{\overline{X} - \mu}{\frac{\sigma}{\sqrt{n}}}
+\]</span></p>
+<p>近似于标准正态分布。</p>
+<div id="exr-6_3_d" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 6.4</strong></span> 一个工人总体的体重的均值为 167，标准差为 27。</p>
+<ol type="1">
+<li>如果选择 36 名工人作为样本，则其体重的样本均值在 163~170 之间的近似概率是多少？</li>
+<li>当样本大小为 144 人时，重复计算第 1 题？</li>
+</ol>
+</div>
+<div id="sol-6_3_d" class="proof solution">
+<p><span class="proof-title"><em>答案 6.4</em>. </span>令 <span class="math inline">\(Z \thicksim \mathcal{N}(0,1)\)</span>。</p>
+<ol type="1">
+<li><p>根据中心极限定理，<span class="math inline">\(\overline{X}\)</span> 近似符合均值为 167、标准差为 <span class="math inline">\(\frac{27}{\sqrt{36}} = 4.5\)</span> 的正态分布。因此：</p>
+<p><span class="math inline">\(\begin{align} P\{163 \lt \overline{X} \lt 170\} &amp;= P\bigg\{\frac{163 - 167}{4.5} \lt \frac{\overline{X} - 167}{4.5} \lt \frac{170 - 167}{4.5} \bigg\} \\ &amp; \approx P\{-0.8889 \lt Z \lt 0.8889\} \\ &amp;= P\{Z \lt 0.8889\} - P\{Z \lt -0.8889\} \\ &amp;= 1 - 2 \cdot P\{Z \ge 0.8889\} \\ &amp;= 0.6259432 \end{align}\)</span></p>
+<p>可以用如下 R 代码 <code>1 - 2 * pnorm(0.8889, lower.tail = FALSE)</code> 求解 <span class="math inline">\(1 - 2 \cdot P\{Z \ge 0.8889\}\)</span> 的值：</p></li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="fl">0.8889</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6259432</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li><p>当样本量为 144 时，近似符合均值为 167、标准差为 <span class="math inline">\(\frac{27}{\sqrt{144}} = 2.25\)</span> 的正态分布。因此：</p>
+<p><span class="math inline">\(\begin{align} P\{163 \lt \overline{X} \lt 170\} &amp;= P\bigg\{\frac{163 - 167}{2.25} \lt \frac{\overline{X} - 167}{2.25} \lt \frac{170 - 167}{2.25} \bigg\} \\ &amp; \approx P\{-1.7778 \lt Z \lt 1.7778\} \\ &amp;= P\{Z \lt 1.7778\} - P\{Z \lt -1.7778\} \\ &amp;= 1 - 2 \cdot P\{Z \ge 1.7778\} \\ &amp;= 0.9245633 \end{align}\)</span></p></li>
+</ol>
+<p>因此，当样本大小从 36 增加到 144 时，工人体重的样本均值在 163~170 之间的近似概率从 0.6259 提升到了 0.9246。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-6_3_e" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 6.5</strong></span> 一位天文学家想测量从她的观测台到一颗遥远恒星的距离。然而，由于大气扰动的原因，任何测量都不会产生确切的距离 <span class="math inline">\(d\)</span>。因此，天文学家决定进行一系列测量，然后使用它们的平均值作为实际距离的估计。如果天文学家认为连续测量的距离之间是独立的随机变量，其均值为 <span class="math inline">\(d\)</span> 光年，标准差为 2 光年，则天文学家需要做多少次测量才能使得她所估计的距离误差在 <span class="math inline">\(\pm 0.5\)</span> 光年之内的概率至少为 95%？</p>
+</div>
+<div id="sol-6_3_e" class="proof solution">
+<p><span class="proof-title"><em>答案 6.5</em>. </span>如果天文学家测量了 <span class="math inline">\(n\)</span> 次，则测量数据的样本均值 <span class="math inline">\(\overline{X}\)</span> 将近似符合均值为 <span class="math inline">\(d\)</span>、标准差为 <span class="math inline">\(\frac{2}{\sqrt{n}}\)</span> 的正态分布。因此，测量值位于 <span class="math inline">\(d \pm 0.5\)</span> 之间的概率为：</p>
+<p><span class="math inline">\(\begin{align} P\{-0.5 \lt \overline{X} - d \lt 0.5\} &amp;= P\bigg\{\frac{-0.5}{\frac{2}{\sqrt{n}}} \lt \frac{\overline{X} - d}{\frac{2}{\sqrt{n}}} \lt \frac{0.5}{\frac{2}{\sqrt{n}}} \bigg\} \\ &amp; \approx P\{-\frac{\sqrt{n}}{4} \lt Z \lt \frac{\sqrt{n}}{4}\} \\ &amp;= 1 - 2 \cdot P\{Z \ge \frac{\sqrt{n}}{4}\} \end{align}\)</span></p>
+<p>即，<span class="math inline">\(1 - 2 \cdot P\{Z \ge \frac{\sqrt{n}}{4}\} \ge 0.95\)</span>，也就是 <span class="math inline">\(P\{Z \ge \frac{\sqrt{n}}{4}\} \le 0.025\)</span>。</p>
+<p>在 R 中，利用 <code>qnorm(0.025, lower.tail = FALSE)</code> 可以得到 <span class="math inline">\(Z\)</span> 的最小值 1.959964，即 <span class="math inline">\(\frac{\sqrt{n}}{4} \ge 1.959964\)</span>。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qnorm</span>(<span class="fl">0.025</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.959964</code></pre>
+</div>
+</div>
+<p>于是得到 <span class="math inline">\(n \ge 61.46334\)</span>，因此，天文学家至少要测量 62 次。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
-<section id="the-sample-variance" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="the-sample-variance"><span class="header-section-number">6.4</span> The sample variance</h2>
+<section id="需要多大的样本" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="需要多大的样本"><span class="header-section-number">6.3.2</span> 需要多大的样本？</h3>
+<p>中心极限定理并没有明确指出：样本大小 <span class="math inline">\(n\)</span> 需要多大才能使逼近的正态分布是有效的。事实上，答案取决于样本数据的总体分布。</p>
+<p>例如，如果总体潜在的分布是正态分布，那么无论样本量大小是多少，样本均值 <span class="math inline">\(\overline{X}\)</span> 也都将是正态分布。一般的经验是：只要样本量 <span class="math inline">\(n\)</span> 至少为30，就可以确信 <span class="math inline">\(\overline{X}\)</span> 近似服从正态分布。也就是说，实际上，无论总体的潜在分布有多不服从正态分布，至少有 30 个样本的样本均值都将近似服从正态分布。在大多数情况下，正态逼近也适用于样本量小得多的场景。事实上，大小为 5 的样本通常就足以让正态逼近是有效的。当总体分布为指数分布时，<a href="#fig-6_3" class="quarto-xref">图&nbsp;<span>6.3</span></a> 显示了样本大小 <span class="math inline">\(n\)</span> 分别为 1、5、10 时的样本均值的分布。</p>
+<div id="fig-6_3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_6/f_6_3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.3: 均值为 1 的 <span class="math inline">\(n\)</span> 个指数随机变量的均值的概率密度函数
+</figcaption>
+</figure>
+</div>
 </section>
-<section id="sampling-distributions-from-a-normal-population" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="sampling-distributions-from-a-normal-population"><span class="header-section-number">6.5</span> Sampling distributions from a normal population</h2>
 </section>
-<section id="sampling-from-a-finite-population" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="sampling-from-a-finite-population"><span class="header-section-number">6.6</span> Sampling from a finite population</h2>
+<section id="sec-6_4" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="sec-6_4"><span class="header-section-number">6.4</span> The sample variance</h2>
+</section>
+<section id="sec-6_5" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="sec-6_5"><span class="header-section-number">6.5</span> Sampling distributions from a normal population</h2>
+</section>
+<section id="sec-6_6" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="sec-6_6"><span class="header-section-number">6.6</span> Sampling from a finite population</h2>
 </section>
 <section id="problems" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
