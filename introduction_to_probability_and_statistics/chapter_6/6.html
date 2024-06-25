@@ -374,10 +374,14 @@ window.Quarto = {
   <li><a href="#样本均值的近似分布" id="toc-样本均值的近似分布" class="nav-link" data-scroll-target="#样本均值的近似分布"><span class="header-section-number">6.3.1</span> 样本均值的近似分布</a></li>
   <li><a href="#需要多大的样本" id="toc-需要多大的样本" class="nav-link" data-scroll-target="#需要多大的样本"><span class="header-section-number">6.3.2</span> 需要多大的样本？</a></li>
   </ul></li>
-  <li><a href="#sec-6_4" id="toc-sec-6_4" class="nav-link" data-scroll-target="#sec-6_4"><span class="header-section-number">6.4</span> The sample variance</a></li>
-  <li><a href="#sec-6_5" id="toc-sec-6_5" class="nav-link" data-scroll-target="#sec-6_5"><span class="header-section-number">6.5</span> Sampling distributions from a normal population</a></li>
-  <li><a href="#sec-6_6" id="toc-sec-6_6" class="nav-link" data-scroll-target="#sec-6_6"><span class="header-section-number">6.6</span> Sampling from a finite population</a></li>
-  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
+  <li><a href="#sec-6_4" id="toc-sec-6_4" class="nav-link" data-scroll-target="#sec-6_4"><span class="header-section-number">6.4</span> 样本方差</a></li>
+  <li><a href="#sec-6_5" id="toc-sec-6_5" class="nav-link" data-scroll-target="#sec-6_5"><span class="header-section-number">6.5</span> 正态分布总体的抽样分布</a>
+  <ul class="collapse">
+  <li><a href="#sec-6_5_1" id="toc-sec-6_5_1" class="nav-link" data-scroll-target="#sec-6_5_1"><span class="header-section-number">6.5.1</span> 样本均值的分布</a></li>
+  <li><a href="#overlinex-和-s2-的联合分布" id="toc-overlinex-和-s2-的联合分布" class="nav-link" data-scroll-target="#overlinex-和-s2-的联合分布"><span class="header-section-number">6.5.2</span> <span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 的联合分布</a></li>
+  </ul></li>
+  <li><a href="#sec-6_6" id="toc-sec-6_6" class="nav-link" data-scroll-target="#sec-6_6"><span class="header-section-number">6.6</span> 从有限总体中抽样</a></li>
+  <li><a href="#习题" id="toc-习题" class="nav-link" data-scroll-target="#习题">习题</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_6/6.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
     </div>
@@ -446,7 +450,7 @@ window.Quarto = {
 <p>物理原因（<em>Physical reasons</em>）指的是基于物理学原理或物理现象的原因。在统计学和概率论中，物理原因通常涉及使用物理理论或实验结果来推导或假设某些统计分布的形式。例如，在某些情况下，物理现象可能会暗示数据遵循某种特定的分布：</p>
 <ol type="1">
 <li>正态分布：如果某个过程受到大量小的、独立的随机影响，那么根据中心极限定理，最终的结果可能会接近正态分布。比如，测量误差通常假定为正态分布。</li>
-<li>指数分布：在某些情况下，事件的发生是完全随机的，且时间间隔独立且服从相同分布，那么这些时间间隔可能符合指数分布。比如，放射性衰变事件的时间间隔通常假设为指数分布。</li>
+<li>指数分布：在某些情况下，事件的发生是完全随机的，且时间间隔独立且服从相同分布，那么这些时间间隔可能服从指数分布。比如，放射性衰变事件的时间间隔通常假设为指数分布。</li>
 <li>泊松分布：当在固定时间间隔内的事件发生是独立的，且事件发生的概率很小，次数很多时，事件的发生次数通常会服从泊松分布。比如，电话交换机中每小时接收到的呼叫数可能服从泊松分布。 <span class="math inline">\(\blacksquare\)</span></li>
 </ol>
 </div>
@@ -457,7 +461,7 @@ window.Quarto = {
 <li>在 <a href="#sec-6_2" class="quarto-xref"><span>章节 6.2</span></a> 中，我们将介绍 <strong>样本均值</strong>，并推导 <strong>样本均值</strong> 的期望和方差。我们注意到，当样本量至少为中等大小时，样本均值的分布近似正态分布。如上的结论来自于 <strong>中心极限定理</strong>（<em>the central limit theorem</em>）。</li>
 <li>中心极限定理是概率论中最重要的理论之一，我们将在 <a href="#sec-6_3" class="quarto-xref"><span>章节 6.3</span></a> 中对其进行讨论。</li>
 <li>在 <a href="#sec-6_4" class="quarto-xref"><span>章节 6.4</span></a> 中，我们将介绍 <strong>样本方差</strong> 并确定其期望。</li>
-<li>在 <a href="#sec-6_5" class="quarto-xref"><span>章节 6.5</span></a> 中，我们假设总体符合正态分布，并给出样本均值和样本方差的联合分布。</li>
+<li>在 <a href="#sec-6_5" class="quarto-xref"><span>章节 6.5</span></a> 中，我们假设总体服从正态分布，并给出样本均值和样本方差的联合分布。</li>
 <li>在 <a href="#sec-6_6" class="quarto-xref"><span>章节 6.6</span></a> 中，我们假设从有限元素的总体中采样，并解释采样所得到的样本是“随机样本”的含义。当总体大小相对于样本大小很大时，我们通常将总体视为是无限大的。</li>
 </ul>
 </section>
@@ -725,7 +729,7 @@ P\{X &gt; 8.3 \times 10^6\} &amp;= P\bigg\{\frac{X - 8 \times 10^6}{8.5381 \time
 <div id="sol-6_3_d" class="proof solution">
 <p><span class="proof-title"><em>答案 6.4</em>. </span>令 <span class="math inline">\(Z \thicksim \mathcal{N}(0,1)\)</span>。</p>
 <ol type="1">
-<li><p>根据中心极限定理，<span class="math inline">\(\overline{X}\)</span> 近似符合均值为 167、标准差为 <span class="math inline">\(\frac{27}{\sqrt{36}} = 4.5\)</span> 的正态分布。因此：</p>
+<li><p>根据中心极限定理，<span class="math inline">\(\overline{X}\)</span> 近似服从均值为 167、标准差为 <span class="math inline">\(\frac{27}{\sqrt{36}} = 4.5\)</span> 的正态分布。因此：</p>
 <p><span class="math inline">\(\begin{align} P\{163 \lt \overline{X} \lt 170\} &amp;= P\bigg\{\frac{163 - 167}{4.5} \lt \frac{\overline{X} - 167}{4.5} \lt \frac{170 - 167}{4.5} \bigg\} \\ &amp; \approx P\{-0.8889 \lt Z \lt 0.8889\} \\ &amp;= P\{Z \lt 0.8889\} - P\{Z \lt -0.8889\} \\ &amp;= 1 - 2 \cdot P\{Z \ge 0.8889\} \\ &amp;= 0.6259432 \end{align}\)</span></p>
 <p>可以用如下 R 代码 <code>1 - 2 * pnorm(0.8889, lower.tail = FALSE)</code> 求解 <span class="math inline">\(1 - 2 \cdot P\{Z \ge 0.8889\}\)</span> 的值：</p></li>
 </ol>
@@ -739,7 +743,7 @@ P\{X &gt; 8.3 \times 10^6\} &amp;= P\bigg\{\frac{X - 8 \times 10^6}{8.5381 \time
 </div>
 </div>
 <ol start="2" type="1">
-<li><p>当样本量为 144 时，近似符合均值为 167、标准差为 <span class="math inline">\(\frac{27}{\sqrt{144}} = 2.25\)</span> 的正态分布。因此：</p>
+<li><p>当样本量为 144 时，近似服从均值为 167、标准差为 <span class="math inline">\(\frac{27}{\sqrt{144}} = 2.25\)</span> 的正态分布。因此：</p>
 <p><span class="math inline">\(\begin{align} P\{163 \lt \overline{X} \lt 170\} &amp;= P\bigg\{\frac{163 - 167}{2.25} \lt \frac{\overline{X} - 167}{2.25} \lt \frac{170 - 167}{2.25} \bigg\} \\ &amp; \approx P\{-1.7778 \lt Z \lt 1.7778\} \\ &amp;= P\{Z \lt 1.7778\} - P\{Z \lt -1.7778\} \\ &amp;= 1 - 2 \cdot P\{Z \ge 1.7778\} \\ &amp;= 0.9245633 \end{align}\)</span></p></li>
 </ol>
 <p>因此，当样本大小从 36 增加到 144 时，工人体重的样本均值在 163~170 之间的近似概率从 0.6259 提升到了 0.9246。<span class="math inline">\(\blacksquare\)</span></p>
@@ -748,7 +752,7 @@ P\{X &gt; 8.3 \times 10^6\} &amp;= P\bigg\{\frac{X - 8 \times 10^6}{8.5381 \time
 <p><span class="theorem-title"><strong>练习 6.5</strong></span> 一位天文学家想测量从她的观测台到一颗遥远恒星的距离。然而，由于大气扰动的原因，任何测量都不会产生确切的距离 <span class="math inline">\(d\)</span>。因此，天文学家决定进行一系列测量，然后使用它们的平均值作为实际距离的估计。如果天文学家认为连续测量的距离之间是独立的随机变量，其均值为 <span class="math inline">\(d\)</span> 光年，标准差为 2 光年，则天文学家需要做多少次测量才能使得她所估计的距离误差在 <span class="math inline">\(\pm 0.5\)</span> 光年之内的概率至少为 95%？</p>
 </div>
 <div id="sol-6_3_e" class="proof solution">
-<p><span class="proof-title"><em>答案 6.5</em>. </span>如果天文学家测量了 <span class="math inline">\(n\)</span> 次，则测量数据的样本均值 <span class="math inline">\(\overline{X}\)</span> 将近似符合均值为 <span class="math inline">\(d\)</span>、标准差为 <span class="math inline">\(\frac{2}{\sqrt{n}}\)</span> 的正态分布。因此，测量值位于 <span class="math inline">\(d \pm 0.5\)</span> 之间的概率为：</p>
+<p><span class="proof-title"><em>答案 6.5</em>. </span>如果天文学家测量了 <span class="math inline">\(n\)</span> 次，则测量数据的样本均值 <span class="math inline">\(\overline{X}\)</span> 将近似服从均值为 <span class="math inline">\(d\)</span>、标准差为 <span class="math inline">\(\frac{2}{\sqrt{n}}\)</span> 的正态分布。因此，测量值位于 <span class="math inline">\(d \pm 0.5\)</span> 之间的概率为：</p>
 <p><span class="math inline">\(\begin{align} P\{-0.5 \lt \overline{X} - d \lt 0.5\} &amp;= P\bigg\{\frac{-0.5}{\frac{2}{\sqrt{n}}} \lt \frac{\overline{X} - d}{\frac{2}{\sqrt{n}}} \lt \frac{0.5}{\frac{2}{\sqrt{n}}} \bigg\} \\ &amp; \approx P\{-\frac{\sqrt{n}}{4} \lt Z \lt \frac{\sqrt{n}}{4}\} \\ &amp;= 1 - 2 \cdot P\{Z \ge \frac{\sqrt{n}}{4}\} \end{align}\)</span></p>
 <p>即，<span class="math inline">\(1 - 2 \cdot P\{Z \ge \frac{\sqrt{n}}{4}\} \ge 0.95\)</span>，也就是 <span class="math inline">\(P\{Z \ge \frac{\sqrt{n}}{4}\} \le 0.025\)</span>。</p>
 <p>在 R 中，利用 <code>qnorm(0.025, lower.tail = FALSE)</code> 可以得到 <span class="math inline">\(Z\)</span> 的最小值 1.959964，即 <span class="math inline">\(\frac{\sqrt{n}}{4} \ge 1.959964\)</span>。</p>
@@ -781,16 +785,472 @@ P\{X &gt; 8.3 \times 10^6\} &amp;= P\bigg\{\frac{X - 8 \times 10^6}{8.5381 \time
 </section>
 </section>
 <section id="sec-6_4" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="sec-6_4"><span class="header-section-number">6.4</span> The sample variance</h2>
+<h2 data-number="6.4" class="anchored" data-anchor-id="sec-6_4"><span class="header-section-number">6.4</span> 样本方差</h2>
+<p>令 <span class="math inline">\(X_1, ..., X_n\)</span> 是从均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的总体中抽取的随机样本。令 <span class="math inline">\(\overline{X}\)</span> 为样本均值，然后回顾一下 <a href="../chapter_2/2.html#sec-2_3_2" class="quarto-xref"><span>章节 2.3.2</span></a> 节中的 <a href="../chapter_2/2.html#def-variance" class="quarto-xref">定义&nbsp;<span>2.3</span></a>。</p>
+<div id="def-sample_variance" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 6.2</strong></span> 令 <span class="math inline">\(S^2\)</span> 为样本方差，则样本方差的定义如下：</p>
+<p><span class="math display">\[
+S^2 = \frac{\sum_{i=1}^{n}{(X_i - \overline{X})^2}}{n-1}
+\]</span></p>
+</div>
+<p><span class="math inline">\(S = \sqrt{S^2}\)</span> 为样本标准差。</p>
+<p>为了计算 <span class="math inline">\(E[S^2]\)</span>，我们需要用到在 <a href="../chapter_2/2.html#sec-2_3_2" class="quarto-xref"><span>章节 2.3.2</span></a> 中已经证明过的 <a href="../chapter_2/2.html#eq-2_3_2_002" class="quarto-xref">方程式&nbsp;<span>2.5</span></a>，即：对于任意的 <span class="math inline">\(x_1, ..., x_n\)</span>，</p>
+<p><span class="math inline">\(\sum_{i=1}^{n}{(x_i - \overline{x})^2} = \sum_{i=1}^{n}{x_i^2} - n\overline{x}^2\)</span>，其中 <span class="math inline">\(\overline{x} = \frac{\sum_{i=1}^{n}{x_i}}{n}\)</span>。</p>
+<p>根据 <a href="#def-sample_variance" class="quarto-xref">定义&nbsp;<span>6.2</span></a> 和 <a href="../chapter_2/2.html#eq-2_3_2_002" class="quarto-xref">方程式&nbsp;<span>2.5</span></a> 有：</p>
+<p><span id="eq-6_4_001"><span class="math display">\[
+(n-1)S^2 = \sum_{i=1}^{n}{X_i^2} - n\overline{X}^2
+\tag{6.2}\]</span></span></p>
+<p>根据 <a href="../chapter_4/4.html#eq-4_6_001_461" class="quarto-xref">方程式&nbsp;<span>4.47</span></a>，对于任意的随机变量 <span class="math inline">\(X\)</span>，<span class="math inline">\(E[X^2] = \textup{Var}(X) + (E[X])^2\)</span>。对 <a href="#eq-6_4_001" class="quarto-xref">方程式&nbsp;<span>6.2</span></a> 两边求期望得到：</p>
+<p><span class="math display">\[
+\begin{align}
+(n-1)E[S^2] &amp;= E\bigg[\sum_{i=1}^{n}{X_i^2}\bigg] - nE[\overline{X}^2] \\
+&amp;= nE[X_1^2] - nE[\overline{X}^2] \\
+&amp;= n \textup{Var}(X_1) + n(E[X_1])^2 - n \textup{Var}(\overline{X}) - n (E[\overline{X}])^2 \\
+&amp;= n \sigma^2 + n \mu^2 - n \frac{\sigma^2}{n} - n \mu^2 \\
+&amp;= (n-1)\sigma^2 \\
+\therefore E[S^2] &amp;= \sigma^2
+\end{align}
+\]</span></p>
+<p>也就是说，样本方差 <span class="math inline">\(S^2\)</span> 的期望等于总体的方差 <span class="math inline">\(\sigma^2\)</span>。</p>
 </section>
 <section id="sec-6_5" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="sec-6_5"><span class="header-section-number">6.5</span> Sampling distributions from a normal population</h2>
+<h2 data-number="6.5" class="anchored" data-anchor-id="sec-6_5"><span class="header-section-number">6.5</span> 正态分布总体的抽样分布</h2>
+<p>令 <span class="math inline">\(X_1, X_2, ..., X_n\)</span> 是从均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布总体中抽取的样本。也就是说，<span class="math inline">\(X_i\)</span> 之间是独立且同分布的，并且 <span class="math inline">\(X_i \thicksim \mathcal{N}(\mu, \sigma^2)\)</span>。</p>
+<p>同时，令 <span class="math inline">\(\overline{X} = \frac{\sum_{i=1}^{n}{X_i}}{n}\)</span> 表示样本均值，令 <span class="math inline">\(S^2 = \frac{\sum_{i=1}^{n}{(X_i - \overline{X})^2}}{n-1}\)</span> 表示样本方差。接下来，我们就将计算 <span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 的分布。</p>
+<section id="sec-6_5_1" class="level3" data-number="6.5.1">
+<h3 data-number="6.5.1" class="anchored" data-anchor-id="sec-6_5_1"><span class="header-section-number">6.5.1</span> 样本均值的分布</h3>
+<p>因为独立的、正态分布的随机变量的和也是正态分布，因此，<span class="math inline">\(\overline{X}\)</span> 也是正态分布，其均值和方差分别为：</p>
+<p><span class="math inline">\(E[\overline{X}] = \sum_{i=1}^{n}{\frac{E[X_i]}{n}} = \mu\)</span></p>
+<p><span class="math inline">\(\textup{Var}(\overline{X}) = \frac{1}{n^2}\sum_{i=1}^{n}{\textup{Var}(X_i)} = \frac{\sigma^2}{n}\)</span></p>
+<p>也就是说，随机样本的平均值 <span class="math inline">\(\overline{X}\)</span> 是一个均值为总体均值、但是方差为总体方差 <span class="math inline">\(\frac{1}{n}\)</span> 倍的正态分布。因此，</p>
+<p><span class="math inline">\(\frac{\overline{X} - \mu}{\frac{\sigma}{\sqrt{n}}}\)</span> 是一个标准正态分布。</p>
+</section>
+<section id="overlinex-和-s2-的联合分布" class="level3" data-number="6.5.2">
+<h3 data-number="6.5.2" class="anchored" data-anchor-id="overlinex-和-s2-的联合分布"><span class="header-section-number">6.5.2</span> <span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 的联合分布</h3>
+<p>在本节中，我们不仅会计算样本方差 <span class="math inline">\(S^2\)</span> 的分布，还发现了关于正态分布随机样本的一个基本事实：即 <span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 是相互独立的随机变量，并且 <span class="math inline">\(\frac{(n-1)S^2}{\sigma^2}\)</span> 服从自由度为 <span class="math inline">\(n−1\)</span> 的卡方（<em>chi-square</em>）分布。</p>
+<p>对于 <span class="math inline">\(x_1, ..., x_n\)</span>，令 <span class="math inline">\(y_i = x_i - \mu\)</span>，则 <span class="math inline">\(\overline{y} = \overline{x} - \mu\)</span>，根据：</p>
+<p><span class="math display">\[
+\sum_{i=1}^{n}{(y_i - \overline{y})^2} = \sum_{i=1}^{n}{y_i^2} - n\overline{y}^2
+\]</span></p>
+<p>有：</p>
+<p><span id="eq-6_5_001"><span class="math display">\[
+\sum_{i=1}^{n}{(x_i - \overline{x})^2} = \sum_{i=1}^{n}{(x_i - \mu)^2} - n(\overline{x} - \mu)^2
+\tag{6.3}\]</span></span></p>
+<p>如果 <span class="math inline">\(X_1, ..., X_n\)</span> 是从均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布总体中抽取的样本，根据 <a href="#eq-6_5_001" class="quarto-xref">方程式&nbsp;<span>6.3</span></a> 有：</p>
+<p><span class="math display">\[
+\frac{\sum_{i=1}^{n}{(X_i - \mu)^2}}{\sigma^2} = \frac{\sum_{i=1}^{n}{(X_i - \overline{X})^2}}{\sigma^2} + \frac{n(\overline{X} - \mu)^2}{\sigma^2}
+\]</span></p>
+<p>即，</p>
+<p><span id="eq-6_5_1"><span class="math display">\[
+\sum_{i=1}^{n}{\bigg(\frac{X_i - \mu}{\sigma}\bigg)^2} = \frac{\sum_{i=1}^{n}{(X_i - \overline{X})^2}}{\sigma^2} + \bigg(\frac{\sqrt{n}(\overline{X} - \mu)}{\sigma}\bigg)^2
+\tag{6.4}\]</span></span></p>
+<p>因为 <span class="math inline">\(\frac{X_i - \mu}{\sigma}\)</span> 是相互独立的标准正态分布，所以 <a href="#eq-6_5_1" class="quarto-xref">方程式&nbsp;<span>6.4</span></a> 中的等式左边是一个自由度为 <span class="math inline">\(n\)</span> 的卡方随机变量。又根据 <a href="#sec-6_5_1" class="quarto-xref"><span>章节 6.5.1</span></a> 可知，<span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu)}{\sigma}\)</span> 也是一个标准正态分布，因此，<span class="math inline">\(\bigg(\frac{\sqrt{n}(\overline{X} - \mu)}{\sigma}\bigg)^2\)</span> 是一个自由度为 1 的卡方随机变量。因此 <a href="#eq-6_5_1" class="quarto-xref">方程式&nbsp;<span>6.4</span></a> 等价于一个自由度为 <span class="math inline">\(n\)</span> 的卡方随机变量 是两个随机变量的和，其中一个随机变量是自由度为 1 的卡方随机变量。同时已知两个独立卡方随机变量之和也是卡方随机变量，并且其自由度为这两个独立的卡方随机变量的自由度之和。因此，看起来，<a href="#eq-6_5_1" class="quarto-xref">方程式&nbsp;<span>6.4</span></a> 右边的两部分是相互独立的、并且 <span class="math inline">\(\frac{\sum_{i=1}^{n}{(X_i - \overline{X})^2}}{\sigma^2}\)</span> 服从自由度为 <span class="math inline">\(n-1\)</span> 的卡方分布。结果确实如此，因此我们有以下基本结论。</p>
+<div id="thm-6_5_1" class="theorem">
+<p><span class="theorem-title"><strong>定理 6.2</strong></span> 如果 <span class="math inline">\(X_1, ..., X_n\)</span> 是从均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布总体中抽取的样本，则</p>
+<ol type="1">
+<li><span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 是相互独立的随机变量</li>
+<li><span class="math inline">\(\overline{X}\)</span> 是均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\frac{\sigma^2}{n}\)</span> 的正态分布随机变量</li>
+<li><span class="math inline">\(\frac{(n-1)S^2}{\sigma^2}\)</span> 是一个自由度为 <span class="math inline">\(n-1\)</span> 的卡方分布随机变量</li>
+</ol>
+</div>
+<p>对于一个正态分布的总体而言，<a href="#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a> 不但给出了 样本均值 <span class="math inline">\(\overline{X}\)</span> 和样本方差 <span class="math inline">\(S^2\)</span> 的分布，而且还给出了 <span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 之间是相互独立的这一重要事实。事实上，<span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 的这种独立性是正态分布的一个特性。<a href="#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a> 的重要性将在后续的章节中得以明显的体现。</p>
+<div id="exr-6_5_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 6.6</strong></span> CPU 处理某类作业（<em>job</em>）所需的时间服从均值为 20 秒、标准差为 3 秒的正态分布。如果观察到 15 个这样的作业，则样本方差超过 12 的概率是多少？</p>
+</div>
+<div id="sol-6_5_a" class="proof solution">
+<p><span class="proof-title"><em>答案 6.6</em>. </span>因为样本的大小 <span class="math inline">\(n = 15\)</span>，样本方差 <span class="math inline">\(\sigma^2 = 9\)</span>，因此：</p>
+<p><span class="math inline">\(P\{S^2 &gt; 12\} = P\bigg\{\frac{14}{9} S^2 \gt \frac{14}{9} \cdot 12\bigg\}\)</span></p>
+</div>
+<p>在 R 中利用 <code>1 - pchisq(56/3, 14)</code> 进行计算得到：</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(<span class="dv">56</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">14</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1780811</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+<p>在后续章节中，<a href="#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a> 的如下推论将非常有用。</p>
+<div id="cor-6_5_2" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 6.1</strong></span> 如果 <span class="math inline">\(X_1, ..., X_n\)</span> 是从均值为 <span class="math inline">\(\mu\)</span> 的正态分布总体中抽取的样本。如果 <span class="math inline">\(\overline{X}\)</span> 为样本均值，<span class="math inline">\(S\)</span> 为样本标准差，则：</p>
+<p><span class="math display">\[
+\sqrt{n} \frac{\overline{X} - \mu}{S} \thicksim t_{n-1}
+\]</span></p>
+</div>
+<p>也就是说，<span class="math inline">\(\sqrt{n} \frac{\overline{X} - \mu}{S}\)</span> 服从自由度为 <span class="math inline">\(n-1\)</span> 的 <span class="math inline">\(t\)</span> 分布。</p>
+<div class="proof">
+<p><span class="proof-title"><em>论证</em>. </span>回想一下，自由度为 <span class="math inline">\(n\)</span> 的 <span class="math inline">\(t\)</span> 分布随机变量的定义为：</p>
+<p><span class="math inline">\(\frac{Z}{\sqrt{\frac{\chi_n^2}{n}}}\)</span></p>
+<p>其中，<span class="math inline">\(Z\)</span> 为标准正态分布随机变量，并且与自由度为 <span class="math inline">\(n\)</span> 的卡方随机变量 <span class="math inline">\(\chi_n^2\)</span> 相互独立。根据 <a href="#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a>，<span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu)}{\sigma}\)</span> 是一个标准正态分布并且与自由度为 <span class="math inline">\(n-1\)</span> 的卡方分布随机变量 <span class="math inline">\(\frac{(n-1)S^2}{\sigma^2}\)</span> 相互独立。因此，我们有：</p>
+<p><span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu) / \sigma}{\sqrt{S^2 / \sigma^2}} = \sqrt{n} \frac{(\overline{X} - \mu)}{S}\)</span></p>
+<p>是一个自由度为 <span class="math inline">\(n-1\)</span> 的 <span class="math inline">\(t\)</span> 分布随机变量。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+</section>
 </section>
 <section id="sec-6_6" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="sec-6_6"><span class="header-section-number">6.6</span> Sampling from a finite population</h2>
+<h2 data-number="6.6" class="anchored" data-anchor-id="sec-6_6"><span class="header-section-number">6.6</span> 从有限总体中抽样</h2>
+<p>考虑一个包含 <span class="math inline">\(N\)</span> 个元素的总体，假设该总体中具有某种特征的个体占比是 <span class="math inline">\(p\)</span>，也就是说有 <span class="math inline">\(Np\)</span> 个个体具备该特征，而 <span class="math inline">\(N(1-p)\)</span> 个个体不具备该特征。从该总体中抽取大小为 <span class="math inline">\(n\)</span> 的样本，如果对于 <span class="math inline">\(\left(\begin{array}{cc}  N \\ n  \end{array}\right)\)</span> 种抽取方式中的每一种都是等概率抽取的，则我们称抽取到的样本为 <strong>随机样本</strong>（<em>random sample</em>）。例如，如果总体由 <span class="math inline">\(a\)</span>、<span class="math inline">\(b\)</span>、<span class="math inline">\(c\)</span> 三个元素构成，则选择大小为 2 的随机样本，以便<span class="math inline">\(\{a,b\}\)</span>、<span class="math inline">\(\{a,c\}\)</span> 和 <span class="math inline">\(\{b,c\}\)</span> 都有同样的可能性成为样本。可以通过以下方式可以依次选择一个随机样本：让随机样本的第一个元素等可能地为总体的 <span class="math inline">\(N\)</span> 个元素中的任何一个，然后让其第二个元素等可能地为总体的剩余 <span class="math inline">\(N - 1\)</span> 个元素中的任何一个，依此类推。</p>
+<p>假设从大小为 <span class="math inline">\(N\)</span> 的总体中抽取大小为 <span class="math inline">\(n\)</span> 的随机样本。对于 <span class="math inline">\(i = 1, ..., n\)</span>，令</p>
+<p><span class="math inline">\(X_i = \begin{cases} 1, \quad &amp; 第 i 个元素具备某种特征\\ 0, \quad &amp; 其它 \end{cases}\)</span></p>
+<p>现在我们考虑 <span class="math inline">\(X_i\)</span> 的和，也就是：</p>
+<p><span class="math inline">\(X = X_1 + X_2 + \cdots + X_n\)</span></p>
+<p>如果样本的第 <span class="math inline">\(i\)</span> 个成员具有该特征，则 <span class="math inline">\(X_i\)</span> 对总和的贡献为 1，否则贡献为 0，因此 <span class="math inline">\(X\)</span> 等于样本中具有该特征的成员的数量。</p>
+<p>此外，样本均值</p>
+<p><span class="math inline">\(\overline{X} = \frac{X}{n} = \sum_{i=1}^{n}{\frac{X_i}{n}}\)</span></p>
+<p>等于样本中具备该特征的成员的占比。</p>
+<p>现在让我们考虑 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(\overline{X}\)</span> 的统计量的概率分布。首先，请注意，由于总体中 <span class="math inline">\(N\)</span> 个成员中的每一个都有相同的可能是样本的第 <span class="math inline">\(i\)</span> 个成员，因此：</p>
+<p><span class="math inline">\(P\{X_i = 1\} = \frac{Np}{N} = p\)</span></p>
+<p>同理，</p>
+<p><span class="math inline">\(P\{X_i = 0\} = 1 - P\{X_i = 1\} = 1 - p\)</span></p>
+<p>也就是说，每一个 <span class="math inline">\(X_i\)</span> 为 1 的概率都是 <span class="math inline">\(p\)</span>，为 0 的概率都是 <span class="math inline">\(1 - p\)</span>。</p>
+<p>需要特别注意的是：随机变量 <span class="math inline">\(X_1, X_2, ..., X_n\)</span> 并不是相互独立的。例如，由于第二次所选择的成员可以是总体 <span class="math inline">\(N\)</span> 个成员中的任何一个，因此第二次选择的成员具有该特征的概率是 <span class="math inline">\(\frac{Np}{N}=p\)</span>。也就是说，在不知道第一次选择结果的情况下，</p>
+<p><span class="math inline">\(P\{X_2 = 1\} = p\)</span></p>
+<p>但是，在给定第一次选择的成员具备该特征的条件下，第二次选择的成员也具备该特征的条件概率为：</p>
+<p><span class="math inline">\(P\{X_2=1 | X_1=1\} = \frac{Np - 1}{N - 1}\)</span></p>
+<p>于是我们可以注意到：如果第一次选择的成员具有该特征，那么第二次选择的成员可能是剩余的 <span class="math inline">\(N-1\)</span> 个成员中具备该特征的 <span class="math inline">\(Np - 1\)</span> 个成员中的任何一个。</p>
+<p>类似的，在给定第一次选择的成员没有该特征的条件下，第二次选择的成员具有该特征的概率是：</p>
+<p><span class="math inline">\(P\{X_2=1 | X_1=0\} = \frac{Np}{N - 1}\)</span></p>
+<p>因此，随机样本的第一个元素是否具有该特征会改变下一个元素具有该特征的概率。然而，当总体大小 <span class="math inline">\(N\)</span> 远远超过样本大小 <span class="math inline">\(n\)</span> 时，这种影响将会变得非常小。例如，如果 <span class="math inline">\(N=1000\)</span>，<span class="math inline">\(p=0.4\)</span>，于是有：</p>
+<p><span class="math inline">\(P\{X_2=1 | X_1=1\} = \frac{Np - 1}{N - 1} = \frac{399}{999} = 0.3994\)</span></p>
+<p><span class="math inline">\(P\{X_2=1 | X_1=0\} = \frac{Np}{N - 1} = \frac{400}{999} = 0.4004\)</span></p>
+<p>如上的条件概率都和 <span class="math inline">\(P\{X_2 = 1\} = 0.4\)</span> 非常接近。</p>
+<p>事实上，可以证明，当总体规模 <span class="math inline">\(N\)</span> 远大于样本大小 <span class="math inline">\(n\)</span> 时，<span class="math inline">\(X_1, X_2, ..., X_n\)</span> 之间近似于相互独立。现在，如果我们把每个 <span class="math inline">\(X_i\)</span> 看作是一次试验的结果，如果 <span class="math inline">\(X_i\)</span> 等于 1 则视为成功，否则视为失败。那么，<span class="math inline">\(X = \sum_{i=1}^{n}{X_i}\)</span> 可以看作是 <span class="math inline">\(n\)</span> 次试验中成功的总次数。因此，如果 <span class="math inline">\(X_i\)</span> 是相互独立的，那么 <span class="math inline">\(X\)</span> 将是一个参数为 <span class="math inline">\((n,p)\)</span> 的二项随机变量。换句话说，当总体规模 <span class="math inline">\(N\)</span> 远大于样本规模 <span class="math inline">\(n\)</span> 时，样本中具有该特征的成员数量的分布近似于参数为 <span class="math inline">\((n,p)\)</span> 的二项分布。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>当然，<span class="math inline">\(X\)</span> 是 <a href="../chapter_5/5.html#sec-5_4" class="quarto-xref"><span>章节 5.4</span></a> 的超几何随机变量（<em>hypergeometric random variable</em>）。因此，之前的分析表明，当抽取的样本个数远小于总体规模时，超几何分布可以近似为二项分布。</p>
+<blockquote class="blockquote">
+<p>对于本文的接下来的部分，我们将假设总体规模远大于样本大小，并且我们也将 <span class="math inline">\(X\)</span> 的分布视为二项分布。</p>
+</blockquote>
+</div>
+</div>
+<p>如 <a href="../chapter_5/5.html#sec-5_1" class="quarto-xref"><span>章节 5.1</span></a> 中所述，对于一个二项随机变量而言，其均值和标准差分别为：</p>
+<p><span class="math inline">\(E[X] = np\)</span>，<span class="math inline">\(\textup{Var}(X)=np(1-p)\)</span></p>
+<p>则样本中具备某特征的成员的占比 <span class="math inline">\(\overline{X} = \frac{X}{n}\)</span> 的均值和方差分别为：</p>
+<p><span class="math inline">\(E[\overline{X}] = \frac{E[X]}{n} = p\)</span></p>
+<p><span class="math inline">\(\textup{Var}(\overline{X}) = \frac{\textup{Var}(X)}{n^2} = \frac{p(1-p)}{n}\)</span></p>
+<div id="exr-6_6_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 6.7</strong></span> 在选举中，假设有 45% 的民众会支持某个候选人。如果选民的随机样本大小为 200，请计算：</p>
+<ol type="1">
+<li>样本中支持该候选人的选民数量的期望和方差？</li>
+<li>样本中支持该候选人的选民数量超过一半的概率？</li>
+</ol>
+</div>
+<div id="sol-6_6_a" class="proof solution">
+<p><span class="proof-title"><em>答案 6.7</em>. </span></p>
+<ol type="1">
+<li><p>样本中支持该候选人的选民数量的期望和标准差为：</p>
+<p><span class="math inline">\(E[X] = np = 200 \cdot 0.45 = 90\)</span></p>
+<p><span class="math inline">\(SD(X) = \sqrt{np(1-p)} = \sqrt{200 \cdot 0.45 \cdot (1 - 0.45)} = 7.0356\)</span></p></li>
+<li><p>因为 <span class="math inline">\(X\)</span> 是一个参数为 <span class="math inline">\((200, 0.45)\)</span> 的二项分布，因此：</p>
+<p><span class="math inline">\(P\{X \ge 101\} = 1 - P\{X \le 100\}\)</span></p>
+<p>在 R 中，利用 <code>1 - pbinom(100, 200, 0.45)</code> 计算得：<span class="math inline">\(P\{X \ge 101\} = 0.06807525\)</span>。</p></li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pbinom</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="fl">0.45</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.06807525</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+重要
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>即使总体中每个元素都有两个以上的可能取值，如果总体规模远大于样本规模，那么样本数据仍然可以看作是来自总体分布的独立随机变量。</p>
+</div>
+</div>
+<div id="exr-6_6_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 6.8</strong></span> 根据美国农业部的《世界家畜状况》报告，丹麦是人均猪肉消费量最高的国家。2013 年，居住在丹麦的人的人均猪肉消费量均值为 147 磅，标准差为 62 磅。如果随机选择 25 名丹麦人作为样本，估算这 25 名丹麦人在 2013 年的平均猪肉消费量超过 150 磅的概率？</p>
+</div>
+<div id="sol-6_6_b" class="proof solution">
+<p><span class="proof-title"><em>答案 6.8</em>. </span>令 <span class="math inline">\(X_i\)</span> 表示样本中第 <span class="math inline">\(i\)</span> 个人的猪肉消费量，<span class="math inline">\(i=1, ..., 25\)</span>。则待求解的概率为：</p>
+<p><span class="math inline">\(P\bigg\{\frac{X_1 + \cdots + X_{25} }{25} \gt 150 \bigg\} = P\{\overline{X} \gt 150\}\)</span></p>
+<p>其中，<span class="math inline">\(\overline{X}\)</span> 为 25 个人的样本均值。我们可以将 <span class="math inline">\(X_i\)</span> 看作是均值为 147、标准差为 62 的相互独立的随机变量。根据中心极限定理有：<span class="math inline">\(\overline{X}\)</span> 是均值为 147、标准差为 <span class="math inline">\(\frac{62}{5}\)</span> 的正态分布。用 <span class="math inline">\(Z\)</span> 表示标准正态分布，则有：</p>
+<p><span class="math inline">\(P\{\overline{X} \gt 150\} = P\bigg\{\frac{\overline{X} - 147}{12.4} \gt \frac{150 - 147}{12.4} \bigg\}\)</span></p>
+<p><span class="math inline">\(P\{\overline{X} \gt 150\} \approx P\bigg\{Z \gt \frac{150 - 147}{12.4}\bigg\} = P\{Z \gt \frac{3}{12.4}\}\)</span></p>
+<p>在 R 中，使用 <code>pnorm(3/12.4, lower.tail = FALSE)</code> 计算得到：</p>
+<p><span class="math inline">\(P\{\overline{X} \gt 150\} = 0.4044151\)</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="dv">3</span><span class="sc">/</span><span class="fl">12.4</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4044151</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
-<section id="problems" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
+<section id="习题" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="习题">习题</h2>
+<ol type="1">
+<li><p>假设 <span class="math inline">\(X_1, X_2, X_3\)</span> 是独立同分布的随机变量，其概率质量函数为：</p>
+<p><span class="math inline">\(P\{X_i = 0\} = 0.2\)</span>，<span class="math inline">\(P\{X_i = 1\} = 0.3\)</span>，<span class="math inline">\(P\{X_i = 3\} = 0.5\)</span></p>
+<ul>
+<li>计算 <span class="math inline">\(\overline{X}_2 = \frac{X_1 + X_2}{2}\)</span> 的概率质量函数？</li>
+<li>计算 <span class="math inline">\(E[\overline{X}_2]\)</span> 和 <span class="math inline">\(\textup{Var}(\overline{X}_2)\)</span>？</li>
+<li>计算 <span class="math inline">\(\overline{X}_3 = \frac{X_1 + X_2 + X_3}{3}\)</span> 的概率质量函数？</li>
+<li>计算 <span class="math inline">\(E[\overline{X}_3]\)</span> 和 <span class="math inline">\(\textup{Var}(\overline{X}_3)\)</span>？</li>
+</ul></li>
+<li><p>如果抛 10 个骰子，计算获得的点数（[10,60]）位于 <span class="math inline">\([30,40]\)</span> 的近似概率？</p></li>
+<li><p>计算 16 个独立、同 <span class="math inline">\((0,1)\)</span> 均匀分布的随机变量的和超过 10 的概率？</p></li>
+<li><p>在轮盘游戏中，轮盘有 38 个槽，编号分别为 0、00、1~36。如果你在指定的数字槽上押 1 点，当球落在这个数字槽上时你会赢 35 点，而当球没有落在这个数字槽上时你就会输 1 点。假设球会以相同的概率落在轮盘上的任何一个数字槽中，那么如果你不断的玩这个游戏，计算如下的概率：</p>
+<ul>
+<li>34 次投注后，你赢了</li>
+<li>1000 次投注后，你赢了</li>
+<li>100000 次投注后，你赢了</li>
+</ul></li>
+<li><p>一个公路部门有足够的盐来处理 80 英寸的降雪。假设每天的降雪的均值为 1.5 英寸、标准差为 3 英寸。</p>
+<ol type="1">
+<li>估算现有的盐在未来 50 天内是否足够？</li>
+<li>你在解决第（1）步时做了什么假设？</li>
+<li>你认为这个假设是合理的吗？</li>
+</ol></li>
+<li><p>将 50 个数字四舍五入到最接近的整数后求和。如果四舍五入的误差是 -0.5 到 0.5 之间的均匀分布，估算得到的总和与实际总和相差超过 3 的概率。</p></li>
+<li><p>一个六面的骰子，每个面出现的概率相等，反复抛这个骰子直到获得的总点数超过 400，估算总共抛的此处超过 140 次的概率？</p></li>
+<li><p>某种电池的寿命是一个均值为 5 周、标准差为 1.5 周的随机变量。电池失效后会立即更换一块新的电池。估算一年内需要的电池数量大于或等于 13 的概率？</p></li>
+<li><p>某种电气零件的寿命是一个均值为 100 小时、标准差为 20 小时的随机变量。如果测试 16 个零件，计算样本均值：</p>
+<ol type="1">
+<li>小于 104 小时的概率？</li>
+<li>在 98 到 104 小时之间的概率？</li>
+</ol></li>
+<li><p>某烟草公司声称其香烟中的尼古丁含量是一个均值为 2.2 毫克、标准差为 0.3 毫克的随机变量。但是，随机选取的 100 个香烟样本的均值是 3.1 毫克。如果该公司的声称是真实的，那么样本均值大于或等于 3.1 毫克的概率是多少？</p></li>
+<li><p>某种灯泡的寿命（小时）是一个均值为 500、标准差为 50 的随机变量。当样本大小为 <span class="math inline">\(n\)</span> 时，估算样本均值超过 525 小时的概率？</p>
+<ul>
+<li>n = 4</li>
+<li>n = 16</li>
+<li>n = 36</li>
+<li>n = 64</li>
+</ul></li>
+<li><p>一位老师根据经验了解到学生考试成绩的均值是 77、标准差是 15。如果该老师要教两个独立的班级，一个班级有 25 名学生，另一个有 64 名学生。</p>
+<ul>
+<li>估算 25 名学生的班级的平均分在 72 到 82 之间的概率？</li>
+<li>估算 64 名学生的班级的平均分在 72 到 82 之间的概率？</li>
+<li>25 名学生的班级的平均测试分数高于 64 名学生的班级的概率是多少？</li>
+<li>假设 25 名学生的班级的平均分是 83分，64 名学生的班级的平均分是 63 分，哪个班级更可能获得 83 分的平均分？</li>
+</ul></li>
+<li><p>如果 <span class="math inline">\(X\)</span> 是参数为 <span class="math inline">\((150,0.6)\)</span> 的二项分布，计算 <span class="math inline">\(P\{X \ge 80\}\)</span> 的确切值，并和如下的两种方式得到的概率进行对比：</p>
+<ul>
+<li>在近似正态分布中使用连续性校正</li>
+<li>在近似正态分布中不使用连续性校正</li>
+</ul></li>
+<li><p>1, 2, 3, 4 四支队伍中的每支队伍都将于其它的每一支队伍进行 10 次比赛。第 <span class="math inline">\(i\)</span> 队和第 <span class="math inline">\(j\)</span> 对比赛时，<span class="math inline">\(i\)</span> 对获胜的概率是 <span class="math inline">\(P_{i,j}\)</span>，<span class="math inline">\(j\)</span> 对获胜的概率是 <span class="math inline">\(1 - P_{i,j}\)</span>。如果： <span class="math inline">\(P_{1,2} = 0.6\)</span> <span class="math inline">\(P_{3,1} = 0.7\)</span> <span class="math inline">\(P_{2,3} = 0.6\)</span> <span class="math inline">\(P_{4,2} = 0.75\)</span> <span class="math inline">\(P_{3,4} = 0.5\)</span> <span class="math inline">\(P_{4,1} = 0.5\)</span></p>
+<ul>
+<li>估算 1 队在最近 20 场比赛中获胜 10 场的概率。</li>
+<li>假设我们想近似计算 2 队赢得比赛的总数大于或等于 1 队的概率。为此，让 <span class="math inline">\(X\)</span> 表示 2 队在与 1 队比赛时获胜的总数，让 <span class="math inline">\(Y\)</span> 表示 2 队在与 3 队、4 队比赛时获胜的总数，让 <span class="math inline">\(Z\)</span> 表示 1 队在于 3 队、4 队比赛时获胜的总数。
+<ul>
+<li><span class="math inline">\(X\)</span>、<span class="math inline">\(Y\)</span>、<span class="math inline">\(Z\)</span> 是独立的吗？</li>
+<li>用随机变量 <span class="math inline">\(X\)</span>、<span class="math inline">\(Y\)</span>、<span class="math inline">\(Z\)</span> 来表示 2 队赢得比赛的总数大于或等于 1 队这一事件</li>
+<li>计算 2 队赢得比赛的总数大于或等于 1 队的概率</li>
+</ul></li>
+</ul></li>
+<li><p>一个篮球队每个赛季会打 60 场比赛。其中 32 场比赛是对阵甲级球队，28 场比赛是对阵乙级球队，并且所有比赛的结果都是独立的。每场比赛中，该队战 胜A 级对手的概率为 0.5，战胜 B 级对手的概率为 0.7。令 <span class="math inline">\(X\)</span> 表示本赛季中该队的总胜利次数。</p>
+<ul>
+<li><span class="math inline">\(X\)</span> 是否是一个二项随机变量？</li>
+<li>令 <span class="math inline">\(X_A\)</span> 表示球队在和 A 级球队比赛时的获胜次数，<span class="math inline">\(X_B\)</span> 表示球队在和 B 级球队比赛时的获胜次数。<span class="math inline">\(X_A\)</span> 和 <span class="math inline">\(X_B\)</span> 的分布是什么？</li>
+<li><span class="math inline">\(X\)</span>，<span class="math inline">\(X_A\)</span>，<span class="math inline">\(X_B\)</span> 之间的关系是什么？</li>
+<li>估算球队在整个赛季中赢得至少 40 场比赛的概率？</li>
+</ul></li>
+<li><p>根据中心极限定理，当 <span class="math inline">\(\lambda\)</span> 很大时，均值为 <span class="math inline">\(\lambda\)</span> 的泊松分布将近似地具有均值和方差都等于 <span class="math inline">\(\lambda\)</span> 的正态分布。如果 <span class="math inline">\(X\)</span> 是均值为 100 的泊松随机变量，计算 <span class="math inline">\(X\)</span> 小于或等于 116 的确切概率，并和如下的两种方式得到的概率进行对比：在近似正态分布中使用连续性校正；在近似正态分布中不使用连续性校正。泊松分布向正态分布的收敛参见 <a href="#fig-6_4" class="quarto-xref">图&nbsp;<span>6.4</span></a>。</p>
+<div id="fig-6_4" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6_4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-6_4" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-6_4_1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-6_4_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_6/f_6_4_1.png" class="img-fluid figure-img" data-ref-parent="fig-6_4">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-6_4_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Poisson(5)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-6_4" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-6_4_2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-6_4_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_6/f_6_4_2.png" class="img-fluid figure-img" data-ref-parent="fig-6_4">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-6_4_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Poisson(10)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-6_4" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-6_4_3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-6_4_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_6/f_6_4_3.png" class="img-fluid figure-img" data-ref-parent="fig-6_4">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-6_4_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) Poisson(20)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6_4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.4: 泊松分布的概率质量函数
+</figcaption>
+</figure>
+</div></li>
+<li><p><span class="math inline">\(X\)</span> 是一个参数为 <span class="math inline">\((100, 0.1)\)</span> 的二项随机变量，计算 <span class="math inline">\(P\{X \leq 10\}\)</span>。将此分别与泊松逼近和正态逼近的结果进行比较（在使用正态逼近时，为了进行连续性校正，待求解的概率为 <span class="math inline">\(P\{X &lt; 10.5\}\)</span>）。</p></li>
+<li><p>恒温器停止工作时的温度是服从方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布。如果测试恒温器五次，计算：</p>
+<ul>
+<li><span class="math inline">\(P\{\frac{S^2}{\sigma^2} &lt; 1.8 \}\)</span></li>
+<li><span class="math inline">\(P\{0.85 \le \frac{S^2}{\sigma^2} \le 1.15\}\)</span></li>
+</ul>
+<p>其中 <span class="math inline">\(S^2\)</span> 是五个测试数据值的样本方差。</p></li>
+<li><p>在习题 18 中，样本的大小需要多大才能确保 <span class="math inline">\(P\{\frac{S^2}{\sigma^2} &lt; 1.8 \}\)</span> 至少为 0.95？</p></li>
+<li><p>考虑两个独立的样本：第一个样本来自方差为 4 的正态分布，其大小为 10；第二个样本来自方差为 2 的正态分布，其大小为 5。计算第二个样本的方差超过第一个样本的方差的概率（提示：考虑使用 <span class="math inline">\(F-分布\)</span>）。</p></li>
+<li><p>12% 的人是左撇子。在一个 100 人的样本中，有 10 到 14 个左撇子的概率是多少？</p></li>
+<li><p>某城市有 52% 的居民赞成在高中教授进化论。在一个大小为 <span class="math inline">\(n\)</span> 的随机样本中，至少 50% 的人赞成教授进化论的概率是多少？</p>
+<ul>
+<li><span class="math inline">\(n = 10\)</span></li>
+<li><span class="math inline">\(n = 100\)</span></li>
+<li><span class="math inline">\(n = 1000\)</span></li>
+<li><span class="math inline">\(n = 10000\)</span></li>
+</ul></li>
+<li><p>下表按照性别给出了某城市居民在健康习惯方面的相关数据。假设随机选择一个 300 名男性构成的样本，估算以下概率：</p>
+<ul>
+<li>至少 150 人很少吃早餐</li>
+<li>少于 100 人吸烟</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 22%">
+<col style="width: 11%">
+<col style="width: 15%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>每晚睡眠不足 6 小时 (%)</th>
+<th>吸烟 (%)</th>
+<th>很少吃早餐 (%)</th>
+<th>体重超标 20% 以上 (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>男性</td>
+<td>22.7</td>
+<td>28.4</td>
+<td>45.4</td>
+<td>29.6</td>
+</tr>
+<tr class="even">
+<td>女性</td>
+<td>21.4</td>
+<td>22.0</td>
+<td>42.0</td>
+<td>25.6</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p>数据来源：美国国家健康统计，健康促进和疾病预防中心。</p>
+</blockquote></li>
+<li><p>（使用习题 23 中的表格）假设随机选择一个 300 名女性构成的样本。估算以下概率：</p>
+<ul>
+<li>其中至少 60 人超重 20% 或以上</li>
+<li>其中不到 50 人每晚睡眠 6 小时或更少</li>
+</ul></li>
+<li><p>（使用习题 23 中的表格）假设随机选择一个 300 名男性构成的样本和一个 300 名女性构成的样本。估算很少吃早餐的女性人数大于男性人数的概率。</p></li>
+<li><p>下表使用数据来说明了青少年全职工人中、不同性别的年收入在不同薪资分组中的占比。假设选择 1000 名男性构成的样本和 1000 名女性构成的样本。使用表格来估算以下概率：</p>
+<ul>
+<li>至少一半的女性收入低于 20,000 美元</li>
+<li>超过一半的男性收入超过 20,000 美元</li>
+<li>超过一半的女性和超过一半的男性收入低于 20,000 美元</li>
+<li>不超过 250 名女性收入至少 25,000 美元</li>
+<li>至少 200 名男性收入超过 50,000 美元</li>
+<li>收入在 20,000 到 24,999 美元之间的女性比男性多</li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>收入范围（单位：$）</th>
+<th>女性百分比 (%)</th>
+<th>男性百分比 (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>4999 或更少</td>
+<td>2.8</td>
+<td>1.8</td>
+</tr>
+<tr class="even">
+<td>5000 到 9999</td>
+<td>10.4</td>
+<td>4.7</td>
+</tr>
+<tr class="odd">
+<td>10,000 到 19,999</td>
+<td>41.0</td>
+<td>23.1</td>
+</tr>
+<tr class="even">
+<td>20,000 到 24,999</td>
+<td>16.5</td>
+<td>13.4</td>
+</tr>
+<tr class="odd">
+<td>25,000 到 49,999</td>
+<td>26.3</td>
+<td>42.1</td>
+</tr>
+<tr class="even">
+<td>50,000 及以上</td>
+<td>3.0</td>
+<td>14.9</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p>来源：美国商务部，人口普查局。</p>
+</blockquote></li>
+<li><p>如今，约 10.5% 的劳动者会加入工会。如果随机选择五名工人，他们加入工会的概率是多少？将你的答案与 1983 年 20.1% 的劳动这加入了工会这一数据进行比较。</p></li>
+<li><p>旧金山所有学生在最近的数学学术能力测试中的样本均值和样本标准差分别是 517 和 120。估算 144 名学生构成的样本的平均得分超过以下值的概率：</p>
+<ul>
+<li>507</li>
+<li>517</li>
+<li>537</li>
+<li>550</li>
+</ul></li>
+<li><p>化学工程专业的刚毕业的本科毕业生的平均工资为 53,600 美元，标准差为 3200 美元。估算 12 名刚毕业的化学工程师的平均工资超过 55,000 美元的概率。</p></li>
+<li><p>某个元器件对电气系统的运行至关重要，一旦该元器件出现故障则必须立即更换。如果这种元件的平均寿命为 100 小时，并且其标准差为 30 小时，那么必须准备多少个该元器件，才能保障在接下来的 2000 小时内，系统持续运行的可能性至少为 0.95？(提示：令 <span class="math inline">\(X_i\)</span> 表示第 <span class="math inline">\(i\)</span> 个元器件的寿命)</p></li>
+</ol>
 
 
 </section>
