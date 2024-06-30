@@ -132,12 +132,12 @@
 <p>安装VLC播放器，用于播放SRT协议的视频流。</p>
 </li>
 </ol>
-<h2 id="生成SRT直播流">生成SRT直播流</h2>
+<h2 id="生成srt直播流">生成SRT直播流</h2>
 <p>可以利用<code>ffmpeg</code>和<code>srt-live-transmit</code>（该工具在安装srt的时候会默认安装）来生成SRT直播流。主要思路是首先利用<code>ffmpeg</code>生成UDP的直播流，然后利用<code>srt-live-transmit</code>把UDP的直播流转换成SRT的直播流，更详细的方式可以参考<a target="_blank" rel="noopener" href="https://github.com/Haivision/srt/blob/master/docs/srt-live-transmit.md">srt-live-transmit的使用说明</a>。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 生成UDP视频流</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ffmpeg -f lavfi -re -i smptebars=duration=300:size=1280x720:rate=30 \</span></span><br><span class="line"><span class="bash">-f lavfi -re -i sine=frequency=1000:duration=60:sample_rate=44100 \</span></span><br><span class="line"><span class="bash">-pix_fmt yuv420p -c:v libx264 -b:v 1000k -g 30 -keyint_min 120 \</span></span><br><span class="line"><span class="bash">-profile:v baseline -preset veryfast -f mpegts \</span></span><br><span class="line"><span class="bash"><span class="string">&quot;udp://127.0.0.1:5000?pkt_size=1316&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 生成SRT视频流</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> srt-live-transmit -s:10 udp://:5000 srt://:5001</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用ffplay播放SRT视频流</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ffplay <span class="string">&quot;srt://127.0.0.1:5001&quot;</span></span></span><br></pre></td></tr></table></figure>
 <p>具体播放效果如下所示：</p>
 <p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/3.jpg" alt></p>
-<h2 id="使用Wireshark分析SRT">使用Wireshark分析SRT</h2>
+<h2 id="使用wireshark分析srt">使用Wireshark分析SRT</h2>
 <p>为了可以用Wireshark抓到SRT数据包，需要使用VLC播放器来打开刚才创建的SRT视频流，具体如下所示：</p>
 <p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/4.jpg" alt></p>
 <p>打开Wireshark，选择Lookback（因为要捕获的SRT地址为127.0.0.1），然后在捕获的数据窗口选择srt协议过滤，稍等片刻就可以看到捕获的SRT数据包，具体如下图所示：</p>

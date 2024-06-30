@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.4.557">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 7&nbsp; Parameter estimation</title>
+<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 7&nbsp; 参数估计</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -70,8 +104,38 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 7&nbsp; Parameter estimation">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 7&nbsp; 参数估计">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
@@ -138,7 +202,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_7/7.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Parameter estimation</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_7/7.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">参数估计</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -207,7 +271,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_7/7.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Parameter estimation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">参数估计</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -303,8 +367,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">7.1</span> Introduction</a></li>
-  <li><a href="#maximum-likelihood-estimators" id="toc-maximum-likelihood-estimators" class="nav-link" data-scroll-target="#maximum-likelihood-estimators"><span class="header-section-number">7.2</span> Maximum likelihood estimators</a></li>
+  <li><a href="#sec-7_1" id="toc-sec-7_1" class="nav-link active" data-scroll-target="#sec-7_1"><span class="header-section-number">7.1</span> 引言</a></li>
+  <li><a href="#sec-7_2" id="toc-sec-7_2" class="nav-link" data-scroll-target="#sec-7_2"><span class="header-section-number">7.2</span> 最大似然估计</a>
+  <ul class="collapse">
+  <li><a href="#估计寿命分布" id="toc-估计寿命分布" class="nav-link" data-scroll-target="#估计寿命分布"><span class="header-section-number">7.2.1</span> 估计寿命分布</a></li>
+  </ul></li>
   <li><a href="#interval-estimates" id="toc-interval-estimates" class="nav-link" data-scroll-target="#interval-estimates"><span class="header-section-number">7.3</span> Interval estimates</a></li>
   <li><a href="#estimating-the-difference-in-means-of-two-normal-populations" id="toc-estimating-the-difference-in-means-of-two-normal-populations" class="nav-link" data-scroll-target="#estimating-the-difference-in-means-of-two-normal-populations"><span class="header-section-number">7.4</span> Estimating the difference in means of two normal populations</a></li>
   <li><a href="#approximate-confidence-interval-for-the-mean-of-a-bernoulli-random-variable" id="toc-approximate-confidence-interval-for-the-mean-of-a-bernoulli-random-variable" class="nav-link" data-scroll-target="#approximate-confidence-interval-for-the-mean-of-a-bernoulli-random-variable"><span class="header-section-number">7.5</span> Approximate confidence interval for the mean of a Bernoulli random variable</a></li>
@@ -320,7 +387,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-7" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Parameter estimation</span></span></h1>
+<h1 class="title"><span id="sec-7" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">参数估计</span></span></h1>
 </div>
 
 
@@ -337,11 +404,254 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">7.1</span> Introduction</h2>
+<section id="sec-7_1" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="sec-7_1"><span class="header-section-number">7.1</span> 引言</h2>
+<p>令 <span class="math inline">\(X_1, ..., X_n\)</span> 是来自分布为 <span class="math inline">\(F_\theta\)</span> 的随机样本，这个分布由一个未知参数向量 <span class="math inline">\(\theta\)</span> 来指定。例如，样本可能来自一个平均值未知的泊松分布；或者可能来自一个均值和方差都未知的正态分布。在概率论中，通常假设分布的所有参数都是已知的，而在统计学中，情况则恰恰相反。统计学的核心问题之一就是使用观测数据来推断未知参数。</p>
+<ul>
+<li>在 <a href="#sec-7_2" class="quarto-xref"><span>章节 7.2</span></a> 中，我们会介绍 <strong>最大似然方法</strong>（<em>maximum likelihood</em>）来估计未知参数。因为 <strong>最大似然估计</strong> 指定了一个单一值作为 <span class="math inline">\(\theta\)</span> 的估计，因此我们称其为 <strong>点估计</strong>（<em>point estimates</em>）。</li>
+<li>在 <span class="quarto-unresolved-ref">?sec-7_3</span> 中，我们会考虑 <strong>区间估计</strong>（<em>interval estimates</em>）的相关问题。对于区间估计而言，我们不会指定某个值作为 <span class="math inline">\(\theta\)</span> 的估计，而是会指定一个区间来估计 <span class="math inline">\(\theta\)</span>。此外，我们还考虑了可以对这样的区间估计报以多少 <strong>置信度</strong>（<em>confidence</em>）的问题。在该节中，我们会展示如何计算一个均值未知、但给定方差的正态分布的均值的区间估计。接下来，我们还会讨论区间估计中的一系列问题。在 <span class="quarto-unresolved-ref">?sec-7_3_1</span> 中，我们会讨论方差未知的正态分布的均值的区间估计。在 <span class="quarto-unresolved-ref">?sec-7_3_2</span> 中，我们会讨论正态分布的方差的区间估计。</li>
+<li>在 <span class="quarto-unresolved-ref">?sec-7_4</span> 中，我们会讨论两个正态分布的均值差的区间估计，我们会分两种情况进行讨论：
+<ul>
+<li>这两个正态分布的方差是已知的；</li>
+<li>这两个正态分布的方差未知，但是我们会假设他们的方差是相同的。</li>
+</ul></li>
+<li>在 <span class="quarto-unresolved-ref">?sec-7_5</span> 和 <span class="quarto-unresolved-ref">?sec-7_6</span> 中，我们会分别讨论伯努利随机变量和指数随机变量的均值的区间估计。</li>
+<li>在 <span class="quarto-unresolved-ref">?sec-7_7</span> 中，我们会重新回到计算未知参数的点估计的一般性问题上来，并展示如何通过 <strong>均方误差</strong>（<em>mean square error</em>）来评估估计量。我们还会讨论估计量的偏差，并会探讨偏差与均方误差之间的关系。</li>
+<li>在 <span class="quarto-unresolved-ref">?sec-7_8</span> 中，我们会考虑在有先验信息可用时确定未知参数估计值的问题，这就是 <strong>贝叶斯</strong>（<em>bayesian</em>）方法。贝叶斯方法假设在观察数据之前，决策者总是可以获得关于 <span class="math inline">\(\theta\)</span> 的信息，并且该信息可以用 <span class="math inline">\(\theta\)</span> 的概率分布来表示。我们还会讨论如何使用估计量和参数 <span class="math inline">\(\theta\)</span> 之间的均方误差来计算 <strong>贝叶斯估计量</strong>（<em>Bayes estimator</em>）。</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" title="估计量与估计值">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+估计量与估计值
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在下一节会讲到：任何用于估计未知参数 <span class="math inline">\(\theta\)</span> 的值的统计量都称为 <span class="math inline">\(\theta\)</span> 的 <strong>估计量</strong>（<em>estimator</em>）。估计量的观测值称为 <strong>估计值</strong>（<em>estimate</em>）。</p>
+</div>
+</div>
 </section>
-<section id="maximum-likelihood-estimators" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="maximum-likelihood-estimators"><span class="header-section-number">7.2</span> Maximum likelihood estimators</h2>
+<section id="sec-7_2" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-7_2"><span class="header-section-number">7.2</span> 最大似然估计</h2>
+<p>任何用于估计未知参数 <span class="math inline">\(\theta\)</span> 的值的统计量都称为 <span class="math inline">\(\theta\)</span> 的 <strong>估计量</strong>（<em>estimator</em>）。估计量的观测值称为 <strong>估计值</strong>（<em>estimate</em>）。例如，一般而言，对于正态分布的均值的估计量是基于样本 <span class="math inline">\(X_1, ..., X_n\)</span> 的样本均值 <span class="math inline">\(\overline{X} = \frac{\sum_i{X_i}}{n}\)</span>。如果样本的大小为 3，并且样本数据为 <span class="math inline">\(X_1=2\)</span>，<span class="math inline">\(X_2=3\)</span>，<span class="math inline">\(X_3=4\)</span>，那么根据估计量 <span class="math inline">\(\overline{X}\)</span> 则得到总体均值的估计值 3。</p>
+<p>假设随机变量 <span class="math inline">\(X_1, \ldots, X_n\)</span> 的联合分布是已知的，只是有一个未知参数 <span class="math inline">\(\theta\)</span>。我们关注的问题是使用观察到的值来估计 <span class="math inline">\(\theta\)</span>。例如， <span class="math inline">\(X_i\)</span> 可能是独立的指数随机变量，每个变量具有相同的未知均值 <span class="math inline">\(\theta\)</span>。在这种情况下，随机变量的联合密度函数将由以下公式给出：</p>
+<p>假设随机变量 <span class="math inline">\(X_1, ..., X_n\)</span> 的联合分布是已知的，只是有一个未知的参数 <span class="math inline">\(\theta\)</span>。我们关注的问题是：使用观察到的数据来估计 <span class="math inline">\(\theta\)</span>。例如，<span class="math inline">\(X_i\)</span> 可能是相互独立的指数随机变量，每个变量都具有相同的未知均值 <span class="math inline">\(\theta\)</span>。在这种情况下，随机变量的联合密度函数为：</p>
+<p><span class="math display">\[
+\begin{align}
+f(x_1, x_2, ..., x_n) &amp;= f_{X_1}(x_1) f_{X_2}(x_2) \cdots f_{X_n}(x_n) \\
+&amp;= \frac{1}{\theta}e^{-\frac{x_1}{\theta}} \frac{1}{\theta}e^{-\frac{x_2}{\theta}} \cdots \frac{1}{\theta}e^{-\frac{x_n}{\theta}} \\
+&amp;= \frac{1}{\theta^n}e^{-{\frac{\sum_{i=1}^{n}{x_i}}{\theta}}}
+\end{align}
+\]</span></p>
+<p>我们的目标就是根据观测数据 <span class="math inline">\(x_1, x_2, ..., x_n\)</span> 来估计 <span class="math inline">\(\theta\)</span>。</p>
+<p>在统计学中，一种被广泛使用的、特殊类型的估计量就是最大似然估计量（<em>maximum likelihood estimator</em>）。最大似然估计的推导过程如下。</p>
+<ol type="1">
+<li>令 <span class="math inline">\(f(x_1, ..., x_n | \theta)\)</span> 表示随机变量 <span class="math inline">\(X_1, X_2, ..., X_n\)</span> 的联合概率质量函数（当它们是离散随机变量时）或者联合概率密度函数（当它们是连续随机变量时）。因为我们假定 <span class="math inline">\(\theta\)</span> 未知，所以我们也将 <span class="math inline">\(f\)</span> 写成 <span class="math inline">\(\theta\)</span> 的函数。</li>
+<li>现在，<span class="math inline">\(f(x_1, ..., x_n | \theta)\)</span> 表示当参数 <span class="math inline">\(\theta\)</span> 是其真实值时，观测值为 <span class="math inline">\(x_1, x_2, ..., x_n\)</span> 的可能性（<em>likelihood</em>）。因此，<span class="math inline">\(\theta\)</span> 的合理的估计值应该是使得观测值的可能性最大的那个 <span class="math inline">\(\theta\)</span> 值。</li>
+<li>换句话说，最大似然估计 <span class="math inline">\(\hat{\theta}\)</span> 就是令 <span class="math inline">\(f(x_1, ..., x_n | \theta)\)</span> 取得最大值的 <span class="math inline">\(\theta\)</span> 值，其中 <span class="math inline">\(x_1, ..., x_n\)</span> 表示观侧数据。而函数 <span class="math inline">\(f(x_1, ..., x_n | \theta)\)</span> 也被称为关于 <span class="math inline">\(\theta\)</span> 的似然函数。</li>
+<li>为了确定 <span class="math inline">\(f(x_1, ..., x_n | \theta)\)</span> 最大时的 <span class="math inline">\(\theta\)</span> 值，通常会利用以下的事实：函数 <span class="math inline">\(f(x_1, ..., x_n | \theta)\)</span> 和函数 <span class="math inline">\(\textup{log}[f(x_1, ..., x_n | \theta)]\)</span> 取得最大值时的 <span class="math inline">\(\theta\)</span> 值是相同的。因此，我们也可以通过最大化 <span class="math inline">\(\textup{log}[f(x_1, ..., x_n | \theta)]\)</span> 得到 <span class="math inline">\(\hat{\theta}\)</span>。</li>
+</ol>
+<div id="exr-7_2_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 7.1</strong></span> <strong>伯努利分布参数的最大似然估计</strong>。假设执行 <span class="math inline">\(n\)</span> 个独立试验，每个试验的成功概率均为 <span class="math inline">\(p\)</span>。则 <span class="math inline">\(p\)</span> 的最大似然估计是多少？</p>
+</div>
+<div id="sol-7_2_a" class="proof solution">
+<p><span class="proof-title"><em>答案 7.1</em>. </span>观察数据由 <span class="math inline">\(X_1, ..., X_n\)</span> 的值构成，其中 <span class="math inline">\(X_i = \begin{cases} 1, \quad &amp; 第 i 次试验成功\\ 0, \quad &amp; 其它 \end{cases}\)</span></p>
+<p>令 <span class="math inline">\(P\{X_i = 1\} = p = 1- P\{X_i = 0\}\)</span>，该等式可以简化为：</p>
+<p><span class="math inline">\(P\{X_i = x\} = p^x(1-p)^{1-x}, \quad x = 0,1\)</span></p>
+<p>因此试验之间相互独立，因此观察到的数据的可能性（<em>likelihook</em>，指的就是联合概率质量函数）为：</p>
+<p><span class="math inline">\(\begin{align} f(x_1, ..., x_n | p) &amp;= P\{X_1 = x_1, ..., X_n = x_n | p\} \\ &amp;= p^{x_1}(1-p)^{1-x_1} \cdots p^{x_n}(1-p)^{1-x_n} \\ &amp;= p^{\sum_{i=1}^{n}{x_i}} (1-p)^{n - \sum_{i=1}^{n}{x_i}}, \quad x_i = 0,1, \quad i = 1,...,n \end{align}\)</span></p>
+<p>为了确定是的 <span class="math inline">\(f\)</span> 取得最大值时 <span class="math inline">\(p\)</span> 的值，首先对 <span class="math inline">\(f\)</span> 取对数： <span class="math inline">\(\textup{log}f(x_1, ..., x_n | p) = \bigg(\sum_{i=1}^{n}{x_i}\bigg)\textup{log}\ p +\bigg (n - \sum_{i=1}^{n}{x_i}\bigg)\textup{log}(1 - p)\)</span></p>
+<p>求导得到：</p>
+<p><span class="math inline">\(\frac{d}{dp} \textup{log}\ f(x_1, ..., x_n | p) = \frac{\sum_{i=1}^{n}{x_i}}{p} -\frac{n - \sum_{i=1}^{n}{x_i}}{1-p}\)</span></p>
+<p>令 <span class="math inline">\(\frac{d}{dp} \textup{log}\ f(x_1, ..., x_n | p) = 0\)</span> 并计算得到最大似然估计 <span class="math inline">\(\hat{p}\)</span> 满足：</p>
+<p><span class="math inline">\(\frac{\sum_{i=1}^{n}{x_i}}{\hat{p}} -\frac{n - \sum_{i=1}^{n}{x_i}}{1-\hat{p}}\)</span></p>
+<p>即，<span class="math inline">\(\hat{p} = \frac{\sum_{i=1}^{n}{x_i}}{n}\)</span></p>
+<p>因此，均值未知的伯努利分布的最大似然估计量为：</p>
+<p><span class="math inline">\(d(X_1, ..., X_n) = \frac{\sum_{i=1}^{n}{X_i}}{n}\)</span></p>
+<p>因为 <span class="math inline">\(\sum_{i=1}^{n}{X_i}\)</span> 就是试验成功的次数，所以 <span class="math inline">\(p\)</span> 的最大似然估计就等于观察到的实验中成功次数的占比。举个例子，假设某制造商生产的 每个 RAM（运行内存）芯片的合格率是相互独立的，并且合格率为 <span class="math inline">\(p\)</span>。如果在 1000 个测试样本中，有 921 个合格品，那么 <span class="math inline">\(p\)</span> 的最大似然估计是 0.921。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-7_2_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 7.2</strong></span> 两位编辑审验相同的一本稿件，如果第一位编辑发现 <span class="math inline">\(n_1\)</span> 个错误，第二位编辑发现 <span class="math inline">\(n_2\)</span> 个错误，其中有 <span class="math inline">\(n_{1,2}\)</span> 个错误两位编辑都发现了，估计这本稿件中的错误总数 <span class="math inline">\(N\)</span>。</p>
+</div>
+<div id="sol-7_2_b" class="proof solution">
+<p><span class="proof-title"><em>答案 7.2</em>. </span>在估计 <span class="math inline">\(N\)</span> 之前，需要对潜在的概率模型做一些假设。假设不同编辑的审验结果之间是独立的，并且稿件中的每个错误被第 <span class="math inline">\(i\)</span> 位编辑独立发现的概率为 <span class="math inline">\(p_i,\ i = 1,2\)</span>。</p>
+<p>为了估计 <span class="math inline">\(N\)</span>，我们将从推导 <span class="math inline">\(p_1\)</span> 的估计量开始。为此，请注意，第一位编辑将会以 <span class="math inline">\(p_1\)</span> 的概率独立发现第二位编辑发现的 <span class="math inline">\(n_2\)</span> 个错误中的每一个错误。因为第一位编辑发现了<span class="math inline">\(n_2\)</span> 个错误中的 <span class="math inline">\(n_{1,2}\)</span> 个错误，因此，<span class="math inline">\(p_1\)</span> 的合理估计为：</p>
+<p><span class="math inline">\(\hat{p}_1 = \frac{n_{1,2}}{n_2}\)</span></p>
+<p>但是，对于稿件中的 <span class="math inline">\(N\)</span> 个错误，因为第一位编辑发现了其中的 <span class="math inline">\(n_1\)</span> 个错误，因此假设 <span class="math inline">\(p_1\)</span> 近似的等于 <span class="math inline">\(\frac{n_1}{N}\)</span> 也是合理的。因此 <span class="math inline">\(\hat{p}_1 \approx \frac{n_1}{N}\)</span>，即 <span class="math inline">\(\frac{n_{1,2}}{n_2}\approx \frac{n_1}{N}\)</span>，也就是说：</p>
+<p><span class="math inline">\(N \approx \frac{n_1 n_2}{n_{1,2}}\)</span></p>
+<p>因为如上的估计对于 <span class="math inline">\(n_1\)</span> 和 <span class="math inline">\(n_2\)</span> 是对称的，所以无论哪个编辑是第一位编辑，最终的结果都是相同的。</p>
+<p>当两个研究小组宣布他们已经破译了人类遗传密码序列时，如上估计过程的一个有趣的案例发生了。作为两个研究小组工作的一部分，他们都估计人类基因组由大约 33000 个基因组成。因为这个数字是由两个小组独立得出的，许多科学家认为这个数字是可信的。但是，大多数科学家对这个相对较少的基因数量感到非常惊讶；相比之下，它只是果蝇基因数量的两倍左右。然而，对两个小组的研究结果进行更为仔细的检查表明，这两个小组均发现的基因数量大约为 17000 个（也就是说，有 17000 个相同的基因被这两个小组发现了）。因此，根据我们之前的估计量，我们会估计基因的实际数量不是 33000个，而是 <span class="math inline">\(\frac{n_1 n_2}{n_{1,2}} = \frac{33000 \times 33000}{17000} \approx 64000\)</span> 个。</p>
+<p>对于声称发现的基因中的某些基因是否真的存在会有一些争议，因此，64000个基因应该被视为基因实际数量的上限。</p>
+<p><strong>当有 <span class="math inline">\(m(m \gt 2)\)</span> 个编辑时，则上述采用的两位编辑的估计方法将不再适用。</strong></p>
+<p>当 <span class="math inline">\(m \gt 2\)</span> 时，对于第 <span class="math inline">\(i\)</span> 为编辑，我们令 <span class="math inline">\(\hat{p}_i\)</span> 为由至少一位其他编辑 <span class="math inline">\(j(j \ne i)\)</span> 发现的错误中 <span class="math inline">\(i\)</span> 也发现的错误的占比，然后让 <span class="math inline">\(\hat{p}_i\)</span> 等于 <span class="math inline">\(\frac{n_i}{N}\)</span>，那么 <span class="math inline">\(N\)</span> 的估计值，即 <span class="math inline">\(\frac{n_i}{\hat{p}_i}\)</span>，将因不同的 <span class="math inline">\(i\)</span> 而异。</p>
+<p>此外，使用这种方法时，即使第 <span class="math inline">\(i\)</span> 位编辑找到的错误比第 <span class="math inline">\(j\)</span> 位编辑的少，我们也有可能得到 <span class="math inline">\(\hat{p}_i &gt; \hat{p}_j\)</span>。例如，对于 <span class="math inline">\(m = 3\)</span>，假设第 1 位编辑和第 2 位编辑找到了完全相同的 10 个错误，而第 3 位编辑找到了 20 个错误且只有 1 个与其他编辑找到的错误是相同的。因为第 1 位编辑和第 2 位编辑都找到了 29 个错误中的 10 个（第 2 位编辑和第 3 位编辑总共找到了 29 个不同的错误），所以，<span class="math inline">\(\hat{p}_i = \frac{10}{29}\)</span>，<span class="math inline">\(i = 1, 2\)</span>。另一方面，因为第 3 位编辑仅找到了其他编辑找到的 10 个错误（第 1 位编辑和第 2 为编辑找到的 10 个错误是相同的）中的 1 个，因此 <span class="math inline">\(\hat{p}_3 = \frac{1}{10}\)</span>。因此，尽管第 3 位编辑找到的错误是 第 1 位编辑的两倍，但 <span class="math inline">\(p_3\)</span> 的估计值小于 <span class="math inline">\(p_1\)</span> 的估计值。</p>
+<p>为了获得更合理的估计，我们可以将上述 <span class="math inline">\(\hat{p}_i,\ i=1, ..., m\)</span> 值作为 <span class="math inline">\(p_i\)</span> 的初步估计值。现在，令 <span class="math inline">\(n_f\)</span> 为至少由一位编辑发现的错误的数量。因为至少一位编辑发现的错误的占比为 <span class="math inline">\(\frac{n_f}{N}\)</span>，因此 <span class="math inline">\(\frac{n_f}{N}\)</span> 近似等于某个错误至少被一位编辑发现的概率 <span class="math inline">\(1 - \Pi_{i=1}^{m}{(1 - p_i)}\)</span>。因此，有：</p>
+<p><span class="math inline">\(\frac{n_f}{N} \approx 1 - \Pi_{i=1}^{m}{(1-p_i)}\)</span></p>
+<p>假设 <span class="math inline">\(N \approx \hat{N}\)</span>，有：</p>
+<p><span id="eq-7_2_1"><span class="math display">\[
+\hat{N} = \frac{n_f}{1 - \Pi_{i=1}^{m}{(1-\hat{p_i})}}
+\tag{7.1}\]</span></span></p>
+<p>有了 <span class="math inline">\(N\)</span> 的估计，我们可以通过 <span class="math inline">\(N\)</span> 的估计来重新估计 <span class="math inline">\(p_i\)</span>：</p>
+<p><span id="eq-7_2_2"><span class="math display">\[
+\hat{p_i} = \frac{n_i}{\hat{N}}, \quad i = 1, ..., m
+\tag{7.2}\]</span></span></p>
+<p>然后，我们可以根据新的 <span class="math inline">\(\hat{p_i}\)</span> 并利用 <a href="#eq-7_2_1" class="quarto-xref">方程式&nbsp;<span>7.1</span></a> 重新估计 <span class="math inline">\(N\)</span>。注意，估计的过程不应该就此停止，每当我们获得了 <span class="math inline">\(N\)</span> 的新估计 <span class="math inline">\(\hat{N}\)</span> 时，我们可以利用 <a href="#eq-7_2_2" class="quarto-xref">方程式&nbsp;<span>7.2</span></a> 获得 <span class="math inline">\(p_i\)</span> 的新估计，然后可以使用 <span class="math inline">\(p_i\)</span> 的新估计来获得 <span class="math inline">\(N\)</span> 的新估计，依此类推。） <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-7_2_c" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 7.3</strong></span> <strong>泊松分布参数的最大似然估计</strong>。假设 <span class="math inline">\(X_1, ..., X_n\)</span> 是独立的泊松随机变量，其均值为 <span class="math inline">\(\lambda\)</span>。确定 <span class="math inline">\(\lambda\)</span> 的最大似然估计量。</p>
+</div>
+<div id="sol-7_2_c" class="proof solution">
+<p><span class="proof-title"><em>答案 7.3</em>. </span><span class="math inline">\(\lambda\)</span> 的似然函数为：</p>
+<p><span class="math inline">\(\begin{align} f(x_1, ..., x_n | \lambda) &amp;= \frac{\lambda^{x_1}e^{-\lambda}}{x_1!} \cdots \frac{\lambda^{x_n}e^{-\lambda}}{x_n!} \\ &amp;= \frac{\lambda^{\sum_{i=1}^{n}{x_i}}e^{-n\lambda}}{x_1! \cdots x_n!} \end{align}\)</span></p>
+<p>对上式取对数有：</p>
+<p><span class="math inline">\(\textup{log}\ f(x_1, ..., x_n | \lambda) = -n\lambda + \sum_{i=1}^{n}{x_i} \textup{log}\ \lambda - \textup{log}\ c\)</span></p>
+<p>其中，<span class="math inline">\(c = \Pi_{i=1}^{n}{x_i!}\)</span>，对上式求导有：</p>
+<p><span class="math inline">\(\frac{d}{d\lambda} \textup{log}\ f(x_1, ..., x_n | \lambda) = -n + \frac{1}{\lambda} \sum_{i=1}^{n}{x_i}\)</span></p>
+<p>令上式为 0，得到最大似然估计 <span class="math inline">\(\hat{\lambda} = \frac{\sum_{i=1}^{n}{x_i}}{n}\)</span></p>
+<p>因此，最大似然估计量为：</p>
+<p><span class="math inline">\(d(X_1, ..., X_n) = \frac{\sum_{i=1}^{n}{x_i}}{n}\)</span></p>
+<p>例如，假设任何一天进入某个零售店的人数是一个泊松随机变量，其均值 <span class="math inline">\(\lambda\)</span> 未知，我们希望估计 <span class="math inline">\(\lambda\)</span> 的值。如果 20 天后，共有857 人进入该机构，那么 <span class="math inline">\(\lambda\)</span> 的最大似然估计为 <span class="math inline">\(\frac{857}{20}=42.85\)</span>。也就是说，平均而言，我们估计在给定的一天将有 42.85 名顾客进入该零售店。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-7_2_d" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 7.4</strong></span> 1998 年加州伯克利市在 10 个随机选择的非雨天发生的交通事故数量如下：</p>
+<p>4,0,6,5,2,1,2,0,4,3</p>
+<p>使用这些数据来估计非雨天最多发生 2 起交通事故的天数占比。</p>
+</div>
+<div id="sol-7_2_d" class="proof solution">
+<p><span class="proof-title"><em>答案 7.4</em>. </span>由于有大量司机，并且每个司机在某一天发生事故的可能性很小，因此假设每天的交通事故数量是泊松随机变量似乎是合理的。因为 <span class="math inline">\(\overline{X} = \frac{1}{10} \sum_{i=1}^{10}{X_i} = 2.7\)</span>，因此，泊松分布的均值的最大似然估计值为 2.7。最多发生 2 起事故的非雨天的长期占比等于 <span class="math inline">\(P\{X \le 2\}\)</span>，其中 <span class="math inline">\(X\)</span> 表示一天中的事故数。因此待计算的估计值为：</p>
+<p><span class="math inline">\(\begin{align} P\{X \le 2\} &amp;= P\{X = 0\} + P\{X = 1\} + P\{X = 2\} \\ &amp;= e^{-2.7}(1 + 2.7 + \frac{{2.7}^2}{2}) \\ &amp;= 0.4936 \end{align}\)</span></p>
+<p>也就是说，我们估计有不到一半的非雨天最多发生 2 起事故。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-7_2_e" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 7.5</strong></span> <strong>正态分布总体的最大似然估计</strong>。假设 <span class="math inline">\(X_1, ..., X_n\)</span> 是相互独立的正态分布随机变量，其均值 <span class="math inline">\(\mu\)</span> 和标准差 <span class="math inline">\(\sigma\)</span> 均未知。计算其均值和标准差的最大似然估计。</p>
+</div>
+<div id="sol-7_2_e" class="proof solution">
+<p><span class="proof-title"><em>答案 7.5</em>. </span>其联合概率密度函数为：</p>
+<p><span class="math inline">\(\begin{align} f(x_1, ..., x_n | \mu, \sigma) &amp;= \Pi_{i=1}^{n}{\frac{1}{\sqrt{2\pi}\sigma}e^{\frac{-(x_i - \mu)^2}{2\sigma^2}}} \\ &amp;= (\frac{1}{2\pi})^{\frac{n}{2}} \frac{1}{\sigma^n} e^{\frac{-\sum_{i=1}^{n}{(x_i - \mu)^2}}{2\sigma^2}} \end{align}\)</span></p>
+<p>取对数有：</p>
+<p><span class="math inline">\(\textup{log}\ f(x_1, ..., x_n | \mu, \sigma) = - \frac{n}{2} \textup{log}\ (2\pi) - n \textup{log}\ \sigma - \frac{\sum_{i=1}^{n}{(x_i - \mu)^2}}{2 \sigma^2}\)</span></p>
+<p>为了找到 <span class="math inline">\(\mu\)</span> 和 <span class="math inline">\(\sigma\)</span> 以使上述值最大化，我们计算如下的偏导数：</p>
+<p><span class="math inline">\(\frac{\partial}{\partial \mu} \textup{log}\ f(x_1, ..., x_n | \mu, \sigma) = \frac{\sum_{i=1}^{n}{(x_i - \mu)}}{\sigma^2}\)</span></p>
+<p><span class="math inline">\(\frac{\partial}{\partial \sigma} \textup{log}\ f(x_1, ..., x_n | \mu, \sigma) = - \frac{n}{\sigma} + \frac{\sum_{i=1}^{n}{(x_i - \mu)^2}}{\sigma^3}\)</span></p>
+<p>令如上的偏导数等于 0，有：</p>
+<p><span class="math inline">\(\hat{\mu} = \frac{\sum_{i=1}^{n}{x_i}}{n}\)</span></p>
+<p><span class="math inline">\(\hat{\sigma} = \bigg[\frac{\sum_{i=1}^{n}{(x_i - \hat{\mu})^2}}{n}\bigg]^{\frac{1}{2}}\)</span></p>
+<p>因此，正态分布的均值和标准差的最大似然估计量分别为：</p>
+<p><span id="eq-7_2_3"><span class="math display">\[
+\begin{align}
+\hat{\mu} &amp;= \overline{X} \\
+\hat{\sigma} &amp;= \bigg[\frac{\sum_{i=1}^{n}{(X_i - \overline{X})^2}}{n}\bigg]^{\frac{1}{2}}
+\end{align}
+\tag{7.3}\]</span></span></p>
+<p>需要注意的是：标准差 <span class="math inline">\(\sigma\)</span> 的最大似然估计并不等同于样本标准差：</p>
+<p><span class="math inline">\(S = \bigg[\frac{\sum_{i=1}^{n}{(X_i - \overline{X})^2}}{n - 1}\bigg]^{\frac{1}{2}}\)</span></p>
+<p>在 <a href="#eq-7_2_3" class="quarto-xref">方程式&nbsp;<span>7.3</span></a> 中，分母为 <span class="math inline">\(\sqrt{n}\)</span>，而不是样本方差中的 <span class="math inline">\(\sqrt{n - 1}\)</span>。然而，对于合理大小的 <span class="math inline">\(n\)</span>，<span class="math inline">\(\sigma\)</span> 的这两个估计量将近似相等。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-7_2_f" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 7.6</strong></span> Kolmogorov 碎裂定律（<em>Kolmogorov’s law of fragmentation</em>）指出，由矿物化合物碎裂产生的大量颗粒中的单个颗粒的大小服从近似对数正态分布（<em>lognormal distribution</em>）。如果一个随机变量 <span class="math inline">\(X\)</span> 的对数 <span class="math inline">\(\textup{log}\ (X)\)</span> 服从正态分布，那么 <span class="math inline">\(X\)</span> 则具有对数正态分布。碎裂定律最初是通过实验证明的，后来由 Kolmogorov 提供了理论基础，并被应用于各种工程研究。例如，人们用碎裂定律来分析从一堆金砂中随机挑选出的颗粒的大小。碎裂定律还应用与地震断裂带的应力释放研究中（参见：Lomnitz, C., “Global Tectonics and Earthquake Risk,” <em>Developments in Geotectonics</em>, Elsevier, Amsterdam, 1979）。</p>
+<p>假设从一大堆金属砂中取出 10 粒样品，它们的长度（以毫米为单位）分别是：</p>
+<p>2.2, 3.4, 1.6, 0.8, 2.7, 3.3, 1.6, 2.8, 2.5, 1.9</p>
+<p>估计整个砂堆中长度在 2~3 毫米之间的砂粒的百分比。</p>
+</div>
+<div id="sol-7_2_f" class="proof solution">
+<p><span class="proof-title"><em>答案 7.6</em>. </span>取这 10 个数据值的自然对数，得到转换后的数据集结果：</p>
+<p>0.7885, 1.2238, 0.4700, -0.2231, 0.9933, 1.1939, 0.4700, 1.0296, 0.9163, 0.6419</p>
+<p>因为如上数据的样本均值和样本标准差分别为：</p>
+<p><span class="math inline">\(\overline{x} = 0.7504, s = 0.4351\)</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">2.2</span>, <span class="fl">3.4</span>, <span class="fl">1.6</span>, <span class="fl">0.8</span>, <span class="fl">2.7</span>, <span class="fl">3.3</span>, <span class="fl">1.6</span>, <span class="fl">2.8</span>, <span class="fl">2.5</span>, <span class="fl">1.9</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>log_x <span class="ot">&lt;-</span> <span class="fu">log</span>(x)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mean_log_x <span class="ot">&lt;-</span> <span class="fu">mean</span>(log_x)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sd_log_x <span class="ot">&lt;-</span> <span class="fu">sd</span>(log_x)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mean_log_x)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7504035</code></pre>
+</div>
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sd_log_x)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.435063</code></pre>
+</div>
+</div>
+<p>因此，随机选择的砂粒长度的对数服从均值为 0.7504、标准差为 0.4351 正态分布。所以，如果 <span class="math inline">\(X\)</span> 是砂粒的长度，那么</p>
+<p><span class="math inline">\(\begin{align} P\{2 \lt X \lt 3\} &amp;= P\{\textup{log}\ 2 \lt \textup{log}\ X \lt \textup{log}\ 3\} \\ &amp;= P\bigg\{\frac{\textup{log}\ 2 - 0.7504}{0.4351} \lt \frac{\textup{log}\ X - 0.7504}{0.4351} \lt \frac{\textup{log}\ 3 - 0.7504}{0.4351}\bigg\} \\ &amp; \approx pnorm(\textup{log}\ 3 - 0.7504 / 0.4351) - pnorm(\textup{log}\ 2 - 0.7504 / 0.4351) \\ &amp;= 0.3405766 \end{align}\)</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>((<span class="fu">log</span>(<span class="dv">3</span>) <span class="sc">-</span> <span class="fl">0.7504</span>) <span class="sc">/</span> <span class="fl">0.4351</span>) <span class="sc">-</span> <span class="fu">pnorm</span>((<span class="fu">log</span>(<span class="dv">2</span>) <span class="sc">-</span> <span class="fl">0.7504</span>) <span class="sc">/</span> <span class="fl">0.4351</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3405766</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>当随机变量可以看作大量独立、同分布的随机变量的乘积的情况下，我们可以假设该随机变量服从对数正态分布。例如，在金融领域，经常用对数正态分布来估计股价在未来某段时间的价格分布。为了理解这种假设的合理性，我们假设当前股价是 <span class="math inline">\(s\)</span>，我们关心的是经过时间 <span class="math inline">\(t\)</span> 后的股票价格 <span class="math inline">\(S(t)\)</span>。对于一个较大的 <span class="math inline">\(n\)</span> 值，令 <span class="math inline">\(t_i = \frac{t}{n}\)</span>，并令 <span class="math inline">\(S(t_1), S(t_2), ..., S(t_n)\)</span> 表示在时间 <span class="math inline">\(t_1, t_2, ..., t_n\)</span> 时的股价。金融领域中的一个比较常见的假设是：<span class="math inline">\(\frac{S(t_i)}{S(t_{i-1})}\)</span> 近似符合独立同分布。因此，如果我们令 <span class="math inline">\(X_i = \frac{S(t_i)}{S(t_{i-1})}\)</span>，则：</p>
+<p><span class="math inline">\(\begin{align} S(t) = S(t_n) &amp;= S(t_0) \cdot \frac{S(t_1)}{S(t_0)} \cdot \frac{S(t_2)}{S(t_1)} \cdot \cdots \cdot \frac{S(t_n)}{S(t_{n-1})} \\ &amp;= s \prod_{i=1}^{n} X_i \end{align}\)</span></p>
+<p>对上式取对数得：</p>
+<p><span class="math inline">\(\log(S(t)) = \log(s) + \sum_{i=1}^{n} \log(X_i)\)</span></p>
+<p>根据中心极限定理有：<span class="math inline">\(\log(S(t))\)</span> 将近似服从正态分布。</p>
+<p>已经证明，对于某些随机变量而言，对数正态分布是一个很好的拟合，例如病人的住院时长和车辆的行驶时间。</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+提示
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在上述所有例子中，总体均值的最大似然估计都是样本均值 <span class="math inline">\(\overline{X}\)</span>。但是并非所有情况都是如此，例如 <a href="#exm-7_2_g" class="quarto-xref">例子&nbsp;<span>7.1</span></a>。</p>
+</div>
+</div>
+<div id="exm-7_2_g" class="theorem example">
+<p><span class="theorem-title"><strong>例子 7.1</strong></span> <strong>均匀分布的均值的最大似然估计</strong>。假设 <span class="math inline">\(X_1, ..., Xn\)</span> 是来自均匀分布 <span class="math inline">\((0, \theta)\)</span> 的样本，其中 <span class="math inline">\(\theta\)</span> 未知。因此，<span class="math inline">\(X_i\)</span> 的联合密度函数为：</p>
+<p><span class="math inline">\(f(x_1, x_2, ..., x_n | \theta) = \begin{cases} \frac{1}{\theta^n}, \quad &amp; 0 \lt x_i \lt \theta \\ 0, \quad &amp; 其它 \end{cases}\)</span></p>
+<p>如果 <span class="math inline">\(\theta\)</span> 尽可能小，则 <span class="math inline">\(f(x_1, x_2, ..., x_n | \theta)\)</span> 则会尽可能的大。由于 <span class="math inline">\(\theta\)</span> 必须至少与所有观测值 <span class="math inline">\(x_i\)</span> 一样大，因此 <span class="math inline">\(\theta\)</span> 的最小的可能值等于 <span class="math inline">\(max(x_1, x_2, ..., x_n)\)</span>。因此，<span class="math inline">\(\theta\)</span> 的最大似然估计量是</p>
+<p><span class="math inline">\(\hat{\theta} = max(X_1, X_2, ..., X_n)\)</span></p>
+<p>因此，可以得出均匀分布均值 <span class="math inline">\(\frac{\theta}{2}\)</span> 的最大似然估计量为 <span class="math inline">\(\frac{max(X_1, X_2, ..., X_n)}{2}\)</span>。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<section id="估计寿命分布" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="估计寿命分布"><span class="header-section-number">7.2.1</span> 估计寿命分布</h3>
+<p>从今天出生的孩子中随机选择一个样本，令 <span class="math inline">\(X\)</span> 表示样本中的孩子死亡时的年龄。若新生儿在其第 <span class="math inline">\(i\)</span> 年死亡，则 <span class="math inline">\(X = i\)</span>，<span class="math inline">\(i \geq 1\)</span>。为了估计 <span class="math inline">\(X\)</span> 的概率质量函数，令 <span class="math inline">\(\lambda_i\)</span> 表示一个新生儿在度过其第 <span class="math inline">\(i - 1\)</span> 年后在第 <span class="math inline">\(i\)</span> 年死亡的概率。即，</p>
+<p><span class="math inline">\(\lambda_i = P\{X = i | X &gt; i - 1\} = \frac{P\{X = i\}}{P\{X &gt; i - 1\}}\)</span></p>
+<p>另外，令</p>
+<p><span class="math inline">\(s_i = 1 - \lambda_i = \frac{P\{X &gt; i\}}{P\{X &gt; i - 1\}}\)</span></p>
+<p>表示新生儿在度过其前 <span class="math inline">\(i - 1\)</span> 年后在第 <span class="math inline">\(i\)</span> 年仍然健在的概率。我们称 <span class="math inline">\(\lambda_i\)</span> 为故障率（<em>failure rate</em>），称 <span class="math inline">\(s_i\)</span> 为生存率（<em>survival rate</em>）（个体在第 <span class="math inline">\(i\)</span> 年的生存概率）。现在，</p>
+<p><span class="math inline">\(s_1 s_2 \cdots s_i = P\{X &gt; 1\} \frac{P\{X &gt; 2\}}{P\{X &gt; 1\}} \frac{P\{X &gt; 3\}}{P\{X &gt; 2\}} \cdots \frac{P\{X &gt; i\}}{P\{X &gt; i - 1\}} = P\{X &gt; i\}\)</span></p>
+<p>因此，</p>
+<p><span class="math inline">\(P\{X = n\} = P\{X &gt; n - 1\} \lambda_n = s_1 \cdots s_{n - 1} (1 - s_n)\)</span></p>
+<p>因此，我们可以通过估计 <span class="math inline">\(s_i, i = 1, \ldots, n\)</span> 来估计 <span class="math inline">\(X\)</span> 的概率质量函数。<span class="math inline">\(s_i\)</span> 可以通过查看所有在第 <span class="math inline">\(i-1\)</span> 年健在的人在第 <span class="math inline">\(i\)</span> 年仍然健在的人来估计 <span class="math inline">\(s_i\)</span> 的值，其估计值 <span class="math inline">\(\hat{s}_i\)</span> 为他们今天仍然健在的比例。然后我们将使用 <span class="math inline">\(\hat{s}_1 \hat{s}_2 \cdots \hat{s}_{n - 1} (1 - \hat{s}_n)\)</span> 来估计 <span class="math inline">\(P\{X = n\}\)</span>。（注意，尽管我们在估计 <span class="math inline">\(s_i\)</span> 时使用了尽可能最新的数据，但我们对新生儿寿命的概率质量函数的估计是假设新生儿在达到年龄 <span class="math inline">\(i\)</span> 时的生存率与去年同年龄 <span class="math inline">\(i\)</span> 的人的生存率相同。）</p>
+<p>在健康研究中，使用生存率来估计寿命分布也是很重要的，尤其是在信息不完全的情况下。例如，考虑一项研究，其中一种新药物被给与 12 名肺癌患者。假设一段时间后，我们得到了从开始服用新药到患者死亡的月份数：</p>
+<p><span class="math inline">\(4, 7^*, 9, 11^*, 12, 3, 14^*, 1, 8, 7, 5, 3^*\)</span></p>
+<p>其中 <span class="math inline">\(x\)</span> 表示患者在开始复用新药后的第 <span class="math inline">\(x\)</span> 个月死亡，而 <span class="math inline">\(x^*\)</span> 表示患者服药 <span class="math inline">\(x\)</span> 个月并且仍然健在。</p>
+<p>令 <span class="math inline">\(X\)</span> 表示开始复用新药后的生存月份数，并令</p>
+<p><span class="math inline">\(s_i = P(X &gt; i \mid X &gt; i - 1) = \frac{P(X &gt; i)}{P(X &gt; i - 1)}\)</span></p>
+<p>为了估计 <span class="math inline">\(s_i\)</span>，即在第 <span class="math inline">\(i - 1\)</span> 个月存活的患者也将在第 <span class="math inline">\(i\)</span> 个月存活的概率，我们应该取那些在第 <span class="math inline">\(i\)</span> 个月开始服药并且在这个月存活的患者的比例。例如，因为 12 名患者中有 1 名在第 1 个月后死亡，所以 <span class="math inline">\(\hat{s}_1 = \frac{11}{12}\)</span>。因为所有在第 2 个月开始服药的 11 名患者都存活，所以 <span class="math inline">\(\hat{s}_2 = \frac{11}{11}\)</span>。因为 11 名患者中有 1 名在第 3 个月后死亡，所以 <span class="math inline">\(\hat{s}_3 = \frac{10}{11}\)</span>。因为 9 名患者中，有 1 名在第 4 个月后死亡，所以 <span class="math inline">\(\hat{s}_4 = \frac{8}{9}\)</span>。类似的推理适用于其他月份，于是得到以下生存率估计值：</p>
+<p><span class="math inline">\(\hat{s}_1 = \frac{11}{12}\)</span></p>
+<p><span class="math inline">\(\hat{s}_2 = \frac{11}{11}\)</span></p>
+<p><span class="math inline">\(\hat{s}_3 = \frac{10}{11}\)</span></p>
+<p><span class="math inline">\(\hat{s}_4 = \frac{8}{9}\)</span></p>
+<p><span class="math inline">\(\hat{s}_5 = \frac{7}{8}\)</span></p>
+<p><span class="math inline">\(\hat{s}_6 = \frac{7}{7}\)</span></p>
+<p><span class="math inline">\(\hat{s}_7 = \frac{6}{7}\)</span></p>
+<p><span class="math inline">\(\hat{s}_8 = \frac{4}{5}\)</span></p>
+<p><span class="math inline">\(\hat{s}_9 = \frac{3}{4}\)</span></p>
+<p><span class="math inline">\(\hat{s}_{10} = \frac{3}{3}\)</span></p>
+<p><span class="math inline">\(\hat{s}_{11} = \frac{3}{3}\)</span></p>
+<p><span class="math inline">\(\hat{s}_{12} = \frac{1}{2}\)</span></p>
+<p><span class="math inline">\(\hat{s}_{13} = \frac{1}{1}\)</span></p>
+<p><span class="math inline">\(\hat{s}_{14} = \frac{1}{1}\)</span></p>
+<p>现在，我们可以使用 <span class="math inline">\(\prod_{i=1}^j \hat{s}_i\)</span> 来估计服用新药至少存活 <span class="math inline">\(j\)</span> 个月的概率，其中 <span class="math inline">\(j = 1, \ldots, 14\)</span>。例如，<span class="math inline">\(P\{X &gt; 6\}\)</span> 的估计是 <span class="math inline">\(\frac{35}{54}\)</span>。</p>
+</section>
 </section>
 <section id="interval-estimates" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="interval-estimates"><span class="header-section-number">7.3</span> Interval estimates</h2>
