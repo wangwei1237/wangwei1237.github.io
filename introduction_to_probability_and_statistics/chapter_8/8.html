@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.557">
+<meta name="generator" content="quarto-1.5.54">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 8&nbsp; Hypothesis testing</title>
+<title>8&nbsp; 假设检验 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,8 +70,38 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 8&nbsp; Hypothesis testing">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="8&nbsp; 假设检验 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
@@ -90,7 +120,7 @@ ul.task-list li input[type="checkbox"] {
     </a>
   </div>
             <div id="quarto-search" class="" title="搜索"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="切换导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -101,7 +131,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">博客</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="link" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-bookshelf" role="img">
 </i> 
  <span class="menu-text">书籍</span>
@@ -128,18 +158,18 @@ ul.task-list li input[type="checkbox"] {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
     <a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_8/8.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Hypothesis testing</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_8/8.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">假设检验</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -213,7 +243,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_8/8.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Hypothesis testing</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">假设检验</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -278,9 +308,9 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">附录</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -303,23 +333,23 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">8.1</span> Introduction</a></li>
-  <li><a href="#significance-levels" id="toc-significance-levels" class="nav-link" data-scroll-target="#significance-levels"><span class="header-section-number">8.2</span> Significance levels</a></li>
-  <li><a href="#tests-concerning-the-mean-of-a-normal-population" id="toc-tests-concerning-the-mean-of-a-normal-population" class="nav-link" data-scroll-target="#tests-concerning-the-mean-of-a-normal-population"><span class="header-section-number">8.3</span> Tests concerning the mean of a normal population</a></li>
+  <li><a href="#sec-8_1" id="toc-sec-8_1" class="nav-link active" data-scroll-target="#sec-8_1"><span class="header-section-number">8.1</span> 引言</a></li>
+  <li><a href="#sec-8_2" id="toc-sec-8_2" class="nav-link" data-scroll-target="#sec-8_2"><span class="header-section-number">8.2</span> 显著性水平</a></li>
+  <li><a href="#sec-8_3" id="toc-sec-8_3" class="nav-link" data-scroll-target="#sec-8_3"><span class="header-section-number">8.3</span> Tests concerning the mean of a normal population</a></li>
   <li><a href="#testing-the-equality-of-means-of-two-normal-populations" id="toc-testing-the-equality-of-means-of-two-normal-populations" class="nav-link" data-scroll-target="#testing-the-equality-of-means-of-two-normal-populations"><span class="header-section-number">8.4</span> Testing the equality of means of two normal populations</a></li>
   <li><a href="#hypothesis-tests-concerning-the-variance-of-a-normal-population" id="toc-hypothesis-tests-concerning-the-variance-of-a-normal-population" class="nav-link" data-scroll-target="#hypothesis-tests-concerning-the-variance-of-a-normal-population"><span class="header-section-number">8.5</span> Hypothesis tests concerning the variance of a normal population</a></li>
-  <li><a href="#hypothesis-tests-in-bernoulli-populations" id="toc-hypothesis-tests-in-bernoulli-populations" class="nav-link" data-scroll-target="#hypothesis-tests-in-bernoulli-populations"><span class="header-section-number">8.6</span> Hypothesis tests in Bernoulli populations</a></li>
+  <li><a href="#二项分布的假设检验" id="toc-二项分布的假设检验" class="nav-link" data-scroll-target="#二项分布的假设检验"><span class="header-section-number">8.6</span> 二项分布的假设检验</a></li>
   <li><a href="#tests-concerning-the-mean-of-a-poisson-distribution" id="toc-tests-concerning-the-mean-of-a-poisson-distribution" class="nav-link" data-scroll-target="#tests-concerning-the-mean-of-a-poisson-distribution"><span class="header-section-number">8.7</span> Tests concerning the mean of a Poisson distribution</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_8/8.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_8/8.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>反馈问题</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-8" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Hypothesis testing</span></span></h1>
+<h1 class="title"><span id="sec-8" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">假设检验</span></span></h1>
 </div>
 
 
@@ -336,14 +366,70 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">8.1</span> Introduction</h2>
+<section id="sec-8_1" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="sec-8_1"><span class="header-section-number">8.1</span> 引言</h2>
+<p>如前一章所述，假设我们从一个分布已知但参数未知的总体中抽取随机样本。现在，我们不想对未知参数进行明确的估计，而是更多的关注使用所得到的样本来检验关于这些参数的某个特定 <strong>假设</strong>（<em>hypothesis</em>）。举例来说，假设某建筑公司刚刚购买了一大批电缆，电缆厂家保证电缆的平均断裂强度至少为每平方英寸（<em>per square inch: PSI</em>） 7000 磅。为了验证电缆厂家的声明，该公司决定随机抽取其中的 10 根电缆以确定其断裂强度。然后，该公司将使用实验结果来确定是否接受电缆厂家声明的假设：总体上，电缆强度的平均值至少为 7000 PSI。</p>
+<p><strong>统计假设</strong>（<em>statistical hypothesis</em>）通常是关于总体分布的一组参数的陈述。我们称之为 <strong>假设</strong> 是因为这一陈述的真实性尚不可知。一个主要问题是开发一个流程，以确定从总体中获取的随机样本的值是否与 <strong>假设</strong> 一致。例如，一个正态分布总体的均值 <span class="math inline">\(\theta\)</span> 未知、方差为 1。“<span class="math inline">\(\theta \lt 1\)</span>” 就是一个 <strong>统计假设</strong>，我们可以通过观察来自该总体的随机样本来对该 <strong>假设</strong> 进行检验。如果随机样本与 <strong>假设</strong> 一致，我们将“接受”该 <strong>假设</strong>；否则，我们将“拒绝”该 <strong>假设</strong>。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="注意">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注意
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>务必注意，当我们接受一个给定的 <strong>假设</strong> 时，并不意味着我们实际上认为这个假设是真的，而是说结果数据与该 <strong>假设</strong> 看起来是一致的。</p>
+<p>例如，在 <span class="math inline">\(\mathcal{N}(\theta，1)\)</span> 的正态分布总体中，如果大小为 10 的样本的均值为 1.25，那么虽然这样的结果不能视为支持 “<span class="math inline">\(\theta \lt 1\)</span>” 的证据，但该结果与 <strong>假设</strong> 并不矛盾，因此我们将接受该 <strong>假设</strong>。</p>
+<p>另外，如果大小为 10 的样本的均值为 3，即使当 <span class="math inline">\(\theta \lt 1\)</span> 时，这样的样本值是可能存在的，但出现这样的样本值是如此的不可能，以致于这似乎与 <strong>假设</strong> 并不一致，因此我们会拒绝该 <strong>假设</strong>。</p>
+</div>
+</div>
 </section>
-<section id="significance-levels" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="significance-levels"><span class="header-section-number">8.2</span> Significance levels</h2>
+<section id="sec-8_2" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="sec-8_2"><span class="header-section-number">8.2</span> 显著性水平</h2>
+<p>考虑一个分布为 <span class="math inline">\(F_{\theta}\)</span> 的总体，其中 <span class="math inline">\(\theta\)</span> 是未知的。假设我们要检验关于 <span class="math inline">\(\theta\)</span> 的特定 <strong>假设</strong>，我们将此假设记为 <span class="math inline">\(H_0\)</span>，并称之为 <strong>原假设</strong>（<em>null hypothesis</em>）。例如，如果 <span class="math inline">\(F_{\theta}\)</span> 是均值为 <span class="math inline">\(\theta\)</span>、方差为 1 的正态分布，那么关于 <span class="math inline">\(\theta\)</span> 的两个可能的 <strong>原假设</strong> 是：</p>
+<ol type="1">
+<li><span class="math inline">\(H_0: \theta = 1\)</span></li>
+<li><span class="math inline">\(H_0: \theta \le 1\)</span></li>
+</ol>
+<p>因此，第一个 <strong>假设</strong> 表明总体是均值为 1 且方差为 1 的正态分布，而第二个 <strong>假设</strong> 表明总体是方差为 1 且均值小于或等于 1 的正态分布。注意，第一个 <strong>原假设</strong> 为真时，完全确定了总体分布，而当第二个 <strong>原假设</strong> 为真时，则没有完全确定总体分布。如果一个 <strong>假设</strong> 为真可以完全确定总体分布，我们称这样的 <strong>假设</strong> 为 <strong>简单假设</strong>（<em>simple hypothesis</em>）；否则，我们称之为 <strong>复合假设</strong>（<em>composite hypothesis</em>）。</p>
+<p>假设现在为了检验特定的 <strong>原假设</strong> <span class="math inline">\(H_0\)</span>，我们将观察一个样本大小为 <span class="math inline">\(n\)</span> 的总体样本——例如 <span class="math inline">\(X_1, \ldots, X_n\)</span>。基于这 <span class="math inline">\(n\)</span> 个值，我们必须决定是否接受 <span class="math inline">\(H_0\)</span>。可以通过在 <span class="math inline">\(n\)</span> 维空间中定义一个区域 <span class="math inline">\(C\)</span> 来指定 <span class="math inline">\(H_0\)</span> 的检验：如果随机样本 <span class="math inline">\(X_1, \ldots, X_n\)</span> 位于 <span class="math inline">\(C\)</span> 中，则拒绝 <strong>假设</strong>，否则接受 <strong>假设</strong>。该区域 <span class="math inline">\(C\)</span> 称之为 <strong>临界区</strong>（<em>critical region</em>）。换句话说，由 <strong>临界区</strong> <span class="math inline">\(C\)</span> 确定的统计检验是：</p>
+<ul>
+<li>接受 <span class="math inline">\(H_0\)</span>：如果 <span class="math inline">\((X_1, X_2, \ldots, X_n) \notin C\)</span></li>
+<li>拒绝 <span class="math inline">\(H_0\)</span>：如果 <span class="math inline">\((X_1, \ldots, X_n) \in C\)</span></li>
+</ul>
+<p>例如，一个关于方差为 1 的正态分布的均值 <span class="math inline">\(\theta\)</span> 的常见假设——均值等于 1 的检验，其 <strong>临界区</strong> 由以下公式给出：</p>
+<p><span id="eq-8_2_1"><span class="math display">\[
+C = \{(X_1, \ldots, X_n) : |\overline{X} - 1| &gt; 1.96 / \sqrt{n}\}
+\tag{8.1}\]</span></span></p>
+<p>因此，当样本均值与 1 的差值超过 1.96 除以样本大小的平方根时，则拒绝 <span class="math inline">\(\theta = 1\)</span> 的 <strong>原假设</strong>。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="注意">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注意
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>重要的是，在任何检验中，可能会出现两种不同类型的错误。</p>
+<ul>
+<li>第一种错误，称之为 <strong>I 型错误</strong>，是指检验错误地拒绝了实际上正确的 <span class="math inline">\(H_0\)</span>。</li>
+<li>第二种错误，称之为 <strong>II 型错误</strong>，是指检验错误地接受了实际上不正确的 <span class="math inline">\(H_0\)</span>。</li>
+</ul>
+</div>
+</div>
+<p>如前所述，统计检验 <span class="math inline">\(H_0\)</span> 的目标不是明确确定 <span class="math inline">\(H_0\)</span> 是否为真，而是确定 <span class="math inline">\(H_0\)</span> 是否与结果数据一致。因此，基于这个目标，合理的做法是：仅当 <span class="math inline">\(H_0\)</span> 为真时，并且结果数据非常不可能出现时，才拒绝 <span class="math inline">\(H_0\)</span>。传统的方法是指定一个值 <span class="math inline">\(\alpha\)</span> ，然后要求检验具有这样的性质：每当 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(H_0\)</span> 被拒绝的概率绝不超过 <span class="math inline">\(\alpha\)</span>。这个 <span class="math inline">\(\alpha\)</span> 值，称之为 <strong>检验的显著性水平</strong>（<em>level of significance of the test</em>）。通常会预先设定检验的显著性水平，常用的值有 <span class="math inline">\(\alpha = 0.1, 0.05, 0.005\)</span>。</p>
+<p>换句话说，传统的检验 <span class="math inline">\(H_0\)</span> 的方法是固定一个显著性水平 <span class="math inline">\(\alpha\)</span> ，然后要求检验具有这样的性质：发生 <strong>I 型错误</strong> 的概率绝不能超过 <span class="math inline">\(\alpha\)</span>。</p>
+<p><span class="math inline">\(\theta\)</span> 是总体的一个未知参数，假设现在我们对检验一个关于 <span class="math inline">\(\theta\)</span> 的特定 <strong>假设</strong> 感兴趣。具体来说，对于给定的参数值集合 <span class="math inline">\(w\)</span>，假设我们对如下的检验感兴趣：</p>
+<p><span class="math inline">\(H_0 : \theta \in w\)</span></p>
+<p>在 <span class="math inline">\(\alpha\)</span> 下检验 <span class="math inline">\(H_0\)</span> 的一种常见方法是，从确定 <span class="math inline">\(\theta\)</span> 的点估计量——记为 <span class="math inline">\(d(\mathbfit{X})\)</span> 开始。</p>
+<p>当 <span class="math inline">\(d(\mathbfit{X})\)</span> 远离区域 <span class="math inline">\(w\)</span> 时，则拒绝 <strong>假设</strong>。然而，为了确定 <span class="math inline">\(d(\mathbfit{X})\)</span> 需要多远才能证明拒绝 <span class="math inline">\(H_0\)</span> 是合理的，我们需要确定当 <span class="math inline">\(H_0\)</span> 为真时 <span class="math inline">\(d(\mathbfit{X})\)</span> 的概率分布。因为这通常能帮助我们确定适当的 <strong>临界区</strong>，从而使检验达到所需的 <strong>显著性水平</strong> <span class="math inline">\(\alpha\)</span>。例如，<a href="#eq-8_2_1" class="quarto-xref">式&nbsp;<span>8.1</span></a> 给出的参数为 <span class="math inline">\((\theta, 1)\)</span> 的总体均值等于 1 的假设检验，当 <span class="math inline">\(\theta\)</span> 的 <strong>点估计量</strong>——即样本均值——与 1 之间的距离超过 <span class="math inline">\(1.96/\sqrt{n}\)</span> 时，则拒绝 <strong>假设</strong>。正如我们将在 <a href="#sec-8_3" class="quarto-xref"><span>小节 8.3</span></a> 中所讲述的，选择 <span class="math inline">\(1.96/\sqrt{n}\)</span> 是为了满足 <strong>显著性水平</strong> <span class="math inline">\(\alpha = 0.05\)</span>。</p>
 </section>
-<section id="tests-concerning-the-mean-of-a-normal-population" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="tests-concerning-the-mean-of-a-normal-population"><span class="header-section-number">8.3</span> Tests concerning the mean of a normal population</h2>
+<section id="sec-8_3" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="sec-8_3"><span class="header-section-number">8.3</span> Tests concerning the mean of a normal population</h2>
 </section>
 <section id="testing-the-equality-of-means-of-two-normal-populations" class="level2" data-number="8.4">
 <h2 data-number="8.4" class="anchored" data-anchor-id="testing-the-equality-of-means-of-two-normal-populations"><span class="header-section-number">8.4</span> Testing the equality of means of two normal populations</h2>
@@ -351,8 +437,26 @@ ul.task-list li input[type="checkbox"] {
 <section id="hypothesis-tests-concerning-the-variance-of-a-normal-population" class="level2" data-number="8.5">
 <h2 data-number="8.5" class="anchored" data-anchor-id="hypothesis-tests-concerning-the-variance-of-a-normal-population"><span class="header-section-number">8.5</span> Hypothesis tests concerning the variance of a normal population</h2>
 </section>
-<section id="hypothesis-tests-in-bernoulli-populations" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="hypothesis-tests-in-bernoulli-populations"><span class="header-section-number">8.6</span> Hypothesis tests in Bernoulli populations</h2>
+<section id="二项分布的假设检验" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="二项分布的假设检验"><span class="header-section-number">8.6</span> 二项分布的假设检验</h2>
+<p>二项分布在工程问题中经常遇到。例如，考虑一种产品生产线，该生产线制造的产品可以分为两类——可接受的或有缺陷的。通常会假设生产的每个产品的缺陷概率为 <span class="math inline">\(p\)</span>，因此一个具有 <span class="math inline">\(n\)</span> 个产品的样本中的缺陷产品数量将是参数为 <span class="math inline">\((n, p)\)</span> 的二项分布。现在考虑以下的假设检验：</p>
+<p><span class="math inline">\(H_0 : p \le p_0 \quad versus \quad H_1 : p &gt; p_0\)</span></p>
+<p>其中 <span class="math inline">\(p_0\)</span> 是某个指定的值。</p>
+<p>如果令 <span class="math inline">\(X\)</span> 表示样本大小为 <span class="math inline">\(n\)</span> 的样本中的缺陷数，那么显然当 <span class="math inline">\(X\)</span> 较大时我们希望拒绝 <span class="math inline">\(H_0\)</span>。为了计算在显著性水平 <span class="math inline">\(\alpha\)</span> 下需要多大的 <span class="math inline">\(X\)</span> 才能证明拒绝是合理的，我们关注到：</p>
+<p><span class="math inline">\(P\{X \ge k\} = \sum_{i=k}^{n} P\{X = i\} = \sum_{i=k}^{n} \binom{n}{i} p^i (1 - p)^{n-i}\)</span></p>
+<p>现在，很直观（并且可以证明），<span class="math inline">\(P\{X \ge k\}\)</span> 是 <span class="math inline">\(p\)</span> 的递增函数——即，样本中包含至少 <span class="math inline">\(k\)</span> 个缺陷产品的概率随着缺陷概率 <span class="math inline">\(p\)</span> 的增加而增加。使用这一点，我们看到当 <span class="math inline">\(H_0\)</span> 为真时（即 <span class="math inline">\(p \le p_0\)</span>），</p>
+<p><span class="math inline">\(P\{X \ge k\} \le \sum_{i=k}^{n} \binom{n}{i} p_0^i (1 - p_0)^{n-i}\)</span></p>
+<p>因此，显著性水平 <span class="math inline">\(\alpha\)</span> 下的假设检验</p>
+<p><span class="math inline">\(H_0 : p \le p_0\)</span> <span class="math inline">\(versus\)</span> <span class="math inline">\(H_1 : p &gt; p_0\)</span></p>
+<p>是当 <span class="math inline">\(X \ge k^*\)</span> 时拒绝 <span class="math inline">\(H_0\)</span>，其中 <span class="math inline">\(k^*\)</span> 是使 <span class="math inline">\(\sum_{i=k}^{n} \binom{n}{i} p_0^i (1 - p_0)^{n-i} \le \alpha\)</span> 成立的最小的 <span class="math inline">\(k\)</span> 值。也就是说，</p>
+<p><span class="math inline">\(k^* = \min \left\{ k : \sum_{i=k}^{n} \binom{n}{i} p_0^i (1 - p_0)^{n-i} \le \alpha \right\}\)</span></p>
+<p>可以通过首先确定检验统计量的值——例如 <span class="math inline">\(X = x\)</span>，然后再计算给定的 <span class="math inline">\(p\)</span>-值 来执行假设检验。</p>
+<p><span class="math display">\[
+\begin{align}
+p\text{-value} &amp;= P\{B(n, p_0) \ge x\} \\
+&amp;= \sum_{i=x}^{n}{\left(\begin{array}{cc}  n \\ i  \end{array}\right)p_0^i(1-p_0)^{n-i}}
+\end{align}
+\]</span></p>
 </section>
 <section id="tests-concerning-the-mean-of-a-poisson-distribution" class="level2" data-number="8.7">
 <h2 data-number="8.7" class="anchored" data-anchor-id="tests-concerning-the-mean-of-a-poisson-distribution"><span class="header-section-number">8.7</span> Tests concerning the mean of a Poisson distribution</h2>
@@ -399,18 +503,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -442,7 +535,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp("https:\/\/wangwei1237\.github\.io\/introduction_to_probability_and_statistics\/");
@@ -450,7 +565,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
@@ -795,7 +910,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
 <p>Copyright Wang Wei. All Rights Reserved.</p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_8/8.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_8/8.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>反馈问题</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
