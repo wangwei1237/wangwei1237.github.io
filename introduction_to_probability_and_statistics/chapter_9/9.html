@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.55">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>9&nbsp; Regression – Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
+<title>9&nbsp; 回归 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -70,8 +104,38 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="9&nbsp; Regression – Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="9&nbsp; 回归 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
@@ -138,7 +202,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_9/9.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Regression</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_9/9.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">回归</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -219,7 +283,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_9/9.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">回归</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -303,10 +367,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">9.1</span> Introduction</a></li>
-  <li><a href="#least-squares-estimators-of-the-regression-parameters" id="toc-least-squares-estimators-of-the-regression-parameters" class="nav-link" data-scroll-target="#least-squares-estimators-of-the-regression-parameters"><span class="header-section-number">9.2</span> Least squares estimators of the regression parameters</a></li>
-  <li><a href="#distribution-of-the-estimators" id="toc-distribution-of-the-estimators" class="nav-link" data-scroll-target="#distribution-of-the-estimators"><span class="header-section-number">9.3</span> Distribution of the estimators</a></li>
-  <li><a href="#statistical-inferences-about-the-regression-parameters" id="toc-statistical-inferences-about-the-regression-parameters" class="nav-link" data-scroll-target="#statistical-inferences-about-the-regression-parameters"><span class="header-section-number">9.4</span> Statistical inferences about the regression parameters</a></li>
+  <li><a href="#sec-9_1" id="toc-sec-9_1" class="nav-link active" data-scroll-target="#sec-9_1"><span class="header-section-number">9.1</span> 引言</a></li>
+  <li><a href="#sec-9_2" id="toc-sec-9_2" class="nav-link" data-scroll-target="#sec-9_2"><span class="header-section-number">9.2</span> 回归参数的最小二乘估计</a></li>
+  <li><a href="#估计量的分布" id="toc-估计量的分布" class="nav-link" data-scroll-target="#估计量的分布"><span class="header-section-number">9.3</span> 估计量的分布</a></li>
+  <li><a href="#sec-9_4" id="toc-sec-9_4" class="nav-link" data-scroll-target="#sec-9_4"><span class="header-section-number">9.4</span> 关于回归参数的统计推断</a></li>
   <li><a href="#the-coefficient-of-determination-and-the-sample-correlation-coefficient" id="toc-the-coefficient-of-determination-and-the-sample-correlation-coefficient" class="nav-link" data-scroll-target="#the-coefficient-of-determination-and-the-sample-correlation-coefficient"><span class="header-section-number">9.5</span> The coefficient of determination and the sample correlation coefficient</a></li>
   <li><a href="#analysis-of-residuals-assessing-the-model" id="toc-analysis-of-residuals-assessing-the-model" class="nav-link" data-scroll-target="#analysis-of-residuals-assessing-the-model"><span class="header-section-number">9.6</span> Analysis of residuals: assessing the model</a></li>
   <li><a href="#transforming-to-linearity" id="toc-transforming-to-linearity" class="nav-link" data-scroll-target="#transforming-to-linearity"><span class="header-section-number">9.7</span> Transforming to linearity</a></li>
@@ -323,7 +387,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-9" class="quarto-section-identifier"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Regression</span></span></h1>
+<h1 class="title"><span id="sec-9" class="quarto-section-identifier"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">回归</span></span></h1>
 </div>
 
 
@@ -340,17 +404,469 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">9.1</span> Introduction</h2>
+<section id="sec-9_1" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="sec-9_1"><span class="header-section-number">9.1</span> 引言</h2>
+<p>工程和科学中的许多问题都涉及到：确定一组变量之间的关系。例如，在化学反应中，我们可能对化学反应的产物、反应时的温度以及所用催化剂的用量之间的关系感兴趣。了解这种不同变量之间的关系可以使我们预测不同温度和催化剂用量下的反应产物。</p>
+<p>在许多情况下，存在一个单一的 <strong>响应变量</strong>（<em>response variable</em>）——也称之为 <strong>因变量</strong>（<em>dependent variable</em>）—— <span class="math inline">\(Y\)</span>。<strong>因变量</strong> <span class="math inline">\(Y\)</span> 依赖于一组 <strong>输入变量</strong>（<em>input variables</em>）——也称之为 <strong>自变量</strong>（<em>independent variables</em>）——<span class="math inline">\(x_1, \ldots, x_r\)</span> 的值。最简单的 <strong>因变量</strong> <span class="math inline">\(Y\)</span> 和 <strong>自变量</strong> <span class="math inline">\(x_1, \ldots, x_r\)</span> 之间的关系类型是线性关系。即，对于一组常数 <span class="math inline">\(\beta_0, \beta_1, \ldots, \beta_r\)</span>，先行关系的等式为：</p>
+<p><span id="eq-9_1_1"><span class="math display">\[
+Y = \beta_0 + \beta_1 x_1 + \cdots + \beta_r x_r
+\tag{9.1}\]</span></span></p>
+<p>如果 <span class="math inline">\(Y\)</span> 和 <span class="math inline">\(x_i\)</span> 之间的关系如 <a href="#eq-9_1_1" class="quarto-xref">式&nbsp;<span>9.1</span></a> 所示，那么一旦学习到 <span class="math inline">\(\beta_i\)</span>，我们就可以准确预测任意一组输入值的 <span class="math inline">\(Y\)</span>。然而，实际上，几乎无法实现 100% 的精确预测，我们最多可以期望 <a href="#eq-9_1_1" class="quarto-xref">式&nbsp;<span>9.1</span></a> 在随机误差下（<em>subject to random error</em>）是有效的。此时，<a href="#eq-9_1_1" class="quarto-xref">式&nbsp;<span>9.1</span></a> 将表示为：</p>
+<p><span id="eq-9_1_2"><span class="math display">\[
+Y = \beta_0 + \beta_1 x_1 + \cdots + \beta_r x_r + e
+\tag{9.2}\]</span></span></p>
+<p>其中 <span class="math inline">\(e\)</span> 表示随机误差，并假设随机误差是均值为 0 的随机变量。实际上，<a href="#eq-9_1_2" class="quarto-xref">式&nbsp;<span>9.2</span></a> 的另一种表达为：</p>
+<p><span id="eq-9_1_001"><span class="math display">\[
+E[Y|\mathbf{x}] = \beta_0 + \beta_1 x_1 + \cdots + \beta_r x_r
+\tag{9.3}\]</span></span></p>
+<p>其中 <span class="math inline">\(\mathbf{x} = (x_1, \ldots, x_r)\)</span> 是 <strong>自变量</strong>，<span class="math inline">\(E[Y|\mathbf{x}]\)</span> 是在给定输入 <span class="math inline">\(\mathbf{x}\)</span> 下的结果的期望。</p>
+<p>我们称 <a href="#eq-9_1_2" class="quarto-xref">式&nbsp;<span>9.2</span></a> 为 <strong>线性回归方程</strong>（<em>linear regression equation</em>）。<a href="#eq-9_1_2" class="quarto-xref">式&nbsp;<span>9.2</span></a> 描述了 <strong>因变量</strong> <span class="math inline">\(Y\)</span> 对一组 <strong>自变量</strong> <span class="math inline">\(x_1, \ldots, x_r\)</span> 的回归。我们称 <span class="math inline">\(\beta_0, \beta_1, \ldots, \beta_r\)</span> 为 <strong>回归系数</strong>（<em>regression coefficients</em>），并且通常需要通过估计得到 <strong>回归系数</strong>。如果回归方程中只包含一个 <strong>自变量</strong>——即 <span class="math inline">\(r=1\)</span>，我们称之为 <strong>简单回归方程</strong>（<em>simple regression equation</em>）；相比之下，如果回归方程包含多个 <strong>自变量</strong>，我们称之为 <strong>多元回归方程</strong>（<em>multiple regression equation</em>）。</p>
+<p>因此，简单线性回归模型假设 <span class="math inline">\(Y\)</span> 的均值与单个 <strong>自变量</strong> 的值之间存在线性关系，即：</p>
+<p><span id="eq-9_1_002"><span class="math display">\[
+Y = \alpha + \beta x + e
+\tag{9.4}\]</span></span></p>
+<p>其中，<span class="math inline">\(x\)</span> 是自变量的值，也称为 <strong>输入水平</strong>（<em>input level</em>），<span class="math inline">\(Y\)</span> 是对应的输出，<span class="math inline">\(e\)</span> 代表均值为 0 的随机误差。</p>
+<div id="exm-9_1_a" class="theorem example">
+<p><span class="theorem-title"><strong>例 9.1</strong></span> 考虑以下 10 对数据 <span class="math inline">\((x_i, y_i), i = 1, \ldots, 10\)</span>，其中 <span class="math inline">\(y\)</span> 是实验的百分比产量，<span class="math inline">\(x\)</span> 是实验温度。</p>
+<p><span class="math display">\[
+\begin{array}{ccc|ccc}
+i &amp; x_i &amp; y_i &amp; i &amp; x_i &amp; y_i \\
+1 &amp; 100 &amp; 45 &amp; 6 &amp; 150 &amp; 68 \\
+2 &amp; 110 &amp; 52 &amp; 7 &amp; 160 &amp; 75 \\
+3 &amp; 120 &amp; 54 &amp; 8 &amp; 170 &amp; 76 \\
+4 &amp; 130 &amp; 63 &amp; 9 &amp; 180 &amp; 92 \\
+5 &amp; 140 &amp; 62 &amp; 10 &amp; 190 &amp; 88 \\
+\end{array}
+\]</span></p>
+<p>如上数据的散点图（<em>scatter diagram</em>）如 <a href="#fig-9_1" class="quarto-xref">图&nbsp;<span>9.1</span></a> 所示。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">100</span>, <span class="dv">190</span>, <span class="dv">10</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">52</span>, <span class="dv">54</span>, <span class="dv">63</span>, <span class="dv">62</span>, <span class="dv">68</span>, <span class="dv">75</span>, <span class="dv">76</span>, <span class="dv">92</span>, <span class="dv">88</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">20</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>)) <span class="sc">+</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">40</span>, <span class="dv">100</span>, <span class="dv">10</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">100</span>))</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-9_1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="9_files/figure-html/fig-9_1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-9_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9.1: 散点图
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>正如 <a href="#fig-9_1" class="quarto-xref">图&nbsp;<span>9.1</span></a> 的散点图所显示的那样，受随机误差的影响，<span class="math inline">\(y\)</span> 和 <span class="math inline">\(x\)</span> 之间似乎存在线性关系。因此，看起来，对于本例的数据而言，简单线性回归模型似乎是合适的。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
-<section id="least-squares-estimators-of-the-regression-parameters" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="least-squares-estimators-of-the-regression-parameters"><span class="header-section-number">9.2</span> Least squares estimators of the regression parameters</h2>
+<section id="sec-9_2" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="sec-9_2"><span class="header-section-number">9.2</span> 回归参数的最小二乘估计</h2>
+<p>假设对于输入值 <span class="math inline">\(x_i\)</span>（<span class="math inline">\(i = 1, \ldots, n\)</span>）的输出为 <span class="math inline">\(Y_i\)</span>，我们将这些数据作为观察值并用于估计简单线性回归模型（<a href="#eq-9_1_002" class="quarto-xref">式&nbsp;<span>9.4</span></a>）中的 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>。</p>
+<p>为了确定 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 的估计，我们作如下推理：如果 <span class="math inline">\(A\)</span> 是 <span class="math inline">\(\alpha\)</span> 的估计，<span class="math inline">\(B\)</span> 是 <span class="math inline">\(\beta\)</span> 的估计，那么输入变量 <span class="math inline">\(x_i\)</span> 的输出估计将是 <span class="math inline">\(A + Bx_i\)</span>。由于实际输出是 <span class="math inline">\(Y_i\)</span> ，因此实际输出和输出估计之间的平方差为 <span class="math inline">\((Y_i - A - Bx_i)^2\)</span>，因此如果 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 是 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 的估计，那么输出估计值和实际输出值之间的平方差的和（<em>SS: the sum of the squared</em>）为：</p>
+<p><span id="eq-9_2_001"><span class="math display">\[
+SS = \sum_{i=1}^n (Y_i - A - Bx_i)^2
+\tag{9.5}\]</span></span></p>
+<p>最小二乘法（<em>the least squares</em>）选择让 <em>SS</em> 达到最小值的 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 以作为 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 的估计。为了确定 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span>，我们首先对 <em>SS</em> 进行微分运算：</p>
+<p><span class="math inline">\(\frac{\partial SS}{\partial A} = -2 \sum_{i=1}^n (Y_i - A - Bx_i)\)</span></p>
+<p><span class="math inline">\(\frac{\partial SS}{\partial B} = -2 \sum_{i=1}^n x_i (Y_i - A - Bx_i)\)</span></p>
+<p>令偏导数为零，得到令 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 最小化的方程：</p>
+<p><span id="eq-9_2_1"><span class="math display">\[
+\begin{align}
+\sum_{i=1}^n Y_i &amp;= nA + B \sum_{i=1}^n x_i \\
+\sum_{i=1}^n x_i Y_i &amp;= A \sum_{i=1}^n x_i + B \sum_{i=1}^n x_i^2
+\end{align}
+\tag{9.6}\]</span></span></p>
+<p>我们称 <a href="#eq-9_2_1" class="quarto-xref">式&nbsp;<span>9.6</span></a> 为 <strong>正规方程</strong>（<em>the normal equations</em>）。如果令：</p>
+<p><span class="math inline">\(\overline{Y} = \sum_i Y_i / n, \quad \overline{x} = \sum_i x_i / n\)</span></p>
+<p>那么我们可以将第一个 <strong>正规方程</strong> 写为：</p>
+<p><span id="eq-9_2_2"><span class="math display">\[
+A = \overline{Y} - B \overline{x}
+\tag{9.7}\]</span></span></p>
+<p>把 <span class="math inline">\(A\)</span> 的代入到第二个 <strong>正规方程</strong> 得到：</p>
+<p><span class="math inline">\(\sum_{i}{x_iY_i} = (\overline{Y}-B\overline{x})n\overline{x} + B \sum_{i}{x_i^2}\)</span></p>
+<p>即，<span class="math inline">\(B\bigg(\sum_i{x_i^2} - n \overline{x}^2\bigg)=\sum_i{x_iY_i} - n\overline{x}\overline{Y}\)</span></p>
+<p>即，<span class="math inline">\(B = \frac{\sum_i{x_iY_i} - n\overline{x}\overline{Y}}{\sum_i{x_i^2} - n \overline{x}^2}\)</span></p>
+<p>因此，根据 <a href="#eq-9_2_2" class="quarto-xref">式&nbsp;<span>9.7</span></a> 和 <span class="math inline">\(n\overline{Y}=\sum_{i=1}^{n}{Y_i}\)</span>，我们可以证明 <a href="#prp-9_2_1" class="quarto-xref">命题&nbsp;<span>9.1</span></a>。</p>
+<div id="prp-9_2_1" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 9.1</strong></span> 在数据集 <span class="math inline">\((x_i, y_i), i = 1, \ldots, n\)</span> 上的 <span class="math inline">\(\beta\)</span> 和 <span class="math inline">\(\alpha\)</span> 的最小二乘法估计量分别为：</p>
+<p><span class="math inline">\(B = \frac{\sum_{i=1}^n x_i Y_i - \overline{x} \sum_{i=1}^n Y_i}{\sum_{i=1}^n x_i^2 - n\overline{x}^2}\)</span></p>
+<p><span class="math inline">\(A = \overline{Y} - B\overline{x}\)</span></p>
+</div>
+<p>我们称直线 <span class="math inline">\(A + Bx\)</span> 为估计线性方程（<em>the estimated regression line</em>）。</p>
+<p>我们可以使用 R 来获得数据对 <span class="math inline">\((x_1, y_1), ..., (x_n, y_n)\)</span> 的估计线性方程。</p>
+<div class="sourceCode" id="annotated-cell-1"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-1-1"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(x_1, ..., x_n)</span>
+<span id="annotated-cell-1-2"><a href="#annotated-cell-1-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(y_1, ..., y_n)</span>
+<span id="annotated-cell-1-3"><a href="#annotated-cell-1-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-1-4" class="code-annotation-target"><a href="#annotated-cell-1-4" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, df)</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-1-5" class="code-annotation-target"><a href="#annotated-cell-1-5" aria-hidden="true" tabindex="-1"></a>fit</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-1" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="4" data-code-annotation="1">定义模型为 <code>lm(y~x)</code>，该模型为线性模型并且假定 <span class="math inline">\(y\)</span> 是 <span class="math inline">\(x\)</span> 的线性函数加上一个随机误差，并且我们将该模型命名为 <code>fit</code>。</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="5" data-code-annotation="2">输出模型 <code>fit</code> 的估计线性方程。</span>
+</dd>
+</dl>
+<p>例如：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">9</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, df)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>fit</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x, data = df)
+
+Coefficients:
+(Intercept)            x  
+      1.143        1.036  </code></pre>
+</div>
+</div>
+<p>所以，根据如上的结果，估计线性方程为：<span class="math inline">\(y = 1.143 + 1.036x\)</span>。</p>
+<p>要获得估计线性方程图，首先输入 <code>plot(x, y)</code>，这将生成散点图。然后输入 <code>abline(fit)</code>，这将在散点图上添加估计线性方程的直线。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">9</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, df)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(fit)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="9_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="exm-9_2_a" class="theorem example">
+<p><span class="theorem-title"><strong>例 9.2</strong></span> 生产某种合成纤维所用的原材料储存在一个没有湿度控制的地方。该储存地点 15 天内的相对湿度和原材料样品的水分含量数据如下所示：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>相对湿度（%）</th>
+<th>46</th>
+<th>53</th>
+<th>29</th>
+<th>61</th>
+<th>36</th>
+<th>39</th>
+<th>47</th>
+<th>49</th>
+<th>52</th>
+<th>38</th>
+<th>55</th>
+<th>32</th>
+<th>57</th>
+<th>54</th>
+<th>44</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>原材料含水量（%）</td>
+<td>12</td>
+<td>15</td>
+<td>7</td>
+<td>17</td>
+<td>10</td>
+<td>11</td>
+<td>11</td>
+<td>12</td>
+<td>14</td>
+<td>9</td>
+<td>16</td>
+<td>8</td>
+<td>18</td>
+<td>14</td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<p>将该线性回归模型命名为 <code>moisture</code>，并且利用 R 得到：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">46</span>, <span class="dv">53</span>, <span class="dv">29</span>, <span class="dv">61</span>, <span class="dv">36</span>, <span class="dv">39</span>, <span class="dv">47</span>, <span class="dv">49</span>, <span class="dv">52</span>, <span class="dv">38</span>, <span class="dv">55</span>, <span class="dv">32</span>, <span class="dv">57</span>, <span class="dv">54</span>, <span class="dv">44</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">15</span>,  <span class="dv">7</span>, <span class="dv">17</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">14</span>,  <span class="dv">9</span>, <span class="dv">16</span>,  <span class="dv">8</span>, <span class="dv">18</span>, <span class="dv">14</span>, <span class="dv">12</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>moisture <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, df)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>moisture</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x, data = df)
+
+Coefficients:
+(Intercept)            x  
+    -2.5105       0.3232  </code></pre>
+</div>
+</div>
+<p>数据的散点图和估计线性方程图为：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">46</span>, <span class="dv">53</span>, <span class="dv">29</span>, <span class="dv">61</span>, <span class="dv">36</span>, <span class="dv">39</span>, <span class="dv">47</span>, <span class="dv">49</span>, <span class="dv">52</span>, <span class="dv">38</span>, <span class="dv">55</span>, <span class="dv">32</span>, <span class="dv">57</span>, <span class="dv">54</span>, <span class="dv">44</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">15</span>,  <span class="dv">7</span>, <span class="dv">17</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">14</span>,  <span class="dv">9</span>, <span class="dv">16</span>,  <span class="dv">8</span>, <span class="dv">18</span>, <span class="dv">14</span>, <span class="dv">12</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>moisture <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, df)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(moisture)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="9_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
 </section>
-<section id="distribution-of-the-estimators" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="distribution-of-the-estimators"><span class="header-section-number">9.3</span> Distribution of the estimators</h2>
+<section id="估计量的分布" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="估计量的分布"><span class="header-section-number">9.3</span> 估计量的分布</h2>
+<p>为了确定估计量 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 的分布，不能仅仅假设随机误差的均值为 0，我们有必要对随机误差做出额外的假设。通常，我们假设随机误差是均值为 0，方差为 <span class="math inline">\(\sigma^2\)</span> 的独立的、正态分布随机变量。也就是说，如果输入值 <span class="math inline">\(x_i\)</span> 对应的输出为 <span class="math inline">\(Y_i\)</span>，那么 <span class="math inline">\(Y_1, \ldots, Y_n\)</span> 相互独立，并且：</p>
+<p><span class="math inline">\(Y_i \sim \mathcal{N}(\alpha + \beta x_i, \sigma^2)\)</span></p>
+<p>注意，上述假设认为随机误差的方差不依赖于输入值，而是一个常数。并且，我们假设 <span class="math inline">\(\sigma^2\)</span> 的值是未知的，我们必须通过数据对 <span class="math inline">\(\sigma^2\)</span> 进行估计。</p>
+<p>根据 <a href="#prp-9_2_1" class="quarto-xref">命题&nbsp;<span>9.1</span></a>，<span class="math inline">\(\beta\)</span> 的最小二乘估计量 <span class="math inline">\(B\)</span> 可以表示为：</p>
+<p><span id="eq-9_3_1"><span class="math display">\[
+B = \frac{\sum_{i}(x_i - \overline{x}) Y_i}{\sum_{i} x_i^2 - n\overline{x}^2}
+\tag{9.8}\]</span></span></p>
+<p>因此，<span class="math inline">\(B\)</span> 是独立、正态分布随机变量 <span class="math inline">\(Y_i, i = 1, \ldots, n\)</span> 的线性组合，所以 <span class="math inline">\(B\)</span> 本身也服从正态分布。根据 <a href="#eq-9_3_1" class="quarto-xref">式&nbsp;<span>9.8</span></a>，<span class="math inline">\(B\)</span> 的均值和方差为：</p>
+<p><span class="math display">\[
+\begin{align}
+E[B] &amp;= \frac{\sum_{i}(x_i - \overline{x}) E[Y_i]}{\sum_{i} x_i^2 - n\overline{x}^2} \\
+&amp;= \frac{\sum_{i}(x_i - \overline{x})(\alpha + \beta x_i)}{\sum_{i} x_i^2 - n\overline{x}^2} \\
+&amp;= \frac{\alpha \sum_{i}(x_i - \overline{x}) + \beta \sum_{i}x_i(x_i - \overline{x})}{\sum_{i} x_i^2 - n\overline{x}^2} \\
+&amp;= \beta \frac{\sum_i x_i^2 - \overline{x}\sum_i x_i}{\sum_i x_i^2 - n\overline{x}^2} \quad \because \sum_i(x_i - \overline{x}) = 0 \\
+&amp;= \beta
+\end{align}
+\]</span></p>
+<p>因此，<span class="math inline">\(E[B] = \beta\)</span>，所以 <span class="math inline">\(B\)</span> 是 <span class="math inline">\(\beta\)</span> 的无偏估计量。现在，我们计算 <span class="math inline">\(B\)</span> 的方差。</p>
+<p><span id="eq-9_3_2"><span class="math display">\[
+\begin{align}
+\textup{Var}(B) &amp;= \frac{\textup{Var}\bigg( \sum_{i=1}^n (x_i - \overline{x}) Y_i \bigg)}{\bigg( \sum_{i=1}^n x_i^2 - n\overline{x}^2 \bigg)^2} \\
+&amp;= \frac{\sum_{i=1}^n (x_i - \overline{x})^2 \textup{Var}(Y_i)}{\bigg( \sum_{i=1}^n x_i^2 - n \overline{x}^2 \bigg)^2} \text{ by independence} \\
+&amp;= \frac{\sigma^2 \sum_{i=1}^n (x_i - \overline{x})^2}{\bigg( \sum_{i=1}^n x_i^2 - n \overline{x}^2 \bigg)^2} \\
+&amp;= \frac{\sigma^2}{\sum_{i=1}^n x_i^2 - n \overline{x}^2} \quad \because \sum_{i=1}^n (x_i - \overline{x})^2 = \sum_{i=1}^n x_i^2 - n \overline{x}^2
+\end{align}
+\tag{9.9}\]</span></span></p>
+<p>根据 <a href="#eq-9_3_1" class="quarto-xref">式&nbsp;<span>9.8</span></a> 以及 <span class="math inline">\(A = \frac{\sum_{i=1}^n Y_i}{n} - B \overline{x}\)</span> 表明 <span class="math inline">\(A\)</span> 也可以表示为独立正态分布随机变量 <span class="math inline">\(Y_i, i = 1, \ldots, n\)</span> 的线性组合，因此 <span class="math inline">\(A\)</span> 也服从正态分布。<span class="math inline">\(A\)</span> 的均值为：</p>
+<p><span class="math display">\[
+\begin{align}
+E[A] &amp;= \sum_{i=1}^n \frac{E[Y_i]}{n} - \overline{x} E[B] \\
+&amp;= \sum_{i=1}^n \frac{\alpha + \beta x_i}{n} - \overline{x} \beta \\
+&amp;= \alpha + \beta \overline{x} - \overline{x} \beta \\
+&amp;= \alpha
+\end{align}
+\]</span></p>
+<p>因此，<span class="math inline">\(A\)</span> 也是 <span class="math inline">\(\alpha\)</span> 的无偏估计量。首先将 <span class="math inline">\(A\)</span> 表示为 <span class="math inline">\(Y_i\)</span> 的线性组合来计算 <span class="math inline">\(A\)</span> 的方差，其结果为（详细的推导步骤作为练习留给读者）：</p>
+<p><span id="eq-9_3_3"><span class="math display">\[
+\text{Var}(A) = \frac{\sigma^2 \sum_{i=1}^n x_i^2}{n \bigg( \sum_{i=1}^n x_i^2 - n \overline{x}^2 \bigg)}
+\tag{9.10}\]</span></span></p>
+<p><span class="math inline">\(Y_i - A - Bx_i, i = 1, \ldots, n\)</span>，表示实际值（即 <span class="math inline">\(Y_i\)</span>）与其最小二乘估计量（即 <span class="math inline">\(A + Bx_i\)</span>）之间的差异，我们称之为 <strong>残差</strong>（<em>residuals</em>）。可以用残差的平方和：</p>
+<p><span class="math inline">\(SS_R = \sum_{i=1}^n (Y_i - A - Bx_i)^2\)</span></p>
+<p>来估计随机误差的方差 <span class="math inline">\(\sigma^2\)</span>。实际上，可以证明</p>
+<p><span class="math inline">\(\frac{SS_R}{\sigma^2} \sim \chi^2_{n-2}\)</span></p>
+<p>也就是说，<span class="math inline">\(\frac{SS_R}{\sigma^2}\)</span> 服从自由度为 <span class="math inline">\(n-2\)</span> 的卡方分布，这意味着</p>
+<p><span class="math inline">\(E \left[ \frac{SS_R}{\sigma^2} \right] = n-2\)</span></p>
+<p>或者</p>
+<p><span class="math inline">\(E \left[ \frac{SS_R}{n-2} \right] = \sigma^2\)</span></p>
+<p>因此，<span class="math inline">\(\frac{SS_R}{n-2}\)</span> 是 <span class="math inline">\(\sigma^2\)</span> 的无偏估计量。此外，还可以证明 <span class="math inline">\(SS_R\)</span> 与 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 是独立的。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>关于为什么 <span class="math inline">\(\frac{SS_R}{\sigma^2}\)</span> 服从自由度为 <span class="math inline">\(n-2\)</span> 的卡方分布并且与 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 独立的合理性论证如下。</p>
+<p>因为 <span class="math inline">\(Y_i\)</span> 是独立正态随机变量，因此 <span class="math inline">\(\frac{(Y_i - E[Y_i])}{\sqrt{\text{Var}(Y_i)}}\)</span>（<span class="math inline">\(i = 1, \ldots, n\)</span>）服从标准正态分布，所以：</p>
+<p><span class="math inline">\(\sum_{i=1}^n \frac{(Y_i - E[Y_i])^2}{\text{Var}(Y_i)} = \sum_{i=1}^n \frac{(Y_i - \alpha - \beta x_i)^2}{\sigma^2} \sim \chi^2_n\)</span></p>
+<p>现在，如果我们用估计量 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 替代 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>，那么将失去 2 个自由度，因此 <span class="math inline">\(\frac{SS_R}{\sigma^2}\)</span> 服从自由度为 <span class="math inline">\(n-2\)</span> 的卡方分布并不令人惊讶。</p>
+<p>事实上，<span class="math inline">\(SS_R\)</span> 与 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 的独立性与一个基本结果非常相似，即在正态分布抽样中，<span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 是独立的（<a href="../chapter_6/6.html#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a>）。实际上，<span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 的独立性表明，如果 <span class="math inline">\(Y_1, \ldots, Y_n\)</span> 是均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布样本，那么平方和 <span class="math inline">\(\sum_{i=1}^n (Y_i - \mu)^2 / \sigma^2\)</span> 服从自由度为 <span class="math inline">\(n\)</span> 的卡方分布。如果用均值的估计量 <span class="math inline">\(\overline{Y}\)</span> 替代 <span class="math inline">\(\mu\)</span> 得到新的平方和 <span class="math inline">\(\sum_{i} (Y_i - \overline{Y})^2 / \sigma^2\)</span>，那么这个量（等于 <span class="math inline">\((n-1)S^2 / \sigma^2\)</span>）将与 <span class="math inline">\(\overline{Y}\)</span> 独立，并且将服从自由度为 <span class="math inline">\(n-1\)</span> 的卡方分布。由于 <span class="math inline">\(SS_R / \sigma^2\)</span> 是通过在平方和 <span class="math inline">\(\sum_{i=1}^n (Y_i - \alpha - \beta x_i)^2 / \sigma^2\)</span> 中用估计量 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 来分别替代 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>，因此这个量可能与 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 是独立的。</p>
+<p>当 <span class="math inline">\(Y_i\)</span> 是正态分布随机变量时，最小二乘估计量也是最大似然估计量。为了验证这一点，注意到 <span class="math inline">\(Y_1, \ldots, Y_n\)</span> 的联合密度由下式给出：</p>
+<p><span class="math display">\[
+\begin{align}
+f_{Y_1, \ldots, Y_n}(y_1, \ldots, y_n) &amp;= \prod_{i=1}^n f_{Y_i}(y_i) \\
+&amp;= \prod_{i=1}^n \frac{1}{\sqrt{2\pi} \sigma} e^{-(y_i - \alpha - \beta x_i)^2 / 2\sigma^2} \\
+&amp;= \frac{1}{(2\pi)^{n/2} \sigma^n} e^{-\sum_{i=1}^n (y_i - \alpha - \beta x_i)^2 / 2\sigma^2} \\
+\end{align}
+\]</span></p>
+<p>因此，<span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 的最大似然估计量恰好是使 <span class="math inline">\(\sum_{i=1}^n (y_i - \alpha - \beta x_i)^2\)</span> 最小的值，即最小二乘估计量。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="符号说明">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+符号说明
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>如果我们令：</p>
+<p><span class="math inline">\(S_{xY} = \sum_{i=1}^n (x_i - \overline{x})(Y_i - \overline{Y}) = \sum_{i=1}^n x_i Y_i - n \overline{x} \overline{Y}\)</span></p>
+<p><span class="math inline">\(S_{xx} = \sum_{i=1}^n (x_i - \overline{x})^2 = \sum_{i=1}^n x_i^2 - n \overline{x}^2\)</span></p>
+<p><span class="math inline">\(S_{YY} = \sum_{i=1}^n (Y_i - \overline{Y})^2 = \sum_{i=1}^n Y_i^2 - n \overline{Y}^2\)</span></p>
+<p>则最小二乘估计量可以表示为：</p>
+<p><span class="math inline">\(B = \frac{S_{xY}}{S_{xx}}\)</span></p>
+<p><span class="math inline">\(A = \overline{Y} - B\overline{x}\)</span></p>
+<p>因此，我们得到如下的残差的平方和的计算等式：</p>
+<p><span id="eq-9_3_4"><span class="math display">\[
+SS_R = \frac{S_{xx}S_{YY} - S_{xY}^2}{S_{xx}}
+\tag{9.11}\]</span></span></p>
+</div>
+</div>
+<p><a href="#prp-9_3_1" class="quarto-xref">命题&nbsp;<span>9.2</span></a> 对本节的内容进行了总结。</p>
+<div id="prp-9_3_1" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 9.2</strong></span> 假设因变量 <span class="math inline">\(Y_i, i = 1, \ldots, n\)</span> 是均值为 <span class="math inline">\(\alpha + \beta x_i\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的独立的、正态分布随机变量。<span class="math inline">\(\beta\)</span> 和 <span class="math inline">\(\alpha\)</span> 的最小二乘估计量为：</p>
+<p><span class="math inline">\(B = \frac{S_{xY}}{S_{xx}}, \quad A = \overline{Y} - B\overline{x}\)</span></p>
+<p>其分布为：</p>
+<p><span class="math inline">\(A \sim \mathcal{N} \left( \alpha, \frac{\sigma^2 \sum_{i} x_i^2}{n S_{xx}} \right)\)</span></p>
+<p><span class="math inline">\(B \sim \mathcal{N} \left( \beta, \frac{\sigma^2}{S_{xx}} \right)\)</span></p>
+<p>此外，如果我们令：</p>
+<p><span class="math inline">\(SS_R = \sum_{i} (Y_i - A - Bx_i)^2\)</span></p>
+<p>表示残差平方和，那么：</p>
+<p><span class="math inline">\(\frac{SS_R}{\sigma^2} \sim \chi^2_{n-2}\)</span></p>
+<p>并且 <span class="math inline">\(SS_R\)</span> 与最小二乘估计量 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 是独立的。同时，<span class="math inline">\(SS_R\)</span> 可以通过如下的方式来计算：</p>
+<p><span class="math inline">\(SS_R = \frac{S_{xx}S_{YY} - (S_{xY})^2}{S_{xx}}\)</span></p>
+</div>
+<p>可以使用 R 计算 <span class="math inline">\(S_{xY}\)</span>，<span class="math inline">\(S_{xx}\)</span>，<span class="math inline">\(S_{YY}\)</span>，<span class="math inline">\(SS_R\)</span>：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(x_1, ..., x_n)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(y_1, ..., y_n)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Sxy <span class="ot">&lt;-</span> <span class="fu">sum</span>(x <span class="sc">*</span> y) <span class="sc">-</span> n <span class="sc">*</span> <span class="fu">mean</span>(x) <span class="sc">*</span> <span class="fu">mean</span>(y)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>Sxx <span class="ot">&lt;-</span> <span class="fu">sum</span>(x <span class="sc">*</span> x) <span class="sc">-</span> n <span class="sc">*</span> <span class="fu">mean</span>(x)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>Syy <span class="ot">&lt;-</span> <span class="fu">sum</span>(y <span class="sc">*</span> y) <span class="sc">-</span> n <span class="sc">*</span> <span class="fu">mean</span>(y)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>SSR <span class="ot">&lt;-</span> (Sxx <span class="sc">*</span> Syy <span class="sc">-</span> Sxy<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> Sxx</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="exr-9_3_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 9.1</strong></span> 下面的数据中，<span class="math inline">\(x\)</span> 为某种产品的湿混合物的水分，<span class="math inline">\(Y\)</span> 为最终产品的密度。</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(x_i\)</span></th>
+<th><span class="math inline">\(y_i\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5</td>
+<td>7.4</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>9.3</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>10.6</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>15.4</td>
+</tr>
+<tr class="odd">
+<td>12</td>
+<td>18.1</td>
+</tr>
+<tr class="even">
+<td>15</td>
+<td>22.2</td>
+</tr>
+<tr class="odd">
+<td>18</td>
+<td>24.1</td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td>24.8</td>
+</tr>
+</tbody>
+</table>
+<p>为这些数据拟合一条线性曲线，并确定回归方程的残差的平方和 <span class="math inline">\(SS_R\)</span>。</p>
+</div>
+<div id="sol-q_3_a" class="proof solution">
+<p><span class="proof-title"><em>解 9.1</em>. </span>使用 R 计算 <span class="math inline">\(SS_R\)</span>：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">10</span>,<span class="dv">12</span>,<span class="dv">15</span>,<span class="dv">18</span>,<span class="dv">20</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">7.4</span>, <span class="fl">9.3</span>, <span class="fl">10.6</span>, <span class="fl">15.4</span>, <span class="fl">18.1</span>, <span class="fl">22.2</span>, <span class="fl">24.1</span>, <span class="fl">24.8</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>Sxy <span class="ot">=</span> <span class="fu">sum</span>(x <span class="sc">*</span> y) <span class="sc">-</span> <span class="dv">8</span> <span class="sc">*</span> <span class="fu">mean</span>(x) <span class="sc">*</span> <span class="fu">mean</span>(y)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>Sxx <span class="ot">=</span> <span class="fu">sum</span>(x <span class="sc">*</span> x) <span class="sc">-</span> <span class="dv">8</span> <span class="sc">*</span> <span class="fu">mean</span>(x)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>Syy <span class="ot">=</span> <span class="fu">sum</span>(y <span class="sc">*</span> y) <span class="sc">-</span> <span class="dv">8</span> <span class="sc">*</span> <span class="fu">mean</span>(y)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>SSR <span class="ot">=</span> (Sxx <span class="sc">*</span> Syy <span class="sc">-</span> Sxy<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> Sxx</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>SSR</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9.469758</code></pre>
+</div>
+</div>
+<p>使用 R 求线性回归方程：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">10</span>,<span class="dv">12</span>,<span class="dv">15</span>,<span class="dv">18</span>,<span class="dv">20</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">7.4</span>, <span class="fl">9.3</span>, <span class="fl">10.6</span>, <span class="fl">15.4</span>, <span class="fl">18.1</span>, <span class="fl">22.2</span>, <span class="fl">24.1</span>, <span class="fl">24.8</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, df)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x, data = df)
+
+Coefficients:
+(Intercept)            x  
+      2.463        1.206  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(model)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-9_2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="9_files/figure-html/fig-9_2-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-9_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9.2: <a href="#exr-9_3_a" class="quarto-xref">习题&nbsp;<span>9.1</span></a>
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>如 <a href="#fig-9_2" class="quarto-xref">图&nbsp;<span>9.2</span></a> 所示，估计的线性回归方程为：</p>
+<p><span class="math inline">\(y = 2.463 + 1.206x\)</span> <span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
-<section id="statistical-inferences-about-the-regression-parameters" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="statistical-inferences-about-the-regression-parameters"><span class="header-section-number">9.4</span> Statistical inferences about the regression parameters</h2>
+<section id="sec-9_4" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="sec-9_4"><span class="header-section-number">9.4</span> 关于回归参数的统计推断</h2>
 </section>
 <section id="the-coefficient-of-determination-and-the-sample-correlation-coefficient" class="level2" data-number="9.5">
 <h2 data-number="9.5" class="anchored" data-anchor-id="the-coefficient-of-determination-and-the-sample-correlation-coefficient"><span class="header-section-number">9.5</span> The coefficient of determination and the sample correlation coefficient</h2>
