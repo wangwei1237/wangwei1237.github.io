@@ -381,11 +381,11 @@ window.Quarto = {
   </ul></li>
   <li><a href="#sec-9_5" id="toc-sec-9_5" class="nav-link" data-scroll-target="#sec-9_5"><span class="header-section-number">9.5</span> 决定系数和样本相关系数</a></li>
   <li><a href="#sec-9_6" id="toc-sec-9_6" class="nav-link" data-scroll-target="#sec-9_6"><span class="header-section-number">9.6</span> 残差分析：评估模型</a></li>
-  <li><a href="#transforming-to-linearity" id="toc-transforming-to-linearity" class="nav-link" data-scroll-target="#transforming-to-linearity"><span class="header-section-number">9.7</span> Transforming to linearity</a></li>
-  <li><a href="#weighted-least-squares" id="toc-weighted-least-squares" class="nav-link" data-scroll-target="#weighted-least-squares"><span class="header-section-number">9.8</span> Weighted least squares</a></li>
-  <li><a href="#polynomial-regression" id="toc-polynomial-regression" class="nav-link" data-scroll-target="#polynomial-regression"><span class="header-section-number">9.9</span> Polynomial regression</a></li>
+  <li><a href="#sec-9_7" id="toc-sec-9_7" class="nav-link" data-scroll-target="#sec-9_7"><span class="header-section-number">9.7</span> 转换为线性回归</a></li>
+  <li><a href="#sec-9_8" id="toc-sec-9_8" class="nav-link" data-scroll-target="#sec-9_8"><span class="header-section-number">9.8</span> 加权最小二乘法</a></li>
+  <li><a href="#sec-9_9" id="toc-sec-9_9" class="nav-link" data-scroll-target="#sec-9_9"><span class="header-section-number">9.9</span> 多项式回归</a></li>
   <li><a href="#multiple-linear-regression" id="toc-multiple-linear-regression" class="nav-link" data-scroll-target="#multiple-linear-regression"><span class="header-section-number">9.10</span> Multiple linear regression</a></li>
-  <li><a href="#logistic-regression-models-for-binary-output-data" id="toc-logistic-regression-models-for-binary-output-data" class="nav-link" data-scroll-target="#logistic-regression-models-for-binary-output-data"><span class="header-section-number">9.11</span> Logistic regression models for binary output data</a></li>
+  <li><a href="#sec-9_11" id="toc-sec-9_11" class="nav-link" data-scroll-target="#sec-9_11"><span class="header-section-number">9.11</span> 用于二元输出数据的逻辑回归模型</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_9/9.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>反馈问题</a></li></ul></div></nav>
@@ -1647,20 +1647,798 @@ F-statistic: 198.4 on 1 and 8 DF,  p-value: 6.273e-07</code></pre>
 </figure>
 </div>
 </section>
-<section id="transforming-to-linearity" class="level2" data-number="9.7">
-<h2 data-number="9.7" class="anchored" data-anchor-id="transforming-to-linearity"><span class="header-section-number">9.7</span> Transforming to linearity</h2>
+<section id="sec-9_7" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="sec-9_7"><span class="header-section-number">9.7</span> 转换为线性回归</h2>
+<p>在许多情况下，响应均值（<em>输出值的均值</em>）明显不是输入水平（<em>输入值</em>）的线性函数。在这种情况下，如果可以确定输入水平和其响应均值之间的关系形式，那么有时可以通过变量变换将其转换为线性形式。例如，在某些应用中，已知信号在 <span class="math inline">\(t\)</span> 时刻处的振幅 <span class="math inline">\(W(t)\)</span> 近似满足：</p>
+<p><span class="math inline">\(W(t) \approx c e^{-dt}\)</span></p>
+<p>对上式去对数运算，则可以表示为：</p>
+<p><span class="math inline">\(\log W(t) \approx \log c - dt\)</span></p>
+<p>如果令 <span class="math inline">\(Y = \log W(t)\)</span>，<span class="math inline">\(\alpha = \log c\)</span>，<span class="math inline">\(\beta = -d\)</span>，则模型 <span class="math inline">\(W(t) \approx c e^{-dt}\)</span> 可以转换为：</p>
+<p><span class="math inline">\(Y = \alpha + \beta t + e\)</span></p>
+<p>然后，我们可以利用最小二乘法来估计简单线性回归模型的回归参数 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>，于是 <span class="math inline">\(W(t) \approx c e^{-dt}\)</span> 可以用如下方式来预测：</p>
+<p><span class="math inline">\(W(t) \approx e^{A + Bt}\)</span></p>
+<div id="exr-9_7_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 9.4</strong></span> 下表给出了在不同温度（摄氏度）下进行实验时所使用的化学物质的百分比。使用这些数据估计：如果实验在 350 度下进行，那么需要使用的化学物质的百分比是多少？</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>温度</th>
+<th>百分比</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5°</td>
+<td>0.061</td>
+</tr>
+<tr class="even">
+<td>10°</td>
+<td>0.113</td>
+</tr>
+<tr class="odd">
+<td>20°</td>
+<td>0.192</td>
+</tr>
+<tr class="even">
+<td>30°</td>
+<td>0.259</td>
+</tr>
+<tr class="odd">
+<td>40°</td>
+<td>0.339</td>
+</tr>
+<tr class="even">
+<td>50°</td>
+<td>0.401</td>
+</tr>
+<tr class="odd">
+<td>60°</td>
+<td>0.461</td>
+</tr>
+<tr class="even">
+<td>80°</td>
+<td>0.551</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="sol-9_7_a" class="proof solution">
+<p><span class="proof-title"><em>解 9.4</em>. </span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">80</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.061</span>, <span class="fl">0.113</span>, <span class="fl">0.192</span>, <span class="fl">0.259</span>, <span class="fl">0.339</span>, <span class="fl">0.401</span>, <span class="fl">0.461</span>, <span class="fl">0.551</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-9_7" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9_7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="9_files/figure-html/fig-9_7-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-9_7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9.7: <a href="#exr-9_7_a" class="quarto-xref">习题&nbsp;<span>9.4</span></a>
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>设 <span class="math inline">\(P(x)\)</span> 为在温度 <span class="math inline">\(10x\)</span> 时所使用的化学物质的百分比。尽管如 <a href="#fig-9_7" class="quarto-xref">图&nbsp;<span>9.7</span></a> 所示，<span class="math inline">\(P(x)\)</span> 看起来大致呈线性关系，但我们可以通过考虑 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(P(x)\)</span> 之间的非线性关系来改进模型的拟合效果。具体而言，我们考虑以下形式的关系：</p>
+<p><span class="math inline">\(1 - P(x) \approx c(1 - d)^x\)</span></p>
+<p>也就是说，假设在温度为 <span class="math inline">\(x\)</span> 的实验中，所用化学物质的百分比大约以指数速率减少。对上式进行对数运算后，可以写成：</p>
+<p><span class="math inline">\(\log(1 - P(x)) \approx \log(c) + x \log(1 - d)\)</span></p>
+<p>令：</p>
+<p><span class="math inline">\(\begin{align}Y &amp;= - \log (1-P) \\ \alpha &amp;= - \log c \\ \beta &amp;= - \log (1-d) \end{align}\)</span></p>
+<p>我们得到了一般的回归方程：</p>
+<p><span class="math inline">\(Y = \alpha + \beta x + e\)</span></p>
+<p>为了看出数据是否支持这个模型，我们需要画出 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(- \log (1-P)\)</span> 的散点图。<a href="#tbl-9_2" class="quarto-xref">表&nbsp;<span>9.3</span></a> 给出了转换后的数据，<a href="#fig-9_8" class="quarto-xref">图&nbsp;<span>9.8</span></a> 给出了对应的散点图。</p>
+<div id="tbl-9_2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-9_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;9.3
+</figcaption>
+<div aria-describedby="tbl-9_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>温度</th>
+<th><span class="math inline">\(- \log (1-P)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5°</td>
+<td>0.063</td>
+</tr>
+<tr class="even">
+<td>10°</td>
+<td>0.120</td>
+</tr>
+<tr class="odd">
+<td>20°</td>
+<td>0.213</td>
+</tr>
+<tr class="even">
+<td>30°</td>
+<td>0.300</td>
+</tr>
+<tr class="odd">
+<td>40°</td>
+<td>0.414</td>
+</tr>
+<tr class="even">
+<td>50°</td>
+<td>0.512</td>
+</tr>
+<tr class="odd">
+<td>60°</td>
+<td>0.618</td>
+</tr>
+<tr class="even">
+<td>80°</td>
+<td>0.801</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">80</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.061</span>, <span class="fl">0.113</span>, <span class="fl">0.192</span>, <span class="fl">0.259</span>, <span class="fl">0.339</span>, <span class="fl">0.401</span>, <span class="fl">0.461</span>, <span class="fl">0.551</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> y)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y1)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-9_8" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9_8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="9_files/figure-html/fig-9_8-1.png" id="fig-9_8" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-9_8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9.8
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>使用 R 得到 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 的最小二乘估计值（<a href="#sec-9_2" class="quarto-xref"><span>小节 9.2</span></a>）：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">80</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.061</span>, <span class="fl">0.113</span>, <span class="fl">0.192</span>, <span class="fl">0.259</span>, <span class="fl">0.339</span>, <span class="fl">0.401</span>, <span class="fl">0.461</span>, <span class="fl">0.551</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> y)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> (<span class="fu">sum</span>(x <span class="sc">*</span> y1) <span class="sc">-</span> <span class="fu">mean</span>(x) <span class="sc">*</span> <span class="fu">sum</span>(y1)) <span class="sc">/</span> (<span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>) <span class="sc">-</span> <span class="fu">length</span>(x) <span class="sc">*</span> <span class="fu">mean</span>(x)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">mean</span>(y1) <span class="sc">-</span> B <span class="sc">*</span> <span class="fu">mean</span>(x)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>B</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.009889817</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>A</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.01544615</code></pre>
+</div>
+</div>
+<p>于是得到 <span class="math inline">\(c\)</span> 和 <span class="math inline">\(d\)</span> 的估计值：</p>
+<p><span class="math inline">\(\begin{align} \hat{c} &amp;= e^{-A} = 0.9847 \\ 1 - \hat{d} &amp;= e^{-B} = 0.9901 \end{align}\)</span></p>
+<p>最后得到估计的函数关系为：</p>
+<p><span class="math inline">\(\hat{P} = 1 - 0.9847 \cdot (0.9901)^x\)</span></p>
+<p>如上模型的残差 <span class="math inline">\(P - \hat{P}\)</span> 如 <a href="#tbl-9_3" class="quarto-xref">表&nbsp;<span>9.4</span></a> 所示。</p>
+<div id="tbl-9_3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-9_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;9.4
+</figcaption>
+<div aria-describedby="tbl-9_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>x</th>
+<th>P</th>
+<th><span class="math inline">\(\hat{P}\)</span></th>
+<th><span class="math inline">\(P - \hat{P}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5</td>
+<td>0.061</td>
+<td>0.063</td>
+<td>-0.002</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>0.113</td>
+<td>0.109</td>
+<td>0.040</td>
+</tr>
+<tr class="odd">
+<td>20</td>
+<td>0.192</td>
+<td>0.193</td>
+<td>-0.001</td>
+</tr>
+<tr class="even">
+<td>30</td>
+<td>0.259</td>
+<td>0.269</td>
+<td>-0.010</td>
+</tr>
+<tr class="odd">
+<td>40</td>
+<td>0.339</td>
+<td>0.339</td>
+<td>0.000</td>
+</tr>
+<tr class="even">
+<td>50</td>
+<td>0.401</td>
+<td>0.401</td>
+<td>0.000</td>
+</tr>
+<tr class="odd">
+<td>60</td>
+<td>0.461</td>
+<td>0.458</td>
+<td>0.003</td>
+</tr>
+<tr class="even">
+<td>80</td>
+<td>0.551</td>
+<td>0.556</td>
+<td>-0.005</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
-<section id="weighted-least-squares" class="level2" data-number="9.8">
-<h2 data-number="9.8" class="anchored" data-anchor-id="weighted-least-squares"><span class="header-section-number">9.8</span> Weighted least squares</h2>
+<section id="sec-9_8" class="level2" data-number="9.8">
+<h2 data-number="9.8" class="anchored" data-anchor-id="sec-9_8"><span class="header-section-number">9.8</span> 加权最小二乘法</h2>
+<p>在回归模型</p>
+<p><span class="math inline">\(Y = \alpha + \beta x + e\)</span></p>
+<p>中，我们经常发现 <strong>响应变量</strong> 的方差不是常数，而是依赖于其 <strong>输入水平</strong>（<em>input level</em>）。如果已经知道这些方差——至少应该知道这些方差的系数——那么可以通过最小化加权平方和来估计回归参数 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>。具体来说，如果</p>
+<p><span class="math inline">\(\text{Var}(Y_i) = \frac{\sigma^2}{w_i}\)</span></p>
+<p>那么估计量 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 应该为下式的最小化：</p>
+<p><span class="math inline">\(\sum_i \frac{[Y_i - (A + Bx_i)]^2}{\text{Var}(Y_i)} = \frac{1}{\sigma^2} \sum_i w_i (Y_i - A - Bx_i)^2\)</span></p>
+<p>分别对 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 进行偏微分计算，然后令偏微分为 0，得到令 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 最小化的方程：</p>
+<p><span id="eq-9_8_1"><span class="math display">\[
+\begin{align}
+\sum_i w_i Y_i &amp;= A \sum_i w_i + B \sum_i w_i x_i \\
+\sum_i w_i x_i Y_i &amp;= A \sum_i w_i x_i + B \sum_i w_i x_i^2
+\end{align}
+\tag{9.18}\]</span></span></p>
+<p>很容易就可以求解这些方程以得到最小二乘估计量。</p>
+<div id="exm-9_8_a" class="theorem example">
+<p><span class="theorem-title"><strong>例 9.8</strong></span> 为了理解为什么应该通过最小化加权平方和而不是普通平方和来获得估计量，需要考虑以下情况。假设 <span class="math inline">\(X_1, \ldots, X_n\)</span> 是具有均值 <span class="math inline">\(\mu\)</span> 和方差 <span class="math inline">\(\sigma^2\)</span> 的独立正态分布随机变量。假设 <span class="math inline">\(X_i\)</span> 不可直接观测，而只能观测到</p>
+<p><span class="math inline">\(Y_1 = X_1 + \dots + X_k, \quad Y_2 = X_{k+1} + \dots + X_n, \quad k &lt; n\)</span></p>
+<p>我们如何基于 <span class="math inline">\(Y_1\)</span> 和 <span class="math inline">\(Y_2\)</span> 估计 <span class="math inline">\(\mu\)</span>？</p>
+<p>虽然 <span class="math inline">\(\mu\)</span> 的最佳估计量显然是 <span class="math inline">\(\overline{X} = \sum_{i=1}^{n} X_i / n = (Y_1 + Y_2)/n\)</span>，但让我们看看普通最小二乘估计量会是什么。因为</p>
+<p><span class="math inline">\(E[Y_1] = k\mu, \quad E[Y_2] = (n - k)\mu\)</span></p>
+<p><span class="math inline">\(\mu\)</span> 的最小二乘估计量是使得以下表达式最小化的 <span class="math inline">\(\mu\)</span> 的值：</p>
+<p><span class="math inline">\((Y_1 - k\mu)^2 + (Y_2 - [n - k]\mu)^2\)</span></p>
+<p>对其求导并令其等于零，我们得到最小二乘估计量 <span class="math inline">\(\mu\)</span>（记作 <span class="math inline">\(\hat{\mu}\)</span>）应满足：</p>
+<p><span class="math inline">\(-2k(Y_1 - k\hat{\mu}) - 2(n - k)[Y_2 - (n - k)\hat{\mu}] = 0\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\([k^2 + (n - k)^2]\hat{\mu} = kY_1 + (n - k)Y_2\)</span></p>
+<p>所以：</p>
+<p><span class="math inline">\(\hat{\mu} = \frac{kY_1 + (n - k)Y_2}{k^2 + (n - k)^2}\)</span></p>
+<p>因为</p>
+<p><span class="math inline">\(E[\hat{\mu}] = \frac{kE[Y_1] + (n - k)E[Y_2]}{k^2 + (n - k)^2} = \frac{k^2\mu + (n - k)^2\mu}{k^2 + (n - k)^2} = \mu\)</span></p>
+<p>因此，我们看到虽然普通最小二乘估计量是 <span class="math inline">\(\mu\)</span> 的无偏估计量，但它却不是 <span class="math inline">\(\overline{X}\)</span> 的最佳估计量。</p>
+<p>现在，我们通过最小化加权平方和来确定 <span class="math inline">\(\mu\)</span> 的估计量。也就是说，让我们确定 <span class="math inline">\(\mu\)</span> 的值（记作 <span class="math inline">\(\mu_w\)</span>）以使得以下表达式最小化：</p>
+<p><span class="math inline">\(\frac{(Y_1 - k\mu)^2}{\text{Var}(Y_1)} + \frac{[Y_2 - (n - k)\mu]^2}{\text{Var}(Y_2)}\)</span></p>
+<p>因为</p>
+<p><span class="math inline">\(\text{Var}(Y_1) = k\sigma^2, \quad \text{Var}(Y_2) = (n - k)\sigma^2\)</span></p>
+<p>这相当于需要选择令下式最小化的 <span class="math inline">\(\mu\)</span>：</p>
+<p><span class="math inline">\(\frac{(Y_1 - k\mu)^2}{k} + \frac{[Y_2 - (n - k)\mu]^2}{n - k}\)</span></p>
+<p>对其求导并令其等于零，我们得到 <span class="math inline">\(\mu_w\)</span> 应满足：</p>
+<p><span class="math inline">\(\frac{-2k(Y_1 - k\mu_w)}{k} - \frac{2(n - k)[Y_2 - (n - k)\mu_w]}{n - k} = 0\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(Y_1 + Y_2 = n\mu_w\)</span></p>
+<p>所以：</p>
+<p><span class="math inline">\(\mu_w = \frac{Y_1 + Y_2}{n}\)</span></p>
+<p>即加权最小二乘估计量实际上就是首选的估计量 <span class="math inline">\((Y_1 + Y_2) / n = \overline{X}\)</span>。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>假设数据是正态分布的，加权最小二乘估计量就是最大似然估计量。这是因为数据 <span class="math inline">\(Y_1, \ldots, Y_n\)</span> 的联合概率密度为：</p>
+<p><span class="math inline">\(\begin{align} f_{Y_1, \ldots, Y_n}(y_1, \ldots, y_n) &amp;= \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi (\sigma/\sqrt{w_i})}} e^{-(y_i - \alpha - \beta x_i)^2 / (2\sigma^2 / w_i)} \\ &amp;= \frac{\sqrt{w_1 \dots w_n}}{(2\pi)^{n/2} \sigma^n} e^{-\sum_{i=1}^{n} w_i (y_i - \alpha - \beta x_i)^2 / 2\sigma^2} \end{align}\)</span></p>
+<p>因此，<span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 的最大似然估计量正是使的加权平方和 <span class="math inline">\(\sum_{i=1}^{n} w_i (y_i - \alpha - \beta x_i)^2\)</span> 最小的 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 的值。</p></li>
+<li><p>加权平方和也可以看作是回归方程 <span class="math inline">\(Y = \alpha + \beta x + e\)</span> 乘以 <span class="math inline">\(\sqrt{w}\)</span>，即：</p>
+<p><span class="math inline">\(Y\sqrt{w} = \alpha \sqrt{w} + \beta x \sqrt{w} + e\sqrt{w}\)</span></p>
+<p>在这个方程中，误差项 <span class="math inline">\(e\sqrt{w}\)</span> 的均值为 0，且方差是常数。因此，<span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 的最小二乘估计量应是使以下表达式最小的 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 的值：</p>
+<p><span class="math inline">\(\sum_{i} (Y_i \sqrt{w_i} - A \sqrt{w_i} - B x_i \sqrt{w_i})^2 = \sum_{i} w_i (Y_i - A - B x_i)^2\)</span></p></li>
+<li><p>加权最小二乘法主要关注那些具有最大权重的数据对（会让权重最大的数据项的误差的方差最小）。</p></li>
+</ol>
+</div>
+</div>
+<p>因为加权最小二乘法需要知道在任意输入水平处的响应变量的方差（至少需要知道其系数），因此加权最小二乘法可能看起来不太有用。但是，通常可以通过分析模型生成的数据来确定这些值。以下两个例子将对此进行说明。</p>
+<div id="exr-9_8_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 9.5</strong></span> 下表表示某城市市区内的通勤时间。自变量或输入变量是通勤的距离。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>通勤距离（英里）</th>
+<th>0.5</th>
+<th>1</th>
+<th>1.5</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>8</th>
+<th>10</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通勤时间（分钟）</td>
+<td>15.0</td>
+<td>15.1</td>
+<td>16.5</td>
+<td>19.9</td>
+<td>27.7</td>
+<td>29.7</td>
+<td>26.7</td>
+<td>35.9</td>
+<td>42</td>
+<td>49.4</td>
+</tr>
+</tbody>
+</table>
+<p>假设通勤时间 <span class="math inline">\(Y\)</span> 和通勤距离 <span class="math inline">\(x\)</span> 之间的关系为线性关系：</p>
+<p><span class="math inline">\(Y = \alpha + \beta x + e\)</span></p>
+<p>我们应如何估计 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>？</p>
+<p>为了使用加权最小二乘法，我们需要知道 <span class="math inline">\(Y\)</span> 的方差。现在，我们提出一个论点，即 <span class="math inline">\(\text{Var}(Y)\)</span> 应与 <span class="math inline">\(x\)</span> 成正比。</p>
+</div>
+<div id="sol-9_8_b" class="proof solution">
+<p><span class="proof-title"><em>解 9.5</em>. </span>设 <span class="math inline">\(d\)</span> 表示一个街区的长度，于是一个通勤距离为 <span class="math inline">\(x\)</span> 的行程将由 <span class="math inline">\(x/d\)</span> 个街区组成。如果我们让 <span class="math inline">\(Y_i\)</span> 表示第 <span class="math inline">\(i\)</span> 个街区所需的时间，那么总通勤时间可以表示为：</p>
+<p><span class="math inline">\(Y = Y_1 + Y_2 + \dots + Y_{x/d}\)</span></p>
+<p>在许多应用中，合理的假设是 <span class="math inline">\(Y_i\)</span> 是具有相同方差的独立随机变量，因此</p>
+<p><span class="math inline">\(\begin{align} \text{Var}(Y) &amp;= \text{Var}(Y_1) + \dots + \text{Var}(Y_{x/d}) \\ &amp;= (x/d)\text{Var}(Y_1) \\ &amp;= x\sigma^2 \end{align}\)</span></p>
+<p>其中 <span class="math inline">\(\sigma^2 = \text{Var}(Y_1)/d\)</span>。</p>
+<p>因此，估计量 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 应该令以下表达式最小化：</p>
+<p><span class="math inline">\(\sum_{i} \frac{(Y_i - A - B x_i)^2}{x_i}\)</span></p>
+<p>使用上面的数据，且权重为 <span class="math inline">\(w_i = 1/x_i\)</span>，<a href="#eq-9_8_1" class="quarto-xref">式&nbsp;<span>9.18</span></a> 的最小二乘方程为：</p>
+<p><span class="math inline">\(\begin{align} 104.22 &amp;= 5.34A + 10B \\ 277.9 &amp;= 10A + 41B \end{align}\)</span></p>
+<p>求解得：</p>
+<p><span class="math inline">\(A = 12.561, \quad B = 3.714\)</span></p>
+<p><a href="#fig-9_9" class="quarto-xref">图&nbsp;<span>9.9</span></a> 展示了数据点和其估计回归线 <span class="math inline">\(12.561 + 3.714x\)</span> 的图形。对我们的解的定性分析可以知：在输入水平较小时，回归的效果最好，这主要是因为权重与输入水平成反比。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>miles <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>time <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">15.0</span>, <span class="fl">15.1</span>, <span class="fl">16.5</span>, <span class="fl">19.9</span>, <span class="fl">27.7</span>, <span class="fl">29.7</span>, <span class="fl">26.7</span>, <span class="fl">35.9</span>, <span class="dv">42</span>, <span class="fl">49.4</span>)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(miles, time)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a =</span> <span class="fl">12.561</span>, <span class="at">b =</span> <span class="fl">3.714</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-9_9" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9_9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="9_files/figure-html/fig-9_9-1.png" id="fig-9_9" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-9_9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9.9
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exm-9_8_c" class="theorem example">
+<p><span class="theorem-title"><strong>例 9.9</strong></span> 考虑在交通繁忙的高速公路上发生的事故数量 <span class="math inline">\(Y\)</span> 与在高速公路上行驶的车辆数量 <span class="math inline">\(x\)</span> 之间的关系。稍微思考后，大多数人可能会认为其比较合适的关系应该为线性模型：</p>
+<p><span class="math inline">\(Y = \alpha + \beta x + e\)</span></p>
+<p>然而，由于没有任何先验（<em>priori</em>）理由认为 <span class="math inline">\(\text{Var}(Y)\)</span> 和输入水平 <span class="math inline">\(x\)</span> 之间无关，因此我们不清楚是否可以使用普通最小二乘法来估计 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>。实际上，我们将论证：应该采用加权最小二乘法且权重为 <span class="math inline">\(1/x\)</span>，即我们应该选择 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 以最小化</p>
+<p><span class="math inline">\(\sum_{i} \frac{(Y_i - A - Bx_i)^2}{x_i}\)</span></p>
+<p>背后的理由是，假设 <span class="math inline">\(Y\)</span> 近似服从泊松分布是合理的。因为我们可以想象每辆车 <span class="math inline">\(x\)</span> 都存在一个小概率会导致事故，因此对于较大的 <span class="math inline">\(x\)</span>，事故的数量应该近似为泊松随机变量。由于泊松随机变量的方差等于其均值，我们可以看到：</p>
+<p><span class="math inline">\(\begin{align} \text{Var}(Y) &amp; \simeq E[Y] \\ &amp;= \alpha + \beta x \\ &amp; \simeq \beta x \end{align}\)</span></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>在响应变量的方差依赖于输入水平时，另一种常用的技术是通过适当的变换来稳定方差。例如，如果 <span class="math inline">\(Y\)</span> 是一个均值为 <span class="math inline">\(\lambda\)</span> 的泊松随机变量，那么可以证明（参见第 2 点），无论 <span class="math inline">\(\lambda\)</span> 的值是多少 <span class="math inline">\(\sqrt{Y}\)</span> 的近似方差都是 <span class="math inline">\(0.25\)</span>。基于这一事实，可以尝试将 <span class="math inline">\(E[\sqrt{Y}]\)</span> 建模为输入水平的线性函数，即：</p>
+<p><span class="math inline">\(\sqrt{Y} = \alpha + \beta x + e\)</span></p></li>
+<li><p>当 <span class="math inline">\(Y\)</span> 是具有均值 <span class="math inline">\(\lambda\)</span> 的泊松分布时，证明 <span class="math inline">\(\text{Var}(\sqrt{Y}) \approx 0.25\)</span>。考虑 <span class="math inline">\(g(y) = \sqrt{y}\)</span> 在 <span class="math inline">\(\lambda\)</span> 处的泰勒级数（<em>Taylor series</em>）展开。忽略二阶导数项以后的所有项，我们得到：</p>
+<p><span id="eq-9_8_2"><span class="math display">\[
+g(y) \approx g(\lambda) + g'(\lambda)(y - \lambda) + \frac{g''(\lambda)(y - \lambda)^2}{2}
+  \tag{9.19}\]</span></span></p>
+<p>由于</p>
+<p><span class="math inline">\(g'(\lambda) = \frac{1}{2} \lambda^{-1/2}, \quad g''(\lambda) = -\frac{1}{4} \lambda^{-3/2}\)</span></p>
+<p>于是，在 <span class="math inline">\(y = Y\)</span> 处，我们得到</p>
+<p><span class="math inline">\(\sqrt{Y} \approx \sqrt{\lambda} + \frac{1}{2} \lambda^{-1/2}(Y - \lambda) - \frac{1}{8} \lambda^{-3/2}(Y - \lambda)^2\)</span></p>
+<p>因为 <span class="math inline">\(E[Y - \lambda] = 0\)</span> 和 <span class="math inline">\(E[(Y - \lambda)^2] = \text{Var}(Y) = \lambda\)</span>，所以：</p>
+<p><span class="math inline">\(E[\sqrt{Y}] \approx \sqrt{\lambda} - \frac{1}{8\sqrt{\lambda}}\)</span></p>
+<p>因此：</p>
+<p><span class="math inline">\((E[\sqrt{Y}])^2 \approx \lambda + \frac{1}{64\lambda} - \frac{1}{4} \approx \lambda - \frac{1}{4}\)</span></p>
+<p>因此：</p>
+<p><span class="math inline">\(\begin{align} \text{Var}(\sqrt{Y}) &amp;= E[Y] - (E[\sqrt{Y}])^2 \\ &amp; \approx \lambda - \left(\lambda - \frac{1}{4}\right) \\ &amp;= \frac{1}{4} \end{align}\)</span></p></li>
+</ol>
+</div>
+</div>
 </section>
-<section id="polynomial-regression" class="level2" data-number="9.9">
-<h2 data-number="9.9" class="anchored" data-anchor-id="polynomial-regression"><span class="header-section-number">9.9</span> Polynomial regression</h2>
+<section id="sec-9_9" class="level2" data-number="9.9">
+<h2 data-number="9.9" class="anchored" data-anchor-id="sec-9_9"><span class="header-section-number">9.9</span> 多项式回归</h2>
+<p>当无法通过线性关系充分拟合响应变量 <span class="math inline">\(Y\)</span> 和自变量 <span class="math inline">\(x\)</span> 之间的函数关系的情况下，有时可以通过考虑多项式关系来获得合理的拟合。也就是说，可以尝试将数据集拟合到以下形式的函数关系：</p>
+<p><span class="math inline">\(Y = \beta_0 + \beta_1 x + \beta_2 x^2 + \cdots + \beta_r x^r + e\)</span></p>
+<p>其中 <span class="math inline">\(\beta_0, \beta_1, \ldots, \beta_r\)</span> 是需要估计的回归系数。如果数据集由 <span class="math inline">\(n\)</span> 对 <span class="math inline">\((x_i, Y_i)\)</span> 组成，其中 <span class="math inline">\(i = 1, \ldots, n\)</span>，那么 <span class="math inline">\(\beta_0, \ldots, \beta_r\)</span> 的最小二乘估计量——我们称之为 <span class="math inline">\(B_0, \ldots, B_r\)</span>——就是使下式最小化的值：</p>
+<p><span class="math inline">\(\sum_{i=1}^{n} \left( Y_i - B_0 - B_1 x_i - B_2 x_i^2 - \cdots - B_r x_i^r \right)^2\)</span></p>
+<p>为了确定这些估计量，我们分别求解 <span class="math inline">\(B_0 \ldots B_r\)</span> 的偏导数，并令这些偏导数等于 0。在执行这些操作，并重新排列所得的方程之后，我们得到的最小二乘估计 <span class="math inline">\(B_0, B_1, \ldots, B_r\)</span> 满足以下由 <span class="math inline">\(r + 1\)</span> 个线性方程组（称为 <strong>正规方程</strong>（<em>normal equations</em>））成的方程组：</p>
+<p><span class="math display">\[
+\begin{align}
+\sum_{i=1}^{n} Y_i &amp;= B_0 n + B_1 \sum_{i=1}^{n} x_i + B_2 \sum_{i=1}^{n} x_i^2 + \cdots + B_r \sum_{i=1}^{n} x_i^r \\
+\sum_{i=1}^{n} x_i Y_i &amp;= B_0 \sum_{i=1}^{n} x_i + B_1 \sum_{i=1}^{n} x_i^2 + B_2 \sum_{i=1}^{n} x_i^3 + \cdots + B_r \sum_{i=1}^{n} x_i^{r+1} \\
+\sum_{i=1}^{n} x_i^2 Y_i &amp;= B_0 \sum_{i=1}^{n} x_i^2 + B_1 \sum_{i=1}^{n} x_i^3 + B_2 \sum_{i=1}^{n} x_i^4 + \cdots + B_r \sum_{i=1}^{n} x_i^{r+2} \\
+&amp; \vdots \qquad \vdots \qquad \qquad \qquad \qquad \qquad \qquad \qquad \vdots \\
+\sum_{i=1}^{n} x_i^r Y_i &amp;= B_0 \sum_{i=1}^{n} x_i^r + B_1 \sum_{i=1}^{n} x_i^{r+1} + \cdots + B_r \sum_{i=1}^{n} x_i^{2r}
+\end{align}
+\]</span></p>
+<p>在对一组数据进行多项式拟合时，通常可以通过研究散点图来确定多项式的必要阶数。我们强调，应始终使用最小可能阶数来充分描述数据的关系。例如，尽管通常可以找到一个阶数为 <span class="math inline">\(n\)</span> 的多项式以通过所有 <span class="math inline">\(n\)</span> 对 <span class="math inline">\((x_i, Y_i)\)</span>，但我们很难对这种拟合寄予太大的信心。</p>
+<p>与线性回归相比，使用多项式拟合来预测那些远离拟合数据（<span class="math inline">\(i = 1, \ldots, n\)</span>）的 <span class="math inline">\(x_0\)</span> 的响应值是一件更为危险的事情。多项式拟合可能只在 <span class="math inline">\(x_i\)</span>（<span class="math inline">\(i = 1, \ldots, n\)</span>）周围的某一区域有效，并且这个区域并不包括 <span class="math inline">\(x_0\)</span>。</p>
+<div id="exr-9_9_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 9.6</strong></span> 为如下的数据进行多项式拟合。</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>x</th>
+<th>Y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>20.6</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>30.8</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>55.0</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>71.4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>97.3</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>131.8</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>156.3</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>197.3</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>238.7</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>291.7</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="sol-9_9_a" class="proof solution">
+<p><span class="proof-title"><em>解 9.6</em>. </span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">20.6</span>, <span class="fl">30.8</span>, <span class="fl">55.0</span>, <span class="fl">71.4</span>, <span class="fl">97.3</span>, <span class="fl">131.8</span>, <span class="fl">156.3</span>, <span class="fl">197.3</span>, <span class="fl">238.7</span>, <span class="fl">291.7</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-9_10" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9_10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="9_files/figure-html/fig-9_10-1.png" id="fig-9_10" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-9_10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9.10
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>数据的散点图（<a href="#fig-9_10" class="quarto-xref">图&nbsp;<span>9.10</span></a>）暗示着 <span class="math inline">\(Y\)</span> 与 <span class="math inline">\(x\)</span> 之间存在二次关系：</p>
+<p><span class="math inline">\(Y = \beta_0 +\beta_1 x + \beta_2 x ^2 + e\)</span></p>
+<p><span class="math inline">\(\begin{align} \sum_{i} x_i &amp;= 55, \quad \sum_{i} x_i^2 = 385, \quad \sum_{i} x_i^3 = 3025, \quad \sum_{i} x_i^4 = 25,333 \\ \sum_{i} Y_i &amp;= 1291.1, \quad \sum_{i} x_i Y_i = 9549.3, \quad \sum_{i} x_i^2 Y_i = 77,758.9 \end{align}\)</span></p>
+<p>所以，最小二乘估计就是如下的方程组的解：</p>
+<p><span id="eq-9_9_1"><span class="math display">\[
+\begin{align}
+1291.1 &amp;= 10B_0 + 55B_1 + 385B_2 \\
+9549.3 &amp;= 55B_0 + 385B_1 + 3025B_2 \\
+77758.9 &amp;= 385B_0 + 3025B_1 + 25333B_2
+\end{align}
+\tag{9.20}\]</span></span></p>
+<p>解如上的方程组可以得到最小二乘估计为：</p>
+<p><span class="math inline">\(B_0 = 12.59326, \quad B_1 = 6.326172, \quad B_2 = 2.122818\)</span></p>
+<p>因此，估计的二次回归方程为：</p>
+<p><span class="math inline">\(Y = 12.59 + 6.33x + 2.12x^2\)</span></p>
+<p>数据的散点图和拟合的二次回归方程图如 <a href="#fig-9_11" class="quarto-xref">图&nbsp;<span>9.11</span></a> 所示。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">20.6</span>, <span class="fl">30.8</span>, <span class="fl">55.0</span>, <span class="fl">71.4</span>, <span class="fl">97.3</span>, <span class="fl">131.8</span>, <span class="fl">156.3</span>, <span class="fl">197.3</span>, <span class="fl">238.7</span>, <span class="fl">291.7</span>)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>beta0 <span class="ot">&lt;-</span> <span class="fl">12.59</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>beta1 <span class="ot">&lt;-</span> <span class="fl">6.33</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>beta2 <span class="ot">&lt;-</span> <span class="fl">2.12</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(beta0 <span class="sc">+</span> beta1 <span class="sc">*</span> x <span class="sc">+</span> beta2 <span class="sc">*</span> x<span class="sc">^</span><span class="dv">2</span>, <span class="at">from=</span><span class="dv">0</span>, <span class="at">to=</span><span class="dv">10</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-9_11" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9_11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="9_files/figure-html/fig-9_11-1.png" id="fig-9_11" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-9_11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9.11
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>可以使用 R 的 <code>lm()</code> 实现 <a href="#exr-9_9_a" class="quarto-xref">习题&nbsp;<span>9.6</span></a> 的多项式拟合。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">20.6</span>, <span class="fl">30.8</span>, <span class="fl">55.0</span>, <span class="fl">71.4</span>, <span class="fl">97.3</span>, <span class="fl">131.8</span>, <span class="fl">156.3</span>, <span class="fl">197.3</span>, <span class="fl">238.7</span>, <span class="fl">291.7</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> <span class="fu">I</span>(x<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x + I(x^2))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.5482 -2.4869 -0.4486  2.7006  4.8739 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  12.6433     4.3477   2.908   0.0227 *  
+x             6.2971     1.8158   3.468   0.0104 *  
+I(x^2)        2.1250     0.1609  13.209 3.33e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.697 on 7 degrees of freedom
+Multiple R-squared:  0.9987,    Adjusted R-squared:  0.9984 
+F-statistic:  2745 on 2 and 7 DF,  p-value: 7.368e-11</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(<span class="fl">12.6433</span> <span class="sc">+</span> <span class="fl">6.2971</span> <span class="sc">*</span> x <span class="sc">+</span> <span class="fl">2.1250</span> <span class="sc">*</span> x<span class="sc">^</span><span class="dv">2</span>, <span class="at">from=</span><span class="dv">0</span>, <span class="at">to=</span><span class="dv">10</span>, <span class="at">col=</span><span class="st">"blue"</span>, <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="9_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在矩阵表示法中，<a href="#eq-9_9_1" class="quarto-xref">式&nbsp;<span>9.20</span></a> 可以表示为：</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+1291.1 \\
+9549.3 \\
+77758.9
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 &amp; 55 &amp; 385 \\
+55 &amp; 385 &amp; 3025 \\
+385 &amp; 3025 &amp; 25,333
+\end{bmatrix}
+\begin{bmatrix}
+B_0 \\
+B_1 \\
+B_2
+\end{bmatrix}
+\]</span></p>
+<p>其解为：</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+B_0 \\
+B_1 \\
+B_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 &amp; 55 &amp; 385 \\
+55 &amp; 385 &amp; 3025 \\
+385 &amp; 3025 &amp; 25,333
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+1291.1 \\
+9549.3 \\
+77,758.9
+\end{bmatrix}
+\]</span></p>
+</div>
+</div>
 </section>
 <section id="multiple-linear-regression" class="level2" data-number="9.10">
 <h2 data-number="9.10" class="anchored" data-anchor-id="multiple-linear-regression"><span class="header-section-number">9.10</span> Multiple linear regression</h2>
 </section>
-<section id="logistic-regression-models-for-binary-output-data" class="level2" data-number="9.11">
-<h2 data-number="9.11" class="anchored" data-anchor-id="logistic-regression-models-for-binary-output-data"><span class="header-section-number">9.11</span> Logistic regression models for binary output data</h2>
+<section id="sec-9_11" class="level2" data-number="9.11">
+<h2 data-number="9.11" class="anchored" data-anchor-id="sec-9_11"><span class="header-section-number">9.11</span> 用于二元输出数据的逻辑回归模型</h2>
+<p>在本节中，我们考虑实验结果要么是成功要么是失败的实验。我们假设可以在不同的水平（<span class="math inline">\(x\)</span>）执行这些实验，并且在水平 <span class="math inline">\(x\)</span> 处实验成功的概率为 <span class="math inline">\(p(x)\)</span>，其中 <span class="math inline">\(-\infty &lt; x &lt; \infty\)</span>。如果 <span class="math inline">\(p(x)\)</span> 具有以下形式：</p>
+<p><span class="math inline">\(p(x) = \frac{e^{a+bx}}{1 + e^{a+bx}}\)</span></p>
+<p>那么，我们称这些实验来自于一个 <strong>逻辑回归模型</strong>（<em>logistic regression model</em>），而称 <span class="math inline">\(p(x)\)</span> 为 <strong>逻辑回归函数</strong>（<em>logistics regression function</em>）。</p>
+<ul>
+<li>如果 <span class="math inline">\(b &gt; 0\)</span>，那么 <span class="math inline">\(p(x) = \frac{1}{[e^{-(a+bx)} + 1]}\)</span> 是一个递增函数，随着 <span class="math inline">\(x \rightarrow \infty\)</span> 而收敛到 1。</li>
+<li>如果 <span class="math inline">\(b &lt; 0\)</span>，那么 <span class="math inline">\(p(x)\)</span> 是一个递减函数，随着 <span class="math inline">\(x \rightarrow \infty\)</span> 而收敛到 0。</li>
+<li>当 <span class="math inline">\(b = 0\)</span> 时，<span class="math inline">\(p(x)\)</span> 是一个常数。</li>
+</ul>
+<p><a href="#fig-9_12" class="quarto-xref">图&nbsp;<span>9.12</span></a> 给出了 <strong>逻辑回归函数</strong> 的图形，从图中可以看出，这些曲线呈现 S 形状。</p>
+<div id="fig-9_12" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9_12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_9/f_9_12.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-9_12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9.12: 逻辑回归函数
+</figcaption>
+</figure>
+</div>
+<p>将 <span class="math inline">\(p(x)\)</span> 写为 <span class="math inline">\(p(x) = 1 - \left[ \frac{1}{1 + e^{a+bx}} \right]\)</span> 并对 <span class="math inline">\(x\)</span> 求导，得到：</p>
+<p><span class="math inline">\(\frac{\partial}{\partial x} p(x) = \frac{be^{a+bx}}{(1 + e^{a+bx})^2} = b \cdot p(x) [1 - p(x)]\)</span></p>
+<p>因此，<span class="math inline">\(p(x)\)</span> 的变化率取决于 <span class="math inline">\(x\)</span>，并且在 <span class="math inline">\(p(x)\)</span> 接近 0.5 时的那些 <span class="math inline">\(x\)</span> 处，<span class="math inline">\(p(x)\)</span> 的变化率最大。例如，在 <span class="math inline">\(p(x) = 0.5\)</span> 时，<span class="math inline">\(\frac{\partial}{\partial x} p(x) = 0.25b\)</span>，而在 <span class="math inline">\(p(x) = 0.8\)</span> 时，<span class="math inline">\(x\)</span> 处，<span class="math inline">\(\frac{\partial}{\partial x} p(x) = 0.16b\)</span>。</p>
+<p>如果我们将 <span class="math inline">\(o(x)\)</span> 定义为实验在 <span class="math inline">\(x\)</span> 处成功时的 <strong>赔率</strong>（<a href="../chapter_3/3.html#sec-3_4" class="quarto-xref"><span>小节 3.4</span></a>），那么：</p>
+<p><span class="math inline">\(o(x) = \frac{p(x)}{1 - p(x)} = e^{a+bx}\)</span></p>
+<p>因此，当 <span class="math inline">\(b &gt; 0\)</span> 时，<strong>赔率</strong> 随着 <span class="math inline">\(x\)</span> 的增加而指数级增加；当 <span class="math inline">\(b &lt; 0\)</span> 时，<strong>赔率</strong> 随着 <span class="math inline">\(x\)</span> 的增加而指数级减少。取 <strong>赔率</strong> 取对数运算，我们有：</p>
+<p><span class="math inline">\(\log(o(x)) = a + bx\)</span></p>
+<p>这表明，对数赔率（<em>log odds</em>）——即 logit 函数——是一个线性函数：</p>
+<p><span class="math inline">\(\log(o(x)) = a + bx\)</span></p>
+<p>逻辑回归函数的参数 <span class="math inline">\(a\)</span> 和 <span class="math inline">\(b\)</span> 是未知的，需要对其进行估计。可以通过最大似然法来估计逻辑回归函数的参数。也就是说，假设在 <span class="math inline">\(x_1, \ldots, x_k\)</span> 进行实验，令 <span class="math inline">\(Y_i\)</span>（成功时为 1，失败时为 0） 表示在 <span class="math inline">\(x_i\)</span> 处进行实验时的实验结果。然后，使用伯努利概率密度函数（即单次试验的概率密度函数为二项概率密度函数）：</p>
+<p><span class="math inline">\(P(Y_i = y_i) = [p(x_i)]^{y_i} [1 - p(x_i)]^{1 - y_i} = \left( \frac{e^{a+bx_i}}{1 + e^{a+bx_i}} \right)^{y_i} \left( \frac{1}{1 + e^{a+bx_i}} \right)^{1 - y_i}, \quad y_i = 0, 1\)</span></p>
+<p>因此，在 <span class="math inline">\(x_i\)</span> 处实验结果为 <span class="math inline">\(y_i\)</span> 的概率（对于所有 <span class="math inline">\(i = 1, \ldots, k\)</span>） 为：</p>
+<p><span class="math inline">\(\begin{align} P(Y_i = y_i, i = 1, \ldots, k) &amp;= \prod_{i} \left( \frac{e^{a+bx_i}}{1 + e^{a+bx_i}} \right)^{y_i} \left( \frac{1}{1 + e^{a+bx_i}} \right)^{1 - y_i} \\ &amp;= \prod_{i}{\frac{(e^{a+bx_i})^{y_i}}{1+e^{a+bx_i}}} \end{align}\)</span></p>
+<p>等式两边取对数得到：</p>
+<p><span class="math inline">\(\log\left( P\{Y_i = y_i, i = 1, \ldots, k\} \right) = \sum_{i=1}^{k} y_i(a + bx_i) - \sum_{i=1}^{k} \log \left( 1 + e^{a+bx_i} \right)\)</span></p>
+<p>现在可以通过数值方法求解使得上述似然函数取得最大值的 <span class="math inline">\(a\)</span> 和 <span class="math inline">\(b\)</span> 的值，从而获得最大似然估计。然而，由于似然函数是非线性的，所以通常需要迭代的方法来计算最大似然估计；因此，通常需要使用专门的软件来获得逻辑回归函数的参数估计。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="glm()">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+glm()
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>glm()</code> 函数用于拟合 <strong>广义线性模型</strong>（<em>Generalized Linear Models, GLM</em>）。<code>glm()</code> 是一个非常强大的函数，可以处理各种类型的回归模型，包括线性回归、逻辑回归、泊松回归等。</p>
+<p>可以通过 <code>family</code> 参数来控制 <code>glm()</code> 的回归类型，例如：</p>
+<ul>
+<li>family = gaussian（默认）用于线性回归</li>
+<li>family = binomial 用于逻辑回归</li>
+<li>family = poisson 用于泊松回归</li>
+</ul>
+</div>
+</div>
+<p>可以使用 R 确定逻辑回归模型中 <span class="math inline">\(a\)</span> 和 <span class="math inline">\(b\)</span> 的估计。可以使用 R 中的 <code>glm(y ~ x, family = "binomial")</code> 确定逻辑回归模型。例如，假设某个实验进行了 7 次，在 <span class="math inline">\(x = (5, 9, 13, 22, 22, 24, 30)\)</span> 时，其对应的结果为 <span class="math inline">\((0, 1, 0, 1, 0, 1, 1)\)</span>，其中 1 表示该实验成功，0 表示实验失败。则估计的逻辑回归方程如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">9</span>, <span class="dv">3</span>, <span class="dv">12</span>, <span class="dv">22</span>, <span class="dv">24</span>, <span class="dv">30</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> x, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:  glm(formula = y ~ x, family = "binomial")
+
+Coefficients:
+(Intercept)            x  
+    -1.2678       0.1103  
+
+Degrees of Freedom: 6 Total (i.e. Null);  5 Residual
+Null Deviance:      9.561 
+Residual Deviance: 8.025    AIC: 12.03</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="注意">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注意
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在原书中，此处使用的是 <code>glm(y ~ x)</code>，如果没有指定 <code>family</code> 参数，则 <code>glm()</code> 实际执行的是线性回归，而不是逻辑回归。这里要特别注意。</p>
+</div>
+</div>
+<p>也就是说，在逻辑回归模型 <span class="math inline">\(p(x)=\frac{e^{a+bx}}{1+e^{a+bx}}\)</span> 中，<span class="math inline">\(a\)</span> 和 <span class="math inline">\(b\)</span> 的估计值分别是：-1.2678 和 0.1103。</p>
+<p>当响应数据为二元数据时，虽然逻辑回归模型是最常用的模型，但通常也会使用其他模型。例如，在输入水平为 <span class="math inline">\(x\)</span> 时，假设 <span class="math inline">\(p(x)\)</span>（实验成功的概率）是一个随 <span class="math inline">\(x\)</span> 的增加而增加的函数是合理的。在这种情况下，常常假设 <span class="math inline">\(p(x)\)</span> 具有特定的概率分布函数。实际上，当 <span class="math inline">\(b &gt; 0\)</span> 时，逻辑回归模型就满足这种形式。此时，因为 <span class="math inline">\(p(x)\)</span> 就是参数为 <span class="math inline">\(\mu = -a/b\)</span>、<span class="math inline">\(\nu = 1/b\)</span> 的逻辑分布随机变量的分布函数（<span class="quarto-unresolved-ref">?sec-5_9</span>）。</p>
+<p>可用于二元响应数据的另一种模型是 <strong>probit model</strong>，在这种模型中，假设对于某些常数 <span class="math inline">\(\alpha, \beta &gt; 0\)</span>，</p>
+<p><span class="math inline">\(p(x) = \Phi(\alpha + \beta x) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\alpha + \beta x} e^{-y^2/2} dy\)</span></p>
+<p>换句话说，<span class="math inline">\(p(x)\)</span> 等于标准正态分布随机变量小于 <span class="math inline">\(\alpha + \beta x\)</span> 的概率。</p>
+<div id="exm-9_11_a" class="theorem example">
+<p><span class="theorem-title"><strong>例 9.10</strong></span> 常见的假设是：当一个动物暴漏在剂量水平为 <span class="math inline">\(x\)</span> 下的某化学物质时，动物是否会生病。该假设使用了阈值模型（<em>threshold model</em>），阈值模型认为每个动物都有一个随机阈值，当剂量水平超过该阈值时，动物就会生病。有时，可以用指数分布来作为阈值分布。例如，Freedman 和 Zeisel 在论文（From Mouse to Man: The Quantitative Assessment of Cancer Risks,” Statistical Science, 1988, 3, 1, 3–56）中的模型假设：一只暴露于 <span class="math inline">\(x\)</span> 剂量（以 ppm 计量）的 DDT（二氯二苯基三氯乙烷，一种合成的有机氯杀虫剂，最早于 1940 年代被引入，用于控制蚊子、苍蝇等传播疾病的昆虫，并在农业中广泛用于保护农作物免受害虫侵害） 下的老鼠将会以如下的概率患上肝癌：</p>
+<p><span class="math inline">\(p(x) = 1 - e^{-\alpha x}, \quad x &gt; 0\)</span></p>
+<p>由于指数分布的“无记忆性”，这相当于假设：如果老鼠在接收到部分剂量 <span class="math inline">\(x\)</span> 后仍然健康，那么剂量水平 <span class="math inline">\(x\)</span> 带来的风险与之前没有接收到任何剂量时一样。</p>
+<p>根据 Freedman 和 Zeisel 的研究，暴露于 250 ppm DDT 下的 111 只老鼠中，有 84 只发展成癌症。因此，可以通过以下公式估计 <span class="math inline">\(\alpha\)</span>：</p>
+<p><span class="math inline">\(1 - e^{-250\hat{\alpha}} = \frac{84}{111}\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(\hat{\alpha} = -\frac{\log(27/111)}{250} = 0.005655\)</span> <span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
 <section id="problems" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
