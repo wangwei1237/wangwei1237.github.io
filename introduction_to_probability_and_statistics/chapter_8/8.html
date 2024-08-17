@@ -369,7 +369,11 @@ window.Quarto = {
   <ul>
   <li><a href="#sec-8_1" id="toc-sec-8_1" class="nav-link active" data-scroll-target="#sec-8_1"><span class="header-section-number">8.1</span> 引言</a></li>
   <li><a href="#sec-8_2" id="toc-sec-8_2" class="nav-link" data-scroll-target="#sec-8_2"><span class="header-section-number">8.2</span> 显著性水平</a></li>
-  <li><a href="#sec-8_3" id="toc-sec-8_3" class="nav-link" data-scroll-target="#sec-8_3"><span class="header-section-number">8.3</span> Tests concerning the mean of a normal population</a></li>
+  <li><a href="#sec-8_3" id="toc-sec-8_3" class="nav-link" data-scroll-target="#sec-8_3"><span class="header-section-number">8.3</span> 正态分布的均值检验</a>
+  <ul class="collapse">
+  <li><a href="#sec-8_3_1" id="toc-sec-8_3_1" class="nav-link" data-scroll-target="#sec-8_3_1"><span class="header-section-number">8.3.1</span> 方差 <span class="math inline">\(\sigma^2\)</span> 已知的场景</a></li>
+  <li><a href="#方差未知的场景t-text检验" id="toc-方差未知的场景t-text检验" class="nav-link" data-scroll-target="#方差未知的场景t-text检验"><span class="header-section-number">8.3.2</span> 方差未知的场景：<span class="math inline">\(t-\text{检验}\)</span></a></li>
+  </ul></li>
   <li><a href="#testing-the-equality-of-means-of-two-normal-populations" id="toc-testing-the-equality-of-means-of-two-normal-populations" class="nav-link" data-scroll-target="#testing-the-equality-of-means-of-two-normal-populations"><span class="header-section-number">8.4</span> Testing the equality of means of two normal populations</a></li>
   <li><a href="#hypothesis-tests-concerning-the-variance-of-a-normal-population" id="toc-hypothesis-tests-concerning-the-variance-of-a-normal-population" class="nav-link" data-scroll-target="#hypothesis-tests-concerning-the-variance-of-a-normal-population"><span class="header-section-number">8.5</span> Hypothesis tests concerning the variance of a normal population</a></li>
   <li><a href="#二项分布的假设检验" id="toc-二项分布的假设检验" class="nav-link" data-scroll-target="#二项分布的假设检验"><span class="header-section-number">8.6</span> 二项分布的假设检验</a></li>
@@ -463,7 +467,342 @@ C = \{(X_1, \ldots, X_n) : |\overline{X} - 1| &gt; 1.96 / \sqrt{n}\}
 <p>当 <span class="math inline">\(d(\mathbfit{X})\)</span> 远离区域 <span class="math inline">\(w\)</span> 时，则拒绝 <strong>假设</strong>。然而，为了确定 <span class="math inline">\(d(\mathbfit{X})\)</span> 需要多远才能证明拒绝 <span class="math inline">\(H_0\)</span> 是合理的，我们需要确定当 <span class="math inline">\(H_0\)</span> 为真时 <span class="math inline">\(d(\mathbfit{X})\)</span> 的概率分布。因为这通常能帮助我们确定适当的 <strong>临界区</strong>，从而使检验达到所需的 <strong>显著性水平</strong> <span class="math inline">\(\alpha\)</span>。例如，<a href="#eq-8_2_1" class="quarto-xref">式&nbsp;<span>8.1</span></a> 给出的参数为 <span class="math inline">\((\theta, 1)\)</span> 的总体均值等于 1 的假设检验，当 <span class="math inline">\(\theta\)</span> 的 <strong>点估计量</strong>——即样本均值——与 1 之间的距离超过 <span class="math inline">\(1.96/\sqrt{n}\)</span> 时，则拒绝 <strong>假设</strong>。正如我们将在 <a href="#sec-8_3" class="quarto-xref"><span>小节 8.3</span></a> 中所讲述的，选择 <span class="math inline">\(1.96/\sqrt{n}\)</span> 是为了满足 <strong>显著性水平</strong> <span class="math inline">\(\alpha = 0.05\)</span>。</p>
 </section>
 <section id="sec-8_3" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="sec-8_3"><span class="header-section-number">8.3</span> Tests concerning the mean of a normal population</h2>
+<h2 data-number="8.3" class="anchored" data-anchor-id="sec-8_3"><span class="header-section-number">8.3</span> 正态分布的均值检验</h2>
+<section id="sec-8_3_1" class="level3" data-number="8.3.1">
+<h3 data-number="8.3.1" class="anchored" data-anchor-id="sec-8_3_1"><span class="header-section-number">8.3.1</span> 方差 <span class="math inline">\(\sigma^2\)</span> 已知的场景</h3>
+<p><span class="math inline">\(X_1, \dots, X_n\)</span> 是从未知均值 <span class="math inline">\(\mu\)</span> 且方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布总体中抽取的大小为 <span class="math inline">\(n\)</span> 的样本，假设我们要对以下的原假设进行检验：</p>
+<p><span class="math inline">\(\begin{align} H_0: \mu = \mu_0 \quad vs \quad H_1: \mu \neq \mu_0 \end{align}\)</span></p>
+<p>其中 <span class="math inline">\(\mu_0\)</span> 是某个特定的常数。</p>
+<p>由于 <span class="math inline">\(\overline{X} = \frac{1}{n} \sum_{i=1}^n X_i\)</span> 是 <span class="math inline">\(\mu\)</span> 的点估计量，因此如果 <span class="math inline">\(\overline{X}\)</span> 与 <span class="math inline">\(\mu_0\)</span> 相差不大，则接受 <span class="math inline">\(H_0\)</span> 是合理的。也就是说，检验的 <strong>临界区</strong> 为：</p>
+<p><span id="eq-8_3_1"><span class="math display">\[
+C = \{ X_1, \dots, X_n : |\overline{X} - \mu_0| &gt; c \}
+\tag{8.2}\]</span></span></p>
+<p>其中 <span class="math inline">\(c\)</span> 为某个合适的值。</p>
+<p>如果我们要求检验的显著性水平为 <span class="math inline">\(\alpha\)</span>，我们必须确定 <a href="#eq-8_3_1" class="quarto-xref">式&nbsp;<span>8.2</span></a> 中的临界值 <span class="math inline">\(c\)</span>，以使得 I 类错误等于 <span class="math inline">\(\alpha\)</span>。即，<span class="math inline">\(c\)</span> 必须满足：</p>
+<p><span id="eq-8_3_2"><span class="math display">\[
+P_{\mu_0}\{ |\overline{X} - \mu_0| &gt; c \} = \alpha
+\tag{8.3}\]</span></span></p>
+<p><span class="math inline">\(P_{\mu_0}\)</span> 表示我们在 <span class="math inline">\(\mu = \mu_0\)</span> 的假设下计算 <a href="#eq-8_3_2" class="quarto-xref">式&nbsp;<span>8.3</span></a> 的概率。然而，当 <span class="math inline">\(\mu = \mu_0\)</span> 时，<span class="math inline">\(\overline{X}\)</span> 将服从均值为 <span class="math inline">\(\mu_0\)</span> 且方差为 <span class="math inline">\(\sigma^2/n\)</span> 的正态分布，因此 <a href="#eq-8_3_001" class="quarto-xref">式&nbsp;<span>8.4</span></a> 定义的 <span class="math inline">\(Z\)</span> 将服从标准正态分布。</p>
+<p><span id="eq-8_3_001"><span class="math display">\[
+Z \equiv \frac{\overline{X} - \mu_0}{\sigma/\sqrt{n}} = \sqrt{n} \frac{(\overline{X} - \mu_0)}{\sigma}
+\tag{8.4}\]</span></span></p>
+<p>于是，<a href="#eq-8_3_2" class="quarto-xref">式&nbsp;<span>8.3</span></a> 等价于：</p>
+<p><span class="math inline">\(P\left\{ |Z| &gt; \frac{c \sqrt{n}}{\sigma} \right\} = \alpha\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(2P\left\{ Z &gt; \frac{c \sqrt{n}}{\sigma} \right\} = \alpha\)</span></p>
+<p>其中 <span class="math inline">\(Z\)</span> 是标准正态分布随机变量。然而，我们知道</p>
+<p><span class="math inline">\(P\{ Z &gt; z_{\alpha/2} \} = \alpha/2\)</span></p>
+<p>因此：</p>
+<p><span class="math inline">\(\frac{c \sqrt{n}}{\sigma} = z_{\alpha/2}\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(c = \frac{z_{\alpha/2} \sigma}{\sqrt{n}}\)</span></p>
+<p>因此，显著性水平为 <span class="math inline">\(\alpha\)</span> 的检验为：</p>
+<ul>
+<li>如果 <span class="math inline">\(\frac{\sqrt{n}}{\sigma} |\overline{X} - \mu_0| &gt; z_{\alpha/2}\)</span>，则拒绝 <span class="math inline">\(H_0\)</span>；</li>
+<li>否则，接受 <span class="math inline">\(H_0\)</span>。</li>
+</ul>
+<p><span id="eq-8_3_3"><span class="math display">\[
+\begin{align}
+\text{拒绝} H_0 &amp;: \quad \frac{\sqrt{n}}{\sigma} |\overline{X} - \mu_0| &gt; z_{\alpha/2} \\
+\text{接受} H_0 &amp;: \quad \frac{\sqrt{n}}{\sigma} |\overline{X} - \mu_0| \le z_{\alpha/2}
+\end{align}
+\tag{8.5}\]</span></span></p>
+<p>可以通过图 <a href="#fig-8_1" class="quarto-xref">图&nbsp;<span>8.1</span></a> 来直观地表示 <a href="#eq-8_3_3" class="quarto-xref">式&nbsp;<span>8.5</span></a>，在 <a href="#fig-8_1" class="quarto-xref">图&nbsp;<span>8.1</span></a> 中，我们叠加了标准正态分布的概率密度函数（即当 <span class="math inline">\(H_0\)</span> 成立时，统计量 <span class="math inline">\(\sqrt{n}(\overline{X} - \mu_0)/\sigma\)</span> 的概率密度）。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="fl">0.01</span>) </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span>x, <span class="at">y=</span>y)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y)) <span class="sc">+</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">x=</span><span class="sc">-</span><span class="fl">1.96</span>, <span class="at">y=</span><span class="fu">dnorm</span>(<span class="sc">-</span><span class="fl">1.96</span>) <span class="sc">*</span> <span class="fl">1.5</span>, <span class="at">xend=</span><span class="sc">-</span><span class="fl">1.96</span>, <span class="at">yend=</span><span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">x=</span><span class="fl">1.96</span>, <span class="at">y=</span><span class="fu">dnorm</span>(<span class="fl">1.96</span>) <span class="sc">*</span> <span class="fl">1.5</span>, <span class="at">xend=</span><span class="fl">1.96</span>, <span class="at">yend=</span><span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">x=</span><span class="sc">-</span><span class="fl">1.96</span>, <span class="at">y=</span><span class="fu">dnorm</span>(<span class="sc">-</span><span class="fl">1.96</span>) <span class="sc">*</span> <span class="fl">1.3</span>, <span class="at">xend=</span><span class="fl">1.96</span>, <span class="at">yend=</span><span class="fu">dnorm</span>(<span class="fl">1.96</span>) <span class="sc">*</span> <span class="fl">1.3</span>, </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">ends =</span> <span class="st">"both"</span>, <span class="at">type =</span> <span class="st">"closed"</span>, <span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.1</span>, <span class="st">"inches"</span>))) <span class="sc">+</span> </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="sc">-</span><span class="fl">1.86</span>, <span class="at">y =</span> <span class="sc">-</span><span class="fl">0.01</span>, <span class="at">label =</span> <span class="fu">TeX</span>(<span class="st">"$-z_{</span><span class="sc">\\</span><span class="st">alpha/2}$"</span>), <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">2.06</span>, <span class="at">y =</span> <span class="sc">-</span><span class="fl">0.01</span>, <span class="at">label =</span> <span class="fu">TeX</span>(<span class="st">"$z_{</span><span class="sc">\\</span><span class="st">alpha/2}$"</span>), <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">0.15</span>, <span class="at">y =</span> <span class="fu">dnorm</span>(<span class="sc">-</span><span class="fl">1.96</span>) <span class="sc">*</span> <span class="fl">1.4</span>, <span class="at">label =</span> <span class="st">"Accept"</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_blank</span>(),<span class="at">axis.title =</span> <span class="fu">element_blank</span>())</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-8_1" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-8_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="8_files/figure-html/fig-8_1-1.png" id="fig-8_1" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-8_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;8.1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="exr-8_3_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.1</strong></span> 与 <a href="../chapter_7/7.html#exr-7_3_a" class="quarto-xref">习题&nbsp;<span>7.7</span></a> 类似，假设从 A 地发射一个信号 <span class="math inline">\(\mu\)</span> 到 B 地，在 B 接收到的信号的值服从均值为 <span class="math inline">\(\mu\)</span>、方差为 4 的正态分布。也就是说，B 地接收到的信号会加入随机噪声、并且该随机噪声是服从 <span class="math inline">\(\mathcal{N}(0, 4)\)</span> 的随机变量。现在，B 地的人怀疑今天 A 地发送的信号值为 <span class="math inline">\(\mu = 8\)</span>。假设 A 地独立发送了 5 次该信号，且在 B 地接收到的信号的平均值为 <span class="math inline">\(\overline{X} = 9.5\)</span>。请对 <strong>今天 A 地发送的信号值为 <span class="math inline">\(\mu = 8\)</span> </strong> 这一假设进行检验。</p>
+</div>
+<div id="exr-8_3_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.2</strong></span> 假设我们在 5% 的显著性水平下进行检验。首先，计算检验统计量：</p>
+<p><span class="math inline">\(\frac{\sqrt{n}}{\sigma} |\overline{X} - \mu_0| = \frac{\sqrt{5}}{2} (1.5) = 1.68\)</span></p>
+<p>由于 1.68 小于 <span class="math inline">\(z_{0.025} = 1.96\)</span>，因此应该接受该假设。换句话说，因为当 A 地发射的信号真的为 8 时，那么会有 5% 的可能性发生像我们观察到的样本平均值偏离 8 的这种情况，但是这个比例并没有达到足以令我们拒绝原假设，所以观察到的数据与原假设并不矛盾。但是，如果我们选择了更不严格的显著性水平——比如 <span class="math inline">\(\alpha = 0.1\)</span>，此时，因为 1.68 大于 <span class="math inline">\(z_{0.05} = 1.645\)</span>，那么我们将拒绝原假设。因此，如果我们选择了 10% 的概率会错误的拒绝原假设的情况下（<em>第 I 类错误</em>），那么我们将拒绝原假设。</p>
+<p>选择合适的显著性水平（<span class="math inline">\(\alpha\)</span>）并不是一个一成不变的标准，而是需要根据具体情况进行调整。例如，如果错误的拒绝实际为真的原假设 <span class="math inline">\(H_0\)</span> 会导致巨大损失，那么我们可能会选择非常保守的显著性水平，此时可以选择 0.05 或 0.01 的显著性水平。此外，如果我们一开始就非常相信 <span class="math inline">\(H_0\)</span> 是正确的，那么我们就需要设置一个非常严格的标准并要求有强有力的数据证据才能认为 <span class="math inline">\(H_0\)</span> 是错误的。也就是说，在这种情况下，我们通常需要设置一个非常低的显著性水平（例如 0.01 或者更低）。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p><a href="#eq-8_3_3" class="quarto-xref">式&nbsp;<span>8.5</span></a> 给出的 <strong>检验</strong> 的描述如下：对于检验统计量 <span class="math inline">\(\sqrt{n}|\overline{X} - \mu_0|/\sigma\)</span> 的任何观测值——我们称其为 <span class="math inline">\(v\)</span>——当 <span class="math inline">\(H_0\)</span> 成立时，如果检验统计量大于或等于 <span class="math inline">\(v\)</span> 的概率小于或等于显著性水平 <span class="math inline">\(\alpha\)</span>，则 <strong>检验</strong> 说明需要拒绝原假设 <span class="math inline">\(H_0\)</span>。</p>
+<p>由此，我们可以通过以下步骤来确定是否接受原假设 <span class="math inline">\(H_0\)</span>：</p>
+<ul>
+<li>首先，计算检验统计量的值 <span class="math inline">\(v\)</span>；</li>
+<li>其次，计算标准正态分布（取绝对值）的概率，即标准正态分布中大于 <span class="math inline">\(v\)</span> 的概率，我们称这一概率为检验的 <span class="math inline">\(p-\text{value}\)</span>。<span class="math inline">\(p-\text{value}\)</span> 给出了临界显著性水平的意义，即如果 <span class="math inline">\(p-\text{value}\)</span> 大于显著性水平 <span class="math inline">\(\alpha\)</span>，则接受 <span class="math inline">\(H_0\)</span>；如果 <span class="math inline">\(p-\text{value}\)</span> 小于或等于显著性水平 <span class="math inline">\(\alpha\)</span>，则拒绝 <span class="math inline">\(H_0\)</span>。</li>
+</ul>
+<p>在实际操作中，显著性水平往往不是预先设定的，而是会首先通过观察数据来确定 <span class="math inline">\(p-\text{value}\)</span>。</p>
+<ul>
+<li>有时，<span class="math inline">\(p-\text{value}\)</span> 会明显大于我们愿意使用的任何显著性水平，因此我们可以非常轻松的就接受原假设 <span class="math inline">\(H_0\)</span>。</li>
+<li>而有时，<span class="math inline">\(p-\text{value}\)</span> 值又非常小（甚至小于任何我们会使用到的显著性水平），因此显然我们应该拒绝该假设。</li>
+</ul>
+<div id="exm-8_3_b" class="theorem example">
+<p><span class="theorem-title"><strong>例 8.1</strong></span> 在 <a href="#exr-8_3_a" class="quarto-xref">习题&nbsp;<span>8.2</span></a> 中，假设接收到的 5 个值的平均值为 <span class="math inline">\(\overline{X} = 8.5\)</span>。在这种情况下，</p>
+<p><span class="math inline">\(\frac{\sqrt{n}}{\sigma} |\overline{X} - \mu_0| = \frac{\sqrt{5}}{4} = 0.559\)</span></p>
+<p>因为</p>
+<p><span class="math inline">\(P\{|Z| &gt; 0.559\} = 2P\{Z &gt; 0.559\}= 2 \times 0.288 = 0.576\)</span></p>
+<p>所以 <span class="math inline">\(p-\text{value}\)</span> 为 0.576，因此信号值为 8 的原假设在任何显著性水平 <span class="math inline">\(\alpha &lt; 0.576\)</span> 下都将被接受。显然，我们绝不会使用一个高达 0.576 的显著性水平来检验原假设，因此我们将接受 <span class="math inline">\(H_0\)</span>。</p>
+<p>另一方面，如果数据的平均值为 11.5，则检验均值为 8 的 <span class="math inline">\(p-\text{value}\)</span> 值将为</p>
+<p><span class="math inline">\(P\{|Z| &gt; 1.75\sqrt{5}\} = P\{|Z| &gt; 3.913\} \approx 0.00005\)</span></p>
+<p>对于如此小的<span class="math inline">\(p-\text{value}\)</span>，我们将拒绝信号值为 8 的原假设。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>到现在为止，我们还没有讨论过 <strong>第 II 类错误</strong> 的概率——也就是在真实均值 <span class="math inline">\(\mu\)</span> 不等于 <span class="math inline">\(\mu_0\)</span> 时错误的接受原假设的概率。<strong>第 II 类错误</strong> 的概率取决于 <span class="math inline">\(\mu\)</span> 的值，因此我们定义 <span class="math inline">\(\beta(\mu)\)</span> 如下：</p>
+<p><span class="math inline">\(\begin{align}\beta(\mu) &amp;= P_\mu\{\text{接受 } H_0\} \\ &amp;=P_{\mu}\left\{\left|\frac{\overline{X}-\mu_0}{\sigma/\sqrt{n}}\right| \le z_{\alpha/2}\right\} \\ &amp;=P_{\mu}\left\{-z_{\alpha/2} \le \frac{\overline{X}-\mu_0}{\sigma/\sqrt{n}}\le z_{\alpha/2}\right\} \end{align}\)</span></p>
+<p>我们称函数 <span class="math inline">\(\beta(\mu)\)</span> 为 <strong>Operating Characteristic</strong>（<em>OC</em>）Curve，<span class="math inline">\(\beta(\mu)\)</span> 表示当真实均值为 <span class="math inline">\(\mu\)</span> 时接受原假设 <span class="math inline">\(H_0\)</span> 的概率。</p>
+<p>为了计算这个概率，我们使用 <span class="math inline">\(\overline{X}\)</span> 服从均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2/n\)</span> 的正态分布的事实，因此</p>
+<p><span class="math inline">\(Z \equiv \frac{\overline{X} - \mu}{\sigma/\sqrt{n}} \sim \mathcal{N}(0, 1)\)</span></p>
+<p>因此，</p>
+<p><span id="eq-8_3_4"><span class="math display">\[
+\begin{align}
+\beta(\mu) &amp;= P_\mu\left\{-z_{\alpha/2} \leq \frac{\overline{X} - \mu_0}{\sigma/\sqrt{n}} \leq z_{\alpha/2}\right\} \\
+&amp;= P_\mu\left\{-z_{\alpha/2} \leq \frac{\overline{X} - \mu + \mu - \mu_0}{\sigma/\sqrt{n}} \leq z_{\alpha/2}\right\} \\
+&amp;= P_\mu\left\{-z_{\alpha/2} - \frac{\mu}{\sigma / \sqrt{n}} \leq \frac{\overline{X} - \mu - \mu_0}{\sigma/\sqrt{n}} \leq z_{\alpha/2} -  \frac{\mu}{\sigma / \sqrt{n}} \right\} \\
+&amp;= P_\mu\left\{ -z_{\alpha/2} - \frac{\mu}{\sigma / \sqrt{n}} \leq Z - \frac{\mu_0}{\sigma/\sqrt{n}} \leq z_{\alpha/2} -  \frac{\mu}{\sigma / \sqrt{n}} \right\} \\
+&amp;= P\left\{\frac{\mu_0 - \mu}{\sigma / \sqrt{n}} - z_{\alpha/2} \le Z \le \frac{\mu_0 - \mu}{\sigma / \sqrt{n}} + z_{\alpha/2}\right\} \\
+&amp;= \Phi\left(\frac{\mu_0 - \mu}{\sigma/\sqrt{n}} + z_{\alpha/2}\right) - \Phi\left(\frac{\mu_0 - \mu}{\sigma/\sqrt{n}} - z_{\alpha/2}\right)
+\end{align}
+\tag{8.6}\]</span></span></p>
+<p>其中 <span class="math inline">\(\Phi\)</span> 是标准正态分布函数。</p>
+<p>对于固定的显著性水平 <span class="math inline">\(\alpha\)</span>，由 <a href="#eq-8_3_4" class="quarto-xref">式&nbsp;<span>8.6</span></a> 给出的 OC 曲线是关于 <span class="math inline">\(\mu_0\)</span> 对称的，并且实际上仅通过 <span class="math inline">\(\sqrt{n}|\mu - \mu_0|/\sigma\)</span> 而依赖于 <span class="math inline">\(\mu\)</span>。当 <span class="math inline">\(\alpha = 0.05\)</span> 时，这条曲线的横坐标由 <span class="math inline">\(\mu\)</span> 改为 <span class="math inline">\(d = \sqrt{n}|\mu - \mu_0|/\sigma\)</span>，并且曲线如 <a href="#fig-8_2" class="quarto-xref">图&nbsp;<span>8.2</span></a> 所示。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># β(μ) 的计算函数</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>calculate_beta <span class="ot">&lt;-</span> <span class="cf">function</span>(mu, mu0, sigma, n, alpha) {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  z_alpha <span class="ot">=</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha <span class="sc">/</span> <span class="dv">2</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">=</span> <span class="fu">sqrt</span>(n) <span class="sc">*</span> (mu0 <span class="sc">-</span> mu) <span class="sc">/</span> sigma</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  beta <span class="ot">=</span> <span class="fu">pnorm</span>(d <span class="sc">+</span> z_alpha) <span class="sc">-</span> <span class="fu">pnorm</span>(d <span class="sc">-</span> z_alpha)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(beta)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 参数设置</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="dv">0</span>        <span class="co"># 原假设的均值</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="dv">3</span>      <span class="co"># 标准差</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">10</span>         <span class="co"># 样本大小</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.05</span>   <span class="co"># 显著性水平</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 生成一系列 μ 的值</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>mu_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 计算每个 μ 对应的 β(μ)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>beta_values <span class="ot">&lt;-</span> <span class="fu">sapply</span>(mu_values, calculate_beta, <span class="at">mu0 =</span> mu0, <span class="at">sigma =</span> sigma, <span class="at">n =</span> n, <span class="at">alpha =</span> alpha)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(n) <span class="sc">/</span> sigma <span class="sc">*</span> <span class="fu">abs</span>(mu0 <span class="sc">-</span> mu_values)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建数据框用于绘图</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">mu =</span> mu_values, <span class="at">d =</span> d, <span class="at">beta =</span> beta_values)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 绘制 OC 曲线</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> beta)) <span class="sc">+</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>)) <span class="sc">+</span> </span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.2</span>)) <span class="sc">+</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-8_2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-8_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="8_files/figure-html/fig-8_2-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-8_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;8.2: 显著性水平位 0.05 时双边正态分布检验的 OC 曲线图
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="exm-8_3_c" class="theorem example">
+<p><span class="theorem-title"><strong>例 8.2</strong></span> 对于 <a href="#exr-8_3_a" class="quarto-xref">习题&nbsp;<span>8.2</span></a> 中的问题，当实际发送的值为 10 时，计算接受原假设 <span class="math inline">\(\mu = 8\)</span> 的概率？</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># β(μ) 的计算函数</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>calculate_beta <span class="ot">&lt;-</span> <span class="cf">function</span>(mu, mu0, sigma, n, alpha) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  z_alpha <span class="ot">=</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha <span class="sc">/</span> <span class="dv">2</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">=</span> <span class="fu">sqrt</span>(n) <span class="sc">*</span> (mu0 <span class="sc">-</span> mu) <span class="sc">/</span> sigma</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  beta <span class="ot">=</span> <span class="fu">pnorm</span>(d <span class="sc">+</span> z_alpha) <span class="sc">-</span> <span class="fu">pnorm</span>(d <span class="sc">-</span> z_alpha)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(beta)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">calculate_beta</span>(<span class="dv">10</span>, <span class="dv">8</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="fl">0.05</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3912205</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>我们称 <span class="math inline">\(1 - \beta(\mu)\)</span> 为 <strong>检验功效函数</strong>（<em>power-function of the test</em>）。因此，对于给定的 <span class="math inline">\(\mu\)</span> 值，<strong>检验功效</strong> 等于当 <span class="math inline">\(\mu\)</span> 为真实值时拒绝原假设的概率。</p>
+</div>
+</div>
+<p>在确定所需的随机样本大小以满足我们对 <em>第 II 类错误</em> 的某些特定要求的场景下，<strong>Operating Characteristic</strong> 函数非常有用。例如，假设我们希望确定所需的样本大小 <span class="math inline">\(n\)</span>，以确保当真实均值实际上为 <span class="math inline">\(\mu_1\)</span> 时，接受原假设 <span class="math inline">\(H_0: \mu = \mu_0\)</span> 的概率大约为 <span class="math inline">\(\beta\)</span>。也就是说，我们希望找到 <span class="math inline">\(n\)</span> 使得：</p>
+<p><span class="math inline">\(\beta(\mu_1) \approx \beta\)</span></p>
+<p>但是，根据 <a href="#eq-8_3_4" class="quarto-xref">式&nbsp;<span>8.6</span></a>，我们可以推导出，如上的式子等价于</p>
+<p><span id="eq-8_3_5"><span class="math display">\[
+\Phi \left(\frac{\sqrt{n}(\mu_0 - \mu_1)}{\sigma} + z_{\alpha/2}\right) - \Phi \left(\frac{\sqrt{n}(\mu_0 - \mu_1)}{\sigma} - z_{\alpha/2}\right) \approx \beta \quad
+\tag{8.7}\]</span></span></p>
+<p>尽管无法直接对 <a href="#eq-8_3_5" class="quarto-xref">式&nbsp;<span>8.7</span></a> 进行求解并得到 <span class="math inline">\(n\)</span>，但可以使用标准正态分布表来求解得到 <span class="math inline">\(n\)</span>。此外，还可以通过 <a href="#eq-8_3_5" class="quarto-xref">式&nbsp;<span>8.7</span></a> 推导出 <span class="math inline">\(n\)</span> 的近似值 <a href="#eq-8_3_7" class="quarto-xref">式&nbsp;<span>8.9</span></a>。</p>
+<p>首先，假设 <span class="math inline">\(\mu_1 &gt; \mu_0\)</span>，于是这意味着：</p>
+<p><span class="math inline">\(\frac{\sqrt{n}(\mu_0 - \mu_1)}{\sigma} - z_{\alpha/2} \leq -z_{\alpha/2}\)</span></p>
+<p>由于 <span class="math inline">\(\Phi\)</span> 是一个递增函数，因此：</p>
+<p><span class="math inline">\(\Phi \left(\frac{\sqrt{n}(\mu_0 - \mu_1)}{\sigma} - z_{\alpha/2}\right) \leq \Phi(-z_{\alpha/2}) = P\{Z \leq -z_{\alpha/2}\} = P\{Z \geq z_{\alpha/2}\} = \alpha/2\)</span></p>
+<p>因此，我们可以取</p>
+<p><span class="math inline">\(\Phi \left(\frac{\sqrt{n}(\mu_0 - \mu_1)}{\sigma} - z_{\alpha/2}\right) \approx 0\)</span></p>
+<p>根据 <a href="#eq-8_3_5" class="quarto-xref">式&nbsp;<span>8.7</span></a> 可以得到：</p>
+<p><span id="eq-8_3_6"><span class="math display">\[
+\beta \approx \Phi \left(\frac{\sqrt{n}(\mu_0 - \mu_1)}{\sigma} + z_{\alpha/2}\right)
+\tag{8.8}\]</span></span></p>
+<p>或者，由于</p>
+<p><span class="math inline">\(\beta = P\{Z &gt; z_{\beta}\} = P\{Z &lt; -z_{\beta}\} = \Phi(-z_{\beta})\)</span></p>
+<p>根据 <a href="#eq-8_3_6" class="quarto-xref">式&nbsp;<span>8.8</span></a> 得到：</p>
+<p><span class="math inline">\(-z_{\beta} \approx \frac{\sqrt{n}(\mu_0 - \mu_1)}{\sigma} + z_{\alpha/2}\)</span></p>
+<p>即：</p>
+<p><span id="eq-8_3_7"><span class="math display">\[
+n \approx \frac{(z_{\alpha/2} + z_{\beta})^2 \sigma^2}{(\mu_1 - \mu_0)^2}
+\tag{8.9}\]</span></span></p>
+<p>事实上，当 <span class="math inline">\(\mu_1 &lt; \mu_0\)</span> 时，我们会得到近似相同的结果（留作习题），因此，在任何情况下 <a href="#eq-8_3_7" class="quarto-xref">式&nbsp;<span>8.9</span></a> 都是如下场景的一个合理的近似值：</p>
+<ul>
+<li>估计所需的样本大小，以确保当真实均值为 <span class="math inline">\(\mu = \mu_1\)</span> 时，<strong>第 II 类错误</strong> 的概率大约等于 <span class="math inline">\(\beta\)</span>。</li>
+</ul>
+<div id="exr-8_3_d" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.3</strong></span> 对于 <a href="#exr-8_3_a" class="quarto-xref">习题&nbsp;<span>8.2</span></a> 的问题，在 0.05 的显著性水平下，当 <span class="math inline">\(\mu\)</span> 实际为 9.2 时，需要发送多少次信号才能使得原假设 <span class="math inline">\(H_0: \mu = 8\)</span> 至少有 75% 的概率被拒绝？</p>
+</div>
+<div id="sol-8_3_d" class="proof solution">
+<p><span class="proof-title"><em>解 8.1</em>. </span>由于 <span class="math inline">\(z_{.025} = 1.96\)</span>，<span class="math inline">\(z_{0.25} = .67\)</span>，根据 <a href="#eq-8_3_7" class="quarto-xref">式&nbsp;<span>8.9</span></a> 有：</p>
+<p><span class="math inline">\(n \approx \frac{(1.96 + 0.67)^2}{(1.2)^2} 4 \approx 19.21\)</span></p>
+<p>因此需要一个大小为 20 的样本。</p>
+<p>根据方程 <a href="#eq-8_3_4" class="quarto-xref">式&nbsp;<span>8.6</span></a>，当 <span class="math inline">\(n = 20\)</span> 时，</p>
+<p><span class="math inline">\(\begin{align} \beta(9.2) &amp;= \Phi \left(-\frac{1.2\sqrt{20}}{2} + 1.96\right) - \Phi \left(-\frac{1.2\sqrt{20}}{2} - 1.96\right) \\ &amp; \approx \Phi(-0.723) - \Phi(-4.643) \\ &amp; \approx 1 - \Phi(0.723) \\ &amp; \approx 0.235 \end{align}\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># β(μ) 的计算函数</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>calculate_beta <span class="ot">&lt;-</span> <span class="cf">function</span>(mu, mu0, sigma, n, alpha) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  z_alpha <span class="ot">=</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha <span class="sc">/</span> <span class="dv">2</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">=</span> <span class="fu">sqrt</span>(n) <span class="sc">*</span> (mu0 <span class="sc">-</span> mu) <span class="sc">/</span> sigma</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  beta <span class="ot">=</span> <span class="fu">pnorm</span>(d <span class="sc">+</span> z_alpha) <span class="sc">-</span> <span class="fu">pnorm</span>(d <span class="sc">-</span> z_alpha)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(beta)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">calculate_beta</span>(<span class="fl">9.2</span>, <span class="dv">8</span>, <span class="dv">2</span>, <span class="dv">20</span>, <span class="fl">0.05</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2347407</code></pre>
+</div>
+</div>
+<p>因此，如果发送消息 20 次，那么当真实均值为 9.2 时，有 76.5% 的概率会拒绝原假设 <span class="math inline">\(\mu = 8\)</span>。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<section id="sec-8_3_1_1" class="level4" data-number="8.3.1.1">
+<h4 data-number="8.3.1.1" class="anchored" data-anchor-id="sec-8_3_1_1"><span class="header-section-number">8.3.1.1</span> 单边检验</h4>
+<p>在检验原假设 <span class="math inline">\(\mu = \mu_0\)</span> 时，我们选择了一种检验以使得在 <span class="math inline">\(\overline{X}\)</span> 远离 <span class="math inline">\(\mu_0\)</span> 时拒绝原假设。也就是说，和 <span class="math inline">\(\mu_0\)</span> 相比，<span class="math inline">\(\overline{X}\)</span>（<span class="math inline">\(\mu\)</span> 的估计量）的一个非常小的值或非常大的值似乎使得 <span class="math inline">\(\mu\)</span> 不可能等于 <span class="math inline">\(\mu_0\)</span>。然而，当 <span class="math inline">\(\mu\)</span> 等于 <span class="math inline">\(\mu_0\)</span> 的唯一 <strong>备择假设</strong> 是 <span class="math inline">\(\mu &gt; \mu_0\)</span> 时会发生什么呢？也就是说，当 <strong>备择假设</strong> 为 <span class="math inline">\(H_1: \mu &gt; \mu_0\)</span> 时会发生什么？显然，此时，在 <span class="math inline">\(\overline{X}\)</span> 很小（与 <span class="math inline">\(\mu\)</span> 相比）时，<span class="math inline">\(H_0\)</span> 为真比 <span class="math inline">\(H_1\)</span> 为真更有可能发生。因此，此时，我们不希望拒绝 <span class="math inline">\(H_0\)</span>。</p>
+<p>因此，对于 <a href="#eq-8_3_8" class="quarto-xref">式&nbsp;<span>8.10</span></a> 的检验</p>
+<p><span id="eq-8_3_8"><span class="math display">\[
+H_0: \mu = \mu_0 \quad vs. \quad H_1: \mu &gt; \mu_0
+\tag{8.10}\]</span></span></p>
+<p>当 <span class="math inline">\(\mu_0\)</span> 的点估计 <span class="math inline">\(\overline{X}\)</span> 远大于 <span class="math inline">\(\mu_0\)</span> 时，我们应该拒绝 <span class="math inline">\(H_0\)</span>。这意味着，<strong>临界区</strong> 应如下所示：</p>
+<p><span class="math inline">\(C = \{(X_1, \dots, X_n) : \overline{X} - \mu_0 &gt; c\}\)</span></p>
+<p>由于当 <span class="math inline">\(H_0\)</span> 为真时，拒绝原假设的概率应该等于 <span class="math inline">\(\alpha\)</span>，因此 <span class="math inline">\(c\)</span> 需要满足：</p>
+<p><span id="eq-8_3_9"><span class="math display">\[
+P_{\mu_0}\{\overline{X} - \mu_0 &gt; c\} = \alpha
+\tag{8.11}\]</span></span></p>
+<p>当 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(Z\)</span> 服从标准正态分布：</p>
+<p><span class="math inline">\(Z = \frac{\overline{X} - \mu_0}{\sigma/\sqrt{n}} = \sqrt{n}\frac{(\overline{X} - \mu_0)}{\sigma}\)</span></p>
+<p>所以，<a href="#eq-8_3_9" class="quarto-xref">式&nbsp;<span>8.11</span></a> 等价于：</p>
+<p><span class="math inline">\(P\left\{Z &gt; \frac{c\sqrt{n}}{\sigma}\right\} = \alpha\)</span></p>
+<p>由于</p>
+<p><span class="math inline">\(P\{Z &gt; z_{\alpha}\} = \alpha\)</span></p>
+<p>所以有：</p>
+<p><span id="eq-8_3_1_1_001"><span class="math display">\[
+c = \frac{z_{\alpha}\sigma}{\sqrt{n}}
+\tag{8.12}\]</span></span></p>
+<p>因此，假设 <a href="#eq-8_3_8" class="quarto-xref">式&nbsp;<span>8.10</span></a> 的检验是当 <span class="math inline">\(\overline{X} - \mu_0 &gt; z_{\alpha} \sigma / \sqrt{n}\)</span> 时拒绝 <span class="math inline">\(H_0\)</span>，否则接受 <span class="math inline">\(H_0\)</span>。即：</p>
+<p><span id="eq-8_3_10"><span class="math display">\[
+\begin{align}
+&amp;\text{接受} \ H_0 \quad \text{如果} \frac{\sqrt{n}}{\sigma} (\overline{X} - \mu_0) \leq z_{\alpha} \\
+&amp;\text{拒绝} \ H_0 \quad \text{如果} \frac{\sqrt{n}}{\sigma} (\overline{X} - \mu_0) \gt z_{\alpha} \\
+\end{align}
+\tag{8.13}\]</span></span></p>
+<p>因为仅在 <span class="math inline">\(\overline{X}\)</span> 较大时才会拒绝原假设，所以 <a href="#eq-8_3_10" class="quarto-xref">式&nbsp;<span>8.13</span></a> 称之为 <strong>单边临界区域</strong>（<em>one-sided critical region</em>）。相应地，与 <strong>备择假设</strong> 为 <span class="math inline">\(H_1: \mu \neq \mu_0\)</span> 的双边检验问题相比，<a href="#eq-8_3_1_1_002" class="quarto-xref">式&nbsp;<span>8.14</span></a> 所示的假设检验问题也称之为 <strong>单边检验问题</strong>。</p>
+<p><span id="eq-8_3_1_1_002"><span class="math display">\[
+\begin{align}
+H_0: &amp;\mu = \mu_0 \\
+H_1: &amp; \mu &gt; \mu_0
+\end{align}
+\tag{8.14}\]</span></span></p>
+<p>为了计算 <strong>单边检验</strong> 中的 <span class="math inline">\(p-\text{value}\)</span>，我们</p>
+<ul>
+<li>首先使用观测数据确定统计量 <span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu_0)}{\sigma}\)</span> 的值。</li>
+<li>然后，<span class="math inline">\(p-\text{value}\)</span> 等于标准正态分布中大于等于该值的概率。</li>
+</ul>
+<div id="exr-8_3_e" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.4</strong></span> 假设在 <a href="#exr-8_3_a" class="quarto-xref">习题&nbsp;<span>8.2</span></a> 中，我们预先知道信号值至少是 8，那么在这种情况下可以得出什么结论？</p>
+</div>
+<div id="sol-8_3_e" class="proof solution">
+<p><span class="proof-title"><em>解 8.2</em>. </span>为了判断观察到的数据是否与均值为 8 的假设一致，我们做如下的检验：</p>
+<p><span class="math inline">\(\begin{align}H_0: &amp;\mu = 8 \\ H_1: &amp;\mu &gt; 8 \end{align}\)</span></p>
+<p>单边检验统计量的值为：</p>
+<p><span class="math inline">\(\sqrt{n} \frac{(\overline{X} - \mu_0)}{\sigma} = \sqrt{5} \frac{(9.5 - 8)}{2} = 1.68\)</span></p>
+<p>并且 <span class="math inline">\(p-\text{value}\)</span> 为标准正态分布超过 1.68 的概率，即</p>
+<p><span class="math inline">\(p-\text{value} = 1 - \Phi(1.68) = 0.0465\)</span></p>
+<p>该检验将在所有大于或等于 0.0465 的显著性水平下拒绝原假设。例如，如果显著性水平 <span class="math inline">\(\alpha = 0.05\)</span>，那么我们将拒绝原假设。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p><a href="#eq-8_3_10" class="quarto-xref">式&nbsp;<span>8.13</span></a> 所示的单边检验的 <strong>Operating Characteristic</strong> 函数 <span class="math inline">\(\beta(\mu) = P_{\mu}\{\text{接受} H_0\}\)</span> 为：</p>
+<p><span class="math inline">\(\begin{align} \beta(\mu) &amp;= P_{\mu}\left\{ \overline{X} \leq \mu_0 + z_{\alpha}\frac{\sigma}{\sqrt{n}} \right\} \\ &amp;= P\left\{ \frac{\sqrt{n}(\overline{X} - \mu_0)}{\sigma} \leq \frac{\sqrt{n}(\mu_0 - \mu)}{\sigma} + z_{\alpha} \right\} \\ &amp;= P\left\{ Z \leq \frac{\sqrt{n}(\mu_0 - \mu)}{\sigma} + z_{\alpha} \right\}, \quad Z \sim N(0, 1) \end{align}\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(\beta(\mu) = \Phi \left( \frac{\sqrt{n}(\mu_0 - \mu)}{\sigma} + z_{\alpha} \right)\)</span></p>
+<p>由于 <span class="math inline">\(\Phi\)</span> 是概率分布函数，因此 <span class="math inline">\(\Phi\)</span> 随着自变量的增加而递增，所以从直觉而言：<span class="math inline">\(\beta(\mu)\)</span> 随 <span class="math inline">\(\mu\)</span> 的增加而减少是合理的。显然，当真实均值 <span class="math inline">\(\mu\)</span> 越大时，<span class="math inline">\(\mu \leq \mu_0\)</span> 的可能性就越小。此外，由于 <span class="math inline">\(\Phi(z_{\alpha}) = 1 - \alpha\)</span>，因此</p>
+<p><span class="math inline">\(\beta(\mu_0) = 1 - \alpha\)</span></p>
+<p>最初用于检验 <span class="math inline">\(H_0: \mu = \mu_0 \ vs. \ H_1: \mu &gt; \mu_0\)</span> 的 <a href="#eq-8_3_10" class="quarto-xref">式&nbsp;<span>8.13</span></a> 也可以用于：在显著性水平 <span class="math inline">\(\alpha\)</span> 下，如下假设的单边检验：</p>
+<p><span id="eq-8_3_1_1_003"><span class="math display">\[
+H_0: \mu \leq \mu_0 \quad vs. \quad H_1: \mu &gt; \mu_0
+\tag{8.15}\]</span></span></p>
+<p>为了验证它仍然是在显著性水平为 <span class="math inline">\(\alpha\)</span> 下的检验，我们需要证明：当 <span class="math inline">\(H_0\)</span> 为真时，拒绝原假设的概率不超过 <span class="math inline">\(\alpha\)</span>。也就是说，我们必须验证：</p>
+<p><span class="math inline">\(1 - \beta(\mu) \leq \alpha , \quad \quad \forall \mu \leq \mu_0\)</span></p>
+<p>或者</p>
+<p><span class="math inline">\(\beta(\mu) \geq 1 - \alpha , \quad \quad \forall \mu \leq \mu_0\)</span></p>
+<p>之前已经证明，对于由方程 <a href="#eq-8_3_10" class="quarto-xref">式&nbsp;<span>8.13</span></a> 给出的检验，<span class="math inline">\(\beta(\mu)\)</span> 随 <span class="math inline">\(\mu\)</span> 的增加而减少，且 <span class="math inline">\(\beta(\mu_0) = 1 - \alpha\)</span>。于是：</p>
+<p><span class="math inline">\(\beta(\mu) \geq \beta(\mu_0) = 1 - \alpha , \quad \quad \forall \mu \leq \mu_0\)</span></p>
+<p>这表明由 <a href="#eq-8_3_10" class="quarto-xref">式&nbsp;<span>8.13</span></a> 给出的检验在显著性水平 <span class="math inline">\(\alpha\)</span> 下，对 <span class="math inline">\(H_0: \mu \leq \mu_0 \quad vs. \quad H_1: \mu &gt; \mu_0\)</span> 仍然是一个 显著性水平为 <span class="math inline">\(\alpha\)</span> 的检验。</p>
+</section>
+</section>
+<section id="方差未知的场景t-text检验" class="level3" data-number="8.3.2">
+<h3 data-number="8.3.2" class="anchored" data-anchor-id="方差未知的场景t-text检验"><span class="header-section-number">8.3.2</span> 方差未知的场景：<span class="math inline">\(t-\text{检验}\)</span></h3>
+</section>
 </section>
 <section id="testing-the-equality-of-means-of-two-normal-populations" class="level2" data-number="8.4">
 <h2 data-number="8.4" class="anchored" data-anchor-id="testing-the-equality-of-means-of-two-normal-populations"><span class="header-section-number">8.4</span> Testing the equality of means of two normal populations</h2>
@@ -492,10 +831,10 @@ p-\text{value} &amp;= P\{B(n, p_0) \ge x\} \\
 \end{align}
 \]</span></p>
 <div id="exr-8_6_a" class="theorem exercise">
-<p><span class="theorem-title"><strong>习题 8.1</strong></span> 一家电脑芯片制造商声称他们出售的芯片的缺陷率不超过 2%。一家电子公司对这家芯片公司的声明印象深刻，并购买了该芯片公司生产的大量芯片。为了确定芯片制造商的声明的可信性，该电子公司决定测试 300 个芯片样本。如果最终发现这 300 个芯片中有 10 个是有缺陷的，那么是否应该拒绝芯片制造商的声明？</p>
+<p><span class="theorem-title"><strong>习题 8.5</strong></span> 一家电脑芯片制造商声称他们出售的芯片的缺陷率不超过 2%。一家电子公司对这家芯片公司的声明印象深刻，并购买了该芯片公司生产的大量芯片。为了确定芯片制造商的声明的可信性，该电子公司决定测试 300 个芯片样本。如果最终发现这 300 个芯片中有 10 个是有缺陷的，那么是否应该拒绝芯片制造商的声明？</p>
 </div>
 <div id="sol-8_6_a" class="proof solution">
-<p><span class="proof-title"><em>解 8.1</em>. </span>让我们在 5% 的显著性水平上检测制造商的声明。为了判断是否需要拒绝制造商 2% 缺陷率的声明，我们需要计算当 <span class="math inline">\(p\)</span> 等于 0.02 时，300 个样本中出现 10 个或更多个缺陷产品的概率。也就是说，我们需要计算 <span class="math inline">\(p-\text{value}\)</span>。如果 <span class="math inline">\(p-\text{value}\)</span> 小于或等于 0.05，那么就应该拒绝制造商 2% 缺陷率的声明。</p>
+<p><span class="proof-title"><em>解 8.3</em>. </span>让我们在 5% 的显著性水平上检测制造商的声明。为了判断是否需要拒绝制造商 2% 缺陷率的声明，我们需要计算当 <span class="math inline">\(p\)</span> 等于 0.02 时，300 个样本中出现 10 个或更多个缺陷产品的概率。也就是说，我们需要计算 <span class="math inline">\(p-\text{value}\)</span>。如果 <span class="math inline">\(p-\text{value}\)</span> 小于或等于 0.05，那么就应该拒绝制造商 2% 缺陷率的声明。</p>
 <p><span class="math display">\[
 \begin{align}
 P_{0.02}\{X \ge 10\} &amp;= 1 - P_{0.02}\{X \le 9\} \\
@@ -518,7 +857,7 @@ P_{0.02}\{X \ge 10\} &amp;= 1 - P_{0.02}\{X \le 9\} \\
 <div class="cell">
 <details class="code-fold">
 <summary>代码</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="dv">10</span>, <span class="dv">300</span>, <span class="fl">0.02</span>, <span class="st">"greater"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="dv">10</span>, <span class="dv">300</span>, <span class="fl">0.02</span>, <span class="st">"greater"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>

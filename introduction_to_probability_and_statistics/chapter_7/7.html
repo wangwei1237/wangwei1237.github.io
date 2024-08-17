@@ -378,8 +378,11 @@ window.Quarto = {
   <li><a href="#sec-7_3_2" id="toc-sec-7_3_2" class="nav-link" data-scroll-target="#sec-7_3_2"><span class="header-section-number">7.3.2</span> 预测区间</a></li>
   <li><a href="#sec-7_3_3" id="toc-sec-7_3_3" class="nav-link" data-scroll-target="#sec-7_3_3"><span class="header-section-number">7.3.3</span> 正态分布方差的置信区间</a></li>
   </ul></li>
-  <li><a href="#sec-7_4" id="toc-sec-7_4" class="nav-link" data-scroll-target="#sec-7_4"><span class="header-section-number">7.4</span> Estimating the difference in means of two normal populations</a></li>
-  <li><a href="#sec-7_5" id="toc-sec-7_5" class="nav-link" data-scroll-target="#sec-7_5"><span class="header-section-number">7.5</span> Approximate confidence interval for the mean of a Bernoulli random variable</a></li>
+  <li><a href="#sec-7_4" id="toc-sec-7_4" class="nav-link" data-scroll-target="#sec-7_4"><span class="header-section-number">7.4</span> 估计两个正态分布总体的均值差异</a>
+  <ul class="collapse">
+  <li><a href="#sec-7_4_1" id="toc-sec-7_4_1" class="nav-link" data-scroll-target="#sec-7_4_1"><span class="header-section-number">7.4.1</span> 总体方差未知时 <span class="math inline">\(\mu_1 - \mu_2\)</span> 的区间估计</a></li>
+  </ul></li>
+  <li><a href="#sec-7_5" id="toc-sec-7_5" class="nav-link" data-scroll-target="#sec-7_5"><span class="header-section-number">7.5</span> 伯努利随机变量均值的近似置信区间</a></li>
   <li><a href="#sec-7_6" id="toc-sec-7_6" class="nav-link" data-scroll-target="#sec-7_6"><span class="header-section-number">7.6</span> Confidence interval of the mean of the exponential distribution</a></li>
   <li><a href="#sec-7_7" id="toc-sec-7_7" class="nav-link" data-scroll-target="#sec-7_7"><span class="header-section-number">7.7</span> Evaluating a point estimator</a></li>
   <li><a href="#sec-7_8" id="toc-sec-7_8" class="nav-link" data-scroll-target="#sec-7_8"><span class="header-section-number">7.8</span> The Bayes estimator</a></li>
@@ -1104,10 +1107,418 @@ X_{n+1} \in \left( \overline{x}_n - t_{\alpha/2, n-1} s_n \sqrt{1 + 1/n}, \overl
 </section>
 </section>
 <section id="sec-7_4" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="sec-7_4"><span class="header-section-number">7.4</span> Estimating the difference in means of two normal populations</h2>
+<h2 data-number="7.4" class="anchored" data-anchor-id="sec-7_4"><span class="header-section-number">7.4</span> 估计两个正态分布总体的均值差异</h2>
+<p>令 <span class="math inline">\(X_1, X_2, \dots, X_n\)</span> 是来自均值为 <span class="math inline">\(\mu_1\)</span>、方差为 <span class="math inline">\(\sigma_1^2\)</span> 的正态分布的总体的一个样本，样本大小为 <span class="math inline">\(n\)</span>；<span class="math inline">\(Y_1, \dots, Y_m\)</span> 是来自均值为 <span class="math inline">\(\mu_2\)</span>、方差为 <span class="math inline">\(\sigma_2^2\)</span> 的另一个正态分布总体的一个样本，样本大小为 <span class="math inline">\(m\)</span>。假设这两个样本之间彼此相互独立。此时，我们感兴趣的是：如何估计 <span class="math inline">\(\mu_1 - \mu_2\)</span>？</p>
+<p>因为 <span class="math inline">\(\mu_1\)</span> 和 <span class="math inline">\(\mu_2\)</span> 的最大似然估计分别是：<span class="math inline">\(\overline{X} = \sum_{i=1}^n X_i / n\)</span>、<span class="math inline">\(\overline{Y} = \sum_{i=1}^m Y_i / m\)</span>，所以直觉而言（并且可以证明）<span class="math inline">\(\mu_1 - \mu_2\)</span> 的最大似然估计是 <span class="math inline">\(\overline{X} - \overline{Y}\)</span>。</p>
+<p>为了得到置信区间估计，我们需要计算 <span class="math inline">\(\overline{X} - \overline{Y}\)</span> 的分布。由于</p>
+<p><span class="math inline">\(\begin{align} \overline{X} &amp;\sim \mathcal{N}\left(\mu_1, \frac{\sigma_1^2}{n}\right) \\ \overline{Y} &amp; \sim \mathcal{N}\left(\mu_2, \frac{\sigma_2^2}{m}\right) \end{align}\)</span></p>
+<p>根据独立正态分布随机变量的和也是正态分布的性质，有：</p>
+<p><span class="math inline">\(\overline{X} - \overline{Y} \sim \mathcal{N}\left(\mu_1 - \mu_2, \frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{m}\right)\)</span></p>
+<p>因此，假设 <span class="math inline">\(\sigma_1^2\)</span> 和 <span class="math inline">\(\sigma_2^2\)</span> 是已知的，我们有：</p>
+<p><span id="eq-7_4_1"><span class="math display">\[
+\frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sqrt{\frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{m}}} \sim \mathcal{N}(0, 1)
+\tag{7.5}\]</span></span></p>
+<p>因此，</p>
+<p><span class="math inline">\(P\left\{-z_{\alpha/2} &lt; \frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sqrt{\frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{m}}} &lt; z_{\alpha/2}\right\} = 1 - \alpha\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(P\left\{\overline{X} - \overline{Y} - z_{\alpha/2}\sqrt{\frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{m}} &lt; \mu_1 - \mu_2 &lt; \overline{X} - \overline{Y} + z_{\alpha/2}\sqrt{\frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{m}}\right\} = 1 - \alpha\)</span></p>
+<p>因此，如果获得了样本的观察数据，则 <span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(\overline{Y}\)</span> 分别等于 <span class="math inline">\(\overline{x}\)</span> 和 <span class="math inline">\(\overline{y}\)</span>，那么 <span class="math inline">\(\mu_1 - \mu_2\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 双边置信区间估计为：</p>
+<p><span id="eq-7_4_001"><span class="math display">\[
+\mu_1 - \mu_2 \in \left(\overline{x} - \overline{y} - z_{\alpha/2}\sqrt{\frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{m}}, \, \overline{x} - \overline{y} + z_{\alpha/2}\sqrt{\frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{m}}\right)
+\tag{7.6}\]</span></span></p>
+<p>类似的，可以得到 <span class="math inline">\(\mu_1 - \mu_2\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 的单边置信区间：</p>
+<p><span id="eq-7_4_002"><span class="math display">\[
+\mu_1 - \mu_2 \in \left(-\infty, \, \overline{x} - \overline{y} + z_{\alpha}\sqrt{\frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{m}}\right)
+\tag{7.7}\]</span></span></p>
+<p><a href="#eq-7_4_002" class="quarto-xref">式&nbsp;<span>7.7</span></a> 的证明我们留给读者来进行验证。</p>
+<div id="exr-7_4_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 7.15</strong></span> 我们对两种不同类型的电缆绝缘材料进行了测试，以确定故障发生时的电压水平。在实验室的实验中，在电压不断增加的情况下，两种类型的电缆绝缘材料在如下的电压下发生了故障：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Type A</th>
+<th>Type B</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>36</td>
+<td>52</td>
+</tr>
+<tr class="even">
+<td>44</td>
+<td>64</td>
+</tr>
+<tr class="odd">
+<td>41</td>
+<td>38</td>
+</tr>
+<tr class="even">
+<td>53</td>
+<td>68</td>
+</tr>
+<tr class="odd">
+<td>38</td>
+<td>66</td>
+</tr>
+<tr class="even">
+<td>36</td>
+<td>52</td>
+</tr>
+<tr class="odd">
+<td>34</td>
+<td>60</td>
+</tr>
+<tr class="even">
+<td>54</td>
+<td>44</td>
+</tr>
+<tr class="odd">
+<td>52</td>
+<td>48</td>
+</tr>
+<tr class="even">
+<td>37</td>
+<td>46</td>
+</tr>
+<tr class="odd">
+<td>51</td>
+<td>70</td>
+</tr>
+<tr class="even">
+<td>44</td>
+<td>62</td>
+</tr>
+<tr class="odd">
+<td>35</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>44</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>假设已知绝缘材料 A 所能承受的电压服从均值为 <span class="math inline">\(\mu_A\)</span>（未知）、方差为 <span class="math inline">\(\sigma_A^2 = 40\)</span> 的正态分布；而绝缘材料 B 服从均值为 <span class="math inline">\(\mu_B\)</span>（未知）、方差为 <span class="math inline">\(\sigma_B^2 = 100\)</span> 的正态分布。</p>
+<ol type="1">
+<li>确定 <span class="math inline">\(\mu_B - \mu_A\)</span> 的 95% 置信区间。</li>
+<li>确定我们可以以 95% 的置信度断言比 <span class="math inline">\(\mu_B - \mu_A\)</span> 小的最大值。</li>
+</ol>
+</div>
+<div id="sol-7_4_a" class="proof solution">
+<p><span class="proof-title"><em>解 7.15</em>. </span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">52</span>, <span class="dv">64</span>, <span class="dv">38</span>, <span class="dv">68</span>, <span class="dv">66</span>, <span class="dv">52</span>, <span class="dv">60</span>, <span class="dv">44</span>, <span class="dv">48</span>, <span class="dv">46</span>, <span class="dv">70</span>, <span class="dv">62</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">36</span>, <span class="dv">44</span>, <span class="dv">41</span>, <span class="dv">53</span>, <span class="dv">38</span>, <span class="dv">36</span>, <span class="dv">34</span>, <span class="dv">54</span>, <span class="dv">52</span>, <span class="dv">37</span>, <span class="dv">51</span>, <span class="dv">44</span>, <span class="dv">35</span>, <span class="dv">44</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>l <span class="ot">&lt;-</span> <span class="fu">mean</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(y) <span class="sc">-</span> <span class="fu">qnorm</span>(.<span class="dv">975</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">40</span> <span class="sc">/</span> <span class="dv">14</span> <span class="sc">+</span> <span class="dv">100</span> <span class="sc">/</span> <span class="dv">12</span>) </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">mean</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(y) <span class="sc">+</span> <span class="fu">qnorm</span>(.<span class="dv">975</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">40</span> <span class="sc">/</span> <span class="dv">14</span> <span class="sc">+</span> <span class="dv">100</span> <span class="sc">/</span> <span class="dv">12</span>) </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(l,u)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  6.491114 19.604124</code></pre>
+</div>
+</div>
+<p>因此，我们有 95% 的信心可以断言 <span class="math inline">\(\mu_B - \mu_A \in (6.491114, 19.604124)\)</span>。为了获得单边上置信区间，我们可以采用如下的 R 代码：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">52</span>, <span class="dv">64</span>, <span class="dv">38</span>, <span class="dv">68</span>, <span class="dv">66</span>, <span class="dv">52</span>, <span class="dv">60</span>, <span class="dv">44</span>, <span class="dv">48</span>, <span class="dv">46</span>, <span class="dv">70</span>, <span class="dv">62</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">36</span>, <span class="dv">44</span>, <span class="dv">41</span>, <span class="dv">53</span>, <span class="dv">38</span>, <span class="dv">36</span>, <span class="dv">34</span>, <span class="dv">54</span>, <span class="dv">52</span>, <span class="dv">37</span>, <span class="dv">51</span>, <span class="dv">44</span>, <span class="dv">35</span>, <span class="dv">44</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">mean</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(y) <span class="sc">-</span> <span class="fu">qnorm</span>(.<span class="dv">95</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">40</span> <span class="sc">/</span> <span class="dv">14</span> <span class="sc">+</span> <span class="dv">100</span> <span class="sc">/</span> <span class="dv">12</span>) </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>u</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7.545227</code></pre>
+</div>
+</div>
+<p>因此，我们有 95% 的信心认为 <span class="math inline">\(\mu_B - \mu_A \ge 7.545227\)</span>。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<section id="sec-7_4_1" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="sec-7_4_1"><span class="header-section-number">7.4.1</span> 总体方差未知时 <span class="math inline">\(\mu_1 - \mu_2\)</span> 的区间估计</h3>
+<p>现在，我们希望再次对 <span class="math inline">\(\mu_1 - \mu_2\)</span> 进行区间估计，但这次估计时的总体方差 <span class="math inline">\(\sigma_1^2\)</span> 和 <span class="math inline">\(\sigma_2^2\)</span> 均是未知的。在这种情况下，最直接的做法就是用 <strong>样本方差</strong> 来替换公式 <a href="#eq-7_4_1" class="quarto-xref">式&nbsp;<span>7.5</span></a> 中的总体方差 <span class="math inline">\(\sigma_1^2\)</span> 和 <span class="math inline">\(\sigma_2^2\)</span>：</p>
+<p><span class="math inline">\(\begin{align} S_1^2 &amp;= \frac{\sum_{i=1}^n (X_i - \overline{X})^2}{n - 1} \\ S_2^2 &amp;= \frac{\sum_{i=1}^m (Y_i - \overline{Y})^2}{m - 1} \end{align}\)</span></p>
+<p>也就是说，此时的区间估计很自然地变为如下的形式：</p>
+<p><span id="eq-7_4_003"><span class="math display">\[
+\frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sqrt{S_1^2/n + S_2^2/m}}
+\tag{7.8}\]</span></span></p>
+<p>然而，为了利用 <a href="#eq-7_4_003" class="quarto-xref">式&nbsp;<span>7.8</span></a> 计算置信区间，我们需要知道 <a href="#eq-7_4_003" class="quarto-xref">式&nbsp;<span>7.8</span></a> 的分布，并且该分布不能依赖于任何未知参数 <span class="math inline">\(\sigma_1^2\)</span> 和 <span class="math inline">\(\sigma_2^2\)</span>。不幸的是，这个分布既复杂又确实依赖于未知参数 <span class="math inline">\(\sigma_1^2\)</span> 和 <span class="math inline">\(\sigma_2^2\)</span>。事实上，只有在特殊情况下，即 <span class="math inline">\(\sigma_1^2 = \sigma_2^2\)</span> 时，我们才能获得 <span class="math inline">\(\mu_1 - \mu_2\)</span> 的区间估计。因此，虽然总体方差未知，但我们可以假设总体方差是一致的，并令 <span class="math inline">\(\sigma^2\)</span> 表示 <span class="math inline">\(\sigma_1^2\)</span> 和 <span class="math inline">\(\sigma_2^2\)</span> 的值。由 <a href="../chapter_6/6.html#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a> 得到：</p>
+<p><span class="math inline">\(\begin{align} (n - 1)\frac{S_1^2}{\sigma^2} &amp; \sim \chi^2_{n-1} \\ (m - 1)\frac{S_2^2}{\sigma^2} &amp; \sim \chi^2_{m-1} \end{align}\)</span></p>
+<p>此外，由于样本是独立的，因此这两个卡方随机变量也是独立的。由卡方随机变量的可加性，独立卡方随机变量之和也是卡方分布，其自由度等于各卡方随机变量的自由度之和，因此有：</p>
+<p><span id="eq-7_4_2"><span class="math display">\[
+(n - 1)\frac{S_1^2}{\sigma^2} + (m - 1)\frac{S_2^2}{\sigma^2} \sim \chi^2_{n+m-2}
+\tag{7.9}\]</span></span></p>
+<p>同时，由于</p>
+<p><span class="math inline">\(\overline{X} - \overline{Y} \sim \mathcal{N}\left(\mu_1 - \mu_2, \frac{\sigma^2}{n} + \frac{\sigma^2}{m}\right)\)</span></p>
+<p>我们可以得到：</p>
+<p><span id="eq-7_4_3"><span class="math display">\[
+\frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sqrt{\sigma^2/n + \sigma^2/m}} \sim \mathcal{N}(0, 1)
+\tag{7.10}\]</span></span></p>
+<p>现在，根据 <a href="../chapter_6/6.html#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a> 中的基本结果，在正态分布抽样中，<span class="math inline">\(\overline{X}\)</span> 和 <span class="math inline">\(S^2\)</span> 是独立的，所以 <span class="math inline">\(X_1, S_1^2, X_2, S_2^2\)</span> 是独立的随机变量。因此，如果令：</p>
+<p><span class="math inline">\(S_p^2 = \frac{(n-1)S_1^2 + (m-1)S_2^2}{n+m-2}\)</span></p>
+<p>使用 <span class="math inline">\(t\)</span> 随机变量的定义（<a href="../chapter_5/5.html#sec-5_8_2" class="quarto-xref"><span>小节 5.8.2</span></a>，<span class="math inline">\(t\)</span> 随机变量为两个独立随机变量的比值，其中分子为标准正态分布，分母为一个卡方随机变量除以其自由度的平方根），根据 <a href="#eq-7_4_2" class="quarto-xref">式&nbsp;<span>7.9</span></a> 和 <a href="#eq-7_4_3" class="quarto-xref">式&nbsp;<span>7.10</span></a> 可以得到：</p>
+<p><span class="math inline">\(\frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sqrt{\sigma^2 (1/n + 1/m)}} \div \sqrt{\frac{S_p^2}{\sigma^2}} = \frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sqrt{S_p^2 (1/n + 1/m)}}\)</span></p>
+<p>是自由度为 <span class="math inline">\(n + m - 2\)</span> 的 <span class="math inline">\(t-\text{分布}\)</span> 随机变量。因此：</p>
+<p><span class="math inline">\(P\left\{ -t_{\alpha/2, n+m-2} \leq \frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{S_p \sqrt{1/n + 1/m}} \leq t_{\alpha/2, n+m-2} \right\} = 1 - \alpha\)</span></p>
+<p>因此，当观察到样本数据后，令 <span class="math inline">\(\overline{X} = \overline{x}\)</span>、<span class="math inline">\(\overline{Y} = \overline{y}\)</span>、<span class="math inline">\(S_p = s_p\)</span>，我们得到 <span class="math inline">\(\mu_1 - \mu_2\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 的置信区间：</p>
+<p><span id="eq-7_4_4"><span class="math display">\[
+\left(\overline{x} - \overline{y} - t_{\alpha/2, n+m-2} s_p \sqrt{1/n + 1/m}, \quad \overline{x} - \overline{y} + t_{\alpha/2, n+m-2} s_p \sqrt{1/n + 1/m}\right)
+\tag{7.11}\]</span></span></p>
+<p>类似地，我们可以得到方差未知时 <span class="math inline">\(\mu_1 - \mu_2\)</span> 的单边置信区间。</p>
+<div id="exr-7_4_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 7.16</strong></span> 对于 <a href="#exr-7_4_a" class="quarto-xref">习题&nbsp;<span>7.15</span></a> 中的数据，如果两个样本的总体方差均未知、但是方差是相等的，计算 <span class="math inline">\(\mu_B - \mu_A\)</span> 的 95% 的双边置信区间？</p>
+</div>
+<div id="sol-7_4_b" class="proof solution">
+<p><span class="proof-title"><em>解 7.16</em>. </span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">52</span>, <span class="dv">64</span>, <span class="dv">38</span>, <span class="dv">68</span>, <span class="dv">66</span>, <span class="dv">52</span>, <span class="dv">60</span>, <span class="dv">44</span>, <span class="dv">48</span>, <span class="dv">46</span>, <span class="dv">70</span>, <span class="dv">62</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">36</span>, <span class="dv">44</span>, <span class="dv">41</span>, <span class="dv">53</span>, <span class="dv">38</span>, <span class="dv">36</span>, <span class="dv">34</span>, <span class="dv">54</span>, <span class="dv">52</span>, <span class="dv">37</span>, <span class="dv">51</span>, <span class="dv">44</span>, <span class="dv">35</span>, <span class="dv">44</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>sp <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((<span class="dv">11</span> <span class="sc">*</span> <span class="fu">var</span>(x) <span class="sc">+</span> <span class="dv">13</span> <span class="sc">*</span> <span class="fu">var</span>(y)) <span class="sc">/</span> <span class="dv">24</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>l <span class="ot">&lt;-</span> <span class="fu">mean</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(y) <span class="sc">-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="dv">24</span>) <span class="sc">*</span> sp <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="dv">12</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">14</span>) </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">mean</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(y) <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="dv">24</span>) <span class="sc">*</span> sp <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="dv">12</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">14</span>) </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(l,u)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  5.830952 20.264286</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>由 <a href="#eq-7_4_4" class="quarto-xref">式&nbsp;<span>7.11</span></a> 给出的置信区间是在假设总体方差相等的条件下的结果；假设抽样的总体的方差都是 <span class="math inline">\(\sigma^2\)</span>，则</p>
+<p><span class="math inline">\(\frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sqrt{\sigma^2/n + \sigma^2/m}} = \frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sigma\sqrt{1/n + 1/m}}\)</span></p>
+<p>服从标准正态分布。</p>
+<p>然而，由于 <span class="math inline">\(\sigma^2\)</span> 是未知的，因此不能直接使用上式来计算置信区间。为了计算置信区间，必须首先估计 <span class="math inline">\(\sigma^2\)</span>。同时，请注意，两个样本方差都是 <span class="math inline">\(\sigma^2\)</span> 的估计量。此外，由于 <span class="math inline">\(S_1^2\)</span> 的自由度为 <span class="math inline">\(n - 1\)</span>，<span class="math inline">\(S_2^2\)</span> 的自由度为 <span class="math inline">\(m - 1\)</span>，所以取这两个样本方差的估计量的加权平均值（权重与自由度成正比）作为 <span class="math inline">\(\sigma^2\)</span> 的估计量是合理的。也就是说，<span class="math inline">\(\sigma^2\)</span> 的估计量是 <strong>池化估计量</strong>（<em>the pooled estimator</em>）：</p>
+<p><span class="math inline">\(S_p^2 = \frac{(n - 1)S_1^2 + (m - 1)S_2^2}{n + m - 2}\)</span></p>
+<p>于是基于以下统计量计算置信区间：</p>
+<p><span class="math inline">\(\frac{\overline{X} - \overline{Y} - (\mu_1 - \mu_2)}{\sqrt{S_p^2\left(1/n + 1/m\right)}}\)</span></p>
+<p>根据之前的分析，如上的统计量服从自由度为 <span class="math inline">\(n + m - 2\)</span> 的 <span class="math inline">\(t- \text{分布}\)</span>。</p>
+</div>
+</div>
+<p><a href="#tbl-7_2" class="quarto-xref">表&nbsp;<span>7.2</span></a> 对本节的相关结论进行了总结。</p>
+<div id="tbl-7_2" class="quarto-layout-panel anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-7_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;7.2: <span class="math inline">\(\mu_1 - \mu_2\)</span> 的 <span class="math inline">\(100(1 - \alpha) \%\)</span> 置信区间
+</figcaption>
+<div aria-describedby="tbl-7_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="tbl-7_2" style="flex-basis: 100.0%;justify-content: center;">
+<div id="tbl-7_2_1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-subfloat-caption quarto-subfloat-tbl" id="tbl-7_2_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) <span class="math inline">\(X_i\)</span>，<span class="math inline">\(Y_i\)</span> 的分布
+</figcaption>
+<div aria-describedby="tbl-7_2_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\begin{align} &amp; X_1, ..., X_n \sim \mathcal{N}(\mu_1, \sigma_1^2) \\ &amp; Y_1, ..., Y_n \sim \mathcal{N}(\mu_2, \sigma_2^2) \\ &amp; \overline{X} = \sum_{i=1}^{n}{X_i} / n, \quad S_1^2 = \sum_{i=1}^{n}{(X_i - \overline{X})^2} / (n-1) \\ &amp; \overline{Y} = \sum_{i=1}^{m}{Y_i} / n, \quad S_2^2 = \sum_{i=1}^{m}{(Y_i - \overline{Y})^2} / (m-1)\end{align}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="tbl-7_2" style="flex-basis: 100.0%;justify-content: center;">
+<div id="tbl-7_2_2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-subfloat-caption quarto-subfloat-tbl" id="tbl-7_2_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) 双边置信区间
+</figcaption>
+<div aria-describedby="tbl-7_2_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 60%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Assumption</th>
+<th style="text-align: left;">Confidence Interval</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\sigma_1, \sigma_2\)</span> 已知</td>
+<td style="text-align: left;"><span class="math inline">\(\overline{X} - \overline{Y} \pm z_{\alpha/2} \sqrt{\sigma_1^2/n + \sigma_2^2/m}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\sigma_1, \sigma_2\)</span> 未知但相等</td>
+<td style="text-align: left;"><span class="math inline">\(\overline{X} - \overline{Y} \pm t_{\alpha/2, n+m-2} \sqrt{\left(\frac{1}{n} + \frac{1}{m}\right) \frac{(n-1)S_1^2 + (m-1)S_2^2}{n+m-2}}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="tbl-7_2" style="flex-basis: 100.0%;justify-content: center;">
+<div id="tbl-7_2_3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-subfloat-caption quarto-subfloat-tbl" id="tbl-7_2_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) 单边下置信区间
+</figcaption>
+<div aria-describedby="tbl-7_2_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 51%">
+<col style="width: 48%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Assumption</th>
+<th style="text-align: left;">Lower Confidence Interval</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\sigma_1, \sigma_2\)</span> 已知</td>
+<td style="text-align: left;"><span class="math inline">\((-\infty, \overline{X} - \overline{Y} + z_{\alpha} \sqrt{\sigma_1^2/n + \sigma_2^2/m})\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\sigma_1, \sigma_2\)</span> 未知但相等</td>
+<td style="text-align: left;"><span class="math inline">\(\left(-\infty, \overline{X} - \overline{Y} + t_{\alpha, n+m-2} \sqrt{\left(\frac{1}{n} + \frac{1}{m}\right) \frac{(n-1)S_1^2 + (m-1)S_2^2}{n+m-2}}\right)\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</figure>
+</div>
+<blockquote class="blockquote">
+<p>注意：<span class="math inline">\(\mu_1 - \mu_2\)</span> 的单边上置信区间可以通过 <span class="math inline">\(\mu_2 - \mu_1\)</span> 的单边下执行区间得到</p>
+</blockquote>
+</section>
 </section>
 <section id="sec-7_5" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="sec-7_5"><span class="header-section-number">7.5</span> Approximate confidence interval for the mean of a Bernoulli random variable</h2>
+<h2 data-number="7.5" class="anchored" data-anchor-id="sec-7_5"><span class="header-section-number">7.5</span> 伯努利随机变量均值的近似置信区间</h2>
+<p>考虑某个物品的一个总体，总体中每个物品达到某些标准的概率都是未知概率 <span class="math inline">\(p\)</span>，并且物品之间的达标率是相互独立的。如果我们从总体中抽取 <span class="math inline">\(n\)</span> 个物品进行测试，以确定这些物品是否达到标准，我们如何利用抽检所得到的数据来计算 <span class="math inline">\(p\)</span> 的置信区间？</p>
+<p>如果我们令 <span class="math inline">\(X\)</span> 表示抽取的 <span class="math inline">\(n\)</span> 个物品中符合标准的物品数量，那么 <span class="math inline">\(X\)</span> 是参数为 <span class="math inline">\((n, p)\)</span> 的二项随机变量。因此，当 <span class="math inline">\(n\)</span> 较大时，根据二项分布会近似为正态分布的特性（<a href="../chapter_6/6.html#sec-6_3" class="quarto-xref"><span>小节 6.3</span></a>），<span class="math inline">\(X\)</span> 近似服从均值为 <span class="math inline">\(np\)</span>、方差为 <span class="math inline">\(np(1-p)\)</span> 的正态分布。因此，</p>
+<p><span id="eq-7_5_1"><span class="math display">\[
+\frac{X - np}{\sqrt{np(1-p)}} \approx \mathcal{N}(0, 1)
+\tag{7.12}\]</span></span></p>
+<p>其中 <span class="math inline">\(\approx\)</span> 表示“近似服从”。因此，对于任何 <span class="math inline">\(\alpha \in (0, 1)\)</span>，我们有：</p>
+<p><span class="math inline">\(P\left\{-z_{\alpha/2} &lt; \frac{X - np}{\sqrt{np(1-p)}} &lt; z_{\alpha/2}\right\} \approx 1 - \alpha\)</span></p>
+<p>因此，如果对于实验数据 <span class="math inline">\(X = x\)</span> 而言，<span class="math inline">\(p\)</span> 的近似 <span class="math inline">\(100(1-\alpha)\%\)</span> 置信区为：</p>
+<p><span id="eq-7_5_001"><span class="math display">\[
+\left\{p : -z_{\alpha/2} &lt; \frac{x - np}{\sqrt{np(1-p)}} &lt; z_{\alpha/2}\right\}
+\tag{7.13}\]</span></span></p>
+<p>然而，<a href="#eq-7_5_001" class="quarto-xref">式&nbsp;<span>7.13</span></a> 的区域并非区间。令 <span class="math inline">\(\hat{p} = X/n\)</span> 表示符合标准的物品所占的比例，以便得到 <span class="math inline">\(p\)</span> 的置信区间。根据 <a href="#exr-7_2_a" class="quarto-xref">习题&nbsp;<span>7.1</span></a> 可知，<span class="math inline">\(\hat{p}\)</span> 是 <span class="math inline">\(p\)</span> 的最大似然估计，因此 <span class="math inline">\(\hat{p}\)</span> 应该近似等于 <span class="math inline">\(p\)</span>。因此，<span class="math inline">\(\sqrt{n\hat{p}(1-\hat{p})}\)</span> 将近似等于 <span class="math inline">\(\sqrt{np(1-p)}\)</span>，因此由 <a href="#eq-7_5_1" class="quarto-xref">式&nbsp;<span>7.12</span></a> 可以得到：</p>
+<p><span class="math inline">\(\frac{X - np}{\sqrt{n\hat{p}(1-\hat{p})}} \approx \mathcal{N}(0, 1)\)</span></p>
+<p>因此，对于任何 <span class="math inline">\(\alpha \in (0, 1)\)</span>，我们有：</p>
+<p><span class="math inline">\(P\left\{-z_{\alpha/2} &lt; \frac{X - np}{\sqrt{n\hat{p}(1-\hat{p})}} &lt; z_{\alpha/2}\right\} \approx 1 - \alpha\)</span></p>
+<p>即，</p>
+<p><span class="math inline">\(P\{-z_{\alpha/2}\sqrt{n\hat{p}(1-\hat{p})} &lt; np - X &lt; z_{\alpha/2}\sqrt{n\hat{p}(1-\hat{p})}\} \approx 1 - \alpha\)</span></p>
+<p>将上述不等式两边都除以 <span class="math inline">\(n\)</span>，并根据 <span class="math inline">\(\hat{p} = X/n\)</span>，有：</p>
+<p><span id="eq-7_5_002"><span class="math display">\[
+P\left\{\hat{p} - z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}} &lt; p &lt; \hat{p} + z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}\right\} \approx 1 - \alpha
+\tag{7.14}\]</span></span></p>
+<p><a href="#eq-7_5_002" class="quarto-xref">式&nbsp;<span>7.14</span></a> 给出了 <span class="math inline">\(p\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 的近似置信区间。</p>
+<div id="exm-7_5_a" class="theorem example">
+<p><span class="theorem-title"><strong>例 7.3</strong></span> 从一批晶体管中随机抽取 100 个样本，并测试这 100 个样本是否符合当前标准。如果其中有 80 个晶体管符合标准，那么符合标准的所有晶体管的比例 <span class="math inline">\(p\)</span> 的近似 95% 置信区间为：</p>
+<p><span class="math inline">\((0.8 - 1.96 \sqrt{\frac{0.8(0.2)}{100}}, \, 0.8 + 1.96 \sqrt{\frac{0.8(0.2)}{100}}) = (0.7216, \, 0.8784)\)</span></p>
+<p>也就是说，在 95% 的置信度的情况下，符合标准的晶体管的比例在 72.16% 到 87.84% 之间。</p>
+</div>
+<div id="exr-7_5_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 7.17</strong></span> 2013 年 8 月，《纽约时报》报道了最近的一项民意调查，结果显示 52% 的人（误差范围为 <span class="math inline">\(\pm 4\%\)</span>）对奥巴马总统的工作表现呈肯定态度。这意味着什么？我们能推断出有多少人参与了调查吗？</p>
+</div>
+<div id="sol-7_5_b" class="proof solution">
+<p><span class="proof-title"><em>解 7.17</em>. </span>新闻媒体通常会使用 95% 置信区间。由于 <span class="math inline">\(z_{0.025} = 1.96\)</span>，令 <span class="math inline">\(p\)</span> 代表肯定奥巴马总统工作表现的人的比例，那么关于 <span class="math inline">\(p\)</span> 的 95% 置信区间可以表示为：</p>
+<p><span class="math inline">\(\hat{p} \pm 1.96 \sqrt{\frac{\hat{p}(1 - \hat{p})}{n}} = 0.52 \pm 1.96 \sqrt{\frac{0.52 \times 0.48}{n}}\)</span></p>
+<p>其中，<span class="math inline">\(n\)</span> 是样本的大小。由于“误差范围”是 <span class="math inline">\(\pm 4\%\)</span>，由此可以推导出：</p>
+<p><span class="math inline">\(1.96 \sqrt{\frac{0.52 \times 0.48}{n}} = 0.04\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(n = \frac{(1.96)^2 \times 0.52 \times 0.48}{(0.04)^2} = 599.29\)</span></p>
+<p>也就是说，大约有 599 人参与了调查，其中 52% 的人对奥巴马总统的工作表现持肯定态度。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>我们经常希望为 <span class="math inline">\(p\)</span> 指定一个近似的 <span class="math inline">\(100(1 - \alpha)\%\)</span> 的置信区间，并且该置信区间的长度不能超过某个给定的值（<span class="math inline">\(b\)</span>）。获得这样的、有大小限定的置信区间的问题在于确定合适的样本量 <span class="math inline">\(n\)</span>。从样本大小为 <span class="math inline">\(n\)</span> 的样本中得到的 <span class="math inline">\(p\)</span> 的近似 <span class="math inline">\(100(1 - \alpha)\%\)</span> 的置信区间的长度为：</p>
+<p><span class="math inline">\(2z_{\alpha/2} \sqrt{\frac{\hat{p}(1 - \hat{p})}{n}}\)</span></p>
+<p>该值近似等于 <span class="math inline">\(2z_{\alpha/2}\sqrt{\frac{p(1-p)}{n}}\)</span>。不幸的是，因为 <span class="math inline">\(p\)</span> 是未知的，因此我们不能简单地令 <span class="math inline">\(2z_{\alpha/2}\sqrt{\frac{p(1-p)}{n}} = b\)</span>，然后再确定所需的样本量 <span class="math inline">\(n\)</span>。然而，我们可以先进行一个初步的抽样，以获得 <span class="math inline">\(p\)</span> 的粗略估计，然后利用该估计来确定 <span class="math inline">\(n\)</span>。</p>
+<p>也就是说，我们使用初步抽样样本中的比例 <span class="math inline">\(p^*\)</span> 作为 <span class="math inline">\(p\)</span> 的初步估计；然后通过求解下列方程确定总样本量 <span class="math inline">\(n\)</span>：</p>
+<p><span class="math inline">\(2z_{\alpha/2} \sqrt{\frac{p^*(1 - p^*)}{n}} = b\)</span></p>
+<p>对上式两边平方得到：</p>
+<p><span class="math inline">\((2z_{\alpha/2})^2 \frac{p^*(1 - p^*)}{n} = b^2\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(n = \frac{(2z_{\alpha/2})^2 p^*(1 - p^*)}{b^2}\)</span></p>
+<p>也就是说，如果最初抽取了 <span class="math inline">\(k\)</span> 个样本以获得 <span class="math inline">\(p\)</span> 的初步估计，那么还应再抽取 <span class="math inline">\(n - k\)</span> 个样本。</p>
+<div id="exm-7_5_c" class="theorem example">
+<p><span class="theorem-title"><strong>例 7.4</strong></span> 某芯片制造商生产的每个芯片的达标率为某个未知概率 <span class="math inline">\(p\)</span>（假设芯片之间的达标率是相互独立的）。已经抽取了 30 个芯片的初步样本以便获得区间长度为 0.05 的 <span class="math inline">\(p\)</span> 的近似 99% 置信区间。在抽取的 30 个芯片中，如果有 26 个芯片符合标准（达标），那么 <span class="math inline">\(p\)</span> 的初步估计为 <span class="math inline">\(26/30\)</span>。使用该值，得到长度为 0.05 的 99% 置信区间所需的样本量为：</p>
+<p><span class="math inline">\(n = \frac{4(z_{0.005})^2 \cdot \frac{26}{30} \left(1 - \frac{26}{30}\right)}{(0.05)^2} = \frac{4(2.58)^2 \cdot \frac{26}{30} \cdot \frac{4}{30}}{(0.05)^2} = 1231\)</span></p>
+<p>因此，我们现在应该再抽取 1201 个芯片，并且如果其中有 1040 个芯片是符合标准的，那么 <span class="math inline">\(p\)</span> 的最终 99% 置信区间为：</p>
+<p><span class="math inline">\(\left(\frac{1066}{1231} - \sqrt{\frac{1066}{1231} \left(1 - \frac{1066}{1231}\right)} \cdot \frac{z_{0.005}}{\sqrt{1231}}, \, \frac{1066}{1231} + \sqrt{\frac{1066}{1231} \left(1 - \frac{1066}{1231}\right)} \cdot \frac{z_{0.005}}{\sqrt{1231}}\right)\)</span></p>
+<p>即：</p>
+<p><span class="math inline">\(p \in (0.84091, 0.89101)\)</span> <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>如前所示，当样本量为</p>
+<p><span class="math inline">\(n = \frac{(2z_{\alpha/2})^2}{b^2} \cdot p(1-p)\)</span></p>
+<p>时，<span class="math inline">\(p\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 置信区间的长度将近似为 <span class="math inline">\(b\)</span>。</p>
+<p>现在很容易证明，对于函数 <span class="math inline">\(g(p) = p(1-p)\)</span>（定义域为：<span class="math inline">\(0 \leq p \leq 1\)</span>）而言，当 <span class="math inline">\(p = \frac{1}{2}\)</span> 时，<span class="math inline">\(g(p)\)</span> 取得最大值 <span class="math inline">\(\frac{1}{4}\)</span>。因此，<span class="math inline">\(n\)</span> 的上界为</p>
+<p><span class="math inline">\(n \leq \frac{(z_{\alpha/2})^2}{b^2}\)</span></p>
+<p>因此，样本量至少为 <span class="math inline">\(\frac{(z_{\alpha/2})^2}{b^2}\)</span> 时，可以确保在不需要任何额外的抽样的情况下，置信区间的长度不超过 <span class="math inline">\(b\)</span>。</p>
+</div>
+</div>
+<p><a href="#tbl-7_3" class="quarto-xref">表&nbsp;<span>7.3</span></a> 对本节的内容进行了总结。</p>
+<div id="tbl-7_3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-7_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;7.3: <span class="math inline">\(X \sim \mathcal{N}(n, p)\)</span>，<span class="math inline">\(\hat{p} = X/n\)</span>，<span class="math inline">\(p\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 的置信区间
+</figcaption>
+<div aria-describedby="tbl-7_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>置信区间类型</th>
+<th>置信区间</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>双边置信区间</td>
+<td><span class="math inline">\(\hat{p} \pm z_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}\)</span></td>
+</tr>
+<tr class="even">
+<td>单边下置信区间</td>
+<td><span class="math inline">\(\left(-\infty, \, \hat{p} + z_{\alpha} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}\right)\)</span></td>
+</tr>
+<tr class="odd">
+<td>单边上置信区间</td>
+<td><span class="math inline">\(\left(\hat{p} - z_{\alpha} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}, \, \infty\right)\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
 <section id="sec-7_6" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="sec-7_6"><span class="header-section-number">7.6</span> Confidence interval of the mean of the exponential distribution</h2>
