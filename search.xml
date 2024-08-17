@@ -10,6 +10,173 @@
 <h2 id="评测的疑惑">评测的疑惑</h2>
 <p>刚工作的时候，经常从事性能评估工作以评估当前系统的改动是否会影响系统的整体性能。那个时候，我们总能够找到各种方法构造线下的性能测试环境，并且性能指标的测试结果往往能够代表上线后的系统的真实表现。也就是说，上线前的性能测试结果和上线后的后验表现之间具备很好的相关性，所以，性能测试结果能够解释、代表上线后的系统性能。</p>
 <p>后来，开始参与产品评测的工作，并且开始发现：从解释、指导层面讲，产品评测和之前的性能评测非常不同，产品评测的结果和上线之后的后验结果之间往往有非常大的偏差，甚至是完全相反的结论。</p>
+<p>曾经多少次，在系统上线之前，我们从多个方面进行了评测：性能也提升了，效果也提升了，我们兴高采烈的上线，然后激动的等待着实验数据的产出，最后得到的却是效果不明显的结论。多少个不眠的夜里，我总会问自己：技术上已经有了很大的提升啦，为什么却没有在线上表现出对应的效果呢？这究竟是为什么呀？</p>
+<h3 id="相机-vs-iphone">相机 VS iPhone</h3>
+<p>后来，我看到了旧金山摄影师 <a href="https://om.co/about/">OM MALIK</a> 制作的一张 <a href="https://om.co/2021/02/07/iphone-vs-camera-no-contest/">全球相机和 iPhone 销量的对比图</a>。</p>
+<p><img src="/2024/08/17/The-Basic-Model-for-the-Product-Evaluation/iPhonevsCameraSales2020.jpeg" alt></p>
+<p>在这张对比图上，我们可以明显看到相机和 iPhone 之间此消彼长的态势，以及以 iPhone 为代表的智能手机对相机展开的销量 “屠杀”：</p>
+<ul>
+<li>2007 年 iPhone 问世时，正处于相机的巅峰时期，其年出货量都在上亿台左右，iPhone 对相机行业的影响也微乎其微。</li>
+<li>2012 年，随着 iPhone 5 的面世，800 万像素的手机相机镜头已经开始对相机行业带来冲击。</li>
+</ul>
+<p>近几年的情况就更不用介绍了，对于普通消费者而言，手机足以满足日常拍摄需求，相机的销量被极度压缩。如今，相机的年出货量还不到 1 千万台，已经不足鼎盛时期的 10%。而 iPhone 的出货量已超过 2 亿台，是相机的近 30 倍。</p>
+<p><img src="/2024/08/17/The-Basic-Model-for-the-Product-Evaluation/2.png" alt></p>
+<p>在 <a href="https://www.dxomark.cn/smartphones-vs-cameras-closing-the-gap-on-image-quality/">智能手机与相机图像质量：逐渐弥合的差距</a> 这篇文章中，对比了相机和手机的拍照体验，其中也提到在很多场景下，相机的性能确实是比当前的高端手机要好很多的。所以，从技术角度上讲，相机的能力并不差，甚至在某些场景（比如抓拍）还要优于手机。尤其是在几年前，相机的拍照能力远远超过手机的时候，相机的销量依然在持续下跌。</p>
+<p>技术没问题呀，用户怎么就是不买呢？</p>
+<h2 id="产品评测模型">产品评测模型</h2>
+<p>我一直在想，为什么产品评测的结果和上线后的后验表现之间往往比较大的偏差呢？这背后究竟隐藏着什么秘密和规律呢？</p>
+<h3 id="用户体验模型">用户体验模型</h3>
+<p>2021 年底的时候，基于自己的观察和思考以及阅读的大量资料，我写了一篇文章：<a href="/2021/12/17/the-QoE-model-for-production/">产品的用户体验模型</a> ，在这篇文章中提出了如下的用户体验模型：</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable rowspacing="0.24999999999999992em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mi>Q</mi><mi>o</mi><mi>E</mi><mo>=</mo><mrow><mo fence="true">{</mo><mtable rowspacing="0.3599999999999999em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>用户上瘾</mtext><mo separator="true">,</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>if  </mtext><mi>Q</mi><mi>o</mi><mi>E</mi><mtext> </mtext><mo>&gt;</mo><mi mathvariant="normal">Δ</mi><mo separator="true">;</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>基本满足</mtext><mo separator="true">,</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>if  </mtext><mi mathvariant="normal">∣</mi><mtext> </mtext><mi>Q</mi><mi>o</mi><mi>E</mi><mtext> </mtext><mi mathvariant="normal">∣</mi><mo>&lt;</mo><mi>ε</mi><mo separator="true">;</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>用户离去</mtext><mo separator="true">,</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>if   </mtext><mi>Q</mi><mi>o</mi><mi>E</mi><mtext> </mtext><mo>&lt;</mo><mo>−</mo><mi mathvariant="normal">Δ</mi></mrow></mstyle></mtd></mtr></mtable></mrow></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mi>s</mi><mi mathvariant="normal">.</mi><mi>t</mi><mi mathvariant="normal">.</mi><mtext>  </mtext><mn>0</mn><mo>&lt;</mo><mi>ε</mi><mo>≪</mo><mi mathvariant="normal">Δ</mi></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+&amp;QoE = \begin{cases}
+\text{用户上瘾}, &amp;\text{if } \ QoE\  &gt; \Delta;\\
+\text{基本满足}, &amp;\text{if } \ |\ QoE\ | &lt; \varepsilon;\\
+\text{用户离去}, &amp;\text{if } \ \ QoE\  &lt;  -\Delta
+\end{cases}\\
+&amp;\\
+&amp; s.t. \ \ 0 &lt; \varepsilon \ll \Delta
+\end{aligned}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:7.62em;vertical-align:-3.5599999999999996em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.0600000000000005em;"><span style="top:-6.0600000000000005em;"><span class="pstrut" style="height:4.41em;"></span><span class="mord"></span></span><span style="top:-3.0100000000000007em;"><span class="pstrut" style="height:4.41em;"></span><span class="mord"></span></span><span style="top:-1.5100000000000007em;"><span class="pstrut" style="height:4.41em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.5599999999999996em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.0600000000000005em;"><span style="top:-6.0600000000000005em;"><span class="pstrut" style="height:4.41em;"></span><span class="mord"><span class="mord"></span><span class="mord mathdefault">Q</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.35002em;"><span style="top:-2.19999em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎩</span></span></span><span style="top:-2.19499em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-2.20499em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-3.15001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎨</span></span></span><span style="top:-4.2950099999999996em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-4.30501em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-4.60002em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎧</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.8500199999999998em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.41em;"><span style="top:-4.41em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">用户上瘾</span></span><span class="mpunct">,</span></span></span><span style="top:-2.97em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">基本满足</span></span><span class="mpunct">,</span></span></span><span style="top:-1.5300000000000002em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">用户离去</span></span><span class="mpunct">,</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.9099999999999997em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.41em;"><span style="top:-4.41em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">if </span></span><span class="mspace"> </span><span class="mord mathdefault">Q</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mspace"> </span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">Δ</span><span class="mpunct">;</span></span></span><span style="top:-2.97em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">if </span></span><span class="mspace"> </span><span class="mord">∣</span><span class="mspace"> </span><span class="mord mathdefault">Q</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace"> </span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault">ε</span><span class="mpunct">;</span></span></span><span style="top:-1.5300000000000002em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">if </span></span><span class="mspace"> </span><span class="mspace"> </span><span class="mord mathdefault">Q</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mspace"> </span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">−</span><span class="mord">Δ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.9099999999999997em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span><span style="top:-3.0100000000000007em;"><span class="pstrut" style="height:4.41em;"></span><span class="mord"><span class="mord"></span></span></span><span style="top:-1.5100000000000007em;"><span class="pstrut" style="height:4.41em;"></span><span class="mord"><span class="mord"></span><span class="mord mathdefault">s</span><span class="mord">.</span><span class="mord mathdefault">t</span><span class="mord">.</span><span class="mspace"> </span><span class="mspace"> </span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault">ε</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≪</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">Δ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.5599999999999996em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p><img src="/2021/12/17/the-QoE-model-for-production/2.png" alt></p>
+<p>事情好像渐渐明晰了起来，但是好像还是没有从根本上解释产品评测的结果和上线后的后验表现之间存在偏差的原因。</p>
+<h3 id="评测基本模型">评测基本模型</h3>
+<p>直到最近，在一次针对语音的多维度评估中，我们才从多个视角的评估数据中忽然发现了这其中的秘密。高兴之情溢于言表，可真是：潇潇雨，雾蒙浓，一线阳光穿云出。我把我们的发现称之为：产品评测的基本模型。</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Perception</mtext><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mtext>Actual</mtext><mo separator="true">,</mo><mtext> Expected</mtext><mo separator="true">,</mo><mtext> UX</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Perception} = f(\text{Actual}, \ \text{Expected}, \ \text{UX}) 
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord text"><span class="mord">Perception</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord text"><span class="mord">Actual</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">Expected</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">UX</span></span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li><strong>Perception</strong>：代表着用户使用产品的感知体验。</li>
+<li><strong>Actual</strong>：代表着产品的实际具有的能力，比如 佳能 EOS R5 Mark II 相机可以拍摄 8K 60P 的视频。</li>
+<li><strong>Expected</strong>：代表着用户使用产品之前的预期，即用户希望这个产品有什么能力，比如用户希望单反相机能够拍出 4K HDR 的视频。</li>
+<li><strong>UX</strong>：代表的用户使用产品过程中的交互体验，比如相机的 3A——自动对焦 (AF)、自动曝光 (AE) 和自动白平衡 (AWB)——使得我们在拍照过程中不需要频繁调节各种参数，大大提升了用户拍照的交互体验。</li>
+</ul>
+<p>用户的感知体验不仅仅依赖于产品的实际能力，也不仅仅与用户预期有关，而是和产品的实际能力、用户预期、交互体验这三者（我们称之为感知体验三要素）有关，是这三者共同决定的。我们之前的评测往往只关注了这三者中的某个或者某两个因素，因此导致了评测结果和上线后的后验表现之间存在偏差。</p>
+<h4 id="actual">Actual</h4>
+<p>产品的实际能力取决于产品的技术实力，是产品感知体验的基础和根本。没有强大的技术实力，很难纯靠贩卖预期和在细节上死扣交互体验而做出让用户满意的产品，更很难获得较好的用户感知体验。</p>
+<h4 id="expected">Expected</h4>
+<p>用户预期是感知体验的显著影响力，当用户想要一个苹果时，我们却给了他一车香蕉，即便是最好的香蕉，那么用户也很难满意。在雷军的 《小米创业思考》这本书中，雷军对用户预期给予了高度关注。</p>
+<div class="douban-card-block">
+	<a class="douban-card" href="https://book.douban.com/subject/36057097">
+		<div class="douban-card-bgimg" style="background-image: url('https://images.weserv.nl/?url=https://img1.doubanio.com/view/subject/s/public/s34286309.jpg');"></div>
+		<div class="douban-card-left">
+			<div class="douban-card-img" style="background-image: url('https://images.weserv.nl/?url=https://img1.doubanio.com/view/subject/s/public/s34286309.jpg');"></div>
+		</div>
+		<div class="douban-card-right" style="line-height: 1.7;">
+			<div class="douban-card-item"><span>书名: </span><strong>小米创业思考</strong></div>
+			<div class="douban-card-item"><span>作者: </span><span>雷军</span></div>
+			<div class="douban-card-item"><span>出版年份: </span><span>2022-8-1</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
+		</div>
+	</a>
+</div>
+<style>
+	.douban-card-block {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		max-height: 400px;
+	}
+	.douban-card {
+		display: flex;
+		margin: 30px 10px;
+		padding: 15px;
+		border-radius: 10px;
+		position: relative;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+		color: antiquewhite;
+		text-decoration: none;
+	}
+	.douban-card:hover {
+		text-decoration: none;
+	}
+	.douban-card-bgimg {
+		position: absolute;
+		width: 115%;
+		height: 115%;
+		filter: blur(15px) brightness(0.6);
+		background-size: 100%;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+	.douban-card-img {
+		position: relative;
+		height: 130px;
+		width: 80px;
+		background-size: 100%;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+	.douban-card-img {
+		position: relative;
+		height: 130px;
+		width: 80px;
+	}
+	.douban-card-left {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.douban-card-right {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		margin-left: 12px;
+		font-size: 16px;
+		font-family: 'Courier New', Courier, monospace;
+		line-height: 1.3;
+		color: antiquewhite;
+	}
+	.douban-card-item {
+		margin-top: 4px;
+	}
+</style>
+<p>在 《小米创业思考》 一书中，雷军总结了小米成功的互联网七字诀：专注、极致、口碑、快。对于 “口碑” 这个秘诀，书里这样写到：</p>
+<blockquote>
+<p>用户口碑是所有产品成功的关键因素，这是不言而喻的公理。</p>
+<p>资源永远有限，对于创业公司尤其如此。只有专注，才能集中所有资源做一件事情，才能把这件事情做到极致；只有极致，才能从内心深处打动用户，用户才愿意口口相传，从而形成良好的口碑传播效应。</p>
+<p>良好的口碑从何而来？我的理解是，好产品不一定能带来口碑，便宜的产品不一定能带来口碑，又好又便宜的产品也不一定能带来口碑，<code>只有超过预期的产品才能带来口碑</code>。</p>
+</blockquote>
+<p>在 《小米创业思考》 这本书中，总共提到了近 40 次用户预期，在这本书的 14 个章节中，有 5 个章节提到了用户预期，从中也可以看出用户预期的重要性。在第 12 章——生态链模式——介绍小米手环的时候，书里这样写道：</p>
+<blockquote>
+<p>为了刺激用户的超预期感，我们玩了点“小心思”，在发布产品时，我们对外宣称可以实现 30 天的超长待机（这在当时已经是个不敢想象的数字），但实际上实验数据要远大于这个数字。</p>
+<p><strong>很多用户使用之后才发现续航时间比说明书里说的要长很多，大大超出预期，由此进一步扩大了小米手环的口碑。</strong></p>
+</blockquote>
+<p>我们认为，用户预期来自两个因素：</p>
+<ul>
+<li>用户的自我认知</li>
+<li>竞品的实际能力</li>
+</ul>
+<p>如何理解呢？如果小孩平时考试都是考 70 分左右（满分 100 分），忽然有一天孩子告诉你她考了 90 分，那么作为父母的我们一定会感到很高兴。过了几天，你去参加家长会，发现那次考试全班 30 个孩子有 29 个考了满分，那么此时我们可能就不会那么高兴了。</p>
+<p>技术变化很快，各类产品层出不穷，用户的预期也随着用户自我认知的提高而不断变化。<strong>所以用户预期并不是一成不变的，而是随着用户自我认知的变化而不断变化</strong>。这要求我们在对待用户预期时，即不能刻舟求剑，也不能坐井观天，而是要用发展的眼光看待用户预期的变化。</p>
+<p>所以，分析到此处，我们才发现了这么多年以来，<code>我们做产品评测的第一大误区</code>：评测的本质应该去探测用户的预期，而不是去对比产品之间的某个具体功能的差异。预期是随着人的不同而不断变化的，是分人群的，是因人而异的；但是不同产品之间的功能差异是固定的，是不因人而异的。</p>
+<h4 id="ux">UX</h4>
+<p>UX 是强有力的粘合剂，是产品实际能力和用户预期之间的润滑剂。当用户预期和产品的实际能力之间出现了偏差的时候，那么就需要依靠强大的 UX 来进行一定的补偿，以避免感知体验上的巨大落差。</p>
+<p>在电影 《抓娃娃》中，有一个马继业带着奶奶和妈妈去吃海底捞的片段：</p>
+<blockquote>
+<p>马继业钱花完了，没钱买菜，于是就带着奶奶和妈妈去海得捞改善下伙食（排队就餐时海得捞提供的免费的饮料和零食），当服务员说可以进去用餐的时候，马继业连忙说：不用不用，我们还想多排一会呢……</p>
+</blockquote>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=1906408958&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<p>从这个层面来看，我们发现 Loading 动画是 UX 最伟大的发明之一。</p>
+<h2 id="评测基本模型中的-f">评测基本模型中的 <em>f</em></h2>
+<p>在评测的基本模型 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Perception</mtext><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mtext>Actual</mtext><mo separator="true">,</mo><mtext> Expected</mtext><mo separator="true">,</mo><mtext> UX</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Perception} = f(\text{Actual}, \ \text{Expected}, \ \text{UX})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord text"><span class="mord">Perception</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord text"><span class="mord">Actual</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">Expected</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">UX</span></span><span class="mclose">)</span></span></span></span> 中，除了我们上面介绍的感知体验三要素外，感知体验三要素的组合方式 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span></span></span></span> 也是一个非常重要的、我们容易忽略的因素。</p>
+<p>在同一个坐标系之中，即便对于是相同的自变量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span>，如果 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span></span></span></span> 不同，那么因变量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">y = f(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span> 也将不同。</p>
+<p><img src="/2024/08/17/The-Basic-Model-for-the-Product-Evaluation/3.png" alt></p>
+<p>对于评测的基本模型 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Perception</mtext><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mtext>Actual</mtext><mo separator="true">,</mo><mtext> Expected</mtext><mo separator="true">,</mo><mtext> UX</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Perception} = f(\text{Actual}, \ \text{Expected}, \ \text{UX})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord text"><span class="mord">Perception</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord text"><span class="mord">Actual</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">Expected</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">UX</span></span><span class="mclose">)</span></span></span></span> 也是如此，即便感知体验的三要素相同，对着三要素的不同组合方式带来的感知体验也不同。正如 <a href="https://baike.baidu.com/item/%E7%94%B0%E5%BF%8C%E8%B5%9B%E9%A9%AC/1137056">田忌赛马</a> 的典故中所说的那样：</p>
+<blockquote>
+<p>孙子曰：今以君之下驷与彼上驷，取君上驷与彼中驷，取君中驷与彼下驷。既驰三辈毕，而田忌一不胜而再胜，卒得王千金。</p>
+</blockquote>
+<p>要素很重要，但是要素的组成方式和构成结构更为重要。正如我在 <a href="/2023/07/09/My-practice-of-working-backwards/">我的 “逆向工作” 实践</a> 中提到的那样：</p>
+<blockquote>
+<p>对于实现特定目标的系统而言，要素很重要，但是连接更为重要。结构决定性质，性质决定用途，就是这个样子。同样都是由 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span></span></span></span> 原子构成，石墨和钻石的结构不同决定了其性质存在非常大的差异。</p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/7.png" alt></p>
+<p>图片中的结构模型由 <a href="https://molview.org/">molview</a> 工具生成。</p>
+</blockquote>
+<p>到此，我们也发现了这么多年来，<code>我们做产品评测的第二大误区</code>：产品评测应该去探测如何组合感知体验的三要素，从而让产品获得最优的感知体验；而不是去对比产品之间的某个具体功能的差异。如何将某一要素的领先优势发挥到极致、采用什么样的结构能够避免某一要素的不足，这才是产品评测更应该关注的事情。</p>
+<h2 id="总结">总结</h2>
+<p>回头想想，我们发现 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Perception</mtext><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mtext>Actual</mtext><mo separator="true">,</mo><mtext> Expected</mtext><mo separator="true">,</mo><mtext> UX</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Perception} = f(\text{Actual}, \ \text{Expected}, \ \text{UX})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord text"><span class="mord">Perception</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord text"><span class="mord">Actual</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">Expected</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">UX</span></span><span class="mclose">)</span></span></span></span> 这个模型源自一次评测中的数据不一致性，这也让我想起了一句话：创新源自异种文化之间的思想碰撞。当数据出现不一致的时候，可能就是创新开始的时候。</p>
 ]]></content>
       <categories>
         <category>总结</category>
