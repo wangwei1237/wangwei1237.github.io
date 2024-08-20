@@ -372,11 +372,14 @@ window.Quarto = {
   <li><a href="#sec-8_3" id="toc-sec-8_3" class="nav-link" data-scroll-target="#sec-8_3"><span class="header-section-number">8.3</span> 正态分布的均值检验</a>
   <ul class="collapse">
   <li><a href="#sec-8_3_1" id="toc-sec-8_3_1" class="nav-link" data-scroll-target="#sec-8_3_1"><span class="header-section-number">8.3.1</span> 方差 <span class="math inline">\(\sigma^2\)</span> 已知的场景</a></li>
-  <li><a href="#方差未知的场景t-text检验" id="toc-方差未知的场景t-text检验" class="nav-link" data-scroll-target="#方差未知的场景t-text检验"><span class="header-section-number">8.3.2</span> 方差未知的场景：<span class="math inline">\(t-\text{检验}\)</span></a></li>
+  <li><a href="#sec-8_3_2" id="toc-sec-8_3_2" class="nav-link" data-scroll-target="#sec-8_3_2"><span class="header-section-number">8.3.2</span> 方差未知的场景：<span class="math inline">\(t-\text{检验}\)</span></a></li>
   </ul></li>
   <li><a href="#testing-the-equality-of-means-of-two-normal-populations" id="toc-testing-the-equality-of-means-of-two-normal-populations" class="nav-link" data-scroll-target="#testing-the-equality-of-means-of-two-normal-populations"><span class="header-section-number">8.4</span> Testing the equality of means of two normal populations</a></li>
   <li><a href="#hypothesis-tests-concerning-the-variance-of-a-normal-population" id="toc-hypothesis-tests-concerning-the-variance-of-a-normal-population" class="nav-link" data-scroll-target="#hypothesis-tests-concerning-the-variance-of-a-normal-population"><span class="header-section-number">8.5</span> Hypothesis tests concerning the variance of a normal population</a></li>
-  <li><a href="#二项分布的假设检验" id="toc-二项分布的假设检验" class="nav-link" data-scroll-target="#二项分布的假设检验"><span class="header-section-number">8.6</span> 二项分布的假设检验</a></li>
+  <li><a href="#二项分布的假设检验" id="toc-二项分布的假设检验" class="nav-link" data-scroll-target="#二项分布的假设检验"><span class="header-section-number">8.6</span> 二项分布的假设检验</a>
+  <ul class="collapse">
+  <li><a href="#sec-8_6_1" id="toc-sec-8_6_1" class="nav-link" data-scroll-target="#sec-8_6_1"><span class="header-section-number">8.6.1</span> 检验两个伯努利总体的参数是否相同</a></li>
+  </ul></li>
   <li><a href="#tests-concerning-the-mean-of-a-poisson-distribution" id="toc-tests-concerning-the-mean-of-a-poisson-distribution" class="nav-link" data-scroll-target="#tests-concerning-the-mean-of-a-poisson-distribution"><span class="header-section-number">8.7</span> Tests concerning the mean of a Poisson distribution</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
@@ -798,10 +801,408 @@ H_0: \mu \leq \mu_0 \quad vs. \quad H_1: \mu &gt; \mu_0
 <p>之前已经证明，对于由方程 <a href="#eq-8_3_10" class="quarto-xref">式&nbsp;<span>8.13</span></a> 给出的检验，<span class="math inline">\(\beta(\mu)\)</span> 随 <span class="math inline">\(\mu\)</span> 的增加而减少，且 <span class="math inline">\(\beta(\mu_0) = 1 - \alpha\)</span>。于是：</p>
 <p><span class="math inline">\(\beta(\mu) \geq \beta(\mu_0) = 1 - \alpha , \quad \quad \forall \mu \leq \mu_0\)</span></p>
 <p>这表明由 <a href="#eq-8_3_10" class="quarto-xref">式&nbsp;<span>8.13</span></a> 给出的检验在显著性水平 <span class="math inline">\(\alpha\)</span> 下，对 <span class="math inline">\(H_0: \mu \leq \mu_0 \quad vs. \quad H_1: \mu &gt; \mu_0\)</span> 仍然是一个 显著性水平为 <span class="math inline">\(\alpha\)</span> 的检验。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>我们还可以在在显著性水平 <span class="math inline">\(\alpha\)</span> 下对如下的假设</p>
+<p><span class="math inline">\(H_0: \mu = \mu_0 \quad (\text{或} \quad \mu \geq \mu_0) \quad vs \quad H_1: \mu &lt; \mu_0\)</span></p>
+<p>做出如下的单边检验：</p>
+<p><span class="math inline">\(\begin{align} \text{接受 } H_0, &amp; \quad \text{如果} \quad \frac{\sqrt{n}}{\sigma}(\overline{X} - \mu_0) \geq -z_{\alpha} \\ \text{拒绝 } H_0, &amp; \quad \text{其他} \end{align}\)</span></p>
+<p>可以通过首先计算检验统计量 <span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu_0)}{\sigma}\)</span> 来进行该检验。<span class="math inline">\(p-\text{value}\)</span> 等于标准正态分布小于 <span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu_0)}{\sigma}\)</span> 的概率，当 <span class="math inline">\(p-\text{value}\)</span> 小于任何的显著性水平时，我们将拒绝原假设。</p>
+</div>
+</div>
+<div id="exr-8_3_f" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.5</strong></span> 目前，市场上的所有香烟的平均尼古丁含量至少为 1.6 毫克/支。一家生产香烟的公司声称，他们发现了一种新的烟草叶处理方法，这种方法会使香烟的平均尼古丁含量低于 1.6 毫克/支。为了测试这家公司的这一说法，我们分析了该公司的 20 支香烟的样本。已知一支香烟的尼古丁含量的标准差为 0.8 毫克，如果 20 支香烟的平均尼古丁含量为 1.54/支，那么在显著性水平为 5% 的情况下，可以得出什么结论？</p>
+<p><strong>注意</strong>：如上问题中有一个问题，即我们如何事先知道标准差为 0.8。一个可能性是，香烟尼古丁含量的变化源自每支香烟中的烟草量的变化，而不是使用的处理方法。因此，可以从以往的经验中得知香烟中尼古丁含量的标准差。</p>
+</div>
+<div id="sol-8_3_f" class="proof solution">
+<p><span class="proof-title"><em>解 8.3</em>. </span>我们必须首先确定适当的原假设。如前所述，我们的检验方法在对原假设和备择假设的处理上是不对称的，因为我们只考虑那些在原假设为真时拒绝原假设的概率永远不会超过显著性水平 <span class="math inline">\(\alpha\)</span> 的检验。因此，拒绝原假设是对数据与此假设不一致的强烈陈述，而当接受原假设时，并不能做出类似的陈述。因此，我们希望仅在有充分证据支持生产商的说法时才能接受生产商的说法，因此我们应将生产商的说法作为备择假设。也就是说，我们应该检验：</p>
+<p><span class="math inline">\(H_0: \mu \geq 1.6 \quad vs \quad H_1: \mu &lt; 1.6\)</span></p>
+<p>此时，检验统计量的值为</p>
+<p><span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu_0)}{\sigma} = \frac{\sqrt{20}(1.54 - 1.6)}{0.8} = -0.336\)</span></p>
+<p>因此，<span class="math inline">\(p\)</span> 值为</p>
+<p><span class="math inline">\(\text{p-value} = P\{Z &lt; -0.336\} = 0.368\)</span></p>
+<p>由于 <span class="math inline">\(\text{p-value}\)</span> 大于 0.05，因此在显著性水平为 5% 的情况下，样本数据不足以拒绝平均尼古丁含量超过 1.6 毫克的假设。换句话说，尽管样本数据支持了香烟生产商的说法，但尚不足以证明应该接受生产商的说法。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p><strong>置信区间估计</strong> 与 <strong>假设检验</strong> 之间有直接的类比关系。例如，对于均值为 <span class="math inline">\(\mu\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span>（已知）的正态分布总体，正如我们在 <a href="../chapter_7/7.html#sec-7_3" class="quarto-xref"><span>小节 7.3</span></a> 中所述，<span class="math inline">\(\mu\)</span> 的 <span class="math inline">\(100(1 - \alpha)\%\)</span> 置信区间为：</p>
+<p><span class="math inline">\(\mu \in \left( \overline{X} - z_{\alpha/2}\frac{\sigma}{\sqrt{n}}, \, \overline{X} + z_{\alpha/2}\frac{\sigma}{\sqrt{n}} \right)\)</span></p>
+<p>其中 <span class="math inline">\(\overline{X}\)</span> 是观测到的样本均值。更正式地，前述置信区间等价于：</p>
+<p><span class="math inline">\(P \left\{ \mu \in \left( \overline{X} - z_{\alpha/2}\frac{\sigma}{\sqrt{n}}, \, \overline{X} + z_{\alpha/2}\frac{\sigma}{\sqrt{n}} \right) \right\} = 1 - \alpha\)</span></p>
+<p>因此，如果 <span class="math inline">\(\mu = \mu_0\)</span>，则 <span class="math inline">\(\mu_0\)</span> 落在区间</p>
+<p><span class="math inline">\(\left( \overline{X} - z_{\alpha/2}\frac{\sigma}{\sqrt{n}}, \, \overline{X} + z_{\alpha/2}\frac{\sigma}{\sqrt{n}} \right)\)</span></p>
+<p>的概率是 <span class="math inline">\(1 - \alpha\)</span>，这意味着显著性水平为 <span class="math inline">\(\alpha\)</span> 的假设——<span class="math inline">\(H_0: \mu = \mu_0 \quad vs \quad H_1: \mu \neq \mu_0\)</span> 的检验是：</p>
+<p>当 <span class="math inline">\(\mu_0 \notin \left( \overline{X} - z_{\alpha/2}\frac{\sigma}{\sqrt{n}}, \, \overline{X} + z_{\alpha/2}\frac{\sigma}{\sqrt{n}} \right)\)</span> 时拒绝 <span class="math inline">\(H_0\)</span>。</p>
+<p>类似地，<span class="math inline">\(\mu\)</span> 的 <span class="math inline">\(100(1 - \alpha)\%\)</span> 单边置信区间由下式给出：</p>
+<p><span class="math inline">\(\mu \in \left( \overline{X} - z_{\alpha}\frac{\sigma}{\sqrt{n}}, \, \infty \right)\)</span></p>
+<p>因此，显著性水平为 <span class="math inline">\(\alpha\)</span> 的假设——<span class="math inline">\(H_0: \mu \leq \mu_0 \quad vs \quad H_1: \mu &gt; \mu_0\)</span> 的检验是：</p>
+<p>当 <span class="math inline">\(\mu_0 \notin \left( \overline{X} - z_{\alpha}\frac{\sigma}{\sqrt{n}}, \, \infty \right)\)</span>（即，<span class="math inline">\(\mu_0 &lt; \overline{X} - z_{\alpha}\frac{\sigma}{\sqrt{n}}\)</span>） 时拒绝 <span class="math inline">\(H_0\)</span>。</p></li>
+<li><p><strong>关于稳健性（<em>robustness</em>）的说明</strong>：统计检验通常基于一些前提条件或假设（例如样本来自正态分布、方差是已知的等），当这些前提条件或假设并不满足的时候，某个检验仍能有良好的表现，那么我们认为该检验是稳健（<em>robust</em>）的。例如，<a href="#sec-8_3_1" class="quarto-xref"><span>小节 8.3.1</span></a> 和 <a href="#sec-8_3_1_1" class="quarto-xref"><span>小节 8.3.1.1</span></a> 中的检验都是基于如下的假设：总体分布是方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布。然而，在推导这些检验时，这个假设仅用于得出：<span class="math inline">\(\overline{X}\)</span> 也服从正态分布。但是，由中心极限定理（<a href="../chapter_6/6.html#thm-6_3_1" class="quarto-xref">定理&nbsp;<span>6.1</span></a>）可知，当样本量足够大时，无论总体服从什么分布，<span class="math inline">\(\overline{X}\)</span> 都将近似服从正态分布。因此，我们可以得出结论，这些检验对于任何方差为 <span class="math inline">\(\sigma^2\)</span> 的总体分布都将是相对稳健的。</p></li>
+</ul>
+</div>
+</div>
+<p><a href="#tbl-8_1" class="quarto-xref">表&nbsp;<span>8.1</span></a> 对本节的假设检验进行了总结。</p>
+<div id="tbl-8_1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-8_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;8.1: <span class="math inline">\(X_1, \dots, X_n\)</span> 是来自 <span class="math inline">\((\mu, \sigma^2)\)</span> 的总体，其中 <span class="math inline">\(\sigma^2\)</span> 是已知的，<span class="math inline">\(\overline{X} = \frac{1}{n} \sum_{i=1}^n X_i\)</span>，<span class="math inline">\(Z\)</span> 是标准正态分布随机变量
+</figcaption>
+<div aria-describedby="tbl-8_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(H_0\)</span></th>
+<th><span class="math inline">\(H_1\)</span></th>
+<th>检验统计量（<em>Test Statistic</em>） <span class="math inline">\(TS\)</span></th>
+<th>在显著性水平 <span class="math inline">\(\alpha\)</span> 下的检验</th>
+<th><span class="math inline">\(TS=t\)</span> 时的 <span class="math inline">\(p-\text{value}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mu = \mu_0\)</span></td>
+<td><span class="math inline">\(\mu \neq \mu_0\)</span></td>
+<td><span class="math inline">\(\sqrt{n}\frac{(\overline{X} - \mu_0)}{\sigma}\)</span></td>
+<td>拒绝 <span class="math inline">\(H_0\)</span> 如果 <span class="math inline">\(|TS| &gt; z_{\alpha/2}\)</span></td>
+<td><span class="math inline">\(2P\{Z \geq |t|\}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mu \leq \mu_0\)</span></td>
+<td><span class="math inline">\(\mu &gt; \mu_0\)</span></td>
+<td><span class="math inline">\(\sqrt{n}\frac{(\overline{X} - \mu_0)}{\sigma}\)</span></td>
+<td>拒绝 <span class="math inline">\(H_0\)</span> 如果 <span class="math inline">\(TS &gt; z_{\alpha}\)</span></td>
+<td><span class="math inline">\(P\{Z \geq t\}\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mu \geq \mu_0\)</span></td>
+<td><span class="math inline">\(\mu &lt; \mu_0\)</span></td>
+<td><span class="math inline">\(\sqrt{n}\frac{(\overline{X} - \mu_0)}{\sigma}\)</span></td>
+<td>拒绝 <span class="math inline">\(H_0\)</span> 如果 <span class="math inline">\(TS &lt; -z_{\alpha}\)</span></td>
+<td><span class="math inline">\(P\{Z \leq t\}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
 </section>
-<section id="方差未知的场景t-text检验" class="level3" data-number="8.3.2">
-<h3 data-number="8.3.2" class="anchored" data-anchor-id="方差未知的场景t-text检验"><span class="header-section-number">8.3.2</span> 方差未知的场景：<span class="math inline">\(t-\text{检验}\)</span></h3>
+<section id="sec-8_3_2" class="level3" data-number="8.3.2">
+<h3 data-number="8.3.2" class="anchored" data-anchor-id="sec-8_3_2"><span class="header-section-number">8.3.2</span> 方差未知的场景：<span class="math inline">\(t-\text{检验}\)</span></h3>
+<p>到目前为止，我们假设正态分布总体的唯一未知参数是其均值。然而，更常见的情况是均值 <span class="math inline">\(\mu\)</span> 和方差 <span class="math inline">\(\sigma^2\)</span> 都未知。假设在这种情况下，再次考虑检验均值等于某个指定值 <span class="math inline">\(\mu_0\)</span> 的假设。即考虑以下假设检验：</p>
+<p><span class="math inline">\(H_0: \mu = \mu_0 \quad vs \quad H_1: \mu \neq \mu_0\)</span></p>
+<p>需要注意的是，此时，因为我们并没有有指定 <span class="math inline">\(\sigma^2\)</span> 的值，因此原假设并不是一个 <strong>简单假设</strong>（<a href="#sec-8_2" class="quarto-xref"><span>小节 8.2</span></a>）。</p>
+<p>与 <a href="#sec-8_3_1" class="quarto-xref"><span>小节 8.3.1</span></a> 一样，当样本均值 <span class="math inline">\(\overline{X}\)</span> 远离 <span class="math inline">\(\mu_0\)</span> 时，拒绝 <span class="math inline">\(H_0\)</span> 是合理的。然而，样本均值 <span class="math inline">\(\overline{X}\)</span> 需要远离 <span class="math inline">\(\mu_0\)</span> 多远才能合理地拒绝 <span class="math inline">\(H_0\)</span> 取决于方差 <span class="math inline">\(\sigma^2\)</span>（参见 <a href="#eq-8_3_001" class="quarto-xref">式&nbsp;<span>8.4</span></a>）。如 <a href="#eq-8_3_3" class="quarto-xref">式&nbsp;<span>8.5</span></a>，<span class="math inline">\(\sigma^2\)</span> 已知时，当 <span class="math inline">\(|\overline{X} - \mu_0|\)</span> 超过 <span class="math inline">\(z_{\alpha/2}\sigma/\sqrt{n}\)</span> 时，检验会拒绝 <span class="math inline">\(H_0\)</span>，即当：</p>
+<p><span class="math inline">\(\frac{\sqrt{n}|\overline{X} - \mu_0|}{\sigma} &gt; z_{\alpha/2}\)</span></p>
+<p>时拒绝 <span class="math inline">\(H_0\)</span>。</p>
+<p>现在，当 <span class="math inline">\(\sigma^2\)</span> 未知时，需要先估计 <span class="math inline">\(\sigma^2\)</span>：</p>
+<p><span class="math inline">\(S^2 = \frac{\sum_{i=1}^{n} (X_i - \overline{X})^2}{n-1}\)</span></p>
+<p>然后，当</p>
+<p><span class="math inline">\(\frac{|\overline{X} - \mu_0|}{S/\sqrt{n}}\)</span></p>
+<p>较大时拒绝 <span class="math inline">\(H_0\)</span>。</p>
+<p>为了确定在显著性水平 <span class="math inline">\(\alpha\)</span> 下， 检验统计量</p>
+<p><span class="math inline">\(\frac{\sqrt{n}|\overline{X} - \mu_0|}{S}\)</span></p>
+<p>需要大到什么程度时才能拒绝 <span class="math inline">\(H_0\)</span>，我们必须确定当 <span class="math inline">\(H_0\)</span> 为真时该统计量的概率分布。然而，如 <a href="../chapter_6/6.html#sec-6_5" class="quarto-xref"><span>小节 6.5</span></a> 中的 <a href="../chapter_6/6.html#cor-6_5_2" class="quarto-xref">推论&nbsp;<span>6.1</span></a> 所述，当 <span class="math inline">\(\mu = \mu_0\)</span> 时，下式定义的统计量 <span class="math inline">\(T\)</span> 服从自由度为 <span class="math inline">\(n-1\)</span> 的 <span class="math inline">\(t-\text{分布}\)</span>。</p>
+<p><span class="math inline">\(T = \frac{\sqrt{n}(\overline{X} - \mu_0)}{S}\)</span></p>
+<p>因此，</p>
+<p><span id="eq-8_3_11"><span class="math display">\[
+P_{\mu_0}\left\{ -t_{\alpha/2, n-1} \leq \frac{\sqrt{n}(\overline{X} - \mu_0)}{S} \leq t_{\alpha/2, n-1} \right\} = 1 - \alpha
+\tag{8.16}\]</span></span></p>
+<p>其中 <span class="math inline">\(t_{\alpha/2, n-1}\)</span> 是自由度为 <span class="math inline">\(n-1\)</span> 的 <span class="math inline">\(t\)</span> 分布在 <span class="math inline">\(\left (100 \frac{\alpha}{2} \right) \%\)</span> 处的上百分位数。</p>
+<p>因此，从 <a href="#eq-8_3_11" class="quarto-xref">式&nbsp;<span>8.16</span></a> 中，我们可以看出，当 <span class="math inline">\(\sigma^2\)</span> 未知的情况时，在适当的显著性水平 <span class="math inline">\(\alpha\)</span> 下的</p>
+<p><span class="math inline">\(H_0: \mu = \mu_0 \quad vs \quad H_1: \mu \neq \mu_0\)</span></p>
+<p>的检验为：</p>
+<p><span id="eq-8_3_12"><span class="math display">\[
+\begin{align}
+\text{接受} \ H_0, &amp;\quad \text{如果} \quad \frac{\sqrt{n}|\overline{X} - \mu_0|}{S} \leq t_{\alpha/2, n-1} \\
+\text{拒绝} \ H_0, &amp;\quad \text{如果} \quad \frac{\sqrt{n}|\overline{X} - \mu_0|}{S} \gt t_{\alpha/2, n-1}
+\end{align}
+\tag{8.17}\]</span></span></p>
+<p>我们称 <a href="#eq-8_3_12" class="quarto-xref">式&nbsp;<span>8.17</span></a> 定义的检验为 <strong>双边 <span class="math inline">\(t-\text{检验}\)</span></strong>（<em>two-sided t-test</em>），如 <a href="#fig-8_3" class="quarto-xref">图&nbsp;<span>8.3</span></a> 所示。</p>
+<div id="fig-8_3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-8_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_8/f_8_3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-8_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;8.3: 双边 <span class="math inline">\(t-\text{检验}\)</span>
+</figcaption>
+</figure>
+</div>
+<p>如果我们用 <span class="math inline">\(t\)</span> 表示检验统计量 <span class="math inline">\(T = \sqrt{n}(\overline{X} - \mu_0)/S\)</span> 的观察值，那么检验的 <span class="math inline">\(p-\text{value}\)</span> 是当 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(|T|\)</span> 超过 <span class="math inline">\(|t|\)</span> 的概率。也就是说，<span class="math inline">\(p-\text{value}\)</span> 是自由度为 <span class="math inline">\(n - 1\)</span> 的 <span class="math inline">\(t-\text{分布}\)</span> 的绝对值超过 <span class="math inline">\(|t|\)</span> 的概率。因此，检验要求在所有的显著性水平均大于 <span class="math inline">\(p-\text{value}\)</span> 时拒绝原假设，同时在所有的显著性水平均小于 <span class="math inline">\(p-\text{value}\)</span> 时接受原假设。</p>
+<div id="exr-8_3_g" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.6</strong></span> 一家诊所的患者的血液胆固醇水平范围为中高水平（即血清中胆固醇至少为 220 毫升/分升），从这些患者中招募了 50 名志愿者来测试一种用于降低血液胆固醇的新药。这 50 名志愿者服用了 1 个月的新药，并记录了他们的血液胆固醇水平的变化。如果他们的血液胆固醇平均降低了 14.8，并且样本标准差为 6.4，可以得出什么结论？</p>
+</div>
+<div id="sol-8_3_g" class="proof solution">
+<p><span class="proof-title"><em>解 8.4</em>. </span>首先检验该变化可能完全是由偶然因素引起的假设——即这 50 个样本的变化构成了一个均值为 0 的正态分布样本。因为用于检验正态分布均值等于 0 的假设的 <span class="math inline">\(T-\text{统计量}\)</span> 的值是</p>
+<p><span class="math inline">\(T = \frac{\sqrt{n} \overline{X}}{S} = \frac{\sqrt{50} \cdot 14.8}{6.4} = 16.352\)</span></p>
+<p>很明显，我们应该拒绝该变化完全是由偶然因素引起的假设。</p>
+<p>然而，不幸的是，此时我们还不能得出结论：这些变化是由于特定药物而不是其他因素引起的。例如，众所周知，任何药物（无论该药物是否直接与患者的病痛相关）通常都会导致患者病情的改善——即所谓的 <strong>安慰剂效应</strong>（<em>placebo effect</em>）。此外，另一个需要考虑的可能性是测试期间的天气情况，因为可以合理地认为天气会影响血液胆固醇水平。</p>
+<p>确实，必须得出结论：上述的实验设计非常不合理。为了测试某种治疗方式是否对可能受多种因素影响的疾病有作用，我们应该尝试设计实验，以避免所有其他可能因素带来的影响。实现这一目标的公认方法是将志愿者随机分成两组：一组复用新药物，另一组服用安慰剂（即一种看起来像实际药物但没有生理作用的药片）。志愿者不应该知道他们是在实验组还是对照组中，实际上，如果连临床医生都不知道这些信息（即所谓的 <strong>双盲试验</strong>（<em>double-blind test</em>）），那就更好了。此时，无论是志愿者还是临床医生，他们自己的偏见都无法在实验中发挥作用。由于这两组人员是从志愿者中随机选出的，我们现在可以认为：除了一组接受了新药而另一组接受了安慰剂之外，影响这两组的所有因素都是相同的。因此，这两组之间表现出的任何差异都可以归因于新药。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-8_3_h" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.7</strong></span> 一位公共卫生官员声称，家庭的平均用水量为每天 350 加仑。为了验证这一说法，对 20 户随机选定的家庭进行了研究，结果这些家庭的平均每日用水量如下：</p>
+<pre><code>340, 344, 362, 375,
+356, 386, 354, 364,
+332, 402, 340, 355,
+362, 322, 372, 324,
+318, 360, 338, 370</code></pre>
+<p>这些数据是否与该官员的说法相矛盾？</p>
+</div>
+<div id="sol-8_3_h" class="proof solution">
+<p><span class="proof-title"><em>解 8.5</em>. </span>为了确定这些数据是否与官员的说法相矛盾，我们需要检验：</p>
+<p><span class="math inline">\(H_0: \mu = 350 \quad vs \quad H_1: \mu \neq 350\)</span></p>
+<p>首先计算样本数据集的样本均值和样本标准差：</p>
+<p><span class="math inline">\(\overline{X} = 353.75, \quad S = 21.82436\)</span></p>
+<p>因此，检验统计量的值为：</p>
+<p><span class="math inline">\(T = \frac{\sqrt{20} (3.75)}{21.82436} = 0.7684308\)</span></p>
+<p>因为这个值小于 <span class="math inline">\(|t_{0.05, 19}| = 1.730\)</span>，所以在 10% 的显著性水平下，接受原假设。实际上，检验数据的 <span class="math inline">\(p-\text{value}\)</span> 为：</p>
+<p><span class="math inline">\(p-\text{value} = P\{ |T_{19}| &gt; 0.7684308 \} = 2P\{ T_{19} &gt; 0.7684308 \} = 0.4517\)</span></p>
+<p>这表明在任何合理的显著性水平下，都会接受原假设，因此数据与该公共卫生官员的说法并不矛盾。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>可以使用 R 来计算 <span class="math inline">\(t-\text{检验}\)</span>。当数据位 <span class="math inline">\(x_1, ..., x_n\)</span> 时，为了检验均值 <span class="math inline">\(\mu\)</span> 等于 <span class="math inline">\(\mu_0\)</span> 的原假设与均值 <span class="math inline">\(\mu\)</span> 不等于 <span class="math inline">\(\mu_0\)</span> 的备择假设，可以使用如下的 R 代码：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(x1, ..., xn)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x, <span class="at">mu =</span> mu0)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>如上的代码会返回 <span class="math inline">\(\mu\)</span> 的 95% 的置信区间以及原假设为真时的 <span class="math inline">\(p-\text{value}\)</span>。我们可以使用如下的代码来计算 <a href="#exr-8_3_h" class="quarto-xref">习题&nbsp;<span>8.7</span></a>：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">340</span>, <span class="dv">356</span>, <span class="dv">332</span>, <span class="dv">362</span>, <span class="dv">318</span>, <span class="dv">344</span>, <span class="dv">386</span>, <span class="dv">402</span>, <span class="dv">322</span>, <span class="dv">360</span>, <span class="dv">362</span>, <span class="dv">354</span>, <span class="dv">340</span>, <span class="dv">372</span>, <span class="dv">338</span>, <span class="dv">375</span>, <span class="dv">363</span>, <span class="dv">355</span>, <span class="dv">324</span>, <span class="dv">370</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">350</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One Sample t-test
+
+data:  x
+t = 0.76843, df = 19, p-value = 0.4517
+alternative hypothesis: true mean is not equal to 350
+95 percent confidence interval:
+ 343.5359 363.9641
+sample estimates:
+mean of x 
+   353.75 </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>此处与原书中的结果存在一定差异，请务必注意。</p>
+</div>
+</div>
+<p>我们可以使用 单边 <span class="math inline">\(t-\text{检验}\)</span> 来检验假设</p>
+<p><span class="math inline">\(H_0: \mu = \mu_0 \quad (\text{或 } H_0: \mu \leq \mu_0) \quad vs \quad H_1: \mu &gt; \mu_0\)</span></p>
+<p>显著性水平为 <span class="math inline">\(\alpha\)</span> 的检验是：</p>
+<p><span id="eq-8_3_13"><span class="math display">\[
+\begin{align}
+\text{接受} H_0 &amp;, \quad \text{如果} \frac{\sqrt{n}(\overline{X} - \mu_0)}{S} \leq t_{\alpha, n-1} \\
+\text{拒绝} H_0 &amp;, \quad \text{如果} \frac{\sqrt{n}(\overline{X} - \mu_0)}{S} &gt; t_{\alpha, n-1}
+\end{align}
+\tag{8.18}\]</span></span></p>
+<p>如果 <span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu_0)}{S} = v\)</span>，那么该检验的 <span class="math inline">\(p-\text{value}\)</span> 是自由度为 <span class="math inline">\(n-1\)</span> 的 <span class="math inline">\(t-\text{分布}\)</span> 随机变量的值大于等于 <span class="math inline">\(v\)</span> 的概率，即 <span class="math inline">\(1 - pt(v, n - 1)\)</span>。</p>
+<p>假设： <span class="math inline">\(H_0: \mu = \mu_0 \quad (\text{或 } H_0: \mu \geq \mu_0) \quad vs \quad H_1: \mu &lt; \mu_0\)</span></p>
+<p>在显著性水平为 <span class="math inline">\(\alpha\)</span> 下的检验是：</p>
+<p><span id="eq-8_3_2_001"><span class="math display">\[
+\begin{align}
+\text{接受 } H_0 &amp;, \quad \text{ 如果 } \frac{\sqrt{n}(\overline{X} - \mu_0)}{S} \geq -t_{\alpha, n-1} \\
+\text{拒绝 } H_0 &amp;, \quad \text{ 如果 } \frac{\sqrt{n}(\overline{X} - \mu_0)}{S} &lt; -t_{\alpha, n-1}
+\end{align}
+\tag{8.19}\]</span></span></p>
+<p>该检验的 <span class="math inline">\(p-\text{value}\)</span> 是自由度为 <span class="math inline">\(n-1\)</span> 的 <span class="math inline">\(t-\text{分布}\)</span> 随机变量的值小于或等于观测值 <span class="math inline">\(\frac{\sqrt{n}(\overline{X} - \mu_0)}{S}\)</span> 的概率，即 <span class="math inline">\(pt(v, n - 1)\)</span>。</p>
+<div id="exr-8_3_i" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.8</strong></span> 新型玻璃纤维轮胎的制造商声称他们生产的轮胎的平均寿命至少为 40,000 英里。为了验证这一说法，测试了 12 条轮胎，其寿命（以千英里为单位）如下：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>轮胎序号</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+<th>10</th>
+<th>11</th>
+<th>12</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>寿命</td>
+<td>36.1</td>
+<td>40.2</td>
+<td>33.8</td>
+<td>38.5</td>
+<td>42</td>
+<td>35.8</td>
+<td>37</td>
+<td>41</td>
+<td>36.8</td>
+<td>37.2</td>
+<td>33</td>
+<td>36</td>
+</tr>
+</tbody>
+</table>
+<p>在 5% 的显著性水平下，检验制造商的说法。</p>
+</div>
+<div id="sol-8_3_i" class="proof solution">
+<p><span class="proof-title"><em>解 8.6</em>. </span>为了确定上述数据是否与制造商生成的其产品的平均寿命至少为 40,000 英里的假设一致，我们将检验</p>
+<p><span class="math inline">\(H_0: \mu \geq 40,000 \quad vs \quad H_1: \mu &lt; 40,000\)</span></p>
+<p>计算得出</p>
+<p><span class="math inline">\(\overline{X} = 37.2833, \quad S = 2.7319\)</span></p>
+<p>因此，检验统计量的值为</p>
+<p><span class="math inline">\(T = \frac{\sqrt{12}(37.2833 - 40)}{2.7319} = -3.4448\)</span></p>
+<p>由于 -3.4448 小于 <span class="math inline">\(t_{0.05, 11} = -1.796\)</span>，因此在 5% 的显著性水平下需要拒绝原假设。实际上，观察数据的 <span class="math inline">\(p-\text{value}\)</span> 为</p>
+<p><span class="math inline">\(p-\text{value} = P\{ T_{11} &lt; -3.4448 \} = P\{ T_{11} &gt; 3.4448 \} = 0.0027\)</span></p>
+<p>这表明在任何大于 0.003 的显著性水平下，我们都将拒绝制造商的说法。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>通过 R 提供的 单边 <span class="math inline">\(t-\text{检验}\)</span> 函数也可以解决 <a href="#exr-8_3_i" class="quarto-xref">习题&nbsp;<span>8.8</span></a> 的问题。在 R 中，通过指定备择假设是均值小于或大于 <span class="math inline">\(\mu_0\)</span> 来执行单边 <span class="math inline">\(t-\text{检验}\)</span>。也就是说，当数据为 <span class="math inline">\(x_1, ..., x_n\)</span> 时，可以使用如下 R 代码对 <span class="math inline">\(H_0: \mu = \mu_0 \quad vs \quad H_1: \mu &gt; \mu_0\)</span> 进行单边 <span class="math inline">\(t-\text{检验}\)</span>。</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(x1,...,xn)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x,  <span class="at">mu =</span> mu0, <span class="at">alternative =</span><span class="st">"less"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>例如，对于 <a href="#exr-8_3_i" class="quarto-xref">习题&nbsp;<span>8.8</span></a> 而言，可以使用如下 R 代码：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">36.1</span>, <span class="fl">40.2</span>, <span class="fl">33.8</span>, <span class="fl">38.5</span>, <span class="dv">42</span>, <span class="fl">35.8</span>, <span class="dv">37</span>, <span class="dv">41</span>, <span class="fl">36.8</span>, <span class="fl">37.2</span>, <span class="dv">33</span>, <span class="dv">36</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">40</span>, <span class="at">alternative =</span> <span class="st">"less"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One Sample t-test
+
+data:  x
+t = -3.4448, df = 11, p-value = 0.002739
+alternative hypothesis: true mean is less than 40
+95 percent confidence interval:
+     -Inf 38.69963
+sample estimates:
+mean of x 
+ 37.28333 </code></pre>
+</div>
+</div>
+<div id="exr-8_3_j" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 8.9</strong></span> 对于一个单服务窗口的排队系统而言，如果到达的客户数量服从泊松分布，那么客户的平均排队时间取决于为客户服务时间的均值和方差。确实，如果 <span class="math inline">\(\mu\)</span> 是服务时间的均值，<span class="math inline">\(\sigma^2\)</span> 是服务时间的方差，那么客户在排队中花费的平均时间将由以下公式给出：</p>
+<p><span class="math inline">\(\frac{\lambda (\mu^2 + \sigma^2)}{2(1 - \lambda \mu)}\)</span></p>
+<p>其中 <span class="math inline">\(\lambda \mu &lt; 1\)</span>，并且 <span class="math inline">\(\lambda\)</span> 是到达率。如果 <span class="math inline">\(\lambda \mu \geq 1\)</span>，则平均等待时间将是无限等待。因为 <span class="math inline">\(\lambda\)</span> 是到达率，<span class="math inline">\(1/\lambda\)</span> 是到达之间的平均时间，因此根据如上的公式可见，当 <span class="math inline">\(\mu\)</span> 仅略小于 <span class="math inline">\(1/\lambda\)</span> 时，平均延迟还相当大。</p>
+<p>假设服务站的平均服务时间（每人）超过 8 分钟，那么该服务站的主管就会雇用第二名服务人员。以下数据给出了该排队系统中 28 位客户的服务时间（以分钟为单位），这些数据是否表明该服务站的平均服务时间超过 8 分钟？</p>
+<pre><code>8.6, 9.4, 5.0, 4.4, 3.7, 11.4, 10.0, 7.6, 14.4, 12.2, 11.0, 14.4, 9.3, 10.5, 10.3, 7.7, 8.3, 6.4, 9.2, 5.7, 7.9, 9.4, 9.0, 13.3, 11.6, 10.0, 9.5, 6.6</code></pre>
+</div>
+<div id="sol-8_3_j" class="proof solution">
+<p><span class="proof-title"><em>解 8.7</em>. </span>使用上述数据来检验服务时间的均值小于或等于 8 分钟的原假设。一个较小的 <span class="math inline">\(p-\text{value}\)</span> 将是平均服务时间超过 8 分钟的有力证据。利用 <code>t.test()</code> 对如上数据进行 <span class="math inline">\(t-\text{检测}\)</span> 得到：检验统计量的值为 2.257，<span class="math inline">\(p-\text{value}\)</span> 为 0.016。如此小的 <span class="math inline">\(p-\text{value}\)</span> 无疑是平均服务时间超过 8 分钟的有力证据。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">8.6</span>, <span class="fl">9.4</span>, <span class="fl">5.0</span>, <span class="fl">4.4</span>, <span class="fl">3.7</span>, <span class="fl">11.4</span>, <span class="fl">10.0</span>, <span class="fl">7.6</span>, <span class="fl">14.4</span>, <span class="fl">12.2</span>, <span class="fl">11.0</span>, <span class="fl">14.4</span>, <span class="fl">9.3</span>, <span class="fl">10.5</span>, <span class="fl">10.3</span>, <span class="fl">7.7</span>, <span class="fl">8.3</span>, <span class="fl">6.4</span>, <span class="fl">9.2</span>, <span class="fl">5.7</span>, <span class="fl">7.9</span>, <span class="fl">9.4</span>, <span class="fl">9.0</span>, <span class="fl">13.3</span>, <span class="fl">11.6</span>, <span class="fl">10.0</span>, <span class="fl">9.5</span>, <span class="fl">6.6</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">8</span>, <span class="at">alternative =</span> <span class="st">"greater"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One Sample t-test
+
+data:  x
+t = 2.2575, df = 27, p-value = 0.01613
+alternative hypothesis: true mean is greater than 8
+95 percent confidence interval:
+ 8.287595      Inf
+sample estimates:
+mean of x 
+ 9.171429 </code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p><a href="#tbl-8_2" class="quarto-xref">表&nbsp;<span>8.2</span></a> 对本节的内容进行了总结。</p>
+<div id="tbl-8_2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-8_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;8.2: <span class="math inline">\(X_1, \dots, X_n\)</span> 是来自方差未知的 <span class="math inline">\((\mu, \sigma^2)\)</span> 总体，<span class="math inline">\(\overline{X} = \sum_{i=1}^{n} X_i/n\)</span>，<span class="math inline">\(S^2 = \sum_{i=1}^{n}(X_i - \overline{X})^2 / (n-1)\)</span>，<span class="math inline">\(T_{n-1}\)</span> 是自由度为 <span class="math inline">\(n-1\)</span> 的 <span class="math inline">\(t-\text{分布}\)</span> 随机变量，<span class="math inline">\(P\{T_{n-1} &gt; t_{\alpha, n-1}\} = \alpha\)</span>
+</figcaption>
+<div aria-describedby="tbl-8_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 16%">
+<col style="width: 39%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(H_0\)</span></th>
+<th><span class="math inline">\(H_1\)</span></th>
+<th>统计量 TS</th>
+<th>在显著性水平为 <span class="math inline">\(\alpha\)</span> 时的检验</th>
+<th><span class="math inline">\(p-\text{value}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mu = \mu_0\)</span></td>
+<td><span class="math inline">\(\mu \neq \mu_0\)</span></td>
+<td><span class="math inline">\(\sqrt{n}(\overline{X} - \mu_0)/S\)</span></td>
+<td>拒绝 <span class="math inline">\(H_0\)</span> 如果， <span class="math inline">\(|TS| &gt; t_{\alpha/2, n-1}\)</span></td>
+<td><span class="math inline">\(2P\{T_{n-1} \geq |t|\}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mu \leq \mu_0\)</span></td>
+<td><span class="math inline">\(\mu &gt; \mu_0\)</span></td>
+<td><span class="math inline">\(\sqrt{n}(\overline{X} - \mu_0)/S\)</span></td>
+<td>拒绝 <span class="math inline">\(H_0\)</span> 如果， <span class="math inline">\(TS &gt; t_{\alpha, n-1}\)</span></td>
+<td><span class="math inline">\(P\{T_{n-1} \geq t\}\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mu \geq \mu_0\)</span></td>
+<td><span class="math inline">\(\mu &lt; \mu_0\)</span></td>
+<td><span class="math inline">\(\sqrt{n}(\overline{X} - \mu_0)/S\)</span></td>
+<td>拒绝 <span class="math inline">\(H_0\)</span> 如果， <span class="math inline">\(TS &lt; -t_{\alpha, n-1}\)</span></td>
+<td><span class="math inline">\(P\{T_{n-1} \leq t\}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
 </section>
 <section id="testing-the-equality-of-means-of-two-normal-populations" class="level2" data-number="8.4">
@@ -831,10 +1232,10 @@ p-\text{value} &amp;= P\{B(n, p_0) \ge x\} \\
 \end{align}
 \]</span></p>
 <div id="exr-8_6_a" class="theorem exercise">
-<p><span class="theorem-title"><strong>习题 8.5</strong></span> 一家电脑芯片制造商声称他们出售的芯片的缺陷率不超过 2%。一家电子公司对这家芯片公司的声明印象深刻，并购买了该芯片公司生产的大量芯片。为了确定芯片制造商的声明的可信性，该电子公司决定测试 300 个芯片样本。如果最终发现这 300 个芯片中有 10 个是有缺陷的，那么是否应该拒绝芯片制造商的声明？</p>
+<p><span class="theorem-title"><strong>习题 8.10</strong></span> 一家电脑芯片制造商声称他们出售的芯片的缺陷率不超过 2%。一家电子公司对这家芯片公司的声明印象深刻，并购买了该芯片公司生产的大量芯片。为了确定芯片制造商的声明的可信性，该电子公司决定测试 300 个芯片样本。如果最终发现这 300 个芯片中有 10 个是有缺陷的，那么是否应该拒绝芯片制造商的声明？</p>
 </div>
 <div id="sol-8_6_a" class="proof solution">
-<p><span class="proof-title"><em>解 8.3</em>. </span>让我们在 5% 的显著性水平上检测制造商的声明。为了判断是否需要拒绝制造商 2% 缺陷率的声明，我们需要计算当 <span class="math inline">\(p\)</span> 等于 0.02 时，300 个样本中出现 10 个或更多个缺陷产品的概率。也就是说，我们需要计算 <span class="math inline">\(p-\text{value}\)</span>。如果 <span class="math inline">\(p-\text{value}\)</span> 小于或等于 0.05，那么就应该拒绝制造商 2% 缺陷率的声明。</p>
+<p><span class="proof-title"><em>解 8.8</em>. </span>让我们在 5% 的显著性水平上检测制造商的声明。为了判断是否需要拒绝制造商 2% 缺陷率的声明，我们需要计算当 <span class="math inline">\(p\)</span> 等于 0.02 时，300 个样本中出现 10 个或更多个缺陷产品的概率。也就是说，我们需要计算 <span class="math inline">\(p-\text{value}\)</span>。如果 <span class="math inline">\(p-\text{value}\)</span> 小于或等于 0.05，那么就应该拒绝制造商 2% 缺陷率的声明。</p>
 <p><span class="math display">\[
 \begin{align}
 P_{0.02}\{X \ge 10\} &amp;= 1 - P_{0.02}\{X \le 9\} \\
@@ -857,7 +1258,7 @@ P_{0.02}\{X \ge 10\} &amp;= 1 - P_{0.02}\{X \le 9\} \\
 <div class="cell">
 <details class="code-fold">
 <summary>代码</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="dv">10</span>, <span class="dv">300</span>, <span class="fl">0.02</span>, <span class="st">"greater"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="dv">10</span>, <span class="dv">300</span>, <span class="fl">0.02</span>, <span class="st">"greater"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -877,6 +1278,32 @@ probability of success
 </div>
 <p><span class="math inline">\(\blacksquare\)</span></p>
 </div>
+<section id="sec-8_6_1" class="level3" data-number="8.6.1">
+<h3 data-number="8.6.1" class="anchored" data-anchor-id="sec-8_6_1"><span class="header-section-number">8.6.1</span> 检验两个伯努利总体的参数是否相同</h3>
+<p>假设某类型的芯片有两种不同的生产方法，并且假设第一种生产方法生产的芯片的缺陷率为 <span class="math inline">\(p_1\)</span>，而第二种生产方法生产的芯片的缺陷率为 <span class="math inline">\(p_2\)</span>。为了检验假设 <span class="math inline">\(p_1 = p_2\)</span>，我们使用第一种方法生产了 <span class="math inline">\(n_1\)</span> 个芯片作为样本 1，使用第二种方法生产了 <span class="math inline">\(n_2\)</span> 个芯片作为样本 2。</p>
+<p>令 <span class="math inline">\(X_1\)</span> 表示样本 1 中的缺陷芯片的数量，<span class="math inline">\(X_2\)</span> 表示样本 2 中的缺陷芯片的数量。因此，<span class="math inline">\(X_1\)</span> 和 <span class="math inline">\(X_2\)</span> 是相互独立的二项分布随机变量，其参数分别为 <span class="math inline">\((n_1, p_1)\)</span> 和 <span class="math inline">\((n_2, p_2)\)</span>。假设 <span class="math inline">\(X_1 + X_2 = k\)</span>，那么两个样本总共有 <span class="math inline">\(k\)</span> 个缺陷品。</p>
+<p>如果 <span class="math inline">\(H_0\)</span>（<span class="math inline">\(p_1 = p_2\)</span>）成立，那么 <span class="math inline">\(n_1 + n_2\)</span> 个芯片中的每一个都有相同的概率成为缺陷品。因此 <span class="math inline">\(k\)</span> 个缺陷品的分布与从一个包含 <span class="math inline">\(n_1 + n_2\)</span> 个物品（其中 <span class="math inline">\(n_1\)</span> 是白色物品， <span class="math inline">\(n_2\)</span> 是黑色物品）中随机抽取 <span class="math inline">\(k\)</span> 个样本的分布相同。换句话说，给定总共 <span class="math inline">\(k\)</span> 个缺陷品，当 <span class="math inline">\(H_0\)</span> 成立时，使用第一种方法得到的缺陷品数量的条件分布将具有以下的超几何分布：</p>
+<p><span id="eq-8_6_1"><span class="math display">\[
+P_{H_0}\{X_1 = i | X_1 + X_2 = k\} = \frac{\binom{n_1}{i}\binom{n_2}{k-i}}{\binom{n_1+n_2}{k}}, \quad i = 0, 1, \ldots, k
+\tag{8.20}\]</span></span></p>
+<p>在检验 <span class="math inline">\(H_0: p_1 = p_2 \quad vs \quad H_1: p_1 \neq p_2\)</span> 时，当使用第一种方法生产的缺陷芯片比例与使用第二种方法生产的缺陷芯片比例差异很大时，似乎可以合理地拒绝原假设。因此，如果总共存在 <span class="math inline">\(k\)</span> 个缺陷品，那么当 <span class="math inline">\(H_0\)</span> 成立时，我们预计 <span class="math inline">\(X_1/n_1\)</span>（使用第一种方法生产的缺陷芯片比例）将接近于 <span class="math inline">\((k - X_1)/n_2\)</span> （使用第二种方法生产的缺陷芯片比例）。当 <span class="math inline">\(X_1\)</span> 非常小或非常大时，<span class="math inline">\(X_1/n_1\)</span> 和 <span class="math inline">\((k - X_1)/n_2\)</span> 之间的差异会比较大，因此，合理的显著性水平 <span class="math inline">\(\alpha\)</span> 的检验如下所示。</p>
+<p>当 <span class="math inline">\(X_1 + X_2 = k\)</span> 时，</p>
+<p><span class="math display">\[
+\begin{align}
+\text{拒绝} H_0 &amp;, \quad \text{如果} P\{X \leq x_1\} \leq \alpha/2 \quad \text{ 或 } \quad P\{X \geq x_1\} \leq \alpha/2 \\
+\text{接受} H_0 &amp;, \quad 否则
+\end{align}
+\]</span></p>
+<p>其中 <span class="math inline">\(X\)</span> 是具有以下概率质量函数的超几何随机变量：</p>
+<p><span id="eq-8_6_2"><span class="math display">\[
+P\{X = i\} = \frac{\binom{n_1}{i}\binom{n_2}{k-i}}{\binom{n_1+n_2}{k}}, \quad i = 0, 1, \ldots, k
+\tag{8.21}\]</span></span></p>
+<p><span id="eq-8_6_3"><span class="math display">\[
+p-\text{value} = 2 \min(P\{X \leq x_1\}, P\{X \geq x_1\})
+\tag{8.22}\]</span></span></p>
+<p>换句话说，如果显著性水平至少为 <span class="math inline">\(\alpha\)</span> 大于等于 <span class="math inline">\(p-\text{value}\)</span>，我们将拒绝原假设。这种检验也称之为 Fisher-Irwin 检验。</p>
+<p>可以通过使用 R 命令 <code>phyper(x, n, m, k)</code> 来计算 <a href="#eq-8_6_3" class="quarto-xref">式&nbsp;<span>8.22</span></a> 的概率，该命令用于计算超几何随机变量的概率，其参数 <span class="math inline">\(n, m, k\)</span> 代表从一个包含 <span class="math inline">\(n\)</span> 个红球和 <span class="math inline">\(m\)</span> 个蓝球的盒子中随机抽取 <span class="math inline">\(k\)</span> 个球时，抽取的红球数量小于或等于 <span class="math inline">\(x\)</span> 的概率。</p>
+</section>
 </section>
 <section id="tests-concerning-the-mean-of-a-poisson-distribution" class="level2" data-number="8.7">
 <h2 data-number="8.7" class="anchored" data-anchor-id="tests-concerning-the-mean-of-a-poisson-distribution"><span class="header-section-number">8.7</span> Tests concerning the mean of a Poisson distribution</h2>
