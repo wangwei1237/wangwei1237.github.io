@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Analysis of variance – Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
+<title>10&nbsp; 方差分析 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,8 +70,38 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="10&nbsp; Analysis of variance – Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="10&nbsp; 方差分析 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
@@ -138,7 +168,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_10/10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of variance</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_10/10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">方差分析</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -225,7 +255,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_10/10.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of variance</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">方差分析</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -303,8 +333,8 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">10.1</span> Introduction</a></li>
-  <li><a href="#an-overview" id="toc-an-overview" class="nav-link" data-scroll-target="#an-overview"><span class="header-section-number">10.2</span> An overview</a></li>
+  <li><a href="#sec-10_1" id="toc-sec-10_1" class="nav-link active" data-scroll-target="#sec-10_1"><span class="header-section-number">10.1</span> 引言</a></li>
+  <li><a href="#sec-10_2" id="toc-sec-10_2" class="nav-link" data-scroll-target="#sec-10_2"><span class="header-section-number">10.2</span> 综述</a></li>
   <li><a href="#one-way-analysis-of-variance" id="toc-one-way-analysis-of-variance" class="nav-link" data-scroll-target="#one-way-analysis-of-variance"><span class="header-section-number">10.3</span> One-way analysis of variance</a></li>
   <li><a href="#two-factor-analysis-of-variance-introduction-and-parameter-estimation" id="toc-two-factor-analysis-of-variance-introduction-and-parameter-estimation" class="nav-link" data-scroll-target="#two-factor-analysis-of-variance-introduction-and-parameter-estimation"><span class="header-section-number">10.4</span> Two-factor analysis of variance: introduction and parameter estimation</a></li>
   <li><a href="#two-factor-analysis-of-variance-testing-hypotheses" id="toc-two-factor-analysis-of-variance-testing-hypotheses" class="nav-link" data-scroll-target="#two-factor-analysis-of-variance-testing-hypotheses"><span class="header-section-number">10.5</span> Two-factor analysis of variance: testing hypotheses</a></li>
@@ -318,7 +348,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-10" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of variance</span></span></h1>
+<h1 class="title"><span id="sec-10" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">方差分析</span></span></h1>
 </div>
 
 
@@ -335,11 +365,60 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">10.1</span> Introduction</h2>
+<section id="sec-10_1" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="sec-10_1"><span class="header-section-number">10.1</span> 引言</h2>
+<p>目前市面上有 4 款软件来教授用户学习一门新的变成语言，某大公司正在考虑大规模购买这 4 款软件中的一款。公司内部一些资深人士声称，这几款软件没有太大的区别，它们对用户的最终学习效果影响很小。为了检验这一假设，公司决定选择 160 名工程师，并将他们分成 4 组，每组 40 人。第 <span class="math inline">\(i\)</span> 组的工程师使用第 <span class="math inline">\(i\)</span>（<span class="math inline">\(i = 1, 2, 3, 4\)</span>）款软件来学习新的语言。当所有工程师完成学习后，参与学习的所有工程师将进行一次全面考试。公司希望使用这次考试的结果来确定不同的教学软件是否真的可以互换。该公司需要怎么做才能实现这一点？</p>
+<p>在回答这个问题之前，我们需要明确，显然我们希望得出这样的结论：当所有分组的平均成绩相似时，可以认为这几款软件确实是可以互换的；而当不同分组的平均成绩之间有很大差异时，可以认为这几款软件在本质上是存在区别的。要得出这样的结论，我们必须注意到：将这 160 名工程师分成 4 组的方法至关重要。例如，假设第一组的成员成绩显著高于其他组，我们能从中得出什么结论？具体来说，这个结果是由于 第 1 款软件的教学效果更好，还是第一组的工程师的学习能力更好？为了能够得出这几款软件是否可以互换的结论，需要一种合理的分组方式以保证不同分组的工程师不会存在显著的差异，这一点至关重要。以完全随机的方式将工程师分成 4 组是久经考验的一种方法。也就是说，完全随机的分组方式可以使得所有可能的分组组合都有相同的概率，从而保障任何一组明显优于其他组的可能性非常小。假设我们确实使用“随机”的方式对工程师分组，虽然目前还不清楚如何才能做到。一种有效的方法是首先对这 160 名工程师进行 1~160 的编号，然后生成 1~160 的随机排列，并将排列中的前 40 名工程师放分到 第 1 组，排列中的第 41 到 80 名工程师分到 第 2 组，以此类推。</p>
+<p>现在，我们可以合理的假设：每一位工程师的考试成绩应该大致服从正态分布，该分布的参数取决于他所使用的教学软件。同样，也可以合理的假设：尽管工程师的平均考试成绩取决于他所使用的教学软件，但考试成绩的变异性（<em>variability</em>）将源自 160 名工程师的内在变异（<em>inherent variation</em>），而不是来自所使用的软件。因此，如果我们令 <span class="math inline">\(X_{ij},\ i=1,...4, \ j=1,...,40\)</span> 表示第 <span class="math inline">\(i\)</span> 组中第 <span class="math inline">\(j\)</span> 名工程师的考试成绩。一个合理的模型可能是假设 <span class="math inline">\(X_{ij}\)</span> 是独立的随机变量，其中 <span class="math inline">\(X_{ij}\)</span> 服从均值为 <span class="math inline">\(\mu_i\)</span> 且方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布。不同的教学软件可以互换的假设相当于对原假设 <span class="math inline">\(H_0: \mu_1 = \mu_2 = \mu_3 = \mu_4\)</span> 进行检验。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="变异量">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+变异量
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>正如在 <a href="../chapter_9/9.html#sec-9_5" class="quarto-xref"><span>小节 9.5</span></a> 中对 <strong>变异</strong> 这个术语的解释，此处再次做如下的强调。</p>
+<p><strong>变异量</strong>（<em>the amount of variation</em>）是指一组数据中的变异性，即数据的波动或分散程度。这种波动可以是由多种因素引起的，包括个体差异、测量误差、随机误差等。在后续的翻译章节中，我们会根据具体的场景交叉使用 <strong>变异量</strong> 和 <strong>数据波动</strong>，如无特殊说明，这些指的都是一个概念。</p>
+<p>同时，我们会避免使用 <strong>数据差异</strong>（<em>difference</em>） 来指代 <strong>变异量</strong> 的概念，因为在数学中，<strong>数据差异</strong> 更多指代两个数据之间的差值，因此和我们所讨论的数据的波动和分布程度并不是一个概念。</p>
+</div>
+</div>
+<p>在本章中，我们将介绍一种技术可以用来检验如上案例中的假设。这种技术非常通用，可以用于推断与总体均值相关的大量参数，这种技术称之为 <strong>方差分析</strong>（<em>ANOVA, analysis of variance</em>）。</p>
 </section>
-<section id="an-overview" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="an-overview"><span class="header-section-number">10.2</span> An overview</h2>
+<section id="sec-10_2" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="sec-10_2"><span class="header-section-number">10.2</span> 综述</h2>
+<blockquote class="blockquote">
+<p>本章内容还需要继续修改。</p>
+</blockquote>
+<p>在 <a href="../chapter_8/8.html#sec-8_4" class="quarto-xref"><span>小节 8.4</span></a>、<a href="../chapter_8/8.html#sec-8_5_1" class="quarto-xref"><span>小节 8.5.1</span></a>、<a href="../chapter_8/8.html#sec-8_6_1" class="quarto-xref"><span>小节 8.6.1</span></a>、<a href="../chapter_8/8.html#sec-8_7_1" class="quarto-xref"><span>小节 8.7.1</span></a> 章节中，我们研究了关于两个总体均值的假设检验。在本章中，我们将研究关于多个总体均值的假设检验。</p>
+<p>在 <span class="quarto-unresolved-ref">?sec-10_3</span> 中，假设我们有来自 <span class="math inline">\(m\)</span> 个不同总体的样本，每个样本的大小为 <span class="math inline">\(n\)</span>，我们希望使用这些数据来检验 <span class="math inline">\(m\)</span> 个总体均值相等的假设。对于这种场景，由于随机变量的均值仅取决于一个因素——即随机变量来自哪个样本——因此称这种情况为 <strong>单因素方差分析</strong>（<em>one-way analysis of variance</em>）。在 <span class="quarto-unresolved-ref">?sec-10_3_2</span> 中，我们展示了如何获得 <span class="math inline">\(\binom{m}{2}\)</span> 对总体均值之间的 <strong>多重比较</strong>（<em>multiple comparisons</em>）。在第 <span class="quarto-unresolved-ref">?sec-10_3_3</span> 中展示了当 <span class="math inline">\(m\)</span> 个样本之间的样本大小不同时，如何检验总体均值相等的假设。</p>
+<p>在 <span class="quarto-unresolved-ref">?sec-10_4</span> 和 <span class="quarto-unresolved-ref">?sec-10_5</span> 中，我们将介绍由两个因素决定因变量均值的模型。在这些模型中，我们可以把自变量排列在一个矩阵中，在这个矩阵中，每一行和每一列都代表着一个因素或条件，矩阵中的元素代表着自变量的观测数据。此时，某个因变量的均值同时依赖于矩阵中的行和列。这种模型称为 <strong>双因素方差分析</strong>（<em>two-way analysis of variance</em>）。我们假设因变量的均值受到自变量的 <strong>加性方式</strong>（<em>additive fashion</em>）影响，具体地，第 <span class="math inline">\(i\)</span> 行、第 <span class="math inline">\(j\)</span> 列的变量对应的响应均值可以表示为 <span class="math inline">\(\mu + \alpha_i + \beta_j\)</span>。在 <span class="quarto-unresolved-ref">?sec-10_4</span> 中，我们将介绍如何估计 <span class="math inline">\(\alpha_i\)</span>、<span class="math inline">\(\beta_j\)</span>。在 <span class="quarto-unresolved-ref">?sec-10_5</span> 中将介绍如何进行检验假设，即某个特定因素不会影响结果的均值。</p>
+<p>在 <span class="quarto-unresolved-ref">?sec-10_6</span> 中，我们将介绍因变量的均值允许以非线性方式取决于自变量所在的行和列的情况，从而允许两个因素之间存在 <strong>交互作用</strong>（<em>interaction</em>）。我们还将介绍如何检验不存在交互作用的假设，以及关于不存在行效应和列效应对因变量均值影响的假设。</p>
+<p>在本章中，我们假设所有的数据都服从正态分布，并且都具有相同（虽然未知）的方差 <span class="math inline">\(\sigma^2\)</span>。使用 ANOVA 来检验和总体均值有关的多个参数的原假设 <span class="math inline">\(H_0\)</span>，需要基于从共同的总体方差 $ ^2 $ 中推导出的两个估计量。第一个估计量是 <span class="math inline">\(\sigma^2\)</span> 的估计量，并且无论原假设是否为真，该估计量都是 <span class="math inline">\(\sigma^2\)</span> 的有效估计量。第二个估计量也是 <span class="math inline">\(\sigma^2\)</span> 的估计量，只是仅在 <span class="math inline">\(H_0\)</span> 为真时，该估计量才是 <span class="math inline">\(\sigma^2\)</span> 的有效估计量。此外，当 <span class="math inline">\(H_0\)</span> 不成立时，第二个估计量往往会超过 <span class="math inline">\(\sigma^2\)</span>。检验方法就是比较这两个估计量的值，并在第二个估计量与第一个估计量的比率足够大时拒绝 <span class="math inline">\(H_0\)</span>。换句话说，当 <span class="math inline">\(H_0\)</span> 为真时，这两个估计量应彼此接近（因为它们在这种情况下都是 <span class="math inline">\(\sigma^2\)</span> 的估计量），而当 <span class="math inline">\(H_0\)</span> 不为真时，第二个估计量通常应比第一个大，因此当第二个估计量显著大于第一个时，拒绝 <span class="math inline">\(H_0\)</span> 是自然的选择。</p>
+<p>我们将使用和卡方随机变量有关的事实来获得方差 <span class="math inline">\(\sigma^2\)</span> 的估计量。假设 <span class="math inline">\(X_1, \dots, X_N\)</span> 是独立的正态分布随机变量，它们可能具有不同的均值但却具有相同的方差 <span class="math inline">\(\sigma^2\)</span>，并且设 <span class="math inline">\(\mu_i = E[X_i]\)</span>，其中 <span class="math inline">\(i = 1, \dots, N\)</span>。</p>
+<p>由于随机变量</p>
+<p><span class="math inline">\(Z_i = (X_i - \mu_i)/\sigma, \quad i = 1, \dots, N\)</span></p>
+<p>服从标准正态分布，因此根据卡方分布随机变量的定义可知：</p>
+<p><span id="eq-10_2_1"><span class="math display">\[
+\sum_{i=1}^{N} Z_i^2 = \sum_{i=1}^{N} \frac{(X_i - \mu_i)^2}{\sigma^2}
+\tag{10.1}\]</span></span></p>
+<p>是一个自由度为 <span class="math inline">\(N\)</span> 的卡方分布随机变量。假设每一个 <span class="math inline">\(\mu_i, \ i = 1, \dots, N\)</span> 都可以表示为 <span class="math inline">\(k\)</span> 个未知参数的线性函数。同时，假设我们可以确定这 <span class="math inline">\(k\)</span> 个参数的估计量，从而给出 <span class="math inline">\(\mu_i\)</span> 的估计量。如果我们用 <span class="math inline">\(\hat{\mu}_i\)</span> 表示 <span class="math inline">\(\mu_i, \ i=1,...,N\)</span> 的估计量，那么可以证明：</p>
+<p><span class="math inline">\(\sum_{i=1}^{N} \frac{(X_i - \hat{\mu}_i)^2}{\sigma^2}\)</span></p>
+<p>服从自由度为 <span class="math inline">\(N - k\)</span> 的卡方分布。</p>
+<p>换句话说，</p>
+<p><span class="math inline">\(\sum_{i=1}^{N} \frac{(X_i - E[X_i])^2}{\sigma^2}\)</span></p>
+<p>是一个自由度为 <span class="math inline">\(N\)</span> 的卡方分布随机变量。</p>
+<p>如果我们用 <span class="math inline">\(k\)</span> 个参数的线性函数来表示每个 <span class="math inline">\(E[X_i]\)</span>，并用这 <span class="math inline">\(k\)</span> 个参数的估计量来替换这 <span class="math inline">\(k\)</span> 个参数，那么我们得到的表达式仍然是卡方分布，但是其自由度将因为每个参数由其估计量来代替而减少 1。</p>
+<p>为了说明如上的结论，我们考虑所有均值已知并且相等的情况，即：</p>
+<p><span class="math inline">\(E[X_i] = \mu, \quad i = 1, \dots, N\)</span></p>
+<p>因为此时只有一个需要估计的参数，因此 <span class="math inline">\(k = 1\)</span>。把公共均值 <span class="math inline">\(\mu\)</span> 的估计量 <span class="math inline">\(\overline{X}\)</span> 代入 <a href="#eq-10_2_1" class="quarto-xref">式&nbsp;<span>10.1</span></a> 得到如下的量：</p>
+<p><span id="eq-10_2_2"><span class="math display">\[
+\sum_{i=1}^{N} \frac{(X_i - \overline{X})^2}{\sigma^2}
+\tag{10.2}\]</span></span></p>
+<p>则 <a href="#eq-10_2_2" class="quarto-xref">式&nbsp;<span>10.2</span></a> 是一个自由度为 <span class="math inline">\(N - 1\)</span> 的卡方分布随机变量。</p>
+<p>在所有均值都相等的情况下，数据 <span class="math inline">\(X_1, \dots, X_N\)</span> 均来自同一个正态分布总体，因此 <a href="#eq-10_2_2" class="quarto-xref">式&nbsp;<span>10.2</span></a> 等价与 <span class="math inline">\((N - 1)S^2/\sigma^2\)</span>，其中 <span class="math inline">\(S^2\)</span> 是样本方差。换句话说，在这种场景下的结论就是：<span class="math inline">\((N - 1)S^2/\sigma^2\)</span> 是自由度为 <span class="math inline">\(N - 1\)</span> 的卡方分布随机变量（参见 <a href="../chapter_6/6.html#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a>）。</p>
 </section>
 <section id="one-way-analysis-of-variance" class="level2" data-number="10.3">
 <h2 data-number="10.3" class="anchored" data-anchor-id="one-way-analysis-of-variance"><span class="header-section-number">10.3</span> One-way analysis of variance</h2>
