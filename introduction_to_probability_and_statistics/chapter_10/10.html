@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -318,7 +352,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../appendices.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">APPENDIX OF TABLES</span></span></a>
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">表格</span></span></a>
   </div>
 </li>
       </ul>
@@ -335,7 +369,11 @@ window.Quarto = {
   <ul>
   <li><a href="#sec-10_1" id="toc-sec-10_1" class="nav-link active" data-scroll-target="#sec-10_1"><span class="header-section-number">10.1</span> 引言</a></li>
   <li><a href="#sec-10_2" id="toc-sec-10_2" class="nav-link" data-scroll-target="#sec-10_2"><span class="header-section-number">10.2</span> 综述</a></li>
-  <li><a href="#one-way-analysis-of-variance" id="toc-one-way-analysis-of-variance" class="nav-link" data-scroll-target="#one-way-analysis-of-variance"><span class="header-section-number">10.3</span> One-way analysis of variance</a></li>
+  <li><a href="#sec-10_3" id="toc-sec-10_3" class="nav-link" data-scroll-target="#sec-10_3"><span class="header-section-number">10.3</span> 单因素方差分析</a>
+  <ul class="collapse">
+  <li><a href="#sec-10_3_1" id="toc-sec-10_3_1" class="nav-link" data-scroll-target="#sec-10_3_1"><span class="header-section-number">10.3.1</span> 使用 R 计算统计量</a></li>
+  <li><a href="#sec-10_3_2" id="toc-sec-10_3_2" class="nav-link" data-scroll-target="#sec-10_3_2"><span class="header-section-number">10.3.2</span> 样本均值的多重比较</a></li>
+  </ul></li>
   <li><a href="#two-factor-analysis-of-variance-introduction-and-parameter-estimation" id="toc-two-factor-analysis-of-variance-introduction-and-parameter-estimation" class="nav-link" data-scroll-target="#two-factor-analysis-of-variance-introduction-and-parameter-estimation"><span class="header-section-number">10.4</span> Two-factor analysis of variance: introduction and parameter estimation</a></li>
   <li><a href="#two-factor-analysis-of-variance-testing-hypotheses" id="toc-two-factor-analysis-of-variance-testing-hypotheses" class="nav-link" data-scroll-target="#two-factor-analysis-of-variance-testing-hypotheses"><span class="header-section-number">10.5</span> Two-factor analysis of variance: testing hypotheses</a></li>
   <li><a href="#two-way-analysis-of-variance-with-interaction" id="toc-two-way-analysis-of-variance-with-interaction" class="nav-link" data-scroll-target="#two-way-analysis-of-variance-with-interaction"><span class="header-section-number">10.6</span> Two-way analysis of variance with interaction</a></li>
@@ -393,7 +431,7 @@ window.Quarto = {
 <p>本章内容还需要继续修改。</p>
 </blockquote>
 <p>在 <a href="../chapter_8/8.html#sec-8_4" class="quarto-xref"><span>小节 8.4</span></a>、<a href="../chapter_8/8.html#sec-8_5_1" class="quarto-xref"><span>小节 8.5.1</span></a>、<a href="../chapter_8/8.html#sec-8_6_1" class="quarto-xref"><span>小节 8.6.1</span></a>、<a href="../chapter_8/8.html#sec-8_7_1" class="quarto-xref"><span>小节 8.7.1</span></a> 章节中，我们研究了关于两个总体均值的假设检验。在本章中，我们将研究关于多个总体均值的假设检验。</p>
-<p>在 <span class="quarto-unresolved-ref">?sec-10_3</span> 中，假设我们有来自 <span class="math inline">\(m\)</span> 个不同总体的样本，每个样本的大小为 <span class="math inline">\(n\)</span>，我们希望使用这些数据来检验 <span class="math inline">\(m\)</span> 个总体均值相等的假设。对于这种场景，由于随机变量的均值仅取决于一个因素——即随机变量来自哪个样本——因此称这种情况为 <strong>单因素方差分析</strong>（<em>one-way analysis of variance</em>）。在 <span class="quarto-unresolved-ref">?sec-10_3_2</span> 中，我们展示了如何获得 <span class="math inline">\(\binom{m}{2}\)</span> 对总体均值之间的 <strong>多重比较</strong>（<em>multiple comparisons</em>）。在第 <span class="quarto-unresolved-ref">?sec-10_3_3</span> 中展示了当 <span class="math inline">\(m\)</span> 个样本之间的样本大小不同时，如何检验总体均值相等的假设。</p>
+<p>在 <a href="#sec-10_3" class="quarto-xref"><span>小节 10.3</span></a> 中，假设我们有来自 <span class="math inline">\(m\)</span> 个不同总体的样本，每个样本的大小为 <span class="math inline">\(n\)</span>，我们希望使用这些数据来检验 <span class="math inline">\(m\)</span> 个总体均值相等的假设。对于这种场景，由于随机变量的均值仅取决于一个因素——即随机变量来自哪个样本——因此称这种情况为 <strong>单因素方差分析</strong>（<em>one-way analysis of variance</em>）。在 <a href="#sec-10_3_2" class="quarto-xref"><span>小节 10.3.2</span></a> 中，我们展示了如何获得 <span class="math inline">\(\binom{m}{2}\)</span> 对总体均值之间的 <strong>多重比较</strong>（<em>multiple comparisons</em>）。在第 <span class="quarto-unresolved-ref">?sec-10_3_3</span> 中展示了当 <span class="math inline">\(m\)</span> 个样本之间的样本大小不同时，如何检验总体均值相等的假设。</p>
 <p>在 <span class="quarto-unresolved-ref">?sec-10_4</span> 和 <span class="quarto-unresolved-ref">?sec-10_5</span> 中，我们将介绍由两个因素决定因变量均值的模型。在这些模型中，我们可以把自变量排列在一个矩阵中，在这个矩阵中，每一行和每一列都代表着一个因素或条件，矩阵中的元素代表着自变量的观测数据。此时，某个因变量的均值同时依赖于矩阵中的行和列。这种模型称为 <strong>双因素方差分析</strong>（<em>two-way analysis of variance</em>）。我们假设因变量的均值受到自变量的 <strong>加性方式</strong>（<em>additive fashion</em>）影响，具体地，第 <span class="math inline">\(i\)</span> 行、第 <span class="math inline">\(j\)</span> 列的变量对应的响应均值可以表示为 <span class="math inline">\(\mu + \alpha_i + \beta_j\)</span>。在 <span class="quarto-unresolved-ref">?sec-10_4</span> 中，我们将介绍如何估计 <span class="math inline">\(\alpha_i\)</span>、<span class="math inline">\(\beta_j\)</span>。在 <span class="quarto-unresolved-ref">?sec-10_5</span> 中将介绍如何进行检验假设，即某个特定因素不会影响结果的均值。</p>
 <p>在 <span class="quarto-unresolved-ref">?sec-10_6</span> 中，我们将介绍因变量的均值允许以非线性方式取决于自变量所在的行和列的情况，从而允许两个因素之间存在 <strong>交互作用</strong>（<em>interaction</em>）。我们还将介绍如何检验不存在交互作用的假设，以及关于不存在行效应和列效应对因变量均值影响的假设。</p>
 <p>在本章中，我们假设所有的数据都服从正态分布，并且都具有相同（虽然未知）的方差 <span class="math inline">\(\sigma^2\)</span>。使用 ANOVA 来检验和总体均值有关的多个参数的原假设 <span class="math inline">\(H_0\)</span>，需要基于从共同的总体方差 $ ^2 $ 中推导出的两个估计量。第一个估计量是 <span class="math inline">\(\sigma^2\)</span> 的估计量，并且无论原假设是否为真，该估计量都是 <span class="math inline">\(\sigma^2\)</span> 的有效估计量。第二个估计量也是 <span class="math inline">\(\sigma^2\)</span> 的估计量，只是仅在 <span class="math inline">\(H_0\)</span> 为真时，该估计量才是 <span class="math inline">\(\sigma^2\)</span> 的有效估计量。此外，当 <span class="math inline">\(H_0\)</span> 不成立时，第二个估计量往往会超过 <span class="math inline">\(\sigma^2\)</span>。检验方法就是比较这两个估计量的值，并在第二个估计量与第一个估计量的比率足够大时拒绝 <span class="math inline">\(H_0\)</span>。换句话说，当 <span class="math inline">\(H_0\)</span> 为真时，这两个估计量应彼此接近（因为它们在这种情况下都是 <span class="math inline">\(\sigma^2\)</span> 的估计量），而当 <span class="math inline">\(H_0\)</span> 不为真时，第二个估计量通常应比第一个大，因此当第二个估计量显著大于第一个时，拒绝 <span class="math inline">\(H_0\)</span> 是自然的选择。</p>
@@ -420,8 +458,394 @@ window.Quarto = {
 <p>则 <a href="#eq-10_2_2" class="quarto-xref">式&nbsp;<span>10.2</span></a> 是一个自由度为 <span class="math inline">\(N - 1\)</span> 的卡方分布随机变量。</p>
 <p>在所有均值都相等的情况下，数据 <span class="math inline">\(X_1, \dots, X_N\)</span> 均来自同一个正态分布总体，因此 <a href="#eq-10_2_2" class="quarto-xref">式&nbsp;<span>10.2</span></a> 等价与 <span class="math inline">\((N - 1)S^2/\sigma^2\)</span>，其中 <span class="math inline">\(S^2\)</span> 是样本方差。换句话说，在这种场景下的结论就是：<span class="math inline">\((N - 1)S^2/\sigma^2\)</span> 是自由度为 <span class="math inline">\(N - 1\)</span> 的卡方分布随机变量（参见 <a href="../chapter_6/6.html#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a>）。</p>
 </section>
-<section id="one-way-analysis-of-variance" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="one-way-analysis-of-variance"><span class="header-section-number">10.3</span> One-way analysis of variance</h2>
+<section id="sec-10_3" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="sec-10_3"><span class="header-section-number">10.3</span> 单因素方差分析</h2>
+<p>有 <span class="math inline">\(m\)</span> 个独立的样本，每个样本的大小为 <span class="math inline">\(n\)</span>，其中第 <span class="math inline">\(i\)</span> 个样本——<span class="math inline">\(X_{i1}, X_{i2}, \dots, X_{in}\)</span>——是均值 <span class="math inline">\(\mu_i\)</span>、方差 <span class="math inline">\(\sigma^2\)</span> 均未知的正态分布随机变量。也就是说，</p>
+<p><span class="math inline">\(X_{ij} \sim \mathcal{N}(\mu_i, \sigma^2), \quad i = 1, \dots, m, \quad j = 1, \dots, n\)</span></p>
+<p>我们将对以下假设进行检验：</p>
+<p><span class="math inline">\(H_0: \mu_1 = \mu_2 = \dots = \mu_m \quad vs \quad H_1: \text{并非所有的均值都相等}\)</span></p>
+<p>也就是说，我们检验的原假设为所有总体的均值都是相等的，对应的备择假设为：至少存在两个总体的均值不同。如何理解我们所要进行的假设检验？想象一下，对于同一个物品而言，我们有 <span class="math inline">\(m\)</span> 种不同的处理方法，第 <span class="math inline">\(i\)</span> 种处理方法的结果是具有均值为 <span class="math inline">\(\mu_i\)</span>、方差为 <span class="math inline">\(\sigma^2\)</span> 的正态分布随机变量。然后我们感兴趣的是：把每种处理方法应用于 <span class="math inline">\(n\)</span> 个物品并分析结果，以检验 <em>所有处理方法的的效果相同</em> 的假设。</p>
+<p>总共有 <span class="math inline">\(nm\)</span> 个独立的正态分布随机变量 <span class="math inline">\(X_{ij}\)</span>，因此 <span class="math inline">\(X_{ij}\)</span> 标准化之后的随机变量的平方和将是 自由度为 <span class="math inline">\(nm\)</span> 的卡方分布随机变量。</p>
+<p><span id="eq-10_3_1"><span class="math display">\[
+\sum_{i=1}^{m} \sum_{j=1}^{n} \frac{(X_{ij} - E[X_{ij}])^2}{\sigma^2} = \sum_{i=1}^{m} \sum_{j=1}^{n} \frac{(X_{ij} - \mu_i)^2}{\sigma^2} \sim \chi^2_{nm}
+\tag{10.3}\]</span></span></p>
+<p>为了获得 <span class="math inline">\(m\)</span> 个未知参数 <span class="math inline">\(\mu_1, \dots, \mu_m\)</span> 的估计量，设 <span class="math inline">\(X_i.\)</span> 表示第 <span class="math inline">\(i\)</span> 个样本中所有元素的平均值，即：</p>
+<p><span class="math inline">\(X_i. = \frac{1}{n} \sum_{j=1}^{n} X_{ij}\)</span></p>
+<p><span class="math inline">\(X_i.\)</span> 是第 <span class="math inline">\(i, \ i = 1, \dots, m\)</span> 个总体的样本均值，因此是总体均值 <span class="math inline">\(\mu_i\)</span> 的估计量。因此，用 <span class="math inline">\(\mu_i\)</span> 的估计量 <span class="math inline">\(X_i.\)</span> 替代 <a href="#eq-10_3_1" class="quarto-xref">式&nbsp;<span>10.3</span></a> 中的 <span class="math inline">\(\mu_i\)</span>，得到：</p>
+<p><span id="eq-10_3_2"><span class="math display">\[
+\sum_{i=1}^{m} \sum_{j=1}^{n} \frac{(X_{ij} - X_i.)^2}{\sigma^2}
+\tag{10.4}\]</span></span></p>
+<p><a href="#eq-10_3_2" class="quarto-xref">式&nbsp;<span>10.4</span></a> 是自由度为 <span class="math inline">\(nm - m\)</span> 的卡方分布。（每估计一个参数，自由度就会减少 1。）</p>
+<p>令 <span class="math inline">\(SS_W = \sum_{i=1}^{m} \sum_{j=1}^{n} (X_{ij} - X_i.)^2\)</span></p>
+<p>因此，<a href="#eq-10_3_2" class="quarto-xref">式&nbsp;<span>10.4</span></a> 变为 <span class="math inline">\(SS_W/\sigma^2\)</span>。</p>
+<p>由于卡方分布随机变量的期望值等于其自由度，因此：<span class="math inline">\(E[SS_W/\sigma^2] = nm - m\)</span>，即 <span class="math inline">\(E\left[\frac{SS_W}{nm - m}\right] = \sigma^2\)</span>。</p>
+<p>我们因此得到了方差 <span class="math inline">\(\sigma^2\)</span> 的第一个估计量，即 <span class="math inline">\(\frac{SS_W}{nm - m}\)</span>。注意，对于该估计量而言，我们并没有对原假设的真假作任何的假设。也就是说，无论原假设是否为真，我们都将有该估计量。</p>
+<div id="def-10_3_1" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 10.1</strong></span> <strong>组内平方和</strong>（<em>within samples sum of squares</em>）</p>
+<p><span class="math inline">\(SS_W = \sum_{i=1}^{m} \sum_{j=1}^{n} (X_{ij} - X_{i.})^2\)</span></p>
+<p>因为 <span class="math inline">\(SS_W\)</span> 是利用样本均值代替 <a href="#eq-10_3_1" class="quarto-xref">式&nbsp;<span>10.3</span></a> 中的总体均值而得到的统计量，因此，我们称 <span class="math inline">\(SS_W\)</span> 为 <strong>组内平方和</strong>（<em>within samples sum of squares</em>）。</p>
+<p><span class="math inline">\(\frac{SS_W}{nm - m}\)</span> 是 <span class="math inline">\(\sigma^2\)</span> 的一个估计量。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>方差 <span class="math inline">\(\sigma^2\)</span> 的第二个估计量是只有在原假设为真时的估计量。假设 <span class="math inline">\(H_0\)</span> 为真，因此所有总体均值 <span class="math inline">\(\mu_i\)</span> 相等，即 <span class="math inline">\(\mu_i = \mu\)</span>。此时，所有 <span class="math inline">\(m\)</span> 个样本均值 <span class="math inline">\(X_1., X_2., \dots, X_m.\)</span> 都将具有相同的均值 <span class="math inline">\(\mu\)</span> 和相同的方差 <span class="math inline">\(\sigma^2/n\)</span>。因此，对 <span class="math inline">\(X_i.\)</span> 标准化后的随机变量 <span class="math inline">\(\frac{X_i. - \mu}{\sqrt{\sigma^2 / n}} = \frac{\sqrt{n}(X_i. - \mu)}{\sigma}\)</span> 的平方和是一个自由度为 <span class="math inline">\(m\)</span> 的卡方分布随机变量。</p>
+<p>即当 <span class="math inline">\(H_0\)</span> 为真时，</p>
+<p><span id="eq-10_3_3"><span class="math display">\[
+\frac{n \sum_{i=1}^{m} {(X_i. - \mu)^2}}{\sigma^2} \sim \chi^2_m
+\tag{10.5}\]</span></span></p>
+<p>当所有的总体均值都等于 <span class="math inline">\(\mu\)</span> 时，<span class="math inline">\(\mu\)</span> 的估计量是所有 <span class="math inline">\(nm\)</span> 个数据值的平均值。也就是说，<span class="math inline">\(\mu\)</span> 的估计量是 <span class="math inline">\(X_{..}\)</span>，即：</p>
+<p><span class="math inline">\(X_{..} = \frac{1}{nm} \sum_{i=1}^{m} \sum_{j=1}^{n} X_{ij} = \frac{1}{m} \sum_{i=1}^{m} X_i.\)</span></p>
+<p>用 <span class="math inline">\(X_{..}\)</span> 代替 <a href="#eq-10_3_3" class="quarto-xref">式&nbsp;<span>10.5</span></a> 中的位置参数 <span class="math inline">\(\mu\)</span>，则当 <span class="math inline">\(H_0\)</span> 为真时，有：</p>
+<p><span class="math inline">\(\frac{n \sum_{i=1}^{m} {(X_i. - X_{..})^2}}{\sigma^2} \sim \chi_{m-1}^2\)</span></p>
+<p>如果我们定义 <span class="math inline">\(SS_B\)</span> 为</p>
+<p><span class="math inline">\(SS_B = n \sum_{i=1}^{m} (X_i. - X_{..})^2\)</span></p>
+<p>那么，当 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(SS_B/\sigma^2\)</span> 是自由度为 <span class="math inline">\(m - 1\)</span> 的卡方分布随机变量。</p>
+<p>所以，当 <span class="math inline">\(H_0\)</span> 为真时，有：</p>
+<p><span class="math inline">\(E\left[\frac{SS_B}{\sigma^2}\right] = m - 1\)</span></p>
+<p>即，</p>
+<p><span id="eq-10_3_4"><span class="math display">\[
+E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
+\tag{10.6}\]</span></span></p>
+<p>因此，当 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(\frac{SS_B}{m - 1}\)</span> 也是 <span class="math inline">\(\sigma^2\)</span> 的估计量。</p>
+<div id="def-10_3_2" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 10.2</strong></span> <strong>组间平方和</strong>（<em>between samples sum of squares</em>）</p>
+<p><span class="math inline">\(SS_B = n \sum_{i=1}^{m} (X_i. - X_{..})^2\)</span></p>
+<p>称为 <strong>组间平方和</strong>（<em>between samples sum of squares</em>）。当 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(\frac{SS_B}{m - 1}\)</span> 是 <span class="math inline">\(\sigma^2\)</span> 的估计量。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>因此，我们得到：</p>
+<p><span class="math inline">\(\begin{align} \frac{SS_W}{nm - m}, \quad &amp;\text{总是} \sigma^2 \text{的估计量} \\ \frac{SS_B}{m - 1}, \quad &amp;\text{仅当} H_0 \text{为真时} \sigma^2 \text{的估计量} \end{align}\)</span></p>
+<p>可以证明（<em>在本节的末尾会对其进行证明</em>），当 <span class="math inline">\(H_0\)</span> 不为真时，<span class="math inline">\(\frac{SS_B}{m - 1}\)</span> 往往会超过 <span class="math inline">\(\sigma^2\)</span>，因此合理的做法是将检验统计量定义为：</p>
+<p><span class="math inline">\(TS = \frac{SS_B/(m - 1)}{SS_W/(nm - m)}\)</span></p>
+<p>并且当 <span class="math inline">\(TS\)</span> 足够大时，拒绝 <span class="math inline">\(H_0\)</span>。</p>
+<p>接下来的问题就是：当 <span class="math inline">\(TS\)</span> 需要多大时才能拒绝 <span class="math inline">\(H_0\)</span>？可以证明：如果 <span class="math inline">\(H_0\)</span> 为真，那么 <span class="math inline">\(SS_B\)</span> 和 <span class="math inline">\(SS_W\)</span> 是独立的。这意味着，当 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(TS\)</span> 服从分子自由度为 <span class="math inline">\(m - 1\)</span>、分母自由度为 <span class="math inline">\(nm - m\)</span> 的 <span class="math inline">\(F-\text{分布}\)</span>。我们使用符号 <span class="math inline">\(F_{r,s}\)</span> 表示分子自由度为 <span class="math inline">\(r\)</span>、分母自由度为 <span class="math inline">\(s\)</span> 的 <span class="math inline">\(F-\text{分布}\)</span> 随机变量，令 <span class="math inline">\(F_{\alpha, m-1, nm-m}\)</span> 表示这个 <span class="math inline">\(F-\text{分布}\)</span> 的 <span class="math inline">\(100(1 - \alpha)\%\)</span> 分位数，即：</p>
+<p><span class="math inline">\(P\left \{F_{m-1, nm-m} &gt; F_{\alpha, m-1, nm-m}\right\} = \alpha\)</span></p>
+<p>在显著性水平 <span class="math inline">\(\alpha\)</span> 时，<span class="math inline">\(H_0\)</span> 的检验为：</p>
+<p><span id="eq-10_3_001"><span class="math display">\[
+\begin{align}
+\text{拒绝} H_0&amp;, \quad \text{如果} \frac{SS_B/(m - 1)}{SS_W/(nm - m)} \gt F_{\alpha, m-1, nm-m} \\
+\text{不拒绝} H_0&amp;, \quad \text{其他}
+\end{align}
+\tag{10.7}\]</span></span></p>
+<p>检验 <em>所有总体均值是否相等</em> 的假设的另一种计算方法是计算 <span class="math inline">\(p-\text{value}\)</span>。如果检验统计量 <span class="math inline">\(TS = v\)</span>，则 <span class="math inline">\(p-\text{value}\)</span> 由以下公式给出：</p>
+<p><span class="math inline">\(p-\text{value} = P\{F_{m-1,nm-m} \geq v\}\)</span></p>
+<p>在 R 中可以使用 <code>pf()</code> 计算 <span class="math inline">\(p-\text{value}\)</span>：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 方式 1</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pf</span>(v, m <span class="sc">-</span> <span class="dv">1</span>, nm <span class="sc">-</span> m)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 方式 2</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">pf</span>(v, m <span class="sc">-</span> <span class="dv">1</span>, nm <span class="sc">-</span> m, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled" title="**平方和恒等式**（*the sum of squares identity*）">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>平方和恒等式</strong>（<em>the sum of squares identity</em>）
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>如下的 <strong>代数恒等式</strong>（<em>algebraic identity</em>），称为 <strong>平方和恒等式</strong>（<em>sum of squares identity</em>），在手动计算时非常有用。</p>
+<p><span class="math inline">\(\sum_{i=1}^{m} \sum_{j=1}^{n} X_{ij}^2 = nm X^2_{..} + SS_B + SS_W\)</span></p>
+<p>根据 <a href="#def-10_3_2" class="quarto-xref">定义&nbsp;<span>10.2</span></a>，我们定义 <span class="math inline">\(SS_B\)</span> 为：</p>
+<p><span class="math inline">\(SS_B = n \sum_{i=1}^{m} (X_i. - X_{..})^2\)</span></p>
+<p>在手动计算时，应首先计算 <span class="math inline">\(SS_B\)</span> 的值。一旦得到 <span class="math inline">\(SS_B\)</span> 后，可以根据 <strong>平方和恒等式</strong> 确定 <span class="math inline">\(SS_W\)</span>。在计算 <span class="math inline">\(SS_W\)</span> 的同时，我们也得到了 <span class="math inline">\(\sum_{i=1}^{m} \sum_{j=1}^{n} X_{ij}^2\)</span> 和 <span class="math inline">\(\overline{X}^2_{..}\)</span>。然后根据如下公式确定 <span class="math inline">\(SS_W\)</span>：</p>
+<p><span class="math inline">\(SS_W = \sum_{i=1}^{m} \sum_{j=1}^{n} X_{ij}^2 - nm X^2_{..} - SS_B\)</span></p>
+</div>
+</div>
+<div id="exr-10_3_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 10.1</strong></span> 一家汽车租赁公司使用 15 台相同的发动机在固定速度下测试 3 种不同的汽油品牌。每种汽油品牌都分配了其中的 5 台发动机，并且每台发动机分配了10 加仑汽油。以下的数据表示了不同发动机在汽油耗尽时所获得的总里程数：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>汽油品牌</th>
+<th>里程（英里）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>汽油 1</td>
+<td>220, 251, 226, 246, 260</td>
+</tr>
+<tr class="even">
+<td>汽油 2</td>
+<td>244, 235, 232, 242, 225</td>
+</tr>
+<tr class="odd">
+<td>汽油 3</td>
+<td>252, 272, 250, 238, 256</td>
+</tr>
+</tbody>
+</table>
+<p>在 5% 的显著性水平下，检验假设：发动机的平均里程不受汽油品牌的影响。</p>
+</div>
+<div id="sol-10_3_a" class="proof solution">
+<p><span class="proof-title"><em>解 10.1</em>. </span>我们手动计算 <a href="#exr-10_3_a" class="quarto-xref">习题&nbsp;<span>10.1</span></a> 的结果。</p>
+<p>首先需要注意的是，每个数据值减去一个常数不会影响检验统计量的值。因此，我们从每个数据值中减去 220，得到以下信息：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>汽油品牌</th>
+<th>里程（英里）</th>
+<th><span class="math inline">\(\sum_j X_{ij}\)</span></th>
+<th><span class="math inline">\(\sum_j X_{ij}^2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0, 31, 6, 26, 40</td>
+<td>103</td>
+<td>3273</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>24, 15, 12, 22, 5</td>
+<td>78</td>
+<td>1454</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>32, 52, 30, 18, 36</td>
+<td>168</td>
+<td>6248</td>
+</tr>
+</tbody>
+</table>
+<p>因为 <span class="math inline">\(m = 3\)</span>，<span class="math inline">\(n = 5\)</span>，并且</p>
+<p><span class="math inline">\(\begin{align} X_1. &amp;= \frac{103}{5} = 20.6 \\ X_2. &amp;= \frac{78}{5} = 15.6 \\ X_3. &amp;= \frac{168}{5} = 33.6 \\ X_{..} &amp;= \frac{(103 + 78 + 168)}{15} = 23.2667 \\ X_{..}^2 &amp;= 541.3393 \end{align}\)</span></p>
+<p>因此，</p>
+<p><span class="math inline">\(SS_B = 5[(20.6 - 23.2667)^2 + (15.6 - 23.2667)^2 + (33.6 - 23.2667)^2] = 863.3335\)</span></p>
+<p>此外，</p>
+<p><span class="math inline">\(\sum \sum X_{ij}^2 = 3273 + 1454 + 6248 = 10975\)</span></p>
+<p>根据平方和恒等式，</p>
+<p><span class="math inline">\(SS_W = 10975 - 15(541.3393) - 863.3335 = 1991.5785\)</span></p>
+<p>因此，检验统计量的值为：</p>
+<p><span class="math inline">\(TS = \frac{863.3335 / 2}{1991.5785/12} = 2.60\)</span></p>
+<p>使用 R 语言计算得到 <span class="math inline">\(p-\text{value}\)</span>：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pf</span>(<span class="fl">2.60</span>, <span class="dv">2</span>, <span class="dv">12</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1153232</code></pre>
+</div>
+</div>
+<p>我们同样可以使用 R 来计算整个过程：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>gas1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">31</span>, <span class="dv">6</span>, <span class="dv">26</span>, <span class="dv">40</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>gas2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">24</span>, <span class="dv">15</span>, <span class="dv">12</span>, <span class="dv">22</span>, <span class="dv">5</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>gas3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">32</span>, <span class="dv">52</span>, <span class="dv">30</span>, <span class="dv">18</span>, <span class="dv">36</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(gas1, gas2, gas3), <span class="at">ncol =</span> <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>x1. <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[<span class="dv">1</span>,])</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>x2. <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[<span class="dv">2</span>,])</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>x3. <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[<span class="dv">3</span>,])</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>x.. <span class="ot">&lt;-</span> <span class="fu">mean</span>(data)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>SS_B <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="sc">*</span> <span class="fu">sum</span>(<span class="fu">apply</span>(data, <span class="dv">1</span>, <span class="cf">function</span>(x) (<span class="fu">mean</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(data))<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>x_ij_ss <span class="ot">&lt;-</span> <span class="fu">sum</span>(data<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>SS_W <span class="ot">&lt;-</span> x_ij_ss <span class="sc">-</span> <span class="dv">3</span> <span class="sc">*</span> <span class="dv">5</span> <span class="sc">*</span> x..<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> SS_B</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">=</span> (SS_B <span class="sc">/</span> <span class="dv">2</span>) <span class="sc">/</span> (SS_W <span class="sc">/</span> <span class="dv">12</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pf</span>(TS, <span class="dv">2</span>, <span class="dv">12</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1152489</code></pre>
+</div>
+</div>
+<p>由于 <span class="math inline">\(p-\text{value}\)</span> 大于 0.05，因此在 5% 的显著性水平下，我们不能拒绝汽品牌不会影响发动机里程的原假设。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>现在让我们证明：</p>
+<p><span class="math inline">\(E\left[\frac{SS_B}{m-1}\right] \geq \sigma^2\)</span></p>
+<p>当且仅当 <span class="math inline">\(H_0\)</span> 为真时，等号成立。</p>
+<p>因此，我们必须证明：</p>
+<p><span class="math inline">\(E\left[\frac{\sum_{i=1}^{m} (X_{i.} - X_{..})^2}{m-1}\right] \geq \frac{\sigma^2}{n}\)</span></p>
+<p>当且仅当 <span class="math inline">\(H_0\)</span> 为真时，等号成立。</p>
+<p>令 <span class="math inline">\(\mu_. = \frac{\sum_{i=1}^{m} \mu_i}{m}\)</span> 为 <span class="math inline">\(m\)</span> 个总体均值的平均值。此外，对于 <span class="math inline">\(i = 1, \dots, m\)</span>，令：</p>
+<p><span class="math inline">\(Y_i = X_{i.} - \mu_i + \mu_.\)</span></p>
+<p>由于 <span class="math inline">\(X_{i.}\)</span> 服从均值为 <span class="math inline">\(\mu_i\)</span>、方差为 <span class="math inline">\(\frac{\sigma^2}{n}\)</span> 的正态分布，因此 <span class="math inline">\(Y_i\)</span> 服从均值为 <span class="math inline">\(\mu_.\)</span>、方差为 <span class="math inline">\(\frac{\sigma^2}{n}\)</span> 的正态分布。因此，<span class="math inline">\(Y_1, \dots, Y_m\)</span> 构成了一个方差为 <span class="math inline">\(\frac{\sigma^2}{n}\)</span> 的正态分布总体的样本。</p>
+<p>令 <span class="math inline">\(Y_{.}\)</span> 为 <span class="math inline">\(Y_i\)</span> 的均值：</p>
+<p><span class="math inline">\(Y_{.} = \frac{\sum_{i=1}^{m} Y_i}{m} = X_{..} - \mu_. + \mu_. = X_{..}\)</span></p>
+<p>则：</p>
+<p><span class="math inline">\(X_{i.} - X_{..} = Y_i + \mu_i - \mu_. - Y_{.}\)</span></p>
+<p>因此，</p>
+<p><span class="math inline">\(\begin{align} E\left[\sum_{i=1}^{m} (X_{i.} - X_{..})^2\right] &amp;= E\left[\sum_{i=1}^{m} (Y_i - Y_{.} + \mu_i - \mu_.)^2\right] \\ &amp;= E\left[\sum_{i=1}^{m} \left[(Y_i - Y_{.})^2 + (\mu_i - \mu_.)^2 + 2(\mu_i - \mu_.)(Y_i - Y_{.})\right]\right] \\ &amp;= E\left[\sum_{i=1}^{m} (Y_i - Y_{.})^2\right] + \sum_{i=1}^{m} (\mu_i - \mu_.)^2 + 2\sum_{i=1}^{m} (\mu_i - \mu_.) E[Y_i - Y_{.}] \\ &amp;= (m-1)\frac{\sigma^2}{n} + \sum_{i=1}^{m} (\mu_i - \mu_.)^2 + 2\sum_{i=1}^{m} (\mu_i - \mu_.) E[Y_i - Y_{.}] \\ &amp;= (m-1)\frac{\sigma^2}{n} + \sum_{i=1}^{m} (\mu_i - \mu_.)^2\end{align}\)</span></p>
+<p>在倒数第二个等式中，<span class="math inline">\(\sum_{i=1}^{m} \frac{(Y_i - Y_{.})^2}{(m-1)}\)</span> 是总体方差 <span class="math inline">\(\frac{\sigma^2}{n}\)</span> 的无偏估计量，并且最后一个等式是因为 <span class="math inline">\(E[Y_i - Y_{.}] = E[Y_i] - E[Y_{.}] = \mu_. - \mu_. = 0\)</span>。最后，在结果的等式两边都除以 <span class="math inline">\(m-1\)</span> 得到：</p>
+<p><span class="math inline">\(E\left[\frac{\sum_{i=1}^{m} (X_{i.} - X_{..})^2}{m-1}\right] = \frac{\sigma^2}{n} + \frac{\sum_{i=1}^{m} (\mu_i - \mu_.)^2}{(m-1)}\)</span></p>
+<p>因为 <span class="math inline">\(\sum_{i=1}^{m} (\mu_i - \mu_.)^2 \geq 0\)</span>，当且仅当所有 <span class="math inline">\(\mu_i\)</span> 相等时等号成立，所以 <span class="math inline">\(E\left[\frac{SS_B}{m-1}\right] \geq \sigma^2\)</span>。</p>
+<p><a href="#tbl-10_1" class="quarto-xref">表&nbsp;<span>10.1</span></a> 总结了本节的结果：</p>
+<div id="tbl-10_1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;10.1: 单因素方差分析表；在显著性水平 <span class="math inline">\(\alpha\)</span> 下的检验，当 <span class="math inline">\(TS \geq F_{\alpha, m-1, nm-m}\)</span> 时拒绝 <span class="math inline">\(H_0\)</span>，否则不拒绝 <span class="math inline">\(H_0\)</span>；如果 <span class="math inline">\(TS = v\)</span>，则 <span class="math inline">\(p-\text{value} = P\{F_{m-1, nm-m} \geq v\}\)</span>
+</figcaption>
+<div aria-describedby="tbl-10_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 37%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>变异来源</th>
+<th>平方和</th>
+<th>自由度</th>
+<th>检验统计量的值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>组间</td>
+<td><span class="math inline">\(SS_B = n\sum_{i=1}^{m} (X_{i.} - X_{..})^2\)</span></td>
+<td><span class="math inline">\(m-1\)</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>组内</td>
+<td><span class="math inline">\(SS_W = \sum_{i=1}^{m} \sum_{j=1}^{n} (X_{ij} - X_{i.})^2\)</span></td>
+<td><span class="math inline">\(nm-m\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+<td><span class="math inline">\(TS = \frac{SS_B/(m-1)}{SS_W/(nm-m)}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<section id="sec-10_3_1" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="sec-10_3_1"><span class="header-section-number">10.3.1</span> 使用 R 计算统计量</h3>
+<p>首先，需要注意的是：在 R 中定义矩阵时，矩阵元素默认按照列的方向来填充。例如，假设我们想要用 R 构建如下的矩阵并命名为 <code>A</code>：</p>
+<p><span class="math display">\[\begin{pmatrix}
+2 &amp; 1 &amp; 3 &amp; 4 \\
+1 &amp; 5 &amp; 2 &amp; 6 \\
+5 &amp; 3 &amp; 7 &amp; 9
+\end{pmatrix}
+\]</span></p>
+<p>我们可以按如下方式进行：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">ncol =</span> <span class="dv">4</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>R 中 <code>matrix()</code> 的定义是：在给出矩阵元素之后，给出行数，然后给出列数。因此，我们可以省略 <code>nrow =</code> 和 <code>ncol =</code>，直接定义 <code>A</code> 如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>), <span class="dv">3</span>, <span class="dv">4</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>要显示矩阵，我们会输入：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>), <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>A</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4]
+[1,]    2    1    3    4
+[2,]    1    5    2    6
+[3,]    5    3    7    9</code></pre>
+</div>
+</div>
+<p>当然，也可以通过列向量来初始化一个矩阵，例如：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">5</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">3</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>v3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">7</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>v4 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(v1, v2, v3, v4), <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>A</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4]
+[1,]    2    1    3    4
+[2,]    1    5    2    6
+[3,]    5    3    7    9</code></pre>
+</div>
+</div>
+<p>如果 <span class="math inline">\(A\)</span> 是一个矩阵，<span class="math inline">\(x\)</span> 是一个标量（<em>scalar</em>），那么 <span class="math inline">\(A + x\)</span> 是一个矩阵，其结果是将 <span class="math inline">\(x\)</span> 加到 <span class="math inline">\(A\)</span> 的每个元素上。矩阵的幂运算意味着矩阵中的每个元素都执行该幂次方运算。例如，如果 <span class="math inline">\(A\)</span> 是矩阵 <span class="math inline">\([a_{i,j}]\)</span>），那么 <span class="math inline">\(A^2\)</span> 就是矩阵 <span class="math inline">\([a_{i,j}^2]\)</span>。（此处的这种约定与“矩阵乘法”的概念并不一致。）</p>
+<p>要对矩阵 <span class="math inline">\(A\)</span> 的所有元素求和，只需输入 R 命令 <code>sum(A)</code>；要获得矩阵 <span class="math inline">\(A\)</span> 中所有元素的平均值，使用 <code>mean(A)</code>。例如，如果我们想要计算矩阵 <span class="math inline">\(A\)</span> 中所有元素的平方求和，并且想将结果命名为 <code>ss</code>，我们可以输入：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>), <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ss <span class="ot">&lt;-</span> <span class="fu">sum</span>(A<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ss</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 260</code></pre>
+</div>
+</div>
+<p>如果我们想计算矩阵 <span class="math inline">\(A\)</span> 中的每一行、或者每一列的元素的和，可以使用 <code>rowSums()</code>、<code>colSums()</code>。例如：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>), <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ss <span class="ot">&lt;-</span> <span class="fu">sum</span>(A<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>ss</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 260</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(A)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10 14 24</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(A)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  8  9 12 19</code></pre>
+</div>
+</div>
+<p>如果想计算矩阵 <span class="math inline">\(A\)</span> 中的每一行、或者每一列的元素的平均值，可以使用 <code>rowMeans()</code>、<code>colMeans()</code>。</p>
+<p>假设 <span class="math inline">\(A\)</span> 是一个具有 <span class="math inline">\(m\)</span> 行和 <span class="math inline">\(n\)</span> 列的矩阵，并且对于 <span class="math inline">\(b_1, \dots, b_m\)</span>，我们想要得到一个矩阵 <span class="math inline">\(B\)</span>。矩阵 <span class="math inline">\(B\)</span> 是从 <span class="math inline">\(A\)</span> 的第一行的每个元素中减去 <span class="math inline">\(b_1\)</span>，从 <span class="math inline">\(A\)</span> 的第二行的每个元素中减去 <span class="math inline">\(b_2\)</span>，……可以使用 R 中的 <code>sweep()</code> 来完成该操作：</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(...)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">c</span>(b1,...,bm)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">sweep</span>(A, <span class="dv">1</span>, b)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>例如：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 对矩阵 A 的每一行中的所有元素，都减去该行对应的均值</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(A)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">sweep</span>(A, <span class="dv">1</span>, b)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>B</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    0    1   -1
+[2,]   -1    1    0</code></pre>
+</div>
+</div>
+<p>同样，假设 <span class="math inline">\(A\)</span> 是一个具有 <span class="math inline">\(m\)</span> 行和 <span class="math inline">\(n\)</span> 列的矩阵，并且对于 <span class="math inline">\(c_1, \dots, c_n\)</span>，我们想要得到一个矩阵 <span class="math inline">\(C\)</span>。矩阵 <span class="math inline">\(C\)</span> 是从 <span class="math inline">\(A\)</span> 的第一列的每个元素中减去 <span class="math inline">\(c_1\)</span>，从 <span class="math inline">\(A\)</span> 的第二列的每个元素中减去 <span class="math inline">\(c_2\)</span>，……同样可以使用 R 中的 <code>sweep()</code> 来完成该操作：</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(...)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">c</span>(c1,...,cn)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">sweep</span>(A, <span class="dv">2</span>, c)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>例如我们想让矩阵 <span class="math inline">\(A\)</span> 的每一列的所有元素都加上该列对应的均值：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 对矩阵 A 的每一列中的所有元素，都加上该列对应的均值</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(A)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">sweep</span>(A, <span class="dv">2</span>, <span class="sc">-</span>c)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>C</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]  4.5    7  3.5
+[2,]  5.5    9  6.5</code></pre>
+</div>
+</div>
+<p>接下来，我们将使用 R 来解决 <a href="#exr-10_3_a" class="quarto-xref">习题&nbsp;<span>10.1</span></a> 中所示的单因素方差分析问题。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>gas1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">220</span>, <span class="dv">251</span>, <span class="dv">226</span>, <span class="dv">246</span>, <span class="dv">260</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>gas2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">244</span>, <span class="dv">235</span>, <span class="dv">232</span>, <span class="dv">242</span>, <span class="dv">225</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>gas3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">252</span>, <span class="dv">272</span>, <span class="dv">250</span>, <span class="dv">238</span>, <span class="dv">256</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>G <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(gas1, gas2, gas3), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>rm <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(G)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>mm <span class="ot">&lt;-</span> <span class="fu">mean</span>(G)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> rm <span class="sc">-</span> mm</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>SS_B <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="sc">*</span> <span class="fu">sum</span>(d<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>SS_W <span class="ot">&lt;-</span> <span class="fu">sum</span>(G<span class="sc">^</span><span class="dv">2</span>) <span class="sc">-</span> <span class="dv">3</span> <span class="sc">*</span> <span class="dv">5</span> <span class="sc">*</span> mm<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> SS_B</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">=</span> (SS_B <span class="sc">/</span> <span class="dv">2</span>) <span class="sc">/</span> (SS_W <span class="sc">/</span> <span class="dv">12</span>)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pf</span>(TS, <span class="dv">2</span>, <span class="dv">12</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1152489</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-10_3_2" class="level3" data-number="10.3.2">
+<h3 data-number="10.3.2" class="anchored" data-anchor-id="sec-10_3_2"><span class="header-section-number">10.3.2</span> 样本均值的多重比较</h3>
+<p>当我们拒绝了总体均值相等的原假设时，我们需要对不同总体的样本均值 <span class="math inline">\(\mu_1, \dots, \mu_m\)</span> 进行比较。实现这个目的常用方法是 <span class="math inline">\(T-\text{方法}\)</span>（<em>T-method</em>）。对于指定的 <span class="math inline">\(\alpha\)</span> 值，<span class="math inline">\(T-\text{方法}\)</span> 为所有的 <span class="math inline">\(\binom{m}{2}\)</span> 个差异 <span class="math inline">\(\mu_i - \mu_j\)</span>（<span class="math inline">\(i \neq j, i, j = 1, \dots, m\)</span>）提供了 <strong>联合置信区间</strong>（<em>joint condifence intervals</em>），从而使得这些所有的置信区间都将以 <span class="math inline">\(1 - \alpha\)</span> 的概率包含其对应的 <span class="math inline">\(\mu_i - \mu_j\)</span>。<span class="math inline">\(T-\text{方法}\)</span> 基于以下结果：</p>
+<p>对于任何 <span class="math inline">\(i \neq j\)</span>，<span class="math inline">\(\mu_i - \mu_j\)</span> 都将以 <span class="math inline">\(1 - \alpha\)</span> 的概率包含于如下的区间：</p>
+<p><span class="math inline">\(X_i. - X_j. - W &lt; \mu_i - \mu_j &lt; X_i. - X_j. + W\)</span></p>
+<p>其中，</p>
+<p><span class="math inline">\(W = \frac{1}{\sqrt{n}}C(m, nm - m, \alpha)\sqrt{\frac{SS_W}{nm - m}}\)</span></p>
+<p>并且，附录中的 <a href="../appendices.html#tbl-A_2" class="quarto-xref">表&nbsp;<span>A.1</span></a> 给出了 <span class="math inline">\(\alpha = 0.05\)</span> 和 <span class="math inline">\(\alpha = 0.01\)</span> 时，<span class="math inline">\(C(m, nm - m, \alpha)\)</span> 的值。</p>
+</section>
 </section>
 <section id="two-factor-analysis-of-variance-introduction-and-parameter-estimation" class="level2" data-number="10.4">
 <h2 data-number="10.4" class="anchored" data-anchor-id="two-factor-analysis-of-variance-introduction-and-parameter-estimation"><span class="header-section-number">10.4</span> Two-factor analysis of variance: introduction and parameter estimation</h2>
