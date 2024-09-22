@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>11&nbsp; Goodness of fit tests and categorical data analysis – Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
+<title>11&nbsp; 拟合优度检验和分类数据分析 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -70,8 +104,38 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="11&nbsp; Goodness of fit tests and categorical data analysis – Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="11&nbsp; 拟合优度检验和分类数据分析 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
@@ -138,7 +202,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_11/11.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Goodness of fit tests and categorical data analysis</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_11/11.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">拟合优度检验和分类数据分析</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -231,7 +295,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_11/11.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Goodness of fit tests and categorical data analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">拟合优度检验和分类数据分析</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -303,12 +367,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">11.1</span> Introduction</a></li>
-  <li><a href="#goodness-of-fit-tests-when-all-parameters-are-specified" id="toc-goodness-of-fit-tests-when-all-parameters-are-specified" class="nav-link" data-scroll-target="#goodness-of-fit-tests-when-all-parameters-are-specified"><span class="header-section-number">11.2</span> Goodness of fit tests when all parameters are specified</a></li>
-  <li><a href="#goodness-of-fit-tests-when-some-parameters-are-unspecified" id="toc-goodness-of-fit-tests-when-some-parameters-are-unspecified" class="nav-link" data-scroll-target="#goodness-of-fit-tests-when-some-parameters-are-unspecified"><span class="header-section-number">11.3</span> Goodness of fit tests when some parameters are unspecified</a></li>
-  <li><a href="#tests-of-independence-in-contingency-tables" id="toc-tests-of-independence-in-contingency-tables" class="nav-link" data-scroll-target="#tests-of-independence-in-contingency-tables"><span class="header-section-number">11.4</span> Tests of independence in contingency tables</a></li>
-  <li><a href="#tests-of-independence-in-contingency-tables-having-fixed-marginal-totals" id="toc-tests-of-independence-in-contingency-tables-having-fixed-marginal-totals" class="nav-link" data-scroll-target="#tests-of-independence-in-contingency-tables-having-fixed-marginal-totals"><span class="header-section-number">11.5</span> Tests of independence in contingency tables having fixed marginal totals</a></li>
-  <li><a href="#the-kolmogorovsmirnov-goodness-of-fit-test-for-continuous-data" id="toc-the-kolmogorovsmirnov-goodness-of-fit-test-for-continuous-data" class="nav-link" data-scroll-target="#the-kolmogorovsmirnov-goodness-of-fit-test-for-continuous-data"><span class="header-section-number">11.6</span> The Kolmogorov–Smirnov goodness of fit test for continuous data</a></li>
+  <li><a href="#sec-11_1" id="toc-sec-11_1" class="nav-link active" data-scroll-target="#sec-11_1"><span class="header-section-number">11.1</span> 引言</a></li>
+  <li><a href="#sec-11_2" id="toc-sec-11_2" class="nav-link" data-scroll-target="#sec-11_2"><span class="header-section-number">11.2</span> 概率模型的所有参数都指定时的拟合优度检验</a>
+  <ul class="collapse">
+  <li><a href="#sec-11_2_1" id="toc-sec-11_2_1" class="nav-link" data-scroll-target="#sec-11_2_1"><span class="header-section-number">11.2.1</span> 通过模拟确定临界区域 <span class="math inline">\(^*\)</span></a></li>
+  </ul></li>
+  <li><a href="#sec-11_3" id="toc-sec-11_3" class="nav-link" data-scroll-target="#sec-11_3"><span class="header-section-number">11.3</span> Goodness of fit tests when some parameters are unspecified</a></li>
+  <li><a href="#sec-11_4" id="toc-sec-11_4" class="nav-link" data-scroll-target="#sec-11_4"><span class="header-section-number">11.4</span> Tests of independence in contingency tables</a></li>
+  <li><a href="#sec-11_5" id="toc-sec-11_5" class="nav-link" data-scroll-target="#sec-11_5"><span class="header-section-number">11.5</span> Tests of independence in contingency tables having fixed marginal totals</a></li>
+  <li><a href="#sec-11_6" id="toc-sec-11_6" class="nav-link" data-scroll-target="#sec-11_6"><span class="header-section-number">11.6</span> The Kolmogorov–Smirnov goodness of fit test for continuous data</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_11/11.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>反馈问题</a></li></ul></div></nav>
@@ -318,7 +385,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-11" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Goodness of fit tests and categorical data analysis</span></span></h1>
+<h1 class="title"><span id="sec-11" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">拟合优度检验和分类数据分析</span></span></h1>
 </div>
 
 
@@ -335,28 +402,257 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level2" data-number="11.1">
-<h2 data-number="11.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">11.1</span> Introduction</h2>
+<section id="sec-11_1" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="sec-11_1"><span class="header-section-number">11.1</span> 引言</h2>
+<p>我们通常需要确定某个特定的 <strong>概率模型</strong>（<em>probabilistic model</em>）是否适用于某个随机事件，例如我们希望能够确定是否可以用泊松分布来描述某时间段内到达商店的顾客数？我们通常通过检验给定的随机样本是否来自某个指定的概率分布来简化判断。例如，我们可能 <strong>先验</strong>（<em>priori</em>）地认为某工厂每天发生的工业事故数量应当是来自泊松分布的随机样本。我们可以通过观察一段时间内发生的事故数量，并用观察到的数据来检验每天发生的工业事故数服从泊松分布的假设是否合理。这种用于判断某随机事件是否满足某特定的概率模型的统计检验称之为：<strong>拟合优度检验</strong>（<em>goodness of fit test</em>）。</p>
+<p>用于检验拟合优度检验的零假设——即某个样本服从某个特定的概率分布——的经典方法是：将随机变量的可能取值划分为有限的多个区域。然后确定落入每个区域的样本值的数量，并与指定概率分布下的理论数量进行比较，当这两个数据之间的差异显著时，我们将拒绝零假设，即该样本不服从我们所假设的分布。详细的检验过程将在 <a href="#sec-11_2" class="quarto-xref"><span>小节 11.2</span></a> 中介绍，并且我们会假设零假设中的概率分布是完全指定的。在 <a href="#sec-11_3" class="quarto-xref"><span>小节 11.3</span></a> 中，我们将介绍当零假设中的概率分布的某些参数并未指定时的分析方法，例如，零假设可能是样本分布为正态分布，但却未指定该分布的均值和方差。在 <a href="#sec-11_4" class="quarto-xref"><span>小节 11.4</span></a> 和 <a href="#sec-11_3" class="quarto-xref"><span>小节 11.3</span></a> 中，我们讨论了根据两种不同的特征对总体中的每个个体进行分类的情况，并展示了如何使用前述的分析方法来检验随机选择的个体的特征是否独立。我们还将演示如何检验 <span class="math inline">\(m\)</span> 个总体都具有相同的离散概率分布的假设。最后，在 <a href="#sec-11_6" class="quarto-xref"><span>小节 11.6</span></a> 中，我们将再次回到检验样本数据来自某个特定的概率分布的问题，只是我们会假设该特定分布是连续的。我们没有采用对数据离散化然后使用 <a href="#sec-11_2" class="quarto-xref"><span>小节 11.2</span></a> 中的检验方法，而是会使用 <strong>Kolmogorov–Smirnov检验</strong> 直接进行检验。</p>
 </section>
-<section id="goodness-of-fit-tests-when-all-parameters-are-specified" class="level2" data-number="11.2">
-<h2 data-number="11.2" class="anchored" data-anchor-id="goodness-of-fit-tests-when-all-parameters-are-specified"><span class="header-section-number">11.2</span> Goodness of fit tests when all parameters are specified</h2>
+<section id="sec-11_2" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="sec-11_2"><span class="header-section-number">11.2</span> 概率模型的所有参数都指定时的拟合优度检验</h2>
+<p>假设有 <span class="math inline">\(n\)</span> 个独立的随机变量 <span class="math inline">\(Y_1, Y_2, \dots, Y_n\)</span>，其中每个变量的取值为 <span class="math inline">\(1, 2, \dots, k\)</span>，我们希望检验如下的零假设：<span class="math inline">\(Y_j\)</span> 的概率质量函数为 <span class="math inline">\(\{ p_i, i = 1, \dots, k \}\)</span>。也就是说，如果用 <span class="math inline">\(Y\)</span> 表示任意一个 <span class="math inline">\(Y_j\)</span>，那么零假设为：</p>
+<p><span class="math inline">\(H_0: P\{Y = i\} = p_i, \quad i = 1, \dots, k\)</span></p>
+<p>备择假设为：</p>
+<p><span class="math inline">\(H_1: P\{Y = i\} \neq p_i, \quad \text{对于某些} i = 1, \dots, k\)</span></p>
+<p>为了检验上述假设，令 <span class="math inline">\(X_i\)</span>（<span class="math inline">\(i = 1, \dots, k\)</span>）表示 <span class="math inline">\(Y_j\)</span> 等于 <span class="math inline">\(i\)</span> 的数量。由于每个 <span class="math inline">\(Y_j\)</span> 都独立地以概率 <span class="math inline">\(P\{Y = i\}\)</span> 等于 <span class="math inline">\(i\)</span>，那么原假设 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(X_i\)</span> 服从参数为 <span class="math inline">\(n\)</span> 和 <span class="math inline">\(p_i\)</span> 的二项分布。因此，当原假设 <span class="math inline">\(H_0\)</span> 为真时，</p>
+<p><span class="math inline">\(E[X_i] = np_i\)</span></p>
+<p>因此，可以用 <span class="math inline">\((X_i - np_i)^2\)</span> 来判断 <span class="math inline">\(p_i\)</span> 是否确实等于 <span class="math inline">\(P\{Y = i\}\)</span>。当 <span class="math inline">\((X_i - np_i)^2\)</span> 比较大时，则表明 <span class="math inline">\(H_0\)</span> 可能不成立。实际上，这种推理让我们考虑以下检验统计量：</p>
+<p><span id="eq-11_2_1"><span class="math display">\[
+T = \sum_{i=1}^k \frac{(X_i - np_i)^2}{np_i}
+\tag{11.1}\]</span></span></p>
+<p>并且，当 <span class="math inline">\(T\)</span> 较大时，我们将拒绝零假设。</p>
+<p>为了确定临界区，首先需要指定显著性水平 <span class="math inline">\(\alpha\)</span>，然后确定满足下式的临界值 <span class="math inline">\(c\)</span>：</p>
+<p><span class="math inline">\(P_{H_0}\{T \geq c\} = \alpha\)</span></p>
+<p>也就是说，我们需要确定 <span class="math inline">\(c\)</span>，使得当 <span class="math inline">\(H_0\)</span> 为真时，统计量 <span class="math inline">\(T\)</span> 大于等于 <span class="math inline">\(c\)</span> 的概率为 <span class="math inline">\(\alpha\)</span>。在显著性水平 <span class="math inline">\(\alpha\)</span> 下，当 <span class="math inline">\(T \geq c\)</span> 时，则需要拒绝原假设 <span class="math inline">\(H_0\)</span>，否则就接受原假设。</p>
+<p>接下来我们需要确定 <span class="math inline">\(c\)</span> 的值。确定 <span class="math inline">\(c\)</span> 的经典的方法是使用如下的结论：当 <span class="math inline">\(n\)</span> 较大时，在 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(T\)</span> 近似服从自由度为 <span class="math inline">\(k - 1\)</span> 的卡方分布（当 <span class="math inline">\(n \rightarrow \infty\)</span> 时，<span class="math inline">\(T\)</span> 服从自由度为 <span class="math inline">\(k-1\)</span> 的卡方分布）。因此，当 <span class="math inline">\(n\)</span> 较大时，<span class="math inline">\(c\)</span> 的取值可以是 <span class="math inline">\(\chi^2_{\alpha, k-1}\)</span>，因此在显著性水平为 <span class="math inline">\(\alpha\)</span> 时的近似检验为：</p>
+<p><span class="math inline">\(\begin{align} \text{拒绝} \quad &amp;H_0 \quad \text{如果} T \geq \chi^2_{\alpha, k-1} \\ \text{接受} \quad &amp;H_0 \quad \text{否则} \end{align}\)</span></p>
+<p>如果观察到的统计量 <span class="math inline">\(T\)</span> 的值为 <span class="math inline">\(t\)</span>，那么上述检验等价于在 <span class="math inline">\(\alpha\)</span> 值大于或等于如下的 <span class="math inline">\(p-\text{value}\)</span> 时拒绝 <span class="math inline">\(H_0\)</span>：</p>
+<p><span class="math inline">\(p-\text{value} = P_{H_0}\{T \geq t\} \approx P\{\chi^2_{k-1} \geq t\}\)</span></p>
+<p>其中 <span class="math inline">\(\chi^2_{k-1}\)</span> 是自由度为 <span class="math inline">\(k - 1\)</span> 的卡方分布随机变量。</p>
+<p>经验规则指出，对于 <span class="math inline">\(n\)</span> 来说，<span class="math inline">\(n\)</span> 需要足够大才能使得如上的检验是一个比较好的近似检验，一般而言，对于每个 <span class="math inline">\(i, i = 1,..., k\)</span>，需要满足 <span class="math inline">\(np_i \geq 1\)</span>，并且至少 80% 的 <span class="math inline">\(np_i\)</span> 值应大于 5。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="备注">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><ol type="a">
+<li>可以展开 <a href="#eq-11_2_1" class="quarto-xref">式&nbsp;<span>11.1</span></a> 中的平方项并根据 <span class="math inline">\(\sum p_i = 1\)</span> 和 <span class="math inline">\(\sum X_i = n\)</span> 来更简单的计算 <span class="math inline">\(T\)</span>（为什么可以这样计算？）：</li>
+</ol></li>
+</ul>
+<p><span id="eq-11_2_2"><span class="math display">\[
+\begin{align}
+T &amp;= \sum_{i=1}^k \frac{X_i^2 - 2np_i X_i + n^2 p_i^2}{np_i} \\
+&amp;= \sum_i \frac{X_i^2}{np_i} - 2 \sum_i X_i + n \sum_i p_i \\
+&amp;= \sum_i \frac{X_i^2}{np_i} - n
+\end{align}
+\tag{11.2}\]</span></span></p>
+<ul>
+<li><ol start="2" type="a">
+<li>直观上而言，依赖于 <span class="math inline">\(X_1, \dots, X_k\)</span> 值的检验统计量 <span class="math inline">\(T\)</span> 只有 <span class="math inline">\(k - 1\)</span> 个自由度的原因是：有一个自由度因为线性关系 <span class="math inline">\(\sum_i X_i = n\)</span> 而丢失了。</li>
+</ol></li>
+<li><ol start="3" type="a">
+<li>虽然证明 <span class="math inline">\(T\)</span> 渐近地服从卡方分布非常复杂，但当 <span class="math inline">\(k = 2\)</span> 时，可以很轻松的证明 <span class="math inline">\(T\)</span> 服从卡方分布。当 <span class="math inline">\(k = 2\)</span> 时，由于 <span class="math inline">\(X_1 + X_2 = n\)</span>，且 <span class="math inline">\(p_1 + p_2 = 1\)</span>，有：</li>
+</ol></li>
+</ul>
+<p><span class="math display">\[
+\begin{align}
+T &amp;= \frac{(X_1 - np_1)^2}{np_1} + \frac{(X_2 - np_2)^2}{np_2} \\
+&amp;= \frac{(X_1 - np_1)^2}{np_1} + \frac{(n - X_1 - n[1 - p_1])^2}{n(1 - p_1)} \\
+&amp;= \frac{(X_1 - np_1)^2}{np_1} + \frac{(X_1 - np_1)^2}{n(1 - p_1)} \\
+&amp;= \frac{(X_1 - np_1)^2}{np_1(1 - p_1)} \quad \because \frac{1}{p} + \frac{1}{1 - p} = \frac{1}{p(1 - p)}
+\end{align}
+\]</span></p>
+<p>因为 <span class="math inline">\(X_1\)</span> 是一个二项分布随机变量，其均值为 <span class="math inline">\(np_1\)</span>，方差为 <span class="math inline">\(np_1(1 - p_1)\)</span>，因此，根据二项分布的正态近似性，可以得出：当 <span class="math inline">\(n\)</span> 比较大时，<span class="math inline">\(\frac{(X_1 - np_1)}{\sqrt{np_1(1 - p_1)}}\)</span> 近似服从标准正态分布，因此 <span class="math inline">\(\frac{(X_1 - np_1)^2}{np_1(1 - p_1)}\)</span> 近似服从自由度为 1 的卡方分布。</p>
+</div>
+</div>
+<div id="exr-11_2_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 11.1</strong></span> 近年来，心理健康与身体健康之间的相关性逐渐得到人们的认可。可以使用名人的生日和去世日期之间的数据分析来进一步的研究这种相关性。为了使用这些数据，我们假设：人们对某件事情的盼望能够改善一个人的心理状态。因为生日会带来更多的关注、关爱，因此一位名人可能会对他/她的生日充满期待。如果这位名人身体不好并且濒临死亡，那么对生日的期待可能会“令他振奋，从而改善他的健康状态，并降低他在生日之前去世的概率。” 数据可能显示：名人在他/她的生日前几个月去世的可能性较小，而在生日之后的几个月去世的可能性较大。</p>
+</div>
+<div id="sol-11_2_a" class="proof solution">
+<p><span class="proof-title"><em>解 11.1</em>. </span>为了验证如上的假设，从《Who Was Who in America》一书中随机选取了 1251 名已故美国名人，书中记录了这些名人的出生日期和去世日期。样本数据取自 D. Phillips 的 <em>Death Day and Birthday: An Unexpected Connection</em>，具体的数据如 <a href="#tbl-11_1" class="quarto-xref">表&nbsp;<span>11.1</span></a> 所示<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<div id="tbl-11_1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.1: 在生日的前后几个月中死亡数量的分布图，<span class="math inline">\(n=1251\)</span>，<span class="math inline">\(n / 12 = 104.25\)</span>
+</figcaption>
+<div aria-describedby="tbl-11_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>生日前后的月数</th>
+<th>死亡数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>6 Months Before</td>
+<td>90</td>
+</tr>
+<tr class="even">
+<td>5 Months Before</td>
+<td>100</td>
+</tr>
+<tr class="odd">
+<td>4 Months Before</td>
+<td>87</td>
+</tr>
+<tr class="even">
+<td>3 Months Before</td>
+<td>96</td>
+</tr>
+<tr class="odd">
+<td>2 Months Before</td>
+<td>101</td>
+</tr>
+<tr class="even">
+<td>1 Month Before</td>
+<td>86</td>
+</tr>
+<tr class="odd">
+<td>The Month</td>
+<td>119</td>
+</tr>
+<tr class="even">
+<td>1 Month After</td>
+<td>118</td>
+</tr>
+<tr class="odd">
+<td>2 Months After</td>
+<td>121</td>
+</tr>
+<tr class="even">
+<td>3 Months After</td>
+<td>114</td>
+</tr>
+<tr class="odd">
+<td>4 Months After</td>
+<td>113</td>
+</tr>
+<tr class="even">
+<td>5 Months After</td>
+<td>106</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>如果去世日期与生日无关，那么这 1251 个人的去世日期在 12 个类别（<em>categories</em>）中的每个类别的可能性都是相同的。因此，我们可以检验以下的零假设：</p>
+<p><span class="math inline">\(H_0: p_i = \frac{1}{12}, \quad i = 1, \dots, 12\)</span></p>
+<p>由于 <span class="math inline">\(np_i = 1251/12 = 104.25\)</span>，该假设的卡方检验统计量为：</p>
+<p><span class="math inline">\(T = \frac{(90)^2 + (100)^2 + (87)^2 + \dots + (106)^2}{104.25} - 1251 = 17.192\)</span></p>
+<p><span class="math inline">\(p-\text{value}\)</span> 为：</p>
+<p><span class="math inline">\(p-\text{value} \approx P(\chi_{11}^2 \geq 17.192) = 1 - \text{pchisq}(17.192, 11) = 0.1023232\)</span></p>
+<p>检验的结果让我们对即将到来的生日是否对人的余生有影响的假设存在一些质疑。尽管这些数据不足以在 10% 的显著性水平下拒绝该假设，但它们确实表明了原假设可能是错误的。于是我们有了一个新的问题：在分析中，我们是否应该有多达 12 个数据类别，是否允许通过更少的可能类别来获得更强的检验？例如，假设我们将数据分为 4 个可能的类别：</p>
+<ul>
+<li><strong>类别 1</strong>: <span class="math inline">\(-6, -5, -4\)</span></li>
+<li><strong>类别 2</strong>: <span class="math inline">\(-3, -2, -1\)</span></li>
+<li><strong>类别 3</strong>: <span class="math inline">\(0, 1, 2\)</span></li>
+<li><strong>类别 4</strong>: <span class="math inline">\(3, 4, 5\)</span></li>
+</ul>
+<p>也就是说，如果某人的去世日期发生在其生日前三个月内，则将其归为 <strong>类别 2</strong>。根据这种分类，我们得到如下的数据：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>死亡人数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>277</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>283</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>358</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>333</td>
+</tr>
+</tbody>
+</table>
+<p>于是：<span class="math inline">\(n = 1251\)</span>，<span class="math inline">\(\quad n/4 = 312.75\)</span>。</p>
+<p><span class="math inline">\(H_0: p_i = \frac{1}{4}, \quad i = 1, 2, 3, 4\)</span> 的检验统计量为：</p>
+<p><span class="math inline">\(T = \frac{(277)^2 + (283)^2 + (358)^2 + (333)^2}{312.75} - 1251 = 14.775\)</span></p>
+<p>因此，由于 <span class="math inline">\(\chi_{01,3}^2 = 11.345\)</span>，所以即使在 1% 的显著性水平下，我们也会拒绝原假设。使用 R 计算得到的 <span class="math inline">\(p-\text{value}\)</span> 为：</p>
+<p><span class="math inline">\(p-\text{value} = P\{\chi_3^2 \geq 14.775\} = 1 - \text{pchisq}(14.775, 3) = 0.00201938\)</span></p>
+<p>然而，如上的原假设是在观察到数据后提出的，因此上述分析可能会受到批评。确实，虽然使用一组数据来确定原假设的“正确表达方式”没有错，但再次利用这些相同的数据来检验该假设的做法是值得怀疑的。因此，要确保得出可靠的结论，按照上述的数据处理方式选择第二个随机样本似乎是必须的，并且需要在新的样本上再次检验 <span class="math inline">\(H_0: p_i = \frac{1}{4}, \quad i = 1, 2, 3, 4\)</span>（参见 <strong>习题 3</strong>）。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>可以使用 R 计算检验统计量和 <span class="math inline">\(p-\text{value}\)</span>。假设 <span class="math inline">\(x = c(x_1,...,x_k)\)</span> 是 <span class="math inline">\(k\)</span> 个不同的类别上的对应样本数量，并且我们希望检验原假设 <span class="math inline">\(H_0: P\{i = k\} = p_i\)</span>。可以使用如下的 R 代码：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(x1,...xk)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(x, <span class="at">p=</span><span class="fu">c</span>(p1,...pk))</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>例如，对于 <a href="#exr-11_2_a" class="quarto-xref">习题&nbsp;<span>11.1</span></a> 而言，</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">277</span>, <span class="dv">283</span>, <span class="dv">358</span>, <span class="dv">333</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(x, <span class="at">p=</span>p)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Chi-squared test for given probabilities
+
+data:  x
+X-squared = 14.775, df = 3, p-value = 0.00202</code></pre>
+</div>
+</div>
+<div id="exr-11_2_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 11.2</strong></span> 某荧光灯制造商对一位购货量非常大的顾客说：他们生产的这些灯泡的质量并不统一，而是按照某种方式生产的。具体而言，他们生产的每个灯泡的质量划分为 A、B、C、D、E 这 5 个等级，并且不同质量等级的灯泡的生产是独立的，同时不同等级对应的概率分别为 0.15、0.25、0.35、0.20 和 0.05。然而，该顾客认为他收到的 E 型（最低质量）灯泡太多，因此他决定花费时间和成本来确定 30 个灯泡的质量，以此来检验制造商的说法。假设他发现这 30 个灯泡中，3 个是 A 等级，6 个是 B 等级，9 个是 C 等级，7 个是 D 等级，5 个是 E 等级。那么，根据这些数据，在 5% 的显著性水平下，该顾客是否能拒绝制造商的说法？</p>
+</div>
+<div id="sol-11_2_b" class="proof solution">
+<p><span class="proof-title"><em>解 11.2</em>. </span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">7</span>, <span class="dv">5</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.25</span>, <span class="fl">0.35</span>, <span class="fl">0.20</span>, <span class="fl">0.05</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(x, <span class="at">p=</span>p)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in chisq.test(x, p = p): Chi-squared approximation may be incorrect</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Chi-squared test for given probabilities
+
+data:  x
+X-squared = 9.3476, df = 4, p-value = 0.05297</code></pre>
+</div>
+</div>
+<p>注意，由于每个类别中的样本量相对较小，所以 R 给出了如下警告：卡方分布对检验统计量分布的近似可能不完全准确。假设结果的准确性没有问题，则在 5% 的显著性水平下，我们不会拒绝原假设。但由于在所有高于 0.053 的显著性水平下，我们都将拒绝原假设，因此该顾客应对制造商的说法保持怀疑态度。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<section id="sec-11_2_1" class="level3" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="sec-11_2_1"><span class="header-section-number">11.2.1</span> 通过模拟确定临界区域 <span class="math inline">\(^*\)</span></h3>
 </section>
-<section id="goodness-of-fit-tests-when-some-parameters-are-unspecified" class="level2" data-number="11.3">
-<h2 data-number="11.3" class="anchored" data-anchor-id="goodness-of-fit-tests-when-some-parameters-are-unspecified"><span class="header-section-number">11.3</span> Goodness of fit tests when some parameters are unspecified</h2>
 </section>
-<section id="tests-of-independence-in-contingency-tables" class="level2" data-number="11.4">
-<h2 data-number="11.4" class="anchored" data-anchor-id="tests-of-independence-in-contingency-tables"><span class="header-section-number">11.4</span> Tests of independence in contingency tables</h2>
+<section id="sec-11_3" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="sec-11_3"><span class="header-section-number">11.3</span> Goodness of fit tests when some parameters are unspecified</h2>
 </section>
-<section id="tests-of-independence-in-contingency-tables-having-fixed-marginal-totals" class="level2" data-number="11.5">
-<h2 data-number="11.5" class="anchored" data-anchor-id="tests-of-independence-in-contingency-tables-having-fixed-marginal-totals"><span class="header-section-number">11.5</span> Tests of independence in contingency tables having fixed marginal totals</h2>
+<section id="sec-11_4" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="sec-11_4"><span class="header-section-number">11.4</span> Tests of independence in contingency tables</h2>
 </section>
-<section id="the-kolmogorovsmirnov-goodness-of-fit-test-for-continuous-data" class="level2" data-number="11.6">
-<h2 data-number="11.6" class="anchored" data-anchor-id="the-kolmogorovsmirnov-goodness-of-fit-test-for-continuous-data"><span class="header-section-number">11.6</span> The Kolmogorov–Smirnov goodness of fit test for continuous data</h2>
+<section id="sec-11_5" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="sec-11_5"><span class="header-section-number">11.5</span> Tests of independence in contingency tables having fixed marginal totals</h2>
+</section>
+<section id="sec-11_6" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="sec-11_6"><span class="header-section-number">11.6</span> The Kolmogorov–Smirnov goodness of fit test for continuous data</h2>
 </section>
 <section id="problems" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
 
 
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>D. Phillips, “Death Day and Birthday: An Unexpected Connection,” in Statistics: A Guide to the Unknown, Holden-Day, 1972.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
