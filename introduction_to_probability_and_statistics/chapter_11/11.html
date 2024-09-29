@@ -372,10 +372,10 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#sec-11_2_1" id="toc-sec-11_2_1" class="nav-link" data-scroll-target="#sec-11_2_1"><span class="header-section-number">11.2.1</span> 通过模拟确定临界区域 <span class="math inline">\(^*\)</span></a></li>
   </ul></li>
-  <li><a href="#sec-11_3" id="toc-sec-11_3" class="nav-link" data-scroll-target="#sec-11_3"><span class="header-section-number">11.3</span> Goodness of fit tests when some parameters are unspecified</a></li>
-  <li><a href="#sec-11_4" id="toc-sec-11_4" class="nav-link" data-scroll-target="#sec-11_4"><span class="header-section-number">11.4</span> Tests of independence in contingency tables</a></li>
-  <li><a href="#sec-11_5" id="toc-sec-11_5" class="nav-link" data-scroll-target="#sec-11_5"><span class="header-section-number">11.5</span> Tests of independence in contingency tables having fixed marginal totals</a></li>
-  <li><a href="#sec-11_6" id="toc-sec-11_6" class="nav-link" data-scroll-target="#sec-11_6"><span class="header-section-number">11.6</span> The Kolmogorov–Smirnov goodness of fit test for continuous data</a></li>
+  <li><a href="#sec-11_3" id="toc-sec-11_3" class="nav-link" data-scroll-target="#sec-11_3"><span class="header-section-number">11.3</span> 概率模型的参数未指定时的拟合优度检验</a></li>
+  <li><a href="#sec-11_4" id="toc-sec-11_4" class="nav-link" data-scroll-target="#sec-11_4"><span class="header-section-number">11.4</span> 列联表的独立性检验</a></li>
+  <li><a href="#sec-11_5" id="toc-sec-11_5" class="nav-link" data-scroll-target="#sec-11_5"><span class="header-section-number">11.5</span> 具有固定边缘总和的列联表的独立性检验</a></li>
+  <li><a href="#sec-11_6" id="toc-sec-11_6" class="nav-link" data-scroll-target="#sec-11_6"><span class="header-section-number">11.6</span> 用于连续数据的 Kolmogorov–Smirnov 拟合优度检验</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_11/11.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>反馈问题</a></li></ul></div></nav>
@@ -632,16 +632,586 @@ X-squared = 9.3476, df = 4, p-value = 0.05297</code></pre>
 </section>
 </section>
 <section id="sec-11_3" class="level2" data-number="11.3">
-<h2 data-number="11.3" class="anchored" data-anchor-id="sec-11_3"><span class="header-section-number">11.3</span> Goodness of fit tests when some parameters are unspecified</h2>
+<h2 data-number="11.3" class="anchored" data-anchor-id="sec-11_3"><span class="header-section-number">11.3</span> 概率模型的参数未指定时的拟合优度检验</h2>
+<p>对于概率模型 <span class="math inline">\(\{p_i, i = 1, \dots, k\}\)</span> 而言，如果并非所有的参数都是已知的，此时我们依然可以对 <strong>原假设</strong>（<em>null hypothesis</em>）进行拟合优度检验。例如，对于我们在 <a href="#sec-11_1" class="quarto-xref"><span>小节 11.1</span></a> 中介绍的某工厂每天事故数量的场景，现在，我们想检验该工厂每天发生的事故次数是否服参数为 <span class="math inline">\(\lambda\)</span> 的泊松分布，其中 <span class="math inline">\(\lambda\)</span> 是未知的。为了检验该假设，假设该工厂把 <span class="math inline">\(n\)</span> 天内每天发生的事故次数都记录了下来，并记作 <span class="math inline">\(Y_1, \dots, Y_n\)</span>。</p>
+<p>要分析这些数据，我们必须首先处理这样一个问题，即 <span class="math inline">\(Y_i\)</span> 可以有无穷多个可能的值。不过，我们可以把 <span class="math inline">\(Y_i\)</span> 的无限种可能的取值划分为 <span class="math inline">\(k\)</span> 个有限数量的区间，然后用 <span class="math inline">\(Y_i\)</span> 落入的区域来解决该问题。例如，如果某天发生的事故数量为 0，则该天处于 <strong>区间 1</strong>；如果发生 1 次事故，则处于 <strong>区间 2</strong>；如果发生 2 次或 3 次事故，则处于 <strong>区间 3</strong>；如果发生 4 次或 5 次事故，则处于 <strong>区间 4</strong>；如果发生 5 次以上事故，则处于 <strong>区间 5</strong>。因此，如果该工厂每天发生的事故次数确实服从均值为 <span class="math inline">\(\lambda\)</span> 的泊松分布，那么：</p>
+<p><span id="eq-11_3_1"><span class="math display">\[
+\begin{align}
+p_1 &amp;= P\{Y = 0\} = e^{-\lambda} \\
+p_2 &amp;= P\{Y = 1\} = \lambda e^{-\lambda} \\
+p_3 &amp;= P\{Y = 2\} + P\{Y = 3\} = \frac{e^{-\lambda} \lambda^2}{2} + \frac{e^{-\lambda} \lambda^3}{6} \\
+p_4 &amp;= P\{Y = 4\} + P\{Y = 5\} = \frac{e^{-\lambda} \lambda^4}{24} + \frac{e^{-\lambda} \lambda^5}{120} \\
+p_5 &amp;= P\{Y &gt; 5\} = 1 - e^{-\lambda} - \lambda e^{-\lambda} - \frac{e^{-\lambda} \lambda^2}{2} - \frac{e^{-\lambda} \lambda^3}{6} - \frac{e^{-\lambda} \lambda^4}{24} - \frac{e^{-\lambda} \lambda^5}{120}
+\end{align}
+\tag{11.3}\]</span></span></p>
+<p>在进行拟合优度检验时，我们面临的第二个难题是：均值 <span class="math inline">\(\lambda\)</span> 的值是未知的。显然，最直接的做法是假设 <span class="math inline">\(H_0\)</span> 为真，然后从数据中估计 <span class="math inline">\(\lambda\)</span>——并用 <span class="math inline">\(\hat{\lambda}\)</span> 作为 <span class="math inline">\(\lambda\)</span> 的估计值——然后用估计量 <span class="math inline">\(\hat{\lambda}\)</span> 来计算统计量：</p>
+<p><span class="math inline">\(T = \sum_{i=1}^{k} \frac{(X_i - n\hat{p_i})^2}{n\hat{p_i}}\)</span></p>
+<p>其中，<span class="math inline">\(X_i\)</span> 是落在区间 <span class="math inline">\(i\)</span>（<span class="math inline">\(i = 1, \dots, k\)</span> ）的 <span class="math inline">\(Y_j\)</span> 数量，<span class="math inline">\(\hat{p_i}\)</span> 是 <span class="math inline">\(Y_j\)</span> 落在区间 <span class="math inline">\(i\)</span> 的估计概率，用 <span class="math inline">\(\lambda\)</span> 的估计量来替代 <span class="math inline">\(\hat{\lambda}\)</span> 并代入 <a href="#eq-11_3_1" class="quarto-xref">式&nbsp;<span>11.3</span></a> 来计算 <span class="math inline">\(\hat{p_i}\)</span>。</p>
+<p>通常，如果原假设中含有计算概率 <span class="math inline">\(\{p_i, i = 1, \dots, k\}\)</span> 所必需的未知参数时，我们可以使用如上的方法。假设有 <span class="math inline">\(m\)</span> 个未知参数，并且可以用最大似然法（maximum likelihood）对其进行估计。可以证明，当 <span class="math inline">\(n\)</span> 足够大时，在 <span class="math inline">\(H_0\)</span> 为真时，统计量 <span class="math inline">\(T\)</span> 近似服从自由度为 <span class="math inline">\(k - 1 - m\)</span> 的卡方分布。换句话说，自由度会随每个需要估计的参数而减一。因此，检验为：</p>
+<p><span class="math inline">\(\begin{align} \text{拒绝} \quad &amp;H_0 \quad \text{如果} \quad T \geq \chi_{\alpha, k-1-m}^2 \\ \text{接受} \quad &amp;H_0 \quad \text{否则} \end{align}\)</span></p>
+<p>另一种等价的检验方法是首先确定统计量 <span class="math inline">\(T\)</span> 的值，记作 <span class="math inline">\(T = t\)</span>，然后计算</p>
+<p><span class="math inline">\(p-\text{value} \approx P\left\{\chi^2_{k-1-m} \geq t\right\}\)</span></p>
+<p>如果 <span class="math inline">\(\alpha \geq p-\text{value}\)</span>，则拒绝原假设。</p>
+<div id="exr-11_3_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 11.3</strong></span> 假设在过去的 30 周内，每周的事故数量如下所示：</p>
+<p><span class="math display">\[
+\begin{array}{ccccccccccccc}
+8 &amp; 0 &amp; 0 &amp; 1 &amp; 3 &amp; 4 &amp; 0 &amp; 2 &amp; 12 &amp; 5 \\
+1 &amp; 8 &amp; 0 &amp; 2 &amp; 0 &amp; 1 &amp; 9 &amp; 3 &amp; 4 &amp; 5 \\
+3 &amp; 3 &amp; 4 &amp; 7 &amp; 4 &amp; 0 &amp; 1 &amp; 2 &amp; 1 &amp; 2
+\end{array}
+\]</span></p>
+<p>检验原假设：每周的事故数量服从泊松分布。</p>
+</div>
+<div id="sol-11_3_a" class="proof solution">
+<p><span class="proof-title"><em>解 11.3</em>. </span>由于 30 周内的事故总数为 95，泊松分布均值的最大似然估计值为：</p>
+<p><span class="math inline">\(\hat{\lambda} = \frac{95}{30} = 3.16667\)</span></p>
+<p>因此，<span class="math inline">\(P\{Y = i\}\)</span> 的估计值为：</p>
+<p><span class="math inline">\(P\{Y = i\} \stackrel{est}{=} \frac{e^{-\hat{\lambda}} \hat{\lambda}^i}{i!}\)</span></p>
+<p>通过计算，我们得到：</p>
+<p><span class="math inline">\(\begin{align} \hat{p_1} &amp;= 0.04214 \\ \hat{p_2} &amp;= 0.13346 \\ \hat{p_3} &amp;= 0.43434 \\ \hat{p_4} &amp;= 0.28841 \\ \hat{p_5} &amp;= 0.10164 \end{align}\)</span></p>
+<p>使用数据值 <span class="math inline">\(X_1 = 6, X_2 = 5, X_3 = 8, X_4 = 6, X_5 = 5\)</span>，我们可以使用 R 来计算检验统计量：</p>
+<p><span class="math inline">\(T = \sum_{i=1}^5 \frac{(X_i - 30\hat{p_i})^2}{30\hat{p_i}}\)</span></p>
+<p>然后计算 <span class="math inline">\(p-\text{value}\)</span>：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">5</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">04214</span>, .<span class="dv">13346</span>, .<span class="dv">43434</span>, .<span class="dv">28841</span>, .<span class="dv">10164</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> (x <span class="sc">-</span> <span class="dv">30</span> <span class="sc">*</span> p)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> y <span class="sc">/</span> (<span class="dv">30</span> <span class="sc">*</span> p)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>T <span class="ot">=</span> <span class="fu">sum</span>(s)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>T</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 21.99156</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(T, <span class="dv">3</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>p_value</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6.549552e-05</code></pre>
+</div>
+</div>
+<p>因此，我们将拒绝工厂每周发生的事故数量服从泊松分布的假设。显然，有太多周事故数量为 0，因此不能假设事故数量服从均值为 3.167 的泊松分布。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
 <section id="sec-11_4" class="level2" data-number="11.4">
-<h2 data-number="11.4" class="anchored" data-anchor-id="sec-11_4"><span class="header-section-number">11.4</span> Tests of independence in contingency tables</h2>
+<h2 data-number="11.4" class="anchored" data-anchor-id="sec-11_4"><span class="header-section-number">11.4</span> 列联表的独立性检验</h2>
+<p>在本节中，我们将考虑这样的问题：总体中的每个成员都可以根据两个不同的特征（<em>characteristics</em>）进行分类——我们将这些特征分别记作 <span class="math inline">\(X-\text{特征}\)</span> 和 <span class="math inline">\(Y-\text{特征}\)</span>。假设 <span class="math inline">\(X-\text{特征}\)</span> 有 <span class="math inline">\(r\)</span> 个可能的取值，<span class="math inline">\(Y-\text{特征}\)</span> 有 <span class="math inline">\(s\)</span> 个可能的取值。对于 <span class="math inline">\(i = 1, \dots, r\)</span>，<span class="math inline">\(j = 1, \dots, s\)</span>，定义</p>
+<p><span class="math inline">\(P_{ij} = P\{X = i, Y = j\}\)</span></p>
+<p>也就是说，<span class="math inline">\(P_{ij}\)</span> 表示随机选择的一个总体成员具有 <span class="math inline">\(X-\text{特征}\)</span> <span class="math inline">\(i\)</span> 和 <span class="math inline">\(Y-\text{特征}\)</span> <span class="math inline">\(j\)</span> 的概率。假设总体中的不同成员之间是独立的，令</p>
+<p><span class="math inline">\(p_i = P\{X = i\} = \sum_{j=1}^{s} P_{ij}, \quad i = 1, \dots, r\)</span></p>
+<p><span class="math inline">\(q_j = P\{Y = j\} = \sum_{i=1}^{r} P_{ij}, \quad j = 1, \dots, s\)</span></p>
+<p>也就是说，<span class="math inline">\(p_i\)</span> 是某个总体成员具有 <span class="math inline">\(X-\text{特征}\)</span> <span class="math inline">\(i\)</span> 的概率，<span class="math inline">\(q_j\)</span> 是其具有 <span class="math inline">\(Y-\text{特征}\)</span> <span class="math inline">\(j\)</span> 的概率。</p>
+<p>我们希望检验这样的一个假设：总体成员的 <span class="math inline">\(X-\text{特征}\)</span> 和 <span class="math inline">\(Y-\text{特征}\)</span> 是相互独立的。即，我们希望检验</p>
+<p><span class="math display">\[
+\begin{align}
+H_0: &amp; P_{ij} = p_i q_j, \quad \forall \, i = 1, \dots, r; j = 1, \dots, s \\
+\qquad &amp; vs \\
+H_1: &amp; P_{ij} \neq p_i q_j, \quad \exists i, j \quad i = 1, \dots, r; j = 1, \dots, s
+\end{align}
+\]</span></p>
+<p>假设我们从总体中抽取了 <span class="math inline">\(n\)</span> 个样本，其中有 <span class="math inline">\(N_{ij}\)</span> 个样本同时具有 <span class="math inline">\(X-\text{特征}\)</span> <span class="math inline">\(i\)</span> 和 <span class="math inline">\(Y-\text{特征}\)</span> <span class="math inline">\(j\)</span>，<span class="math inline">\(i = 1, \dots, r; j = 1, \dots, s\)</span>。</p>
+<p>由于原假设中未指定的 <span class="math inline">\(p_i\)</span> 和 <span class="math inline">\(q_j\)</span>，我们必须估计他们，因为</p>
+<p><span class="math inline">\(N_i = \sum_{j=1}^{s} N_{ij}, \quad i = 1, \dots, r\)</span></p>
+<p>表示样本中具有 <span class="math inline">\(X-\text{特征}\)</span> <span class="math inline">\(i\)</span> 的样本数量，<span class="math inline">\(p_i\)</span> 的估计值（事实上是最大似然估计值）为</p>
+<p><span class="math inline">\(\hat{p_i} = \frac{N_i}{n}, \quad i = 1, \dots, r\)</span></p>
+<p>同样地，令</p>
+<p><span class="math inline">\(M_j = \sum_{i=1}^{r} N_{ij}, \quad j = 1, \dots, s\)</span></p>
+<p>表示样本中具有 <span class="math inline">\(Y-\text{特征}\)</span> <span class="math inline">\(j\)</span> 的样本数量，则 <span class="math inline">\(q_j\)</span> 的估计值为</p>
+<p><span class="math inline">\(\hat{q_j} = \frac{M_j}{n}, \quad j = 1, \dots, s\)</span></p>
+<p>乍一看，我们似乎需要使用数据来估计 <span class="math inline">\(r + s\)</span> 个参数。然而，由于 <span class="math inline">\(p_i\)</span> 的和与 <span class="math inline">\(q_j\)</span> 的和都必须为 1，也就是说，<span class="math inline">\(\sum_{i=1}^{r} p_i = \sum_{j=1}^{s} q_j = 1\)</span>。所以，我们实际上只需要估计 <span class="math inline">\(r-1\)</span> 个 <span class="math inline">\(p_i\)</span> 和 <span class="math inline">\(s-1\)</span> 个 <span class="math inline">\(q_j\)</span>。例如，如果 <span class="math inline">\(r = 2\)</span>，因为 <span class="math inline">\(p_2 = 1 - p_1\)</span>，所以一旦估计了 <span class="math inline">\(p_1\)</span>，就可以自动推导出 <span class="math inline">\(p_2\)</span>。因此，我们实际上需要估计 <span class="math inline">\(r - 1 + s - 1 = r + s - 2\)</span> 个参数，由于每个总体成员都有 <span class="math inline">\(k = rs\)</span> 个不同的可能取值，在 <span class="math inline">\(n\)</span> 较大的情况下，检验统计量将近似服从自由度为 <span class="math inline">\(rs - 1 - (r + s - 2) = (r-1)(s-1)\)</span> 的卡方分布。</p>
+<p>所以，当 <span class="math inline">\(H_0\)</span> 为真时，</p>
+<p><span class="math inline">\(E[N_{ij}] = nP_{ij} = np_iq_j\)</span></p>
+<p>因此，检验统计量 <span class="math inline">\(T\)</span> 的定义为</p>
+<p><span class="math inline">\(T = \sum_{j=1}^{s} \sum_{i=1}^{r} \frac{(N_{ij} - n \hat{p_i} \hat{q_j})^2}{n \hat{p_i} \hat{q_j}} = \sum_{j=1}^{s} \sum_{i=1}^{r} \frac{N_{ij}^2}{n \hat{p_i} \hat{q_j}} - n\)</span></p>
+<p>如果检验统计量的值为 <span class="math inline">\(T = t\)</span>，则相应的 <span class="math inline">\(p-\text{value}\)</span>：</p>
+<p><span class="math inline">\(\begin{align} p-\text{value} &amp;= P_{H_0}(T \geq t) \\ &amp;\approx P\{\chi^2_{(r-1)(s-1)} \gt t\} \\ &amp;= 1 - \text{pchisq}(t, (r-1)(s-1)) \end{align}\)</span></p>
+<div id="exr-11_4_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 11.4</strong></span> 我们随机选取了 300 个人作为样本，并对其按照性别和政治派别（民主党人、共和党人、无党派人士）进行分类。如下的列联表展示了所得到的数据。</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(i\)</span>/<span class="math inline">\(j\)</span></th>
+<th>民主党人</th>
+<th>共和党人</th>
+<th>无党派人士</th>
+<th>总计</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>女性</td>
+<td>68</td>
+<td>56</td>
+<td>32</td>
+<td>156</td>
+</tr>
+<tr class="even">
+<td>男性</td>
+<td>52</td>
+<td>72</td>
+<td>20</td>
+<td>144</td>
+</tr>
+<tr class="odd">
+<td>总计</td>
+<td>120</td>
+<td>128</td>
+<td>52</td>
+<td>300</td>
+</tr>
+</tbody>
+</table>
+<p>例如，列联表表明，在 300 人的样本中，有 68 名女性是民主党，56 名女性是共和党，32 名女性是无党派人士；即 <span class="math inline">\(N_{11}=68\)</span>，<span class="math inline">\(N_{12}=56\)</span>，<span class="math inline">\(N_{13}=32\)</span>。类似地，<span class="math inline">\(N_{21}=52\)</span>，<span class="math inline">\(N_{22}=72\)</span>，<span class="math inline">\(N_{23}=20\)</span>。</p>
+<p>利用这些数据检验随机选取的一个人的性别和政治派别是独立的这一假设。</p>
+</div>
+<div id="sol-11_4_a" class="proof solution">
+<p><span class="proof-title"><em>解 11.4</em>. </span>根据上述数据，我们得到 <span class="math inline">\(n\hat{p_i}\hat{q_j}=\frac{N_iM_j}{n}\)</span> 的 6 个值如下：</p>
+<p><span class="math inline">\(\frac{N_{1}M_{1}}{n}=\frac{156\times120}{300}=62.40\)</span> <span class="math inline">\(\frac{N_{1}M_{2}}{n}=\frac{156\times128}{300}=66.56\)</span> <span class="math inline">\(\frac{N_{1}M_{3}}{n}=\frac{156\times52}{300}=27.04\)</span> <span class="math inline">\(\frac{N_{2}M_{1}}{n}=\frac{144\times120}{300}=57.60\)</span> <span class="math inline">\(\frac{N_{2}M_{2}}{n}=\frac{144\times128}{300}=61.44\)</span> <span class="math inline">\(\frac{N_{2}M_{3}}{n}=\frac{144\times52}{300}=24.96\)</span></p>
+<p>因此，检验统计量的值为：</p>
+<p><span class="math inline">\(\begin{align} TS&amp;=\frac{(68 - 62.40)^{2}}{62.40}+\frac{(56 - 66.56)^{2}}{66.56}+\frac{(32 - 27.04)^{2}}{27.04}+\frac{(52 - 57.60)^{2}}{57.60} \\ &amp;+\frac{(72 - 61.44)^{2}}{61.44}+\frac{(20 - 24.96)^{2}}{24.96}\\ &amp;=6.433 \end{align}\)</span></p>
+<p><span class="math inline">\((r - 1)(s - 1)=2\)</span>，我们使用 R 来获得 <span class="math inline">\(p-\text{value}\)</span>。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(<span class="fl">6.433</span>, <span class="dv">2</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>p_value</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.04009515</code></pre>
+</div>
+</div>
+<p>因此，在 5% 的显著性水平下，我们将拒绝性别和政治派别是独立的原假设。</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>我们可以直接使用 R 中的卡方检验函数来进行检验。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>women <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">68</span>, <span class="dv">56</span>, <span class="dv">32</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>men <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">52</span>, <span class="dv">72</span>, <span class="dv">20</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(women, men), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(data) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Democrat"</span>, <span class="st">"Republican"</span>, <span class="st">"Independent"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(data) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Women"</span>, <span class="st">"Men"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Democrat Republican Independent
+Women       68         56          32
+Men         52         72          20</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(data)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  data
+X-squared = 6.4329, df = 2, p-value = 0.0401</code></pre>
+</div>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exr-11_4_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 11.5</strong></span> 一家公司每天会安排三个不同的班次工人来操作四台机器。下面的列联表展示了在六个月的时间里的机器故障数据。</p>
+<div id="tbl-11_2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.2: 机器故障数
+</figcaption>
+<div aria-describedby="tbl-11_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>班次</th>
+<th>机器 A</th>
+<th>机器 B</th>
+<th>机器 C</th>
+<th>机器 D</th>
+<th>总计</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>班次 1</td>
+<td>10</td>
+<td>12</td>
+<td>6</td>
+<td>7</td>
+<td>35</td>
+</tr>
+<tr class="even">
+<td>班次 2</td>
+<td>10</td>
+<td>24</td>
+<td>9</td>
+<td>10</td>
+<td>53</td>
+</tr>
+<tr class="odd">
+<td>班次 3</td>
+<td>13</td>
+<td>20</td>
+<td>7</td>
+<td>10</td>
+<td>50</td>
+</tr>
+<tr class="even">
+<td>每台机器总计</td>
+<td>33</td>
+<td>56</td>
+<td>22</td>
+<td>27</td>
+<td>138</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>假设我们希望确定某台机器在特定班次发生故障的概率是否受该班次的影响。换句话说，对于任意一次故障，我们希望检验导致故障的机器和故障发生的班次之间是否独立。</p>
+</div>
+<div id="sol-11_4_b" class="proof solution">
+<p><span class="proof-title"><em>解 11.5</em>. </span>根据计算，我们得出检验统计量的值为 1.8148。因此，<span class="math inline">\(p-\text{value}\)</span> 为：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(<span class="fl">1.9148</span>, <span class="dv">6</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>p_value</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9273652</code></pre>
+</div>
+</div>
+<p>因此，我们将接受导致故障的机器和故障发生的班次是独立的假设。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
 <section id="sec-11_5" class="level2" data-number="11.5">
-<h2 data-number="11.5" class="anchored" data-anchor-id="sec-11_5"><span class="header-section-number">11.5</span> Tests of independence in contingency tables having fixed marginal totals</h2>
+<h2 data-number="11.5" class="anchored" data-anchor-id="sec-11_5"><span class="header-section-number">11.5</span> 具有固定边缘总和的列联表的独立性检验</h2>
+<p>在 <a href="#exr-11_4_a" class="quarto-xref">习题&nbsp;<span>11.4</span></a> 中，我们确定了：在特定人群中性别和政治派别的相关性。为了检验我们的原假设，我们首先从该人群中选择了一个随机样本，然后记录了样本的 <strong>特征</strong>（<em>characteristics</em>）。</p>
+<p>然而，我们收集数据的另一种方式是：预先确定样本中男性和女性的数量，然后从男性和女性人群中选择对应大小的随机样本。也就是说，样本中的男性和女性的数量并不是由随机抽取而决定，而是提前确定他们的数量。因为这样做会导致样本中的男性样本总数和女性样本总数都有固定的特定值，所以我们通常称由此得到的列联表具有固定的边缘（<em>fixed margins</em>）。</p>
+<p>事实证明，即便使用以上的规则来收集数据，<a href="#sec-11_4" class="quarto-xref"><span>小节 11.4</span></a> 中给出的假设检验仍然可以用来检验两个特征的独立性。检验统计量仍然是</p>
+<p><span class="math inline">\(TS=\sum_{i}\sum_{j}\frac{(N_{ij}-\hat{e}_{ij})^{2}}{\hat{e}_{ij}}\)</span></p>
+<ul>
+<li><span class="math inline">\(N_{ij}\)</span> 是样本中同时具有 <span class="math inline">\(X-\text{特征}\)</span> <span class="math inline">\(i\)</span> 和 <span class="math inline">\(Y-\text{特征}\)</span> <span class="math inline">\(j\)</span> 的样本数量</li>
+<li><span class="math inline">\(N_{i}\)</span> 是样本中具有 <span class="math inline">\(X-\text{特征}\)</span> <span class="math inline">\(i\)</span> 的样本数量</li>
+<li><span class="math inline">\(M_{j}\)</span> 是样本中具有 <span class="math inline">\(Y-\text{特征}\)</span> <span class="math inline">\(j\)</span> 的样本数量</li>
+<li><span class="math inline">\(\hat{e}_{ij}=n\hat{p}_{i}\hat{q}_{j}=\frac{N_{i}M_{j}}{n}\)</span> ，其中 <span class="math inline">\(n\)</span> 是样本的总大小。</li>
+</ul>
+<p>此外，当原假设 <span class="math inline">\(H_0\)</span> 为真时， <span class="math inline">\(TS\)</span> 仍然近似具有自由度为 <span class="math inline">\((r - 1)(s - 1)\)</span> 的卡方分布。这里的量 <span class="math inline">\(r\)</span> 和 <span class="math inline">\(s\)</span> 分别指的是 <span class="math inline">\(X-\text{特征}\)</span> 和 <span class="math inline">\(Y-\text{特征}\)</span> 可能取值的数量。换句话说，独立性假设检验与某个特征的边缘总和是预先固定的还是由整个总体的随机样本产生的无关。</p>
+<div id="exr-11_5_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 11.6</strong></span> 随机选取了 20000 名不吸烟者和 10000 名吸烟者，并对他们进行了为期 10 年的跟踪调查。以下数据显示了在这段时间内患肺癌的人数。</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>吸烟者数量</th>
+<th>不吸烟者数量</th>
+<th>总计</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>患肺癌数量</td>
+<td>62</td>
+<td>14</td>
+<td>76</td>
+</tr>
+<tr class="even">
+<td>未患肺癌数量</td>
+<td>9938</td>
+<td>19986</td>
+<td>29924</td>
+</tr>
+<tr class="odd">
+<td>总计</td>
+<td>10000</td>
+<td>20000</td>
+<td>30000</td>
+</tr>
+</tbody>
+</table>
+<p>在 1% 的显著性水平下检验吸烟与肺癌是否独立的假设。</p>
+</div>
+<div id="sol-11_5_a" class="proof solution">
+<p><span class="proof-title"><em>解 11.6</em>. </span>当吸烟和肺癌无关时，每个 <span class="math inline">\(ij\)</span> 单元格中预期人数的估计值为：</p>
+<p><span class="math inline">\(\hat{e}_{11}=\frac{(76)(10000)}{30000}=25.33\)</span></p>
+<p><span class="math inline">\(\hat{e}_{12}=\frac{(76)(20000)}{30000}=50.67\)</span></p>
+<p><span class="math inline">\(\hat{e}_{21}=\frac{(29924)(10000)}{30000}=9974.67\)</span></p>
+<p><span class="math inline">\(\hat{e}_{22}=\frac{(29924)(20000)}{30000}=19949.33\)</span></p>
+<p>因此，检验统计量的值为：</p>
+<p><span class="math inline">\(\begin{align*} TS&amp;=\frac{(62 - 25.33)^{2}}{25.33}+\frac{(14 - 50.67)^{2}}{50.67}+\frac{(9938 - 9974.67)^{2}}{9974.67} \\ &amp;+\frac{(19986 - 19949.33)^{2}}{19949.33}\\ &amp;=53.09 + 26.54 + 0.13 + 0.07 = 79.83 \end{align*}\)</span></p>
+<p>因此，<span class="math inline">\(p-\text{value}\approx P(\chi_{1}^{2}&gt;79.83)=1-\text{pchisq}(79.83,1)\approx0\)</span> 。</p>
+<p>所以，在任何显著性水平下，随机选取的一个人患肺癌与否与这个人是否吸烟无关的原假设都会被拒绝。</p>
+</div>
+<p>接下来，我们将介绍如何使用本节的计算框架来检验 <span class="math inline">\(m\)</span> 个离散总体分布是否相等的假设。考虑 <span class="math inline">\(m\)</span> 个独立的总体，每个总体的成员取值为 <span class="math inline">\(1,\ldots,n\)</span>。假设从总体 <span class="math inline">\(i\)</span> 中随机选取的一个成员的值为 <span class="math inline">\(j\)</span> 的概率为 <span class="math inline">\(p_{i,j}\)</span> ，其中 <span class="math inline">\(i = 1,\ldots,m\)</span>，<span class="math inline">\(j = 1,\ldots,n\)</span>。检验如下的原假设：</p>
+<p><span class="math inline">\(H_0：\forall j = 1,\ldots,n, \quad p_{1,j}=p_{2,j}=p_{3,j}=\cdots=p_{m,j}\)</span></p>
+<p>首先考虑由这 <span class="math inline">\(m\)</span> 个总体的所有成员组成的 <strong>超总体</strong>（<em>superpopulation</em>）。该 <strong>超总体</strong> 的任何成员都可以根据两个 <strong>特征</strong> 进行分类。第一个特征指定成员来自 <span class="math inline">\(m\)</span> 个总体中的哪一个，第二个特征指定其取值。于是，<span class="math inline">\(m\)</span> 个总体的分布都相等的假设就变成了如下的假设：对于每个取值而言，该取值在 <span class="math inline">\(m\)</span> 个总体中的每一个中的比例都是相同的。但这完全等同于：从超总体中随机选取的一个成员的两个特征是独立的。</p>
+<p>因此，我们可以通过从每个总体中随机选取样本成员来检验 <span class="math inline">\(H_0\)</span>。如果我们用 <span class="math inline">\(M_i\)</span> 表示从总体 <span class="math inline">\(i\)</span> 中抽取的样本大小，用 <span class="math inline">\(N_{i,j}\)</span> 表示该样本中取值等于 <span class="math inline">\(j\)</span> 的数量，其中 <span class="math inline">\(i = 1,\ldots,m\)</span>，<span class="math inline">\(j = 1,\ldots,n\)</span>，那么我们可以通过检验如下的列联表中特征的独立性来检验 <span class="math inline">\(H_0\)</span>。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>取值</th>
+<th>总体 1</th>
+<th>总体 2</th>
+<th><span class="math inline">\(\cdots\)</span></th>
+<th>总体 <span class="math inline">\(i\)</span></th>
+<th><span class="math inline">\(\cdots\)</span></th>
+<th>总体 <span class="math inline">\(m\)</span></th>
+<th>总计</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><span class="math inline">\(N_{1,1}\)</span></td>
+<td><span class="math inline">\(N_{2,1}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(N_{i,1}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(N_{m,1}\)</span></td>
+<td><span class="math inline">\(N_1\)</span></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\vdots\)</span></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(j\)</span></td>
+<td><span class="math inline">\(N_{1,j}\)</span></td>
+<td><span class="math inline">\(N_{2,j}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(N_{i,j}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(N_{m,j}\)</span></td>
+<td><span class="math inline">\(N_j\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\vdots\)</span></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(n\)</span></td>
+<td><span class="math inline">\(N_{1,n}\)</span></td>
+<td><span class="math inline">\(N_{2,n}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(N_{i,n}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(N_{m,n}\)</span></td>
+<td><span class="math inline">\(N_n\)</span></td>
+</tr>
+<tr class="odd">
+<td>总计</td>
+<td><span class="math inline">\(M_1\)</span></td>
+<td><span class="math inline">\(M_2\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(M_i\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(M_m\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>注意，<span class="math inline">\(N_j\)</span> 表示样本中取值为 <span class="math inline">\(j\)</span> 的成员的数量。</p>
+<div id="exr-11_5_b" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 11.7</strong></span> 最近的一项研究报告称，他们从四个不同的国家随机选取了500名（每个国家随机选择 500 名）女性办公室职员进行调研。其中一个问题就是：她们在工作中是否经常受到言语或性虐待，并得到了如下数据。</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>国家</th>
+<th>受虐待的人数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>澳大利亚</td>
+<td>28</td>
+</tr>
+<tr class="even">
+<td>德国</td>
+<td>30</td>
+</tr>
+<tr class="odd">
+<td>日本</td>
+<td>51</td>
+</tr>
+<tr class="even">
+<td>美国</td>
+<td>55</td>
+</tr>
+</tbody>
+</table>
+<p>基于这些数据，这些国家中经常在工作中感到受虐待的女性办公室职员的比例相同这一说法是否合理？</p>
+</div>
+<div id="sol-11_5_b" class="proof solution">
+<p><span class="proof-title"><em>解 11.7</em>. </span>将上述数据表示成如下的列联表：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>国家 1</th>
+<th>国家 2</th>
+<th>国家 3</th>
+<th>国家 4</th>
+<th>总计</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>受到虐待</td>
+<td>28</td>
+<td>30</td>
+<td>51</td>
+<td>55</td>
+<td>171</td>
+</tr>
+<tr class="even">
+<td>未受虐待</td>
+<td>472</td>
+<td>470</td>
+<td>442</td>
+<td>445</td>
+<td>1829</td>
+</tr>
+<tr class="odd">
+<td>总计</td>
+<td>500</td>
+<td>500</td>
+<td>500</td>
+<td>500</td>
+<td>2000</td>
+</tr>
+</tbody>
+</table>
+<p>可以通过检验上述列联表中的独立性来检验原假设。使用 R 语言得到检验统计量的值为 <span class="math inline">\(TS = 19.51\)</span>，对应的 <span class="math inline">\(p-\text{value}\)</span> 为 0.0002。</p>
+<p>因此，在 1% 的显著性水平下（实际上，在任何高于 0.02% 的显著性水平下），我们将拒绝这些国家中的不同女性在工作中受到虐待的比例相同这一假设。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
 <section id="sec-11_6" class="level2" data-number="11.6">
-<h2 data-number="11.6" class="anchored" data-anchor-id="sec-11_6"><span class="header-section-number">11.6</span> The Kolmogorov–Smirnov goodness of fit test for continuous data</h2>
+<h2 data-number="11.6" class="anchored" data-anchor-id="sec-11_6"><span class="header-section-number">11.6</span> 用于连续数据的 Kolmogorov–Smirnov 拟合优度检验</h2>
+<p>假设 <span class="math inline">\(Y_1,\ldots,Y_n\)</span> 为来自连续分布的总体的样本数据，并且我们希望检验原假设 <span class="math inline">\(H_0: \text{总体的分布函数为} F\)</span>，其中 <span class="math inline">\(F\)</span> 是一个指定的连续分布函数。</p>
+<p>一种检验 <span class="math inline">\(H_0\)</span> 的方法是：</p>
+<ul>
+<li>首先将 <span class="math inline">\(Y_j\)</span> 的可能取值划分为 <span class="math inline">\(k\)</span> 个不同的区间，即 <span class="math inline">\((y_0,y_1),(y_1,y_2),\ldots,(y_{k - 1},y_k)\)</span>，其中 <span class="math inline">\(y_0 = -\infty\)</span>，<span class="math inline">\(y_k = +\infty\)</span>。</li>
+<li>如果 <span class="math inline">\(Y_j\)</span> 落在区间 <span class="math inline">\((y_{i - 1},y_i)\)</span> 中，则令 <span class="math inline">\(Y_j^d = i\)</span>。于是我们得到一个离散随机变量 <span class="math inline">\(Y_j^{d}\)</span>，<span class="math inline">\(j = 1,\ldots,n\)</span>。</li>
+</ul>
+<p>原假设意味着 <span class="math inline">\(P\{Y_j^{d} = i\} = F(y_i)-F(y_{i - 1})\)</span>，<span class="math inline">\(i = 1,\ldots,k\)</span>，并且可以通过已经介绍过的卡方拟合优度检验来检验原假设。</p>
+<p>然而，还有另一种比如上的离散化方法更为有效的检验方法以检验 <span class="math inline">\(Y_j\)</span> 是否来自连续分布函数 <span class="math inline">\(F\)</span>。接下来，我们将介绍这种更为有效的检验方法。</p>
+<p>在观察到 <span class="math inline">\(Y_1,\ldots,Y_n\)</span> 之后，令 <span class="math inline">\(F_e\)</span> 为 <strong>经验分布函数</strong>（<em>the empirical distribution function</em>）：</p>
+<p><span class="math inline">\(F_e(x)=\frac{\#i:Y_i\leq x}{n}\)</span></p>
+<p>也就是说，<span class="math inline">\(F_e(x)\)</span> 是观察值中小于或等于 <span class="math inline">\(x\)</span> 的比例。因为 <span class="math inline">\(F_e(x)\)</span> 是一个观察值小于或等于 <span class="math inline">\(x\)</span> 的概率的自然估计量，所以如果原假设（<span class="math inline">\(F\)</span> 就是总体的分布函数）是正确的，那么 <span class="math inline">\(F_e(x)\)</span> 和 <span class="math inline">\(F(x)\)</span> 应该非常接近。由于对于所有的 <span class="math inline">\(x\)</span> 都是如此，所以检验 <span class="math inline">\(H_0\)</span> 的检验统计量为：</p>
+<p><span class="math inline">\(D\equiv\underset{x}{\text{Maximum}}|F_e(x)-F(x)|\)</span></p>
+<p>其中在 <span class="math inline">\(x \in (-\infty, +\infty)\)</span> 上取 <span class="math inline">\(|F_e(x)-F(x)|\)</span> 的最大值作为统计量 <span class="math inline">\(D\)</span>。我们称 <span class="math inline">\(D\)</span> 为 Kolmogorov–Smirnov 检验统计量。</p>
+<p>为了计算给定数据集 <span class="math inline">\(Y_j = y_j\)</span>，<span class="math inline">\(j = 1,\ldots,n\)</span> 下的 <span class="math inline">\(D\)</span> 的值，我们令 <span class="math inline">\(y_{(1)},y_{(2)},\ldots,y_{(n)}\)</span> 表示 <span class="math inline">\(y_j\)</span> 的升序排列结果。也就是说，<span class="math inline">\(y_{(j)}\)</span> 是 <span class="math inline">\(y_1,\ldots,y_n\)</span> 中第 <span class="math inline">\(j\)</span> 小的值。</p>
+<p>例如，如果 <span class="math inline">\(n =3\)</span>，<span class="math inline">\(y_1 = 3\)</span>，<span class="math inline">\(y_2 = 5\)</span>，<span class="math inline">\(y_3 = 1\)</span>，那么 <span class="math inline">\(y_{(1)} = 1\)</span>，<span class="math inline">\(y_{(2)} = 3\)</span>，<span class="math inline">\(y_{(3)} = 5\)</span>。所以，<span class="math inline">\(F_e(x)\)</span> 可以写作：</p>
+<p><span class="math display">\[
+F_e(x) = \begin{cases}
+0, \quad &amp; \text{if} \quad x \lt y_{(1)} \\
+\frac{1}{n}, \quad &amp; \text{if} \quad y_{(1)} \le x \lt y_{(2)} \\
+\vdots &amp; \\
+\frac{j}{n}, \quad &amp; \text{if} \quad y_{(j)} \le x \lt y_{(j + 1)} \\
+\vdots &amp; \\
+1, \quad &amp; \text{if} \quad y_{(n)} \le x
+\end{cases}
+\]</span></p>
+<p>所以，在区间 <span class="math inline">\((y_{(j - 1)},y_{(j)})\)</span> 内，<span class="math inline">\(F_e(x)\)</span> 是常数，并在 <span class="math inline">\(y_{(1)},\ldots,y_{(n)}\)</span> 处跃增 <span class="math inline">\(\frac{1}{n}\)</span>。由于 <span class="math inline">\(F(x)\)</span> 是 <span class="math inline">\(x\)</span> 的增函数且小于等于 <span class="math inline">\(1\)</span>，所以 <span class="math inline">\(F_e(x)-F(x)\)</span> 的最大值是非负的，并且当 <span class="math inline">\(x\)</span> 等于 <span class="math inline">\(y_{(j)}, j = 1,\ldots,n\)</span> 中的一个时取得最大值（如 <a href="#fig-11_1" class="quarto-xref">图&nbsp;<span>11.1</span></a>）。</p>
+<div id="fig-11_1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/chapter_11/f_11_1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.1: <span class="math inline">\(n=5\)</span>
+</figcaption>
+</figure>
+</div>
+<p>也就是说，</p>
+<p><span id="eq-11_6_1"><span class="math display">\[
+\underset{x}{\text{Maximum}} \left \{ F_e(x)-F(x) \right \} =\underset{j = 1,\ldots,n}{\text{Maximum}}\{\frac{j}{n}-F(y_{(j)})\}
+\tag{11.4}\]</span></span></p>
+<p>类似地，<span class="math inline">\(F(x)-F_e(x)\)</span> 的最大值也是非负的，并且出现在紧靠跳跃点 <span class="math inline">\(y_{(j)}\)</span> 的前一个的位置。所以：</p>
+<p><span id="eq-11_6_2"><span class="math display">\[
+\underset{x}{\text{Maximum}}\{F(x)-F_e(x)\}=\underset{j = 1,\ldots,n}{\text{Maximum}}\{F(y_{(j)})-\frac{j - 1}{n}\}
+\tag{11.5}\]</span></span></p>
+<p>根据 <a href="#eq-11_6_1" class="quarto-xref">式&nbsp;<span>11.4</span></a> 和 <a href="#eq-11_6_2" class="quarto-xref">式&nbsp;<span>11.5</span></a>，我们得到：</p>
+<p><span id="eq-11_6_3"><span class="math display">\[
+\begin{align*}
+D&amp;=\underset{x}{\text{Maximum}}\vert F_e(x)-F(x)\vert\\
+&amp;=\text{Maximum} \left \{\text{Maximum}\{F_e(x)-F(x)\},\text{Maximum}\{F(x)-F_e(x)\} \right \}\\
+&amp;=\text{Maximum} \left \{\frac{j}{n}-F(y_{(j)}),F(y_{(j)})-\frac{j - 1}{n},j = 1,\ldots,n \right \}
+\end{align*}
+\tag{11.6}\]</span></span></p>
+<p>我们可以利用 <a href="#eq-11_6_3" class="quarto-xref">式&nbsp;<span>11.6</span></a> 来计算 <span class="math inline">\(D\)</span> 的值。</p>
+<p>假设已经观察到 <span class="math inline">\(Y_j\)</span>，并且 <span class="math inline">\(Y_j\)</span> 的观察值使得 <span class="math inline">\(D = d\)</span>。较大的 <span class="math inline">\(D\)</span> 值似乎与总体分布服从 <span class="math inline">\(F\)</span> 的原假设不一致，所以观察数据集的 <span class="math inline">\(p-\text{value}\)</span> 为：</p>
+<p><span class="math inline">\(p-\text{value}=P_F\{D\geq d\}\)</span></p>
+<p>其中我们写作 <span class="math inline">\(P_F\)</span> 是为了表明如上的概率是在原假设 <span class="math inline">\(H_0\)</span> 为真（所以 <span class="math inline">\(F\)</span> 就是总体的分布函数）的情况下计算的。</p>
+<p>可以通过 <a href="#prp-11_6_1" class="quarto-xref">命题&nbsp;<span>11.1</span></a> 的模拟来更简单的近似计算如上的 <span class="math inline">\(p-\text{value}\)</span>。<a href="#prp-11_6_1" class="quarto-xref">命题&nbsp;<span>11.1</span></a> 表明 <span class="math inline">\(P_F\{D\geq d\}\)</span> 不依赖于总体的假设分布函数 <span class="math inline">\(F\)</span>，这允许我们可以选择任何的连续分布 <span class="math inline">\(F\)</span> 进行模拟来估计 <span class="math inline">\(p-\text{value}\)</span>（因此，我们可以使用 <span class="math inline">\((0,1)\)</span> 均匀分布）。</p>
+<div id="prp-11_6_1" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 11.1</strong></span> 对于任意的连续分布函数 <span class="math inline">\(F\)</span>，<span class="math inline">\(P_F{D \ge d}\)</span> 都是一样的。</p>
+<div class="proof">
+<p><span class="proof-title"><em>证</em>. </span><span class="math inline">\(\begin{align*} P_F\{D\geq d\}&amp;=P_F\left\{\underset{x}{\text{Maximum}}\left|\frac{\#\{i:Y_i\leq x\}}{n}-F(x)\right|\geq d\right\}\\ &amp;=P_F\left\{\underset{x}{\text{Maximum}}\left|\frac{\#\{i:F(Y_i)\leq F(x)\}}{n}-F(x)\right|\geq d\right\}\\ &amp;=P\left\{\underset{x}{\text{Maximum}}\left|\frac{\#\{i:U_i\leq F(x)\}}{n}-F(x)\right|\geq d\right\} \end{align*}\)</span></p>
+<p>其中，<span class="math inline">\(U_1,\ldots,U_n\)</span> 是独立的 <span class="math inline">\((0,1)\)</span> 均匀分布随机变量。</p>
+<ul>
+<li>第一个等式成立是因为 <span class="math inline">\(F\)</span> 是增函数，所以 <span class="math inline">\(Y\leq x\)</span> 等价于 <span class="math inline">\(F(Y)\leq F(x)\)</span></li>
+<li>第二个等式成立是因为如果 <span class="math inline">\(Y\)</span> 具有连续分布函数 <span class="math inline">\(F\)</span>，那么随机变量 <span class="math inline">\(F(Y)\)</span> 为 <span class="math inline">\((0,1)\)</span> 均匀分布（证明过程留作习题）。</li>
+</ul>
+<p>令 <span class="math inline">\(y = F(x)\)</span>，并且当 <span class="math inline">\(x\)</span> 从 <span class="math inline">\(-\infty\)</span> 增加到 <span class="math inline">\(+\infty\)</span> 时，<span class="math inline">\(F(x)\)</span> 从 <span class="math inline">\(0\)</span> 增加到 <span class="math inline">\(1\)</span> ，于是我们得到：</p>
+<p><span class="math inline">\(P_F\{D\geq d\}=P\left\{\underset{0\leq y\leq1}{\text{Maximum}}\left|\frac{\#\{i:U_i\leq y\}}{n}-y\right|\geq d\right\}\)</span></p>
+<p>这表明，当原假设 <span class="math inline">\(H_0\)</span> 为真时，<span class="math inline">\(D\)</span> 的分布不依赖于实际分布 <span class="math inline">\(F\)</span>。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
+</div>
+<p>由 <a href="#prp-11_6_1" class="quarto-xref">命题&nbsp;<span>11.1</span></a> 可知，在根据观察数据确定 <span class="math inline">\(D\)</span> 的值（<span class="math inline">\(D = d\)</span>）之后，可以使用 <span class="math inline">\((0,1)\)</span> 均匀分布进行模拟来获得 <span class="math inline">\(p-\text{value}\)</span>。也就是说，我们生成一个包含 <span class="math inline">\(n\)</span> 个随机数 <span class="math inline">\(U_1,\ldots,U_n\)</span> 的集合，然后检查 <span class="math inline">\(\underset{0\leq y\leq1}{\text{Maximum}}\left|\frac{\#\{i:U_i\leq y\}}{n}-y\right|\geq d\)</span> 是否成立。重复这个过程很多次，那么 <span class="math inline">\(\underset{0\leq y\leq1}{\text{Maximum}}\left|\frac{\#\{i:U_i\leq y\}}{n}-y\right|\geq d\)</span> 成立的次数比例就是对该数据集 <span class="math inline">\(p-\text{value}\)</span> 的估计。如前所述，可以通过对随机数排序，然后使用等式</p>
+<p><span class="math inline">\(\text{Max}\left|\frac{\#\{i:U_i\leq y\}}{n}-y\right|=\text{Max}\left\{\frac{j}{n}-U_{(j)},U_{(j)}-\frac{j - 1}{n},j = 1,\ldots,n\right\}\)</span></p>
+<p>来计算不等式的左边，其中 <span class="math inline">\(U_{(j)}\)</span> 是 <span class="math inline">\(U_1,\ldots,U_n\)</span> 中的第 <span class="math inline">\(j\)</span> 小的值。</p>
+<p>例如，如果 <span class="math inline">\(n = 3\)</span> 且 <span class="math inline">\(U_1 = 0.7\)</span>，<span class="math inline">\(U_2 = 0.6\)</span>，<span class="math inline">\(U_3 = 0.4\)</span>，那么 <span class="math inline">\(U_{(1)} = 0.4\)</span>，<span class="math inline">\(U_{(2)} = 0.6\)</span>，<span class="math inline">\(U_{(3)} = 0.7\)</span>，这个数据集的 <span class="math inline">\(D\)</span> 值为：</p>
+<p><span class="math inline">\(D=\text{Max}\left\{\frac{1}{3}-0.4,\frac{2}{3}-0.6,1 - 0.7,0.4,0.6-\frac{1}{3},0.7-\frac{2}{3}\right\}=0.4\)</span> 。</p>
+<p>令 <span class="math inline">\(D^{*}=(\sqrt{n}+0.12+\frac{0.11}{\sqrt{n}})D\)</span>，并令 <span class="math inline">\(d_{\alpha}^{*}\)</span> 满足 <span class="math inline">\(P_F\{D^{*}\geq d_{\alpha}^{*}\}=\alpha\)</span>，则对于不同的 <span class="math inline">\(\alpha\)</span> 值，<span class="math inline">\(d_{\alpha}^{*}\)</span> 有以下的近似值：</p>
+<p><span class="math inline">\(d_{0.1}^{*}=1.224\)</span></p>
+<p><span class="math inline">\(d_{0.05}^{*}=1.358\)</span></p>
+<p><span class="math inline">\(d_{0.025}^{*}=1.480\)</span></p>
+<p><span class="math inline">\(d_{0.01}^{*}=1.626\)</span></p>
+<p>如果 <span class="math inline">\(D^{*}\)</span> 的观测值大于等于 <span class="math inline">\(d_{\alpha}^{*}\)</span>，那么在显著性水平为 <span class="math inline">\(\alpha\)</span> 下，我们将拒绝总体分布函数为 <span class="math inline">\(F\)</span> 的原假设。</p>
+<div id="exr-11_6_a" class="theorem exercise">
+<p><span class="theorem-title"><strong>习题 11.8</strong></span> 假设我们要检验一个给定的总体分布是均值为 100 的指数分布的假设，即 <span class="math inline">\(F(x)=1-e^{-x/100}\)</span>。如果来自该分布的、大小为 10 的样本的有序值为：</p>
+<p>66、72、81、94、112、116、124、140、145、155</p>
+<p>那么可以得出什么结论？</p>
+</div>
+<div id="sol-11_6_a" class="proof solution">
+<p><span class="proof-title"><em>解 11.8</em>. </span>首先，我们使用 <a href="#eq-11_6_3" class="quarto-xref">式&nbsp;<span>11.6</span></a> 来计算 Kolmogorov–Smirnov 检验统计量 <span class="math inline">\(D\)</span> 的值。经过计算，我们得到 <span class="math inline">\(D = 0.4831487\)</span>，所以：</p>
+<p><span class="math inline">\(D^{*}=0.48315(\sqrt{10}+0.12+\frac{0.11}{\sqrt{10}})=1.603\)</span>。</p>
+<p>因为 1.603 超过了 <span class="math inline">\(d_{0.025}^{*}=1.480\)</span>，所以在 2.5% 的显著性水平下，我们将拒绝样本数据来自均值为 100 的指数分布的原假设。另一方面，因为 1.603 小于 <span class="math inline">\(d_{0.01}^{*}=1.626\)</span>，所以在 1% 的显著性水平下，我们不会拒绝原假设。<span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
 <section id="problems" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
