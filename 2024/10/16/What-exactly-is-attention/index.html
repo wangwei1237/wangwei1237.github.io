@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.7k</span>
+            <span class="post-count">3.9k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">17 分钟</span>
+            <span class="post-count">18 分钟</span>
         </span>
     </span>
 </div>
@@ -326,6 +326,41 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p>在 <code>Multi-Head Attention</code> 的基础之上，再增加前馈网络、叠加和归一组件，就得到了完整的 Transformer Encoder。当然，实际中，可以将 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span></span> 个 Encoder 一个一个的叠加起来，最后一个 Encoder 的输出就是原始输入内容的特征值 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">R</mi></mrow><annotation encoding="application/x-tex">\mathbf{R}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">R</span></span></span></span></span>（矩阵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">R</mi></mrow><annotation encoding="application/x-tex">\mathbf{R}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">R</span></span></span></span></span> 与输入内容的词向量矩阵的维度是一致的）。</p>
 <p><img src="/2024/10/16/What-exactly-is-attention/encoder.png" alt="Encoder 架构图"></p>
 <h2 id="transformer-中的-decoder">Transformer 中的 Decoder</h2>
+<p>假设我们要把英语句子 <code>I am a student</code>（原句）翻译成中文 <code>我是一个学生</code>（目标句）。</p>
+<ol>
+<li>首先，我们把原句 <code>I am a student</code> 输入到 Transformer 的 Encoder 中，让 Encoder 学习原句并得到原句的特征矩阵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">R</mi></mrow><annotation encoding="application/x-tex">\mathbf{R}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">R</span></span></span></span></span>。</li>
+<li>然后，我们把 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">R</mi></mrow><annotation encoding="application/x-tex">\mathbf{R}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">R</span></span></span></span></span> 输入到解码器，解码器根据 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">R</mi></mrow><annotation encoding="application/x-tex">\mathbf{R}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">R</span></span></span></span></span> 和解码器之前的输出作为输入，并生成目标句中的下一个词，直到生成目标句为止（解码器每次迭代会生成一个词，直到生成目标句为止）。</li>
+</ol>
+<p>具体的生成过程如下图所示：</p>
+<p><img src="/2024/10/16/What-exactly-is-attention/decode_demo1.gif" alt="解码器的例子"></p>
+<h3 id="带掩码的多头注意力层">带掩码的多头注意力层</h3>
+<p>以如上的翻译认为为例，假设训练数据集如下所示：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">原句</th>
+<th style="text-align:center">目标句</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">I am a student</td>
+<td style="text-align:center">我是一个学生</td>
+</tr>
+<tr>
+<td style="text-align:center">I am a teacher</td>
+<td style="text-align:center">我是一个老师</td>
+</tr>
+<tr>
+<td style="text-align:center">Good morning</td>
+<td style="text-align:center">早上好</td>
+</tr>
+<tr>
+<td style="text-align:center">Thank you very much</td>
+<td style="text-align:center">非常感谢你</td>
+</tr>
+</tbody>
+</table>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
