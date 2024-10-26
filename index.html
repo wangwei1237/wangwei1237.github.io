@@ -172,7 +172,13 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2024/10/16/What-exactly-is-attention/1.png" alt></p> 
+  <p><img src="/2024/10/16/What-exactly-is-attention/1.png" alt></p>
+<p>最近的 1 年多以来，一直使用 文心一言、豆包、Kimi 等大模型来帮助自己提供各种场景的效率，但是一直没有对当前大模型的底层原理做深入了解。在编写 <a href="https://wangwei1237.github.io/LLM_in_Action/">Large Language Model in Action</a> 这本书的时候，我也曾说过：</p>
+<blockquote>
+<p>这是一本关于大语言模型实践的书籍，而不是一本深入研究大语言模型的运行原理和底层算法的书籍。</p>
+</blockquote>
+<p>但是，2024 年 10 月 1 日，OpenAI 发布了 <a target="_blank" rel="noopener" href="https://openai.com/index/api-prompt-caching/">Prompt Caching in the API</a> 以提升大语言模型 API 的性能。当听到这个消息的时候，我感到非常震惊，也非常兴奋，于是接下来的几天我总想搞明白这背后的原理是什么，这里的 <code>prompt caching</code> 又究竟是什么？</p>
+<p>于是，我想，是时候需要深入了解一下当前大模型的起点——Transformer 模型，也是时候需要深入了解一下究竟什么是自注意力机制。</p> 
       <a class="article-more-link" href="/2024/10/16/What-exactly-is-attention/"
         >阅读更多...</a
       >
@@ -234,7 +240,7 @@
 <blockquote>
 <p>曾经多少次，在系统上线之前，我们从多个方面进行了评测：性能也提升了，效果也提升了，我们兴高采烈的上线，然后激动的等待着实验数据的产出，最后得到的却是效果不明显的结论。多少个不眠的夜里，我总会问自己：技术上已经有了很大的提升啦，为什么却没有在线上表现出对应的效果呢？这究竟是为什么呀？</p>
 </blockquote>
-<p>同时，根据我的观察和实践，提出了评测的基本模型 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Perception</mtext><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mtext>Actual</mtext><mo separator="true">,</mo><mtext> Expected</mtext><mo separator="true">,</mo><mtext> UX</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Perception} = f(\text{Actual}, \ \text{Expected}, \ \text{UX})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord text"><span class="mord">Perception</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord text"><span class="mord">Actual</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">Expected</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace"> </span><span class="mord text"><span class="mord">UX</span></span><span class="mclose">)</span></span></span></span> 来解释了评测的疑惑。但是，仅仅依靠这个模型，我们就可以得出合理的结论吗？如上的模型，只能帮助我们获得准确的观察数据，但是如何从准确的观察数据中得出合理的结论呢？</p> 
+<p>同时，根据我的观察和实践，提出了评测的基本模型 $\text{Perception} = f(\text{Actual}, \ \text{Expected}, \ \text{UX})$ 来解释了评测的疑惑。但是，仅仅依靠这个模型，我们就可以得出合理的结论吗？如上的模型，只能帮助我们获得准确的观察数据，但是如何从准确的观察数据中得出合理的结论呢？</p> 
       <a class="article-more-link" href="/2024/10/06/The-Statistical-Approach-for-the-Product-Evaluation/"
         >阅读更多...</a
       >
