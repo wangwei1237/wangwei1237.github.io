@@ -114,7 +114,7 @@
        
   <p>libyuv是Google开源的实现各种YUV格式与RGB格式之间相互转换、旋转、缩放的库。关于libyuv的具体介绍可以参考<a target="_blank" rel="noopener" href="https://chromium.googlesource.com/libyuv/libyuv">官网介绍</a>。</p>
 <span id="more"></span>
-<h2 id="Android-Studio编译libyuv">Android Studio编译libyuv</h2>
+<h2 id="android-studio编译libyuv">Android Studio编译libyuv</h2>
 <p>在自己编译libyuv的过程中，遇到了很多坑。在解决这些坑的过程中发现，从网上查询的很多资料并没有对问题的解决提供帮助。因此，在自己趟过了所有的坑之后，就想把编译libyuv的过程整理了出来，一方面是做一个梳理和总结，另一方面也希望帮助更多有类似需求的人。</p>
 <p>接下来，开始介绍在Android平台上，利用NKD编译包含libjpeg库的libyuv库。这个主要通过<a target="_blank" rel="noopener" href="https://chromium.googlesource.com/libyuv/libyuv/+/refs/heads/master/Android.mk">libyuv/Android.mk</a>中的如下代码实现：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">include $(CLEAR_VARS)</span><br><span class="line"></span><br><span class="line">LOCAL_WHOLE_STATIC_LIBRARIES :&#x3D; libyuv_static</span><br><span class="line">LOCAL_MODULE :&#x3D; libyuv</span><br><span class="line">ifneq ($(LIBYUV_DISABLE_JPEG), &quot;yes&quot;)</span><br><span class="line">LOCAL_SHARED_LIBRARIES :&#x3D; jpeg</span><br><span class="line">endif</span><br><span class="line"></span><br><span class="line">include $(BUILD_SHARED_LIBRARY)</span><br></pre></td></tr></table></figure>
@@ -124,9 +124,9 @@
 <li><a target="_blank" rel="noopener" href="https://github.com/libjpeg-turbo/libjpeg-turbo.git">libjpeg-turbo</a></li>
 </ul>
 <h2 id="编译依赖">编译依赖</h2>
-<h3 id="NDK">NDK</h3>
+<h3 id="ndk">NDK</h3>
 <p>因为NDK-r17之后的版本，不支持gcc编译so，需要使用clang来编译so库。因此编译时，需要确定好自己的NDK版本。</p>
-<h3 id="CMAKE-NASM-GCC等">CMAKE, NASM, GCC等</h3>
+<h3 id="cmake-nasm-gcc等">CMAKE, NASM, GCC等</h3>
 <p>该部分编译依赖为编译libjpeg-turbo库的编译依赖，具体可以参见libjpeg-turbo的<a target="_blank" rel="noopener" href="https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/BUILDING.md">BUILD.md</a></p>
 <h2 id="编译libjpeg-turbo">编译libjpeg-turbo</h2>
 <ol>
