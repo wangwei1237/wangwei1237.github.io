@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.6k</span>
+            <span class="post-count">6.2k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14 分钟</span>
+            <span class="post-count">26 分钟</span>
         </span>
     </span>
 </div>
@@ -240,8 +240,362 @@
 <p>由于大模型表现出强悍的预测能力，因此它们非常适合成为强大的压缩器。我们通过压缩的视角来看待大模型的预测问题，并评估了大模型的压缩能力。</p>
 </blockquote>
 <h2 id="gpt-模型的参数量">GPT 模型的参数量</h2>
+<p>在 <em>Language Models are Few-Shot Learners</em> <sup class="footnote-ref"><a href="#fn7" id="fnref7:2">[7:2]</a></sup> 中提到，GPT-3 的参数数量是 1750 亿，我们也经常说 ChatGPT 的参数数量是 1750 亿，那么如何计算模型的参数数量呢？</p>
+<p>既然 GPT-3 的架构、超参数都是公开的，我们不妨按照相关数据来测算一下 GPT-3 的参数数量，也借这个机会熟悉一下 GPT 系列模型的细节。</p>
+<p>对于之前的文本生成的例子，下图展示了其中的一个迭代的详细过程：</p>
 <p><img src="/2024/10/31/From-Transformer-To-GPT/GPT_arch_detail.png" alt="GPT 预测下一个词的详细过程"></p>
-<h2 id="gpt-模型的计算量">GPT 模型的计算量</h2>
+<p>如上图所示，对于 GPT 架构而言，整个预测的过程可以分为 6 个步骤：</p>
+<ol>
+<li>
+<p>分词<br>
+对于原始的输入 <code>我是一个学生</code>，首先需要使用某种分词算法进行分词，并得到分词之后的 Tokens 序列：</p>
+<blockquote>
+<p>tokens = [我, 是, 一个, 学生]</p>
+</blockquote>
+<p>以 GPT-3 为例，模型的总词汇量（tokens）为 50257，每个 token 都有一个对应的 ID 序号，比如 <code>tokens = [我, 是, 一个, 学生]</code> 对应的 ID 序号为：</p>
+<blockquote>
+<p>tokens = [176389, 22912, 52770]</p>
+</blockquote>
+<p>对于分词而言，并不涉及到任何的模型参数，由于涉及到的计算量并不大，因此整体的操作均在 CPU 上完成。得到 tokens 后，然后将对应的序列发送给 GPU 进行计算。</p>
+</li>
+<li>
+<p>词嵌入<br>
+模型需要根据 <code>tokens = [176389, 22912, 52770]</code> 中的 ID 得到对应 token 的词向量，并组装成矩阵形式的输入序列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">X</mi></mrow><annotation encoding="application/x-tex">\mathbf{X}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">X</span></span></span></span></span>。在这个过程中，需要使用模型的词嵌入矩阵，该矩阵的每一行代表一个 token 的词向量，词嵌入矩阵的维度依赖于具体的模型。以 GPT-3 为例，其词汇量为 50257，每个 token 的维度为 12288，所以 GPT-3 的词嵌入矩阵的维度为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>50257</mn><mo>×</mo><mn>12288</mn></mrow><annotation encoding="application/x-tex">50257 \times 12288</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">5</span><span class="mord">0</span><span class="mord">2</span><span class="mord">5</span><span class="mord">7</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span></span></span></span>，也就是共计有 <code>617,558,016</code> 个参数。</p>
+</li>
+<li>
+<p>位置嵌入<br>
+根据 <a href="/2024/10/16/What-exactly-is-attention/#transformer-%E4%B8%AD%E7%9A%84-positional-encoding">自注意力究竟是什么？中的 Transformer 中的 Positional Encoding 一节</a> 中的介绍，我们还需要对输入的矩阵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">X</mi></mrow><annotation encoding="application/x-tex">\mathbf{X}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">X</span></span></span></span></span> 增加位置信息，并得到含有位置信息的输入矩阵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">X</mi></mrow><annotation encoding="application/x-tex">\mathbf{X}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">X</span></span></span></span></span>。而在该步骤中，需要使用到模型的位置嵌入矩阵，该矩阵的行数和模型的上下文大小一致，并且每一行的大小和模型的词嵌入矩阵中每个 token 的维度一致。以 GPT-3 为例，其模型上下文大小为 2048，所以 GPT-3 的位置嵌入矩阵的维度为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2048</mn><mo>×</mo><mn>12288</mn></mrow><annotation encoding="application/x-tex">2048 \times 12288</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mord">0</span><span class="mord">4</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span></span></span></span>，也就是共计有 <code>25,165,824</code> 个参数。</p>
+</li>
+<li>
+<p>计算自注意力<br>
+接下来，需要根据输入矩阵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">X</mi></mrow><annotation encoding="application/x-tex">\mathbf{X}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">X</span></span></span></span></span> 计算自注意力，根据之前的介绍，需要首先利用 3 个权重矩阵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">W</mi><mi>Q</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{W}^Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">Q</span></span></span></span></span></span></span></span></span></span></span>、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">W</mi><mi>K</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{W}^K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.07153em;">K</span></span></span></span></span></span></span></span></span></span></span>、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">W</mi><mi>V</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{W}^V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span></span></span></span></span></span></span></span></span></span></span> 对 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">X</mi></mrow><annotation encoding="application/x-tex">\mathbf{X}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">X</span></span></span></span></span> 进行线性变换并得到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">Q</mi></mrow><annotation encoding="application/x-tex">\mathbf{Q}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8805499999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathbf">Q</span></span></span></span></span>、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">K</mi></mrow><annotation encoding="application/x-tex">\mathbf{K}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf">K</span></span></span></span></span>、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">V</mi></mrow><annotation encoding="application/x-tex">\mathbf{V}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">V</span></span></span></span></span>，然后利用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Attention</mtext><mo stretchy="false">(</mo><mi mathvariant="bold">Q</mi><mo separator="true">,</mo><mi mathvariant="bold">K</mi><mo separator="true">,</mo><mi mathvariant="bold">V</mi><mo stretchy="false">)</mo><mo>=</mo><mtext>softmax</mtext><mrow><mo fence="true">(</mo><mfrac><mrow><mi mathvariant="bold">Q</mi><msup><mi mathvariant="bold">K</mi><mi>T</mi></msup></mrow><msqrt><msub><mi>d</mi><mi>k</mi></msub></msqrt></mfrac><mo fence="true">)</mo></mrow><mi mathvariant="bold">V</mi></mrow><annotation encoding="application/x-tex">\text{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V})=\text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}}\right)\mathbf{V}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">Attention</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">Q</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf">K</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">V</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.80002em;vertical-align:-0.65002em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size2">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.089473em;"><span style="top:-2.5864385em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord sqrt mtight"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8622307142857143em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mtight" style="padding-left:0.833em;"><span class="mord mtight"><span class="mord mathdefault mtight">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.8222307142857144em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail mtight" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" viewbox="0 0 400000 1080" preserveaspectratio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.17776928571428574em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.446108em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathbf mtight">Q</span></span><span class="mord mtight"><span class="mord mtight"><span class="mord mathbf mtight">K</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9190928571428572em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.538em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size2">)</span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">V</span></span></span></span></span> 计算自注意力。在 GPT-3 中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">W</mi><mi>Q</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{W}^Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">Q</span></span></span></span></span></span></span></span></span></span></span>、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">W</mi><mi>K</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{W}^K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.07153em;">K</span></span></span></span></span></span></span></span></span></span></span>、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">W</mi><mi>V</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{W}^V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span></span></span></span></span></span></span></span></span></span></span> 的维度均为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12288</mn><mo>×</mo><mn>128</mn></mrow><annotation encoding="application/x-tex">12288 \times 128</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">8</span></span></span></span>，并且每个解码器包含 96 个自注意力模块，因此共计有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12288</mn><mo>×</mo><mn>128</mn><mo>×</mo><mn>3</mn><mo>×</mo><mn>96</mn></mrow><annotation encoding="application/x-tex">12288 \times 128 \times 3 \times 96</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">9</span><span class="mord">6</span></span></span></span>——即 <code>452,984,832</code> 个参数。对于多头注意力计算的结果，还需要使用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>96</mn><mo>∗</mo><mn>128</mn><mo>×</mo><mn>12288</mn></mrow><annotation encoding="application/x-tex">96*128 \times 12288</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">9</span><span class="mord">6</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span></span></span></span> 的矩阵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">W</mi><mi>O</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{W}^O</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">O</span></span></span></span></span></span></span></span></span></span></span> 对其进行线性变换，因此还需要 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>96</mn><mo>∗</mo><mn>128</mn><mo>×</mo><mn>12288</mn></mrow><annotation encoding="application/x-tex">96*128 \times 12288</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">9</span><span class="mord">6</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span></span></span></span>——即 <code>150,994,944</code> 个参数。因此，对于每个解码器而言，自注意力模块的参数共计有 <code>603,979,776</code> 个参数。而 GPT-3 中，共计包含 96 个解码器，因此共计有 <code>57,982,058,496</code> 个参数。</p>
+</li>
+</ol>
+<p><img src="/2024/10/31/From-Transformer-To-GPT/mhattention_parameters.png" alt></p>
+<ol start="5">
+<li>前向反馈网络处理<br>
+前向连接层的计算公式为：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>FFN</mtext><mo stretchy="false">(</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo><mo>=</mo><mtext>max</mtext><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mi mathvariant="bold">x</mi><msub><mi mathvariant="bold">W</mi><mn>1</mn></msub><mo>+</mo><msub><mi mathvariant="bold">b</mi><mn>1</mn></msub><mo stretchy="false">)</mo><msub><mi mathvariant="bold">W</mi><mn>2</mn></msub><mo>+</mo><msub><mi mathvariant="bold">b</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\text{FFN}(\mathbf{x}) = \text{max}(0, \mathbf{x}\mathbf{W}_1 + \mathbf{b}_1)\mathbf{W}_2+\mathbf{b}_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">FFN</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">x</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">max</span></span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf">x</span></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">b</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">b</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，因此，其参数包括四个部分：两个权重矩阵和两个偏置变换。权重矩阵的维度 = 词向量维度 * 隐藏层维度，在 GPT-3 中，隐藏层维度为 4 倍词向量维度，因此，前向反馈网络的参数量为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12288</mn><mo>∗</mo><mo stretchy="false">(</mo><mn>12288</mn><mo>∗</mo><mn>4</mn><mo stretchy="false">)</mo><mo>∗</mo><mn>2</mn><mo>+</mo><mn>12288</mn><mo>∗</mo><mn>4</mn><mo>+</mo><mn>12288</mn></mrow><annotation encoding="application/x-tex">12288 * (12288 * 4) * 2 + 12288 * 4 + 12288</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">4</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">2</span><span class="mord">8</span><span class="mord">8</span></span></span></span>——即 <code>1,208,020,992</code> 个参数。而 GPT-3 中，共计包含 96 个解码器，因此共计有 <code>115,970,015,232</code> 个参数。</li>
+<li>线性层生成 logit 向量 并计算概率<br>
+最终，经过 96 层的解码器之后，我们得到了最后一个词的向量表示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">h</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{h}_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">h</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，然后利用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>softmax</mtext><mo stretchy="false">(</mo><msub><mi mathvariant="bold">h</mi><mi>n</mi></msub><msubsup><mi mathvariant="bold">W</mi><mi>e</mi><mi>T</mi></msubsup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{softmax}(\mathbf{h}_n\mathbf{W}_e^T)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0913309999999998em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathbf">h</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4530000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">e</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 计算下一个词的可能概率。由于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="bold">W</mi><mi>e</mi><mi>T</mi></msubsup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{W}_e^T)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0913309999999998em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4530000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">e</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 和模型的词向量矩阵是一致的，因此不需要额外的参数。</li>
+</ol>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">归一化层的参数
+</p><p>对于 GPT-3 模型而言，除了如上的步骤外，在每一个解码器中，还会有 2 个归一化层，同时在最后一个解码器之后，还增加了一个额外的归一化层，其主要作用为：</p>
+<ul>
+<li>稳定训练过程：在深度神经网络中，层归一化通过将每层的输入标准化为相同的分布，减少了梯度爆炸或梯度消失的问题，使模型能够更稳定地进行训练。</li>
+<li>加速收敛：归一化层可以使模型在训练中更快地找到合适的权重参数，通常会加快模型的收敛速度，从而缩短训练时间。</li>
+<li>减小内部协变量偏移：归一化层通过使输入分布保持一致，减少了每层的激活分布随训练而发生的变化，从而有助于模型更容易捕捉数据的特征。</li>
+<li>提升泛化能力：归一化操作可以使模型的训练更具鲁棒性，从而在测试数据上表现更好，提高模型的泛化能力。</li>
+</ul>
+<p>归一化层只涉及到两个参数：缩放参数（gamma）和偏移参数（beta），这两个参数的大小和模型的词向量维度大小一致。因此，对于 GPT-3 而言，每个归一化层需要 <code>12288 * 2 = 24,576</code> 个参数。</p>
+</div>
+<p>我们可以使用如下的代码来计算 GPT 的参数数量，完整的代码参见 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/R/blob/main/llm_parameters.R">llm_parameters.R</a>。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">get_llm_parameters_cnt &lt;- <span class="keyword">function</span>(</span><br><span class="line">  model_name = <span class="string">&quot;&quot;</span>,</span><br><span class="line">  n_vocabulary,    <span class="comment"># 模型的总 token 量</span></span><br><span class="line">  n_ctx,           <span class="comment"># 模型的 prompt 窗口大小</span></span><br><span class="line">  d_model,         <span class="comment"># 模型的 embedding 向量维度</span></span><br><span class="line">  d_q,             <span class="comment"># W^Q 矩阵的行向量维度</span></span><br><span class="line">  d_k,             <span class="comment"># W^K 矩阵的行向量维度</span></span><br><span class="line">  d_v,             <span class="comment"># W^V 矩阵的行向量维度</span></span><br><span class="line">  n_heads,         <span class="comment"># 每一个解码器中多头注意力矩阵的头数</span></span><br><span class="line">  n_layers,        <span class="comment"># 解码器的层数</span></span><br><span class="line">  d_ff             <span class="comment"># 前向反馈网络隐藏层的维度</span></span><br><span class="line">) &#123;</span><br><span class="line">  n_embedding  &lt;- n_vocabulary * d_model</span><br><span class="line">  n_position   &lt;- n_ctx * d_model</span><br><span class="line"></span><br><span class="line">  <span class="comment"># n_layers 层解码器的总参数</span></span><br><span class="line">  n_attention  &lt;- n_layers * single_decoder_attention_cnt(d_model,</span><br><span class="line">                                                          d_q,</span><br><span class="line">                                                          d_k,</span><br><span class="line">                                                          d_v,</span><br><span class="line">                                                          n_heads)</span><br><span class="line">  n_ffn        &lt;- n_layers * single_decoder_ffn_cnt(d_model, d_ff)</span><br><span class="line">  n_norm       &lt;- n_layers * single_decoder_norm_cnt(d_model)</span><br><span class="line">  n_top_norm   &lt;- 2 * d_model <span class="comment"># 最顶层的 Norm 层的参数</span></span><br><span class="line"></span><br><span class="line">  total_params &lt;- n_embedding + n_position + n_attention + n_ffn + n_norm +</span><br><span class="line">    n_top_norm</span><br><span class="line"></span><br><span class="line">  <span class="comment"># 输出相关参数</span></span><br><span class="line">  df &lt;- data.frame(Model     = model_name,</span><br><span class="line">                   Embedding = n_embedding,</span><br><span class="line">                   Emd_Rate  = <span class="built_in">round</span>(n_embedding / total_params, <span class="number">1</span>),</span><br><span class="line">                   Position  = n_position,</span><br><span class="line">                   Attention = n_attention,</span><br><span class="line">                   Atn_Rate  = <span class="built_in">round</span>(n_attention / total_params, <span class="number">1</span>),</span><br><span class="line">                   Ffn       = n_ffn,</span><br><span class="line">                   Ffn_Rate  = <span class="built_in">round</span>(n_ffn / total_params, <span class="number">1</span>),</span><br><span class="line">                   Norm      = n_norm,</span><br><span class="line">                   Total     = total_params)</span><br><span class="line">  print(kable(df, format = <span class="string">&quot;markdown&quot;</span>))</span><br><span class="line"></span><br><span class="line">  <span class="built_in">return</span>(total_params)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据论文中公开的模型超参数，我们可以得到不同模型的参数数量，如下表所示：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">llm_list &lt;- <span class="built_in">list</span>(</span><br><span class="line">  <span class="built_in">list</span>(model_name = <span class="string">&quot;GPT-1&quot;</span>,</span><br><span class="line">       n_vocabulary = <span class="number">40000</span>,</span><br><span class="line">       n_ctx = <span class="number">512</span>,</span><br><span class="line">       d_model = <span class="number">768</span>,</span><br><span class="line">       d_q = <span class="number">64</span>,</span><br><span class="line">       d_k = <span class="number">64</span>,</span><br><span class="line">       d_v = <span class="number">64</span>,</span><br><span class="line">       n_heads = <span class="number">12</span>,</span><br><span class="line">       n_layers = <span class="number">12</span>,</span><br><span class="line">       d_ff = <span class="number">768</span> * <span class="number">4</span>),</span><br><span class="line">  ...</span><br><span class="line">  ...</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">get_llm_list_parameters_cnt(llm_list)</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Model</th>
+<th style="text-align:right">Embedding</th>
+<th style="text-align:right">Emd_Rate</th>
+<th style="text-align:right">Position</th>
+<th style="text-align:right">Attention</th>
+<th style="text-align:right">Atn_Rate</th>
+<th style="text-align:right">Ffn</th>
+<th style="text-align:right">Ffn_Rate</th>
+<th style="text-align:right">Norm</th>
+<th style="text-align:right">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">GPT-1</td>
+<td style="text-align:right">30720000</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">393216</td>
+<td style="text-align:right">28311552</td>
+<td style="text-align:right">0.2</td>
+<td style="text-align:right">56669184</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">36864</td>
+<td style="text-align:right">116132352</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-2-Small</td>
+<td style="text-align:right">38597376</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">786432</td>
+<td style="text-align:right">28311552</td>
+<td style="text-align:right">0.2</td>
+<td style="text-align:right">56669184</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">36864</td>
+<td style="text-align:right">124402944</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-3-Small</td>
+<td style="text-align:right">38597376</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">1572864</td>
+<td style="text-align:right">28311552</td>
+<td style="text-align:right">0.2</td>
+<td style="text-align:right">56669184</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">36864</td>
+<td style="text-align:right">125189376</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-3-Medium</td>
+<td style="text-align:right">51463168</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">2097152</td>
+<td style="text-align:right">100663296</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">201449472</td>
+<td style="text-align:right">0.6</td>
+<td style="text-align:right">98304</td>
+<td style="text-align:right">355773440</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-3-Large</td>
+<td style="text-align:right">77194752</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">3145728</td>
+<td style="text-align:right">226492416</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">453169152</td>
+<td style="text-align:right">0.6</td>
+<td style="text-align:right">147456</td>
+<td style="text-align:right">760152576</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-3-XL</td>
+<td style="text-align:right">102926336</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">4194304</td>
+<td style="text-align:right">603979776</td>
+<td style="text-align:right">0.4</td>
+<td style="text-align:right">805552128</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">196608</td>
+<td style="text-align:right">1516853248</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-3-2.7B</td>
+<td style="text-align:right">128657920</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">5242880</td>
+<td style="text-align:right">838860800</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">1678131200</td>
+<td style="text-align:right">0.6</td>
+<td style="text-align:right">327680</td>
+<td style="text-align:right">2651225600</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-3-6.7B</td>
+<td style="text-align:right">205852672</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">8388608</td>
+<td style="text-align:right">2147483648</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">4295622656</td>
+<td style="text-align:right">0.6</td>
+<td style="text-align:right">524288</td>
+<td style="text-align:right">6657880064</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-3-13B</td>
+<td style="text-align:right">258320980</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">10526720</td>
+<td style="text-align:right">4210688000</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">8455300000</td>
+<td style="text-align:right">0.7</td>
+<td style="text-align:right">822400</td>
+<td style="text-align:right">12935668380</td>
+</tr>
+<tr>
+<td style="text-align:left">GPT-3-175B</td>
+<td style="text-align:right">617558016</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">25165824</td>
+<td style="text-align:right">57982058496</td>
+<td style="text-align:right">0.3</td>
+<td style="text-align:right">115970015232</td>
+<td style="text-align:right">0.7</td>
+<td style="text-align:right">4718592</td>
+<td style="text-align:right">174599540736</td>
+</tr>
+</tbody>
+</table>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition attention"><p class="admonition-title">Attention Is (Not) All You Need
+</p><p>根据如上的参数量表格，在 GPT 架构中，Attention 层的参数占整个模型的参数的占比在 20%~40%，特别在 GPT-3-175B 模型中，Attention 层的参数占比只有 30%。因此，在大模型架构中，Attention 并非是模型的全部，<em>Attention Is <strong>(Not)</strong> All You Need</em>，这一点需要特别的注意。</p>
+</div>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -258,7 +612,7 @@
 </li>
 <li id="fn6" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a> <a href="#fnref6" class="footnote-backref">↩︎</a> <a href="#fnref6:1" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn7" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.14165">Language Models are Few-Shot Learners</a> <a href="#fnref7" class="footnote-backref">↩︎</a> <a href="#fnref7:1" class="footnote-backref">↩︎</a></p>
+<li id="fn7" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.14165">Language Models are Few-Shot Learners</a> <a href="#fnref7" class="footnote-backref">↩︎</a> <a href="#fnref7:1" class="footnote-backref">↩︎</a> <a href="#fnref7:2" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn8" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language Models are Unsupervised Multitask Learners</a> <a href="#fnref8" class="footnote-backref">↩︎</a></p>
 </li>
