@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3k</span>
+            <span class="post-count">5.3k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">12 分钟</span>
+            <span class="post-count">20 分钟</span>
         </span>
     </span>
 </div>
@@ -143,7 +143,7 @@ over target tokens. (<em>From: Improving Language Understanding by Generative Pr
 <p>在这里面，最为典型的研究当属 OpenAI 在 2020 年 1 月 发表的 <em><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a></em> ，这篇论文通过实验的量化分析对大模型的性能、参数量、训练数据、计算量之间的关联性进行了深入的分析，并提出了大模型领域的 “Scaling Laws” 理论，为后续大模型的发展提供了重要的指导意义。</p>
 <p>自从谷歌的翻译团队在 2018 年提出 Transformer 架构之后，非常多的研究者都在探索不同的模型结构，并在不同的任务上取得了新的 SOTA，但是在 OpenAI 发表 <em>Scaling Laws</em> 之前却很少有人考虑影响模型性能的主要因素究竟是什么？</p>
 <p>或者，在 OpenAI 发表 <em>Scaling Laws</em> 之前，也有研究者对影响模型性能的相关因素进行了量化的研究或者分析，或者也发现了初步的结论<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>，但是仍然没有人对这些大量的实验数据进行量化分析并提出 <em>Scaling Laws</em> 的具体数学表示<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。</p>
-<p>当然，站在今天的视觉再来回顾 <em>Scaling Laws</em> 的定义，我们会发现这里面其实并没有什么特别高深的技术，只是利用实验做了量化分析并用数学语言来表述所发现的规律。或许，我们会说，这个实验我们也能做，就好像如果时光倒流，我们也能提出 <em>Scaling Laws</em> 一样。但是，直到 OpenAI 发表了 <em>Scaling Laws</em>，也没有团队能够这样系统的提出 <em>Scaling Laws</em>。</p>
+<p>当然，站在今天的视角再来回顾 <em>Scaling Laws</em> 的定义，我们会发现这里面其实并没有什么特别高深的技术，只是利用实验做了量化分析并用数学语言来表述所发现的规律。或许，我们会说，这个实验我们也能做，就好像如果时光倒流，我们也能提出 <em>Scaling Laws</em> 一样。但是，直到 OpenAI 发表了 <em>Scaling Laws</em>，也没有团队能够这样系统的提出 <em>Scaling Laws</em>。</p>
 <p>所谓 <em>Scaling laws</em> 其实就是一种描述系统随着规模的变化而发生的规律性变化的数学表达——通常表现为随着系统规模的增加，某些可测量的特征呈现出的某种固定的比例关系。</p>
 <p>2018 年 6 月，OpenAI 发布了 116M 参数规模的 GPT-1 模型（Improving Language Understanding by Generative Pre-Training），2019 年 4 月，他们又发布了 1.5B 参数规模的 GPT-2 模型（Language Models are Few-Shot Learners），随着参数规模的增加，模型性能也呈现出了明显的线性增长。</p>
 <p>接下来，如何能够让模型的性能再上一个新的台阶呢？GPT-2 模型的参数量达到了 1.5B，训练数据量达到了 40GB，训练的成本也高达 256$ 每小时<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>（总成本预估在 10 万$ 左右），接下来的方向将是什么？参数量要继续增加到多少？需要多少训练数据？</p>
@@ -173,7 +173,7 @@ over target tokens. (<em>From: Improving Language Understanding by Generative Pr
 <h3 id="效能工作的量化">效能工作的量化</h3>
 <p>回头想一下今年的效能工作，其实和 <em>Scaling Laws</em> 的思路非常相似，我们也是通过大量的实证数据的量化分析来指导我们的工作。我们认为质量是影响当前效率的核心因素，所以我们通过质量数据的分阶段分布来指导并优化我们的工作。</p>
 <p>虽然听起来非常简单，但是当我们真正开始做的时候，我们发现，之前我们都忽略了这些数据，之前我们也从来没有利用这些数据来做更好的量化分析。在衡量效能提升的量化分析中，我们也发现，确实有很多具体工作的工时无法精准的获取，但是我们采用了很多的近似原则来估算对应的效能，并且提出了用节省的工时量来表征效能提升的思路。</p>
-<p>就像 OpenAI 用训练阶段的交叉熵来表征模型性能一样，这可能会存在一定的不合理性，但是这确是一种非常简便的方式。所以，我们也知道用节省的工时量来表征效能提升的方式并不准确，但是这是我们能够想到的最便捷的方式。</p>
+<p>就像 OpenAI 用训练阶段的交叉熵来表征模型性能一样，这可能会存在一定的不合理性（例如，虽然交叉熵下降了 10%，但并不等价于模型在下游任务上的 <em>性能</em> 只提升了百分之十，有可能模型在下游任务上的性能有非常大幅度的提升），但是这确是一种非常简便的方式。所以，我们也知道用节省的工时量来表征效能提升的方式并不准确，但是这是我们能够想到的最便捷的方式。</p>
 <p>在我们的效能提升工作中，我们时刻利用量化分析来刻画并指导我们的工作，我们能够从量化分析中发现我们下一步的核心工作和重点方向，并且能够近似的预估出完成这些工作我们可以优化的效果。</p>
 <p><img src="/2024/12/01/Reflections-on-the-LLMs-Technological-Evolution/demo_2.png" alt></p>
 <h3 id="量化的好处">量化的好处</h3>
@@ -290,7 +290,67 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </p><p>用什么指标来刻画需求的复杂性？用什么指标来刻画需求的交付速度？这些指标过去一段时间的统计数据是怎样的？我们基于这些数据的推断又是什么？针对这些推断我们需要采取什么动作？……</p>
 </div>
 <h2 id="优化的思路">优化的思路</h2>
+<h3 id="大模型的推理优化">大模型的推理优化</h3>
+<p>大模型的推理优化技术有如下的思路：</p>
+<ul>
+<li>在推理设备上从 CPU 迁移到 GPU，从而可以 GPU 高并行的特征来解决推理过程中的大量的矩阵运算，提升推理的速度。</li>
+<li>不断细化的并行化处理，从推理阶段的 <code>Prefill 阶段</code>、<code>Decode 阶段</code> 分离，到请求级别的 <code>Batching</code> 批处理到请求级别的 <code>Micro-Batching</code> 批处理，然后再到 Token 级别的 <code>Piggybacking</code> 批处理，从而可以最大程度的减少推理过程的无效等待，提升推理的速度和 GPU 的吞吐。<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup></li>
+<li>KV 缓存、Prompt Caching 技术，避免推理过程中的重复计算，从而提升推理的速度。</li>
+<li>量化技术，用 <code>INT8</code> 来替换 <code>FLOAT16</code>、<code>FLOAT32</code> 的浮点计算，降低推理过程的计算复杂度，在保障推理效果的情况下提升推理的速度。我们也可以在 Netflex 开发的视频画质评估工具 <a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf">VMAF</a> 中看到同样的优化技术。</li>
+<li>……</li>
+</ul>
+<p>所以我们看到，推理优化的思路大致上可以分为三个部分：</p>
+<ul>
+<li>去掉不必要的等待</li>
+<li>减少重复的计算</li>
+<li>优化计算的算法</li>
+</ul>
+<p><img src="/2024/12/01/Reflections-on-the-LLMs-Technological-Evolution/2.png" alt="推理优化的技术线条"></p>
+<h3 id="效能工作的优化">效能工作的优化</h3>
+<p>回顾今年的效能工作，我才发现整体的优化思路和大模型的推理优化思路基本一致：我们没有像之前那样仅从效能的维度来思考问题，而是在保障质量这个约束条件下，从等待、重复、优化这三个正交的维度开展效能提升工作，进而达到提升交付效能的目标。</p>
+<p>要实现这种包含约束条件的优化，需要我们首先从端到端的全局工作进行分析，然后对每个阶段的工作效能进行量化，再对不同阶段的的工作进行分析，从而识别出：</p>
+<ul>
+<li>哪些工作存在着非必须的等待，例如测试环境的等待，不同团队合并代码之间的等待，……</li>
+<li>哪些工作存在的大量的重复，例如多轮迭代测试中的重复测试</li>
+<li>哪些工作的方式需要进一步优化，例如手工测试是否可以转变为自动化测试？</li>
+</ul>
+<p>进而根据识别出的不同阶段的问题，采取有针对性的方案进行优化，从而提升整体的交付效能。在整个优化过程中，因为有质量这个优化的约束条件，所以我们可以做到在我们可以控制的范围内做到效能提升的最大化，做到了快，但又不是无极限的快。</p>
+<p>刘润先生在 2024 年度演讲《进化的力量》中提到了 <strong>越汇乌鸡卷</strong> 的例子<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup>：</p>
+<blockquote>
+<p>我们的工厂，每天会在不锈钢台面上，加工鸡肉。然后，清理台面，再加工鸡架。</p>
+<p>清理台面的过程，要花 4 分钟。一位员工提出来，要不咱们用桌垫吧？就像吃饭时铺个餐垫，吃完直接换新的。这样，清理台面的时间，就从 4 分钟缩短到了 1 分钟。</p>
+<p>以前我们用 “镊子” 去除鸡架的内脏，要花 14 到 20 秒。所以这活，需要 5 个人干。</p>
+<p>一位员工提出来，要不我们试试 “弯头水果叉” 呢？结果，用叉子一试，时间几乎减半！从此，5 个人的活，现在 3 个人就能搞定。</p>
+</blockquote>
+<p>这就是：减少浪费，降低重复。这就是在保障质量的前提下，提升效率。低成本的核心，不是降低品质，而是减少浪费。</p>
+<h3 id="控制的重要性">控制的重要性</h3>
+<p>在 <a href="/2021/12/04/Should-the-new-business-production-development-focus-on-internal-quality/">新业务的开发就不需要重视内部质量吗？</a> 这篇文章中，我提到：</p>
+<blockquote>
+<p>根据 Martin Fowler 的 <em>软件累计功能</em> 模型，如果不重视 <em>内部质量</em>，数周之后，糟糕的 <em>内部质量</em> 就会严重影响软件的交付效率。因此，只有在一开始就重视软件的 <em>内部质量</em>，才能真正有效的提升新业务的价值探索效率。</p>
+</blockquote>
+<p>在交付过程中，一味地求快，一味地追求超出自己控制范围的快，最终只会让效率变得更糟糕。</p>
+<p>清代的文学家周容写过一篇散文 《小港渡者》，这篇杂记散文，通过短短不到二百个字，通过自己未听 <em>渡者</em> 缓行的建议，希望通过 <em>急行</em> 而达到在城门关闭之前入城的目标，最终因为 <em>急行</em> 而没有入城的故事，来说明了 <strong>欲速则不达</strong> 的道理。</p>
+<blockquote>
+<p>庚寅冬，予自小港欲入蛟川城，命小奚以木简束书从。时西日沉山，晚烟萦树，望城二里许。<br>
+因问渡者：“尚可得南门开否？” 渡者熟视小奚，应曰：“徐行之，尚开也； 速进，则阖。”<br>
+予愠为戏。趋行及半，小奚仆，束断书崩，啼，未即起。理书就束，而前门已牡下矣。<br>
+予爽然思渡者言近道。天下之以躁急自败，穷暮而无所归宿者，其犹是也夫，其犹是也夫！</p>
+</blockquote>
 <h2 id="技术的信仰">技术的信仰</h2>
+<p>如果我们回顾一下 GPT 的发展历程，我们就会发现 OpenAI 的对大模型的技术信仰。当技术路线出现岔路口时，技术信仰能够确保团队不会在技术路线上摇摆不定并始终向着自己认定的方向前进。</p>
+<p>在技术信仰的加持下，团队会坚定自己的技术路线，并不停地用实践的方式去验证自己的技术信仰，并在不断的验证中修正自己的技术方向。</p>
+<p><img src="/2024/12/01/Reflections-on-the-LLMs-Technological-Evolution/llm_his.png" alt></p>
+<ul>
+<li>2018 年 6 月，OpenAI 发布了基于 Transformer 架构的自回归模型 GPT-1，开启了他们的 AGI 之旅。</li>
+<li>4 个月后，2018 年 10 月，谷歌就发布了基于 Transformer 架构的自编码模型 BERT。与 GPT-1 相比，BERT 在很多下游任务上表现出更强劲的性能，并且也刷新了多个榜单的记录。在很长一段时间里，BERT（及其变体）一直处于各类榜单的首位，是人们谈论的焦点。</li>
+</ul>
+<p>在这个时候，如果我们是 OpenAI 团队，我们将如何判断技术的方向？在有更强大的架构为前提得情况下，是否还要继续坚持自己自回归的架构？</p>
+<p>置身于历史之中，在 BERT 发布之后，如果我们也要进入到大模型的领域，那么我们在技术选型上将作出何种抉择？</p>
+<p>幸运的是，OpenAI 团队并没有因为 BERT 的发布而摇摆，这种技术的坚定，才有了 4 年之后的 2022 年的 ChatGPT 的发布，也才有了之后的大模型的火爆。</p>
+<p>在研究大模型的代码能力时，对 AGI 的技术信仰推动 OpenAI 发现了 SWE 数据集存在的问题，并推动他们于 SWE 的作者一起合作提出了更好的数据集——<a target="_blank" rel="noopener" href="https://openai.com/index/introducing-swe-bench-verified/">SWE-bench Verified</a>，以更好的评估大模型的能力。</p>
+<p>针对 <a target="_blank" rel="noopener" href="https://openai.com/index/introducing-swe-bench-verified/">SWE-bench Verified</a> 我们会说，这不就是个数据集吗，这有什么技术含量、这有什么难度呢？我们要是做我们也可以做出来。但是就像之前说的 <code>Scaling Laws</code> 一样，虽然简单，但是在 OpenAI 之前，确实也没有团队真正系统化的提出来。</p>
+<p>技术发展日新月异，技术信仰能够让团队避免盲目跟随热点，确保团队能够沿着既定的技术脉络发展。团队不但能够降低技术路线反复变更所带来的成本，也能保证自身在日新月异的技术浪潮中具备足够的自主性和话语权。</p>
+<p>如 OpenAI 所实践的那样，技术信仰可以让团队文化更加内敛与坚韧。研发人员不再是单纯的“任务执行者”，而是对所研产品与技术充满热忱的探索者。团队成员会相信，自己的每一次实验、每一次数据集优化、每一段代码改进，都将在通往更高层次智能的路途中发挥作用。在这种充满信仰的氛围中，失败不再是阻碍前行的壁垒，而成为验证思路、激发创意的助力。在这种长期投入与坚持下，技术信仰最终转化为组织的核心竞争力，使团队在日益激烈的大模型竞赛中屹立不倒。</p>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -302,6 +362,10 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <li id="fn3" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/GPT-2">GPT-2</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn4" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2308.16369">SARATHI: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MjM5NjA3MzYxNA==&amp;mid=2652200096&amp;idx=1&amp;sn=988d7f5ddaae6460be20498c3d3d9323&amp;chksm=bc40431d308a044b00410fec5557557a6ec92154f712913b6cbeb6e9bf5095703d65a18b4e19&amp;scene=27">进化的力量：刘润 2024 年度演讲</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
