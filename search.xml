@@ -1,6 +1,359 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>大模型评测 7 条原则</title>
+    <url>/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/</url>
+    <content><![CDATA[<p><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/1.png" alt></p>
+<p>白居易在《钱塘湖春行》中写道：</p>
+<blockquote>
+<p>孤山寺北贾亭西，水面初平云脚低。几处早莺争暖树，谁家新燕啄春泥。乱花渐欲迷人眼，浅草才能没马蹄。</p>
+</blockquote>
+<p>2025 年 的春天，大模型的发展也正如诗句中所描述的意境那般：百花齐放，百家争鸣。在这个时候，大模型的评测也变得越来越重要。但是，如何才能确保在评测大模型时，能够得到正确、客观的结论呢？通过大量的实践、我们整理出了以下 7 条原则，希望能够帮助大家在评测大模型时，得到更加置信的结论。</p>
+<span id="more"></span>
+<h2 id="1-评测样本必须无歧义">1. 评测样本必须无歧义</h2>
+<p>评测数据集中的样本描述必须是准确的、无歧义的，存在歧义的样本无办保证最终的评估结论的准确性。</p>
+<p>最典型的就是 OpenAI 在 24 年 8 月 发布的 SWE-bench Verified 数据集，OpenAI 认为 原始 SWE-bench 低估了大模型在代码方面的能力，于是对该数据进行了重新标注并构建了 SWE-bench Verified 数据集。在整个标注的过程中，OpenAI 发现：原始 SWE-bench 中的样本有很大一部分是不合格的。</p>
+<table>
+<thead>
+<tr>
+<th>38.3% 的样本问题陈述不够明确</th>
+<th>61.1% 的样本因为单元测试问题将有效解决方案错误地标记为不正确</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/2.png" alt></td>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/3.png" alt></td>
+</tr>
+</tbody>
+</table>
+<h6 id="歧义评测样本举例">歧义评测样本举例</h6>
+<table>
+<thead>
+<tr>
+<th>原始图片</th>
+<th>含有歧义的样本 Query</th>
+<th>修改后无歧义的样本 Query</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/4.png" alt></td>
+<td>为什么 A 是对的？<br> * A 是对的 <br> * A 是错误的，因为题目问的是错误的选项是哪个？</td>
+<td>为什么这道题的答案是 A？</td>
+</tr>
+<tr>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/5.png" alt></td>
+<td>这是什么小说？ <br> * 蒲松龄的《狼三则·其一》 <br> * 东田集中的《东郭先生和狼》，虽然可能性非常小</td>
+<td>这是蒲松龄的哪篇小说？</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-必须覆盖模型的新增能力">2. 必须覆盖模型的新增能力</h2>
+<p>模型在不断优化的过程中，会针对特定场景进行优化，评测的样本必须能够覆盖这些特定场景，否则就无法对模型性能进行正确的评估。</p>
+<p>2025 年 2月，万相2.1 宣布开源，其优势在于：长提示词遵循，人物复杂运动，多主体互动等。我们在不同的数据集上同时对万相 2.1 和可灵 1.6 进行了评估，却得出了相反的结论。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>参考图片</th>
+<th>创意描述</th>
+<th>万相 2.1</th>
+<th>可灵 1.6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据集 A</td>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/6.png" alt></td>
+<td>马车沿着小路前行。假山逐渐浮现，周围的云层一点点散开</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>数据集 B</td>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/7.png" alt></td>
+<td>生成视频，视频中广袤无垠的翠绿草原，微风拂动草浪，远处山峦连绵起伏与蓝天相接，阳光洒下。一位身着绚丽民族服饰的漂亮女性骑手双腿轻夹马腹，缰绳一甩，骏马前蹄扬起，嘶鸣一声。骑手骑着骏马在草原上纵情奔跑，马蹄溅起草屑，马鬃飞扬，身姿矫健，与草原融为一体。</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-评测样本必须分场景组织">3. 评测样本必须分场景组织</h2>
+<p>在评测大模型的视觉理解理解能力的时候，我们发现，不同的场景下，大模型的表现差异很大。如果单独看某个场景的效果，可能 A 模型效果好，B 模型效果差。但如果在另外的场景，却发现 B 模型效果好，A 模型效果差。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">模型</th>
+<th style="text-align:center">整体平均值</th>
+<th style="text-align:center">图像内容提取</th>
+<th style="text-align:center">图像问答推理</th>
+<th style="text-align:center">图像异常识别</th>
+<th style="text-align:center">文创</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">A</td>
+<td style="text-align:center"><strong>1.57</strong></td>
+<td style="text-align:center">1.75</td>
+<td style="text-align:center">1.67</td>
+<td style="text-align:center">0.57</td>
+<td style="text-align:center">1.52</td>
+</tr>
+<tr>
+<td style="text-align:center">B</td>
+<td style="text-align:center">1.56</td>
+<td style="text-align:center"><strong>1.79</strong></td>
+<td style="text-align:center">1.65</td>
+<td style="text-align:center">0.57</td>
+<td style="text-align:center">1.48</td>
+</tr>
+<tr>
+<td style="text-align:center">C</td>
+<td style="text-align:center">1.54</td>
+<td style="text-align:center">1.64</td>
+<td style="text-align:center">1.8</td>
+<td style="text-align:center">0.29</td>
+<td style="text-align:center">1.48</td>
+</tr>
+<tr>
+<td style="text-align:center">D</td>
+<td style="text-align:center">1.52</td>
+<td style="text-align:center">1.39</td>
+<td style="text-align:center"><strong>1.83</strong></td>
+<td style="text-align:center">0.43</td>
+<td style="text-align:center"><strong>1.6</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">E</td>
+<td style="text-align:center">1.36</td>
+<td style="text-align:center">1.46</td>
+<td style="text-align:center">1.47</td>
+<td style="text-align:center">0.57</td>
+<td style="text-align:center">1.32</td>
+</tr>
+<tr>
+<td style="text-align:center">F</td>
+<td style="text-align:center">1.28</td>
+<td style="text-align:center">1.43</td>
+<td style="text-align:center">1.33</td>
+<td style="text-align:center">0.29</td>
+<td style="text-align:center">1.32</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-大模型的参数必须明确">4. 大模型的参数必须明确</h2>
+<p>虽然是相同的模型，但是我们在评测中发现对于同样的 Query，不同的渠道获得的结果并不相同，因此在评测时，必须明确产生当前结果的个模型的参数。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参考图片</th>
+<th style="text-align:center">创意描述</th>
+<th style="text-align:center">官网效果</th>
+<th style="text-align:center">自部署效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/8.png" alt></td>
+<td style="text-align:center">爱因斯坦正在认真的上课，突然，他停下手中的粉笔，转身面向学生，调皮地伸出舌头，眼睛眯成一条缝，脸上露出一个可爱的笑容，仿佛在和学生们开一个小玩笑。</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<p>再比如，对于推理模型而言，如果是 API 访问模型，则会缺少联网搜索的能力，但是如果是 WEB 访问模型，则可以增加联网搜索能力。</p>
+<p><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/10.png" alt></p>
+<h2 id="5-评估样本必须细化打分准则">5. 评估样本必须细化打分准则</h2>
+<p>只进行整体评估容易忽略模型的在特殊场景下的优势，也容易忽略模型在特殊场景下的缺点。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参考图片</th>
+<th style="text-align:center">创意描述</th>
+<th style="text-align:center">模型 A 效果</th>
+<th style="text-align:center">模型 B 效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/11.png" alt></td>
+<td style="text-align:center">图中有两位年轻漂亮的女生在酒吧喝酒，请根据图片生成他们一边喝酒，一边尽情舞动，活力四射的视频。视频中酒吧的彩色霓虹灯缓慢的闪烁，投射出迷幻的光影，并营造出节日般的氛围。两位主角随着节奏摆动身体，脸上洋溢着灿烂笑容，彼此眼神交流，流露出亲密与喜悦。</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/12.png" alt></td>
+<td style="text-align:center">男人看向左侧，说着话</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>整体打分</th>
+<th>运动复杂度</th>
+<th>细节效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模型 A</td>
+<td>1.5</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>模型 B</td>
+<td>1.5</td>
+<td>1</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>对于 VBench 榜单，对于不同的视频生成模型，从单维度打分来看，不同模型之间有很大的区别。但是从总分来，模型之间的差距反而变的不明显了（80%~86%之间的模型有30+个）。</p>
+<table>
+<thead>
+<tr>
+<th>VBench 打分维度</th>
+<th>VBench 榜单</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/13.png" alt></td>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/14.png" alt></td>
+</tr>
+</tbody>
+</table>
+<p>从数学的角度看待分维度打分的必要性。假设模型具备 3 个指标，考虑到模型的随机性，所以这 3 个指标是一个随机变量，并假定其均符合标准正态分布——<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>X</mi><mn>2</mn></msub><mo separator="true">,</mo><msub><mi>X</mi><mn>3</mn></msub><mo>∼</mo><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X_1, X_2,X_3 \sim \mathcal{N}(0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.14736em;">N</span></span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>。<br>
+因为三个指标是相互独立的，因此，模型的整体指标 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>4</mn></msub><mo>=</mo><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><msub><mi>X</mi><mn>2</mn></msub><mo>+</mo><msub><mi>X</mi><mn>3</mn></msub><mo>∼</mo><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>3</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X_4 = X_1 + X_2 + X_3 \sim \mathcal{N}(0,3)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">4</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.14736em;">N</span></span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">3</span><span class="mclose">)</span></span></span></span>。<br>
+由于整体的方差 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">σ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> 变大，因此在进行推断统计时，统计量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><msqrt><mi>n</mi></msqrt><mfrac><mrow><mover accent="true"><mi>x</mi><mo>ˉ</mo></mover><mo>−</mo><msub><mi>μ</mi><mn>0</mn></msub></mrow><mi>σ</mi></mfrac></mrow><annotation encoding="application/x-tex">Z=\sqrt{n}\frac{\bar{x}-\mu_0}{\sigma}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.199439em;vertical-align:-0.345em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8002800000000001em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathdefault">n</span></span></span><span style="top:-2.76028em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" viewbox="0 0 400000 1080" preserveaspectratio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.23972em;"><span></span></span></span></span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.854439em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">σ</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.446108em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord accent mtight"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.56778em;"><span style="top:-2.7em;"><span class="pstrut" style="height:2.7em;"></span><span class="mord mtight"><span class="mord mathdefault mtight">x</span></span></span><span style="top:-2.7em;"><span class="pstrut" style="height:2.7em;"></span><span class="accent-body" style="left:-0.22222em;"><span class="mord mtight">ˉ</span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mtight"><span class="mord mathdefault mtight">μ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> 会变小，进而导致双边检验的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>−</mo><mtext>value</mtext><mo>=</mo><mn>2</mn><mo>×</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi mathvariant="normal">Φ</mi><mo stretchy="false">(</mo><mi mathvariant="normal">∣</mi><mi>Z</mi><mi mathvariant="normal">∣</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p-\text{value} = 2 \times (1 - \Phi(|Z|))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7777700000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord text"><span class="mord">value</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">Φ</span><span class="mopen">(</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mord">∣</span><span class="mclose">)</span><span class="mclose">)</span></span></span></span> 会变大，从而导致无法对不同模型的能力进行区分。</p>
+<p><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/15.png" alt></p>
+<h2 id="6-凡主观-必双盲">6. 凡主观，必双盲</h2>
+<p>对于主观评估，当连续评估时间超过 20 分钟时，打分的准确性开始下降。尤其是对于推理模型和图片理解场景的评估，模型的生成内容越来越复杂，评估难度越来越大，为了避免人的疲劳带来的打分置信度下降，必须采用全双盲的评估手段。</p>
+<h2 id="7-凡统计-必推断">7. 凡统计，必推断</h2>
+<p>评测是抽样问题，样本的描述性统计指标（均值，中位数等）不代表全体。样本统计量数值的绝对排序并不一定意味着模型 A 就肯定比模型 B 要好。</p>
+<table>
+<thead>
+<tr>
+<th>gpt-4o-system-card</th>
+<th>VBench 的榜单，86.22%和85.71% 之间能说明什么？</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/15.png" alt></td>
+<td><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/16.png" alt></td>
+</tr>
+</tbody>
+</table>
+<p>论文 <a href="https://arxiv.org/abs/2403.15250">Comprehensive Reassessment of Large-Scale Evaluation Outcomes in LLMs: A Multifaceted Statistical Approach</a> 中提出：在评估大模型时，需要对评估的描述性统计结果进行推断再评估，例如假设检验、方差分析等。</p>
+<p><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/17.png" alt></p>
+<p>不同大模型对三类 Query 的出图率数据推断分析：<br>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mtext>模型A与模型B的出图率一致</mtext><mspace width="1em"><mi>v</mi><mi>s</mi><mi mathvariant="normal">.</mi><mspace width="1em"><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><mtext>模型A与模型B的出图率不一致</mtext></mspace></mspace></mrow><annotation encoding="application/x-tex">H_0: \text{模型A与模型B的出图率一致} \quad vs. \quad H_1: \text{模型A与模型B的出图率不一致}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord text"><span class="mord cjk_fallback">模型</span><span class="mord">A</span><span class="mord cjk_fallback">与模型</span><span class="mord">B</span><span class="mord cjk_fallback">的出图率一致</span></span><span class="mspace" style="margin-right:1em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mord mathdefault">s</span><span class="mord">.</span><span class="mspace" style="margin-right:1em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord text"><span class="mord cjk_fallback">模型</span><span class="mord">A</span><span class="mord cjk_fallback">与模型</span><span class="mord">B</span><span class="mord cjk_fallback">的出图率不一致</span></span></span></span></span></p>
+<h6 id="query-类别-a">Query 类别 A</h6>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>出图量</th>
+<th>未出图量</th>
+<th>出图率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>65</td>
+<td>85</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>B</td>
+<td>54</td>
+<td>96</td>
+<td>36%</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/18.png" alt></p>
+<h6 id="query-类别-b">Query 类别 B</h6>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>出图量</th>
+<th>未出图量</th>
+<th>出图率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>95</td>
+<td>25</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>B</td>
+<td>83</td>
+<td>37</td>
+<td>69%</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/19.png" alt></p>
+<h6 id="query-类别-c">Query 类别 C</h6>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>出图量</th>
+<th>未出图量</th>
+<th>出图率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>12</td>
+<td>122</td>
+<td>9%</td>
+</tr>
+<tr>
+<td>B</td>
+<td>23</td>
+<td>111</td>
+<td>17%</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/20.png" alt></p>
+]]></content>
+      <categories>
+        <category>LLM</category>
+      </categories>
+      <tags>
+        <tag>评测</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>对大模型技术演化的思考</title>
     <url>/2024/12/01/Reflections-on-the-LLMs-Technological-Evolution/</url>
     <content><![CDATA[<p><img src="/2024/12/01/Reflections-on-the-LLMs-Technological-Evolution/ai-generated.jpg" alt></p>
@@ -1974,8 +2327,8 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <category>总结</category>
       </categories>
       <tags>
-        <tag>数据分析</tag>
         <tag>评测</tag>
+        <tag>数据分析</tag>
         <tag>统计学</tag>
         <tag>推断统计</tag>
       </tags>
@@ -7087,8 +7440,8 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 		<div class="douban-card-right" style="line-height: 1.7;">
 			<div class="douban-card-item"><span>书名: </span><strong>与运气竞争</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]克莱顿·克里斯坦森</span></div>
-			<div class="douban-card-item"><span>出版年份: </span><span>2018-5</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>8.0</span></div>
+			<div class="douban-card-item"><span>出版年份: </span><span>2018-5-20</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>7.9</span></div>
 		</div>
 	</a>
 </div>
@@ -9928,7 +10281,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>起源</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]大卫·克里斯蒂安</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2019-4-10</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>7.9</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>7.8</span></div>
 		</div>
 	</a>
 </div>
@@ -11113,7 +11466,7 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 			<div class="douban-card-item"><span>书名: </span><strong>不拘一格</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]里德·哈斯廷斯</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2021-1-1</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.2</span></div>
 		</div>
 	</a>
 </div>
