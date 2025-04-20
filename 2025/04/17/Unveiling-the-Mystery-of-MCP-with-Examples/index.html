@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.2k</span>
+            <span class="post-count">3.4k</span>
         </span>
     </span>
 
@@ -99,7 +99,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">14 分钟</span>
         </span>
     </span>
 </div>
@@ -178,6 +178,225 @@
 <p>于是，我开始疯狂的在 Github Copilot 中、在 Cline 中、在其他的开源 MCP Client 中不停的使用 Github MCP Server，也在不停的使用过程中慢慢的对 MCP 有了更新的认识。</p>
 <p>本文将以 <a target="_blank" rel="noopener" href="https://github.com/adhikasp/mcp-client-cli">mcp-client-cli</a> 和 <a target="_blank" rel="noopener" href="https://github.com/github/github-mcp-server">github-mcp-server</a>、<a target="_blank" rel="noopener" href="https://github.com/CodeByWaqas/weather-mcp-server">weather-mcp-server</a>、<a target="_blank" rel="noopener" href="https://github.com/bytebase/dbhub">dbhub</a> 为具体的例子，来一步步的揭开 MCP 的神秘面纱。</p>
 <h2 id="function-calling">Function Calling</h2>
+<p>预训练大模型的训练知识存在一个截止日期，例如 <a target="_blank" rel="noopener" href="https://platform.openai.com/docs/models/o3">o3</a> 的训练知识截止日期是 2024 年 6 月 1 日，<a target="_blank" rel="noopener" href="https://platform.openai.com/docs/models/gpt-4o">GPT-4o</a> 的训练知识截止日期是 2023 年 10 月 1 日。</p>
+<p><img src="/2025/04/17/Unveiling-the-Mystery-of-MCP-with-Examples/openai_kco.png" alt="不同模型的训练数据截止日期"></p>
+<p>大语言模型的本质是在训练知识的环境中，预测下一个 token。如果不能与外部系统交互，模型就只能模仿，无法成为真正能干事的“助手”。模型也永远只能在“语言的沙箱”中玩耍，无法跳出模型的知识边界去改变世界。最终，模型无法回答某些最新的、超出其训练截止日期的问题，也无法完成某些特定的动作，例如：</p>
+<ul>
+<li>明天北京的天气如何</li>
+<li>预定一张从北京到天津的火车票</li>
+<li>……</li>
+</ul>
+<p>为此，OpenAI 在 2023 年 6 月 13 日发布了 <a target="_blank" rel="noopener" href="https://openai.com/index/function-calling-and-other-api-updates/">Function Calling</a> 功能，开发者可以通过 Function Calling 解决模型与外部系统交互、调用逻辑程序、获取最新数据等方面的关键限制，以实现在需要时调用外部 API 获取最新信息或执行特定操作，进而使得大语言模型从“对话生成器”升级为“智能助手”。</p>
+<p>根据 <a target="_blank" rel="noopener" href="https://platform.openai.com/docs/guides/function-calling?api-mode=responses">OpenAI 的官方文档中给出的示例代码</a>，通过 Function Calling 查询天气信息的步骤如下所示：</p>
+<pre class="mermaid">sequenceDiagram
+    participant Developer
+    participant Model
+
+    Note over Developer,Model: Step 1 - Tool Definitions + Messages
+    Developer->>Model: get_weather(location)<br>“What’s the weather in Beijing?”
+
+    Note over Model: Step 2 - Tool Calls
+    Model->>Developer: get_weather("Beijing")
+
+    Note over Developer: Step 3 - Execute Function Code
+    Developer->>Developer: get_weather("Beijing")<br>→ {"temperature": 14}
+
+    Note over Developer,Model: Step 4 - Results
+    Developer->>Model: All prior messages +<br>{"temperature": 14}
+
+    Note over Model,Developer: Step 5 - Final Response
+    Model->>Developer: "It’s currently 14°C in Beijing."</pre>
+<h2 id="function-calling-的局限性">Function Calling 的局限性</h2>
+<ul>
+<li>在 Function Calling 中，开发者必须使用宿主语言编写 <code>tools</code> 中定义的工具，而不同的宿主可能会采用不同的变成语言（python，javascript，golang……）。因此，对于某一工具（<code>get_weather()</code>）而言，该工具的开发者需要针对不同的宿主语言来重新编写该工具，无论怎样，这都是一件令人讨厌与痛苦的事情。而这种重复的、兼容适配工作，必然会降低工具提供者的维护热情，工具提供者也不太可能将自己的工具共享给其他宿主使用，因此也无法形成良好的工具共享生态。这也是 Function Calling 发布这么长时间以来一直没有形成良好的工具生态的原因之一。</li>
+</ul>
+<pre class="mermaid">    flowchart LR
+    subgraph Host
+        Python["Python"] 
+        Golang["Golang"] 
+        JavaScript["Java<br>Script"] 
+    end
+
+    subgraph Host Tools
+        Python["Python"] e1@--> PythonTools[py_tools]
+        Golang["Golang"] e2@--> GoTools[go_tools]
+        JavaScript["Java<br>Script"] e3@--> JsTools[js_tools]
+    end
+
+    PythonTools e4@--> SharedTools[tools]
+    JsTools e5@--> SharedTools
+    GoTools e6@--> SharedTools
+
+    e1@{ animate: true }
+    e2@{ animate: true }
+    e3@{ animate: true }
+    e4@{ animate: true }
+    e5@{ animate: true }
+    e6@{ animate: true }</pre>
+<ul>
+<li>在 Function Calling 中，LLM 能够检测到的工具是通过硬编码的方式进行注册的，缺乏动态加载或者热更新的能力，每次新增工具都需要修改宿主代码甚至重新编译宿主代码，对于中大型的宿主而言，重新编译、重新发布都意味着额外的风险和成本。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">response = client.responses.create(</span><br><span class="line">    model=<span class="string">&quot;gpt-4.1&quot;</span>,</span><br><span class="line">    <span class="built_in">input</span>=input_messages,</span><br><span class="line">    tools=tools,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在 Function Calling 中，对工具的调用是同步、即时调用，整个过程不能挂起任务或中断后恢复，也无法有效的引入人工校验机制，对于某些需要人工确认的任务（例如：是否继续发送邮件、是否继续删除等），Function Calling 无法满足需求。</li>
+</ul>
+<pre class="mermaid">flowchart LR
+    Q[Query:<br>预定明天北京到天津的车票] --> A[函数调用：<br>查询可预订车票]
+    A --> B[人工干预：<br>选择车次]
+    B --> C[函数调用：<br> 提交订单]
+    C -->D[人工干预：<br> 订单确认]
+    D -->E[函数调用：<br> 执行预定]
+    E --> F[任务完成]</pre>
+<h2 id="mcp">MCP</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">万能的抽象层，无所不能的中间件
+</p><p><strong>没有什么是抽象一层解决不了的事情，如果有，那就再抽象一层。</strong></p>
+</div>
+<h3 id="http-协议的例子">http 协议的例子</h3>
+<p>我们先来看一个使用 golang 编写服务模块的例子，入下所示：</p>
+<pre class="mermaid">flowchart LR
+ subgraph s2["基于 http 的服务网关"]
+        Nginx["Nginx"]
+        ClientNew["Client"]
+        ServiceA_new["Service A - Golang"]
+        ServiceB_new["Service B - Python"]
+  end
+ subgraph s3["使用 golang 开发的服务模块"]
+        ClientOld["Client"]
+        GoModule["module M <br> golang"]
+        ServiceA_old["Service A"]
+        ServiceB_old["Service B"]
+
+        ClientOld -- 私有协议 --> GoModule
+        GoModule -- golang代码 --> ServiceA_old
+        GoModule -- golang代码 --> ServiceB_old
+  end
+    ClientNew -- HTTP --> Nginx
+    Nginx -- HTTP --> ServiceA_new & ServiceB_new
+    s3 e1@ == 使用 http 协议抽象一层 ==> s2
+
+    style Nginx fill:#f9f,stroke:#333,stroke-width:1px
+    e1@{ animate: true }</pre>
+<p>在上面的例子中，<code>Client</code> 私有通信协议与 golang 编写的 <code>Module M</code> 通信，该模块会提供 <code>Service A</code> 和 <code>Service B</code> 两种服务。此时，如果要为 <code>Module M</code> 增加新的功能，我们则需要修改原有的 <code>Service A</code> 或这 <code>Service B</code> 的代码，或者新增一个 golang 编写的 <code>Service C</code>。而如果此时，你的团队中 golang 开发人员正在高优处理其他项目，只有 python 开发人员有时间可以处理这个问题，那么你就只能等着了。</p>
+<p>当然，大语言模型的编程能力已经相当棒了，我们可以假设 python 开发者可以在大语言模型的帮助下完成 golang 新服务 <code>Service C</code> 的开发。但是接下来的测试、发布、上线等工作仍然需要繁琐的流程。</p>
+<p>而如果我们抽象一层， 在 <code>Module M</code> 与 <code>Service A</code>、<code>Service B</code> 之间增加一个 http 的服务网关 <code>Nginx</code>，那么我们就可以通过 http 协议来进行通信并提供服务了。对于新增加 <code>Service C</code> 模块，python 开发人员完全可以使用自己熟悉的开发栈、发布流程来进行开发、测试、发布等工作。当 <code>Service C</code> 模块发布之后，只需要在 <code>Nginx</code> 中增加一条路由规则即可实现服务的发布。只要我们允许，团队中的 NodeJS 开发者、Java 开发者……不同语言栈的开发者都可以使用自己熟悉的语言栈来扩展 <code>Module M</code>服务的功能，而 <code>Module M</code> 的生态也将越来越丰富。</p>
+<p>在 http 协议的基础上，通过抽象出一层 <code>Nginx</code> 服务网关层，我们从架构上解决了不同语言、不同开发栈之间的耦合问题，同时也解决了服务模块的热更新问题。</p>
+<h3 id="mcp-协议的本质">MCP 协议的本质</h3>
+<p>从本质上，<code>MCP 协议</code> 和 <code>http 协议</code> 一样，是大语言模型与不同工具的通信协议，大模型助手程序中的 <code>MCP Client</code> 通过 <code>MCP 协议</code> 与 <code>MCP Server</code> 通信，以获取工具列表并调用工具。我们在来回顾一下本文开头提到的 MCP 的架构图：</p>
+<pre class="mermaid">flowchart LR
+    %% 子图 Your Computer 区域
+    subgraph "Your Computer"
+        direction TB
+        Host["Host with MCP Client<br>(Claude, IDEs, Tools)"]
+        S1["MCP Server A"]
+        S2["MCP Server B"]
+        S3["MCP Server C"]
+        D1[("Local<br>Data Source A")]
+        D2[("Local<br>Data Source B")]
+        
+        Host e1@-->|MCP Protocol| S1
+        Host e2@-->|MCP Protocol| S2
+        Host e3@-->|MCP Protocol| S3
+        S1 e4@--> D1
+        S2 e5@--> D2
+        e1@{ animate: true }
+        e2@{ animate: true }
+        e3@{ animate: true }
+        e4@{ animate: true }
+        e5@{ animate: true }
+    end
+
+    %% 子图 Internet 区域在右侧
+    subgraph "Internet"
+        direction TB
+        D3[("Remote<br>Service C")]
+    end
+
+    S3 e6@-->|Web APIs| D3
+    e6@{ animate: true }</pre>
+<p>如上的 MCP 架构总共分为了五个部分：</p>
+<ul>
+<li><code>MCP Hosts</code>: Hosts 是指通过 MCP 协议访问外部数据的应用程序，例如 Claude Desktop、Cline。</li>
+<li><code>MCP Clients</code>: 客户端是在 Hosts 应用程序内，用于维护与 Server 通信的模块。</li>
+<li><code>MCP Servers</code>: 通过标准化的 <code>MCP 协议</code>，为 <code>MCP Client</code> 提供工具，同时具体的工具执行也是通过 <code>MCP Server</code> 来完成。</li>
+<li><code>Local Data Sources</code>: 本地数据资源：文件、数据库和 API。</li>
+<li><code>Remote Services</code>: 网络资源：文件、数据库和 API。</li>
+</ul>
  
       <!-- reward -->
       
