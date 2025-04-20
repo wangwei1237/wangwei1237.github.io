@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.4k</span>
+            <span class="post-count">4.1k</span>
         </span>
     </span>
 
@@ -99,7 +99,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14 分钟</span>
+            <span class="post-count">18 分钟</span>
         </span>
     </span>
 </div>
@@ -397,6 +397,107 @@
 <li><code>Local Data Sources</code>: 本地数据资源：文件、数据库和 API。</li>
 <li><code>Remote Services</code>: 网络资源：文件、数据库和 API。</li>
 </ul>
+<h3 id="github-mcp-server-体验-mcp-server">github-mcp-server 体验 MCP Server</h3>
+<p>4 月 8 日 Github 官方开源了自己的 MCP Server——<a target="_blank" rel="noopener" href="https://github.com/github/github-mcp-server">github-mcp-server</a>，借助 github-mcp-server，我们可以通过自然语言与 Github 进行通信以重新定义 GitHub 自动化。github-mcp-server 是一个使用 golang 编写的 MCP Server，其底层使用 <a target="_blank" rel="noopener" href="https://github.com/google/go-github">go-github 包</a> 实现了对 Github API 的调用。</p>
+<p>以 <code>issue</code> 相关的工具为例，在 github-mcp-server 中，其具体的实现逻辑位于 <a target="_blank" rel="noopener" href="https://github.com/github/github-mcp-server/blob/main/pkg/github/issues.go">github-mcp-server/pkg/github/issues.go</a> 文件，其核心代码如下所示：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> github</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;github.com/google/go-github/v69/github&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// GetIssue creates a tool to get details of a specific issue in a GitHub repository.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetIssue</span><span class="params">(getClient GetClientFn, t translations.TranslationHelperFunc)</span> <span class="params">(tool mcp.Tool, handler server.ToolHandlerFunc)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> mcp.NewTool(<span class="string">&quot;get_issue&quot;</span>,</span><br><span class="line">			mcp.WithDescription(t(<span class="string">&quot;TOOL_GET_ISSUE_DESCRIPTION&quot;</span>, <span class="string">&quot;Get details of a specific issue in a GitHub repository&quot;</span>)),</span><br><span class="line">			...</span><br><span class="line">		), <span class="comment">// 工具定义</span></span><br><span class="line">		<span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context, request mcp.CallToolRequest)</span> <span class="params">(*mcp.CallToolResult, error)</span></span> &#123;</span><br><span class="line">            ...</span><br><span class="line">			client, err := getClient(ctx)</span><br><span class="line">			issue, resp, err := client.Issues.Get(ctx, owner, repo, issueNumber)</span><br><span class="line">			r, err := json.Marshal(issue)</span><br><span class="line">			<span class="keyword">return</span> mcp.NewToolResultText(<span class="keyword">string</span>(r)), <span class="literal">nil</span></span><br><span class="line">		&#125; <span class="comment">// 工具调用</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">VSCode 中使用 github-mcp-server
+</p><ol>
+<li>根据 github-mcp-server 的文档，我们在本地编译并生成 github-mcp-server 可执行文件</li>
+<li>在 VSCode 中编辑 <code>User/settings.json</code> 文件，增加文档中给出的 <code>MCP Server</code> 配置
+<img src="/2025/04/17/Unveiling-the-Mystery-of-MCP-with-Examples/githubmcpserver-vscode-setting.png" alt></li>
+<li>使用 VSCode 的 GitHub Copilot 插件，并选择 <code>代理</code> 模式，大模型选择 GPT-4o，就可以使用自然语言来与 Github 进行交互。
+<img src="/2025/04/17/Unveiling-the-Mystery-of-MCP-with-Examples/github_mcp_server_demo.gif" alt></li>
+</ol>
+</div>
+<p>为了测试我们本地编译的 github-mcp-server 的可用性，我们可以采用如下的集中方式：</p>
+<ol>
+<li>
+<p>通过 stdio 管道的方式来与 github-mcp-server 进行交互。我们可以使用以下命令来启动 github-mcp-server：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&#x27;&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;tools/list&quot;&#125;&#x27;</span> | /Users/wangwei17/Documents/Project/github/github-mcp-server/github-mcp-server stdio</span><br><span class="line"></span><br><span class="line">$ GitHub MCP Server running on stdio</span><br><span class="line">&#123;<span class="string">&quot;jsonrpc&quot;</span>:<span class="string">&quot;2.0&quot;</span>,<span class="string">&quot;id&quot;</span>:1,<span class="string">&quot;result&quot;</span>:&#123;<span class="string">&quot;tools&quot;</span>:[&#123;<span class="string">&quot;description&quot;</span>:<span class="string">&quot;Add a comment to an existing issue&quot;</span>, ...</span><br><span class="line">...</span><br><span class="line">...&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过 @modelcontextprotocol/inspector 工具与 github-mcp-server 进行交互。</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ npx @modelcontextprotocol/inspector github-mcp-server stdio</span><br><span class="line"></span><br><span class="line">$ Starting MCP inspector...</span><br><span class="line">⚙️ Proxy server listening on port 6277</span><br><span class="line">🔍 MCP Inspector is up and running at http://127.0.0.1:6274 🚀</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/04/17/Unveiling-the-Mystery-of-MCP-with-Examples/mcp-inspector.png" alt></p>
+</li>
+</ol>
  
       <!-- reward -->
       
