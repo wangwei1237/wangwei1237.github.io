@@ -613,6 +613,54 @@
 <p>adhikasp/mcp-client-cli 使用 <code>OutputHandler</code> 和 <code>agent_executor.astream(...) </code> 的流式交互逻辑，实现了在工具调用前进行人工确认的功能。为了避免过度的人工确认，还在配置中增加了 <code>mcpServers.server.requires_confirmation</code> 字段来控制在执行工具之前是否需要人工确认。只有 <code>mcpServers.server.requires_confirmation= true</code> 的工具才会在执行之前进行人工确认。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在工具调用之前，检查是否需要人工确认，src/mcp_client_cli/output.py</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">confirm_tool_call</span>(<span class="params">self, config: <span class="built_in">dict</span>, chunk: <span class="built_in">any</span></span>) -&gt; <span class="built_in">bool</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self._is_tool_call_requested(chunk, config):</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    self.stop()</span><br><span class="line">    is_confirmed = self._ask_tool_call_confirmation()</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> is_confirmed:</span><br><span class="line">        self.md += <span class="string">&quot;# Tool call denied&quot;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.text_only:</span><br><span class="line">        self.start()</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">handle_conversation</span>(<span class="params">args: argparse.Namespace, query: HumanMessage, </span></span></span><br><span class="line"><span class="function"><span class="params">                            is_conversation_continuation: <span class="built_in">bool</span>, app_config: AppConfig</span>) -&gt; <span class="literal">None</span>:</span></span><br><span class="line">    output = OutputHandler(text_only=args.text_only, only_last_message=args.no_intermediates)</span><br><span class="line">    output.start()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">async</span> <span class="keyword">for</span> chunk <span class="keyword">in</span> agent_executor.astream(</span><br><span class="line">            input_messages,</span><br><span class="line">            stream_mode=[<span class="string">&quot;messages&quot;</span>, <span class="string">&quot;values&quot;</span>],</span><br><span class="line">            config=&#123;<span class="string">&quot;configurable&quot;</span>: &#123;<span class="string">&quot;thread_id&quot;</span>: thread_id, <span class="string">&quot;user_id&quot;</span>: <span class="string">&quot;myself&quot;</span>&#125;, </span><br><span class="line">                    <span class="string">&quot;recursion_limit&quot;</span>: <span class="number">100</span>&#125;</span><br><span class="line">        ):</span><br><span class="line">            output.update(chunk)</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> args.no_confirmations: <span class="comment"># 如果需要确认，并且用户没有点击确认，则停止</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> output.confirm_tool_call(app_config.__dict__, chunk):</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        output.finish()</span><br></pre></td></tr></table></figure>
 <p><img src="/2025/04/17/Unveiling-the-Mystery-of-MCP-with-Examples/human_check.png" alt></p>
+<h2 id="思考">思考</h2>
+<h3 id="1-mcp-的本质是什么？">1.MCP 的本质是什么？</h3>
+<p>MCP 的本质<strong>是通过抽象一个协议层实现架构解耦的架构优化技术</strong>，从而将一个大单体拆解为微服务架构，从而可以将更多的开发者引入到这个大单体的生态中，从而可以突破原先的单体系统的瓶颈。</p>
+<p>使用 MCP 协议，任何开发者都可以用自己喜欢和熟悉的语言（而不用考虑宿主语言）来开发自己的 MCP Server 并共享出来，这种方式令开发者更乐于分享自己的工具和服务，从而形成良好的生态。开发者已经在 <a href="https://smithery.ai/">Smithery</a> 平台上共享了近 5000 个 MCP Server，涵盖了天气、翻译、计算器、Github、数据库等多种功能。越来越多的 TOP 级产品也开始发布自己的 MCP Server，例如：Github、支付宝、百度地图……</p>
+<p>越简单的东西，越容易上手，越容易吸引更多的开发者参与进来，也越容易形成良好的生态。今年年初的时候我就像学习一下 ComfyUI 以对各种大模型进行编排实现非常酷炫的效果，例如 RunningHUB 上的这个 <a href="https://www.runninghub.ai/post/1894610227340181506">WAN2.1 万相图生视频</a>，但是看到这个效果对应的背后的复杂的工作流，我就停住了脚步，迟迟没有下手。</p>
+<p><img src="/2025/04/17/Unveiling-the-Mystery-of-MCP-with-Examples/runninghub.png" alt></p>
+<h3 id="2-mcp-server-的重点是什么？">2.MCP Server 的重点是什么？</h3>
+<p>从共享工具的视角看，MCP Server 的开发是一件并不算很难的事情，看看现在的 MCP Server 的数量我们就可以感受到。但是，从工具使用（MCP Hosts）的视觉看，如何编排更大规模的工具仍然是一件非常复杂的事情。</p>
+<p>新的技术必然会伴随着新的组织方式和新的思维方式。每一个工具都需要一个 MCP Server？如何对工具分门别类？如何进行级联查询？因此，未来，MCP Server 的重点在于如何组织好着庞大的工具，以便 MCP Hosts 可以更加方便的使用 MCP Server 获取工具，从而解决实际问题。</p>
+<p>MCP Server 的不是重点，重点是如何能为 MCP Hosts 所用，重中之重是 MCP Hosts 如何编排 MCP Server 解决实际问题。</p>
+<h3 id="3-选择-stdio-还是-sse-作为通信协议？">3.选择 stdio 还是 SSE 作为通信协议？</h3>
+<p>根据 MCP 的<a href="https://modelcontextprotocol.io/docs/concepts/architecture">官方文档</a>，MCP 协议支持两种传输协议：<code>stdio</code> 和 <code>sse</code>。在 <a href="https://github.com/orgs/modelcontextprotocol/discussions/16">Claude Desktop App with HTTP-with-SSE-transport?</a> 这个讨论帖子中，也有用户提到了希望 Claude Desktop App 支持 SSE 协议的传输方式，但是目前看起来，Claude Desktop 仍然只支持 <code>stdio</code> 的传输方式。</p>
+<pre class="mermaid">flowchart LR
+    subgraph "Host"
+        client1[MCP Client]
+        client2[MCP Client]
+    end
+    subgraph "Server Process"
+        server1[MCP Server]
+    end
+    subgraph "Server Process"
+        server2[MCP Server]
+    end
+
+    client1 e1@-->|Transport Layer <br> stdio| server1
+    client2 e2@-->|Transport Layer <br> sse| server2
+
+    e1@{ animate: true }
+    e2@{ animate: true }</pre>
+<p>SSE 协议的优点在于 MCP Server 的中心化管理，但是从应用的角度看，这种中心化管理的意义并不大。同时，如果采用中心化管理，MCP Server 中涉及到敏感秘钥信息的时候，如果做好安全管理又是一个问题。</p>
+<p>个人更推荐使用 <code>stdio</code> 的通信协议，因为这种方式更加简单，也更易于管理。</p>
+<h2 id="mcp-的网络资源列表">MCP 的网络资源列表</h2>
+<h3 id="1-mcp-官方资源">1.MCP 官方资源</h3>
+<ul>
+<li><a href="https://github.com/modelcontextprotocol">官方的开源组织 Model Context Protocol</a></li>
+<li><a href="https://modelcontextprotocol.io/introduction">官方的文档 modelcontextprotocol</a></li>
+<li><a href="https://github.com/modelcontextprotocol/servers">官方的 MCP Server 列表</a></li>
+<li><a href="https://www.anthropic.com/news/model-context-protocol">Claude Blog</a></li>
+</ul>
+<h3 id="2-社区的-mcp-server-的列表">2.社区的 MCP Server 的列表</h3>
+<ul>
+<li><a href="https://mcp.so/">MCP.so</a></li>
+<li><a href="https://cursor.directory/">Cursor Directory</a></li>
+<li><a href="https://www.pulsemcp.com/">Pulsemcp</a></li>
+<li><a href="https://glama.ai/mcp/servers">Glama MCP Servers</a></li>
+<li><a href="https://smithery.ai/">Smithery</a></li>
+<li><a href="https://modelscope.cn/mcp">ModelScope MCP 广场</a></li>
+</ul>
 ]]></content>
       <categories>
         <category>LLM</category>
