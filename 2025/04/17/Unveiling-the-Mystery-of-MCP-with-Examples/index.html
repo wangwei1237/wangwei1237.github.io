@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">8.2k</span>
+            <span class="post-count">8.4k</span>
         </span>
     </span>
 
@@ -99,7 +99,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">37 分钟</span>
+            <span class="post-count">38 分钟</span>
         </span>
     </span>
 </div>
@@ -700,6 +700,38 @@
 <li>mcpServers.server.requires_confirmation: 是否需要人工确认，默认值为 false。对于一些需要人工确认的操作，例如：删除文件、发送邮件等操作，可以设置为 true。这样在执行这些操作时，会弹出一个确认框，要求用户确认后才能执行。</li>
 </ul>
 <p><img src="/2025/04/17/Unveiling-the-Mystery-of-MCP-with-Examples/mcp-cli-listtools.png" alt></p>
+<p>使用 adhikasp/mcp-client-cli 查询天气的时序图如下所示：</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant Host as MCP Host<br>(adhikasp/mcp-client-cli)
+    participant Client as MCP Client<br>(mcp client)
+    participant Server as MCP Server<br>(weather-mcp-server)
+    participant Tool as Tool<br>(OpenWeatherMap API)
+    participant LLM as MCP LLM<br>(GPT/Claude/……)
+    
+    Host->>Client: 初始化 MCP 客户端
+    Client->>Server: 请求工具列表
+    activate Server
+    Server-->>Client: 返回工具列表
+    deactivate Server
+    Client-->>Host: 返回工具列表
+    Host->>LLM: 组合<用户Query>+<系统提示词>+<工具列表>
+    activate LLM
+    LLM-->>Host:function: weather<br>params:{city:Beijing, date:tomorrow}
+    deactivate LLM
+    Host->>Client: mcp.call("weather", {"city": "Beijing", "date": "tomorrow"})
+    Client->>Server: mcp.call("weather", {"city": "Beijing", "date": "tomorrow"})
+    Server->>Tool: GET /weather?city=Beijing&date=tomorrow
+    activate Tool
+    Tool-->>Server: { "temp": 38, "humidity": 65 }
+    deactivate Tool
+    Server-->>Client: { "temp": 38, "humidity": 65 }
+    Client-->>Host: { "temp": 38, "humidity": 65 }
+    Host->>LLM: 组合<用户Query>+<系统提示词>+<工具列表>+<工具结果>
+    activate LLM
+    LLM-->>Host: 明天北京气温 38℃，气温较高，湿度较大，请注意避免中暑
+    deactivate LLM
+    note over Host,LLM:</工具结果></工具列表></系统提示词></用户Query></工具列表></系统提示词></用户Query></pre>
 <h2 id="adhikasp-mcp-client-cli-的特点">adhikasp/mcp-client-cli 的特点</h2>
 <p>根据 <a target="_blank" rel="noopener" href="https://github.com/adhikasp/mcp-client-cli/blob/master/c4_diagram.png">adhikasp/mcp-client-cli 的结构图</a> 以及源码，我们可以一窥 adhikasp/mcp-client-cli 究竟有哪些特点。源码面前了无秘密。</p>
 <p><img src="/2025/04/17/Unveiling-the-Mystery-of-MCP-with-Examples/mcp-client-cli-c4-diagram.png" alt></p>
