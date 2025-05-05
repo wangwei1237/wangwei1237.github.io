@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.5k</span>
+            <span class="post-count">3.2k</span>
         </span>
     </span>
 
@@ -99,7 +99,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">10 分钟</span>
+            <span class="post-count">14 分钟</span>
         </span>
     </span>
 </div>
@@ -281,6 +281,102 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request POST <span class="string">&#x27;http://localhost:8080/v1/chat/completions&#x27;</span> \</span><br><span class="line"> --header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line"> --header <span class="string">&#x27;appid;&#x27;</span> \</span><br><span class="line"> --data-raw <span class="string">&#x27;&#123;&quot;model&quot;:&quot;Qwen3-4B&quot;,&quot;messages&quot;:[&#123;&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;Strawberry里有几个 r&quot;&#125;],&quot;stream&quot;: false&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
 <p><code>sh qwen34b.sh</code> 的结果如下：</p>
 <p><img src="/2025/05/04/Quickly-Deploy-the-LLM-Model-Using-Aliyun-PAI-DSW/llama_server.png" alt></p>
+<h2 id="在公网中访问实例中的服务">在公网中访问实例中的服务</h2>
+<p>我们之前在 DSW 实例中启动的 <code>llama-server</code> 服务是无法在公网中访问的，因此我们只能在 DSW 实例中通过 <code>http://localhost:8080/v1/chat/completions</code> 的方式来访问 <code>llama-server</code> 服务。</p>
+<p>如果我们想要在公网中访问实例中的模型服务时，DSW 也提供了自定义服务访问配置的功能，以实现在公网中访问 DSW 中的模型服务。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">自定义服务访问功能的注意事项
+</p><ul>
+<li>自定义服务访问功能主要用于开发阶段，方便开发者将服务分享给协同开发者以方便测试和验证。</li>
+<li>当 DSW 实例关闭后，实例内的自定义服务也将无法访问。</li>
+<li>自定义服务访问功能需要的 NAT 网关、弹性公网 IP 都是单独的云产品，需要额外计费，计费说明请参见 <a target="_blank" rel="noopener" href="https://help.aliyun.com/zh/nat-gateway/product-overview/billing-overview-1?spm=a2c4g.11186623.0.0.5f2c74c88Tu6gJ#title-x86-3l6-0na">公网 NAT 网关计费说明</a>、<a target="_blank" rel="noopener" href="https://help.aliyun.com/zh/eip/product-overview/billing-methods/?spm=a2c4g.11186623.0.0.5f2c74c88Tu6gJ#ariaid-title1">弹性公网 IP 计费说明</a>。</li>
+</ul>
+</div>
+<p>具体的配置可以参考 <a target="_blank" rel="noopener" href="https://help.aliyun.com/zh/pai/user-guide/custom-services-access-configurations?spm=a2c4g.11186623.help-menu-30347.d_3_3_4_10.6e9158e0f0MrlF&amp;scm=20140722.H_2847325._.OR_help-T_cn~zh-V_1">PAI-DSW 的官方文档——在公网中访问实例中的服务</a>，在我的使用过程中，我选择的是 <strong>方案一：在新建DSW实例页配置</strong>，整体配置过程也比较简单，这里不再赘述。</p>
+<p>配置完成后，当启动 DSW 实例后，我们可以在对应实例的配置页面中找到公网访问的地址：</p>
+<p><img src="/2025/05/04/Quickly-Deploy-the-LLM-Model-Using-Aliyun-PAI-DSW/nat.png" alt></p>
+<p>通过 <code>llama-server</code> 启动 Qwen3-4B 的服务端：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">./llama-server -m /mnt/workspace/models/Qwen3-4B/Qwen3-4B-F16.gguf \</span><br><span class="line"> --jinja \</span><br><span class="line"> --reasoning-format deepseek \</span><br><span class="line"> -ngl 99 \</span><br><span class="line"> -fa \</span><br><span class="line"> -sm row \</span><br><span class="line"> --temp 0.6 \</span><br><span class="line"> --top-k 20 \</span><br><span class="line"> --top-p 0.95 \</span><br><span class="line"> --min-p 0 \</span><br><span class="line"> -c 40960 \</span><br><span class="line"> -n 32768 \</span><br><span class="line"> --no-context-shift \</span><br><span class="line"> --port 8080 \</span><br><span class="line"> --host 0.0.0.0</span><br></pre></td></tr></table></figure>
+<p>我们可以通过在浏览器中访问 <code>http://120.55.12.216:8080/</code> 请求刚才部署的 Qwen3-4B 模型服务：</p>
+<p><img src="/2025/05/04/Quickly-Deploy-the-LLM-Model-Using-Aliyun-PAI-DSW/qwen_url.png" alt></p>
+<p>我们还可以在本地终端中，使用 <code>curl</code> 命令请求 DSW 实例中部署的 Qwen3-4B 模型服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request POST <span class="string">&#x27;http://120.55.12.216:8080/v1/chat/completions&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;appid;&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;&quot;model&quot;:&quot;Qwen3-4B&quot;,&quot;messages&quot;:[&#123;&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;Strawberry里有几个 r&quot;&#125;],&quot;stream&quot;: false&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><img src="/2025/05/04/Quickly-Deploy-the-LLM-Model-Using-Aliyun-PAI-DSW/qwen3_iterm.png" alt></p>
  
       <!-- reward -->
       
