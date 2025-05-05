@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.2k</span>
+            <span class="post-count">3.5k</span>
         </span>
     </span>
 
@@ -99,7 +99,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14 分钟</span>
+            <span class="post-count">15 分钟</span>
         </span>
     </span>
 </div>
@@ -363,7 +363,7 @@
 <div class="admonition warning"><p class="admonition-title">自定义服务访问功能的注意事项
 </p><ul>
 <li>自定义服务访问功能主要用于开发阶段，方便开发者将服务分享给协同开发者以方便测试和验证。</li>
-<li>当 DSW 实例关闭后，实例内的自定义服务也将无法访问。</li>
+<li>g当 DSW 实例关闭后，实例内的自定义服务也将无法访问。</li>
 <li>自定义服务访问功能需要的 NAT 网关、弹性公网 IP 都是单独的云产品，需要额外计费，计费说明请参见 <a target="_blank" rel="noopener" href="https://help.aliyun.com/zh/nat-gateway/product-overview/billing-overview-1?spm=a2c4g.11186623.0.0.5f2c74c88Tu6gJ#title-x86-3l6-0na">公网 NAT 网关计费说明</a>、<a target="_blank" rel="noopener" href="https://help.aliyun.com/zh/eip/product-overview/billing-methods/?spm=a2c4g.11186623.0.0.5f2c74c88Tu6gJ#ariaid-title1">弹性公网 IP 计费说明</a>。</li>
 </ul>
 </div>
@@ -377,6 +377,85 @@
 <p>我们还可以在本地终端中，使用 <code>curl</code> 命令请求 DSW 实例中部署的 Qwen3-4B 模型服务：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request POST <span class="string">&#x27;http://120.55.12.216:8080/v1/chat/completions&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;appid;&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;&quot;model&quot;:&quot;Qwen3-4B&quot;,&quot;messages&quot;:[&#123;&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;Strawberry里有几个 r&quot;&#125;],&quot;stream&quot;: false&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
 <p><img src="/2025/05/04/Quickly-Deploy-the-LLM-Model-Using-Aliyun-PAI-DSW/qwen3_iterm.png" alt></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">公网访问的注意事项
+</p><p>NAT 网关、弹性公网 IP 都是单独的云产品，需要额外计费，只要申请后就会产生费用，因此建议在不需要公网访问时，及时在控制台中删除 NAT 网关和弹性公网 IP，以避免不必要的费用。</p>
+</div>
  
       <!-- reward -->
       
