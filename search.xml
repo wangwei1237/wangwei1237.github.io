@@ -1,6 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>在阿里云上部署 Vui 语音模型</title>
+    <url>/2025/06/14/Deploy-vui-audio-model/</url>
+    <content><![CDATA[<p><img src="/2025/06/14/Deploy-vui-audio-model/tts-basics.jpg" alt></p>
+<p>6 月初，Fluxions-AI 团队在 GitHub 上开源了一款轻量级、可在设备端运行的语音对话模型：<a href="https://github.com/fluxions-ai/vui">Vui</a>。Vui 语音模型基于 <a href="https://huggingface.co/docs/transformers/en/model_doc/llama">Llama transformer</a> 架构来预测下一个语音 token。据 Fluxions-AI 团队介绍，他们在 <a href="https://x.com/harrycblum/status/1752698806184063153">2 张 4090</a> 显卡上完成了 Vui 的训练，并且提供了 3 个不同的模型。Vui训练成本极低，参数量也较小，可以支持语气词的拟人化模拟，在生成效果上更自然、更逼真，并且还支持两人对话的语音生成，非常适合语聊、生成播客语音内容、采访/访谈配音等场景。</p>
+<span id="more"></span>
+<p>在 Vui 的推理代码中，使用了 <code>from_pretrained()</code> 或者 <code>hf_hub_download()</code> 等方法直接从 HuggingFace Hub 下载模型文件。但是由于各种原因，如上的方式在模型部署的时候可能会存在一些问题，导致在部署在线推理代码时存在异常。一般而言，HuggingFace Hub 上的大部分模型文件都可以在 <a href="https://modelscope.cn/">ModelScope</a> 上找到，所以我们可以先从 ModelScope 上下载模型文件，然后修改 Vui 的推理代码，从而实现推理代码的部署。</p>
+<p>本文将介绍如何在阿里云 PAI-DSW 上部署 Vui 模型。</p>
+<h2 id="下载-vui-推理代码">下载 Vui 推理代码</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /mnt/workspace</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/fluxions-ai/vui.git</span><br></pre></td></tr></table></figure>
+<h2 id="修改-vui-vad-代码">修改 Vui.vad 代码</h2>
+<p>Vui 项目中，用到了基于深度学习的语音活动检测（VAD, Voice Activity Detection）模型 <code>pyannote/voice-activity-detection</code>，该模型的加载和处理位于 <a href="https://github.com/fluxions-ai/vui/blob/main/src/vui/vad.py">src/vui/vad.py</a> 代码文件。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 模型权重文件</span></span><br><span class="line">VAD_SEGMENTATION_URL = <span class="string">&quot;https://whisperx.s3.eu-west-2.amazonaws.com/model_weights/segmentation/0b5b3216d60a2d32fc086b47ea8c67589aaeb26b7e07fcbe620d6d0b83e209ea/pytorch_model.bin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载并构造一个包含模型、特征处理器、后处理等步骤的完整语音活动检测的 pipeline</span></span><br><span class="line">pipeline = <span class="literal">None</span></span><br><span class="line">pipeline_name = <span class="string">&quot;pyannote/voice-activity-detection&quot;</span></span><br></pre></td></tr></table></figure>
+<p>首先，代码中的 <code>VAD_SEGMENTATION_URL</code> 中指定的 URL 目前已经失效。</p>
+<p><img src="/2025/06/14/Deploy-vui-audio-model/whisperx_error.png" alt></p>
+<p>参考 <a href="https://huggingface.co/pyannote/voice-activity-detection">pyannote/voice-activity-detection 的 Model Card</a>，我们发现了如下的提示：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1. visit hf.co/pyannote/segmentation and accept user conditions</span></span><br><span class="line"><span class="comment"># 2. visit hf.co/settings/tokens to create an access token</span></span><br><span class="line"><span class="comment"># 3. instantiate pretrained voice activity detection pipeline</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pyannote.audio <span class="keyword">import</span> Pipeline</span><br><span class="line">pipeline = Pipeline.from_pretrained(<span class="string">&quot;pyannote/voice-activity-detection&quot;</span>,</span><br><span class="line">                                    use_auth_token=<span class="string">&quot;ACCESS_TOKEN_GOES_HERE&quot;</span>)</span><br><span class="line">output = pipeline(<span class="string">&quot;audio.wav&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> speech <span class="keyword">in</span> output.get_timeline().support():</span><br><span class="line">    <span class="comment"># active speech between speech.start and speech.end</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>所以，首先我们需要在 Hugging Face 的 <a href="https://huggingface.co/pyannote/segmentation">pyannote/segmentation</a> 页面接受模型的使用条款。然后在 <a href="https://huggingface.co/settings/tokens">Settings</a> 页面上创建一个新的 Access Token，并将 <a href="https://huggingface.co/pyannote/segmentation">pyannote/segmentation</a> 和 <a href="https://huggingface.co/pyannote/voice-activity-detection">pyannote/voice-activity-detection</a> 这两个模型的访问权限授予该 Token。</p>
+<p>然后，我们使用如下的代码将 <a href="https://huggingface.co/pyannote/segmentation">pyannote/segmentation</a> 模型的权重文件下载到本地：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /mnt/workspace/vui</span><br><span class="line">modelscope download --model pyannote/segmentation --local-dir segmentation</span><br><span class="line"><span class="built_in">cd</span> segmentation &amp;&amp; cp pytorch_model.bin whisperx-vad-segmentation.bin</span><br></pre></td></tr></table></figure>
+<p>最后修改 <code>src/vui/vad.py</code> 中的代码，在 detect_voice_activity:from_pretrained(pipeline_name) 中传入刚刚创建的 Access Token：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">pipeline = Pipeline.from_pretrained(pipeline_name,</span><br><span class="line">                                    use_auth_token=<span class="string">&quot;&#123;huggingface_access_token&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>同时，修改 <code>load_vad_model()</code> 中的模型加载本地下载好的模型，避免直接从 URL 或者 Hugging Face Hub 加载模型。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> model_fp <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    model_fp = os.path.join(<span class="string">&quot;/mnt/workspace/vui/segmentation/&quot;</span>, <span class="string">&quot;whisperx-vad-segmentation.bin&quot;</span>)</span><br></pre></td></tr></table></figure>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">HuggingFace 代理
+</p><p>对于 pyannote.audio.Pipeline.from_pretrained() 方法，默认是从 Hugging Face Hub 加载一个预训练的 VAD pipeline，如果无法访问 Hugging Face Hub，可以尝试采用 <a href="https://hf-mirror.com/">hf-mirror</a> 的方法。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> HF_ENDPOINT=https://hf-mirror.com</span><br></pre></td></tr></table></figure></p>
+<p>如果模型文件非常小，或者采用类似于 <code>pyannote.audio.Pipeline.from_pretraine()</code> 的方法需要直接从 Hugging Face Hub 上加载模型文件，可以使用 <a href="https://hf-mirror.com/">hf-mirror</a> 的代理服务。</p>
+<p>除非不得已，否则不建议直接从 Hugging Face Hub 下载模型文件，如果对应的模型在 ModelScope 也存在，建议直接从 ModelScope 上下载。</p>
+</div>
+<h2 id="修改-vui-model-代码">修改 Vui.model 代码</h2>
+<p>Vui 项目中，使用了 Google 发布的 <a href="https://huggingface.co/google/byt5-small">byt5-small</a> 模型，为了避免直接从 Hugging Face Hub 上下载模型文件，我们首先手动从 ModelScope 下载该模型，然后修改 Vui 中的 AutoTokenizer 的加载方式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /mnt/workspace/vui</span><br><span class="line">modelscope download --model google/byt5-small --local-dir byt5-small</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vui</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    BASE = <span class="string">&quot;vui-100m-base.pt&quot;</span></span><br><span class="line">    COHOST = <span class="string">&quot;vui-cohost-100m.pt&quot;</span></span><br><span class="line">    ABRAHAM = <span class="string">&quot;vui-abraham-100m.pt&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, config: Config = Config(<span class="params"></span>)</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.codec = Fluac.from_pretrained()</span><br><span class="line">        self.config = config</span><br><span class="line">        cfg = config.model</span><br><span class="line">        self.tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;/mnt/workspace/vui/byt5-small&quot;</span>)    </span><br></pre></td></tr></table></figure>
+<h2 id="下载-vui-模型文件">下载 Vui 模型文件</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 目前 ModelScope 上还未提供 Vui 模型文件</span></span><br><span class="line"><span class="built_in">cd</span> /mnt/workspace/models</span><br><span class="line">huggingface-cli download --resume-download fluxions/vui --local-dir vui</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将模型文件复制到 Vui 的代码目录下</span></span><br><span class="line"><span class="built_in">cd</span> /mnt/workspace/vui/src/vui &amp;&amp; cp -r /mnt/workspace/models/vui/*.pt .</span><br></pre></td></tr></table></figure>
+<h2 id="申请公网-ip">申请公网 IP</h2>
+<p>根据 <a href="/2025/05/04/Quickly-Deploy-the-LLM-Model-Using-Aliyun-PAI-DSW/">使用阿里云PAI-DSW快速部署模型</a> 中的 <strong>在公网中访问实例中的服务</strong> 部分的说明，为 DSW 实例申请一个公网 IP。</p>
+<p>修改 <code>vui/demo.py</code> 中的代码，在启动 gradio 服务时，指定服务端口：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">demo.launch(server_name=<span class="string">&quot;0.0.0.0&quot;</span>, server_port=<span class="number">8080</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="启动-vui-服务">启动 Vui 服务</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">conda create -n vui python=3.12</span><br><span class="line">conda activate vui</span><br><span class="line"><span class="built_in">cd</span> /mnt/workspace/vui &amp;&amp; pip install -e .</span><br><span class="line">python demo.py</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/06/14/Deploy-vui-audio-model/vui_demo_1.jpg" alt></p>
+<h2 id="为什么要申请公网-ip">为什么要申请公网 IP</h2>
+<p>在阿里云 PAI-DSW 上部署模型时，默认情况下实例是没有公网 IP 的，这意味着外部无法直接访问实例中的服务。为了方便开发者可以通过浏览器通过 WEB UI 访问 DSW 实例中的服务，阿里云提供了一个代理域名。为了安全性，该代理域名只允许在启动 DSW 实例的浏览器中访问，例如 <code>https://935142-proxy-8080.dsw-gateway-cn-hangzhou.data.aliyun.com/</code>。</p>
+<p><img src="/2025/06/14/Deploy-vui-audio-model/vui_demo_2_2.png" alt></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">注意
+</p><p>此处，需要特别注意，阿里云提供的代理域名是 <code>https</code> 协议的域名。</p>
+</div>
+<p>但是，我们在 DSW 实例中，启动的 gradio 服务却是 <code>http</code> 协议的服务。</p>
+<p><img src="/2025/06/14/Deploy-vui-audio-model/vui_demo_2_1.png" alt></p>
+<p>这就导致，当我们在浏览器中通过 gradio 体验 Vui 的模型效果时，出现了 <code>https</code> 的 URL 请求了 <code>http</code> 的资源的场景，进而导致浏览器的安全策略阻止了 <code>http</code> 的请求。</p>
+<p><img src="/2025/06/14/Deploy-vui-audio-model/vui_demo_3.jpg" alt></p>
+<p>而该 <code>http</code> 的请求正式 Vui 模型生成的语音文件，进而导致无法实现在线播放的效果。</p>
+<p><img src="/2025/06/14/Deploy-vui-audio-model/vui_demo_4.png" alt></p>
+<h2 id="后记">后记</h2>
+<p>当我们遇到这个问题的时候，我们一直以为是 Vui 模型在推理的过程中出现了异常，导致无法生成语音文件。经过一番排查后，我们才发现问题的根源在于浏览器的安全策略阻止了 <code>http</code> 的请求。实际上，Vui 已经生成了语音文件，并且可以通过 <code>https</code> 的 URL 访问到该语音文件。只是我们在启动 gradio 服务时，使用了 <code>http</code> 协议，所以 gradio 通过 <code>SSE</code> 协议返回的语音地址是 <code>http</code> 协议的 URL。</p>
+<p><img src="/2025/06/14/Deploy-vui-audio-model/gradio_data.png" alt></p>
+<p>我们尝试了多种方法，希望能修改 gradio 的代码，以便当以 <code>http</code> 启动 gradio 服务时，返回的语音地址是 <code>https</code> 协议的 URL，但是都没有成功。</p>
+<p>最终，我们还是决定申请一个公网 IP，这样就可以直接通过公网 IP 访问 DSW 实例中的服务。</p>
+]]></content>
+      <categories>
+        <category>LLM</category>
+      </categories>
+      <tags>
+        <tag>TTS</tag>
+        <tag>Vui</tag>
+        <tag>DSW</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>自然语言是否会统一所有的行业和领域?</title>
     <url>/2025/06/01/Will-Natural-Language-Unify-All-Industries-and-Fields/</url>
     <content><![CDATA[<p><img src="/2025/06/01/Will-Natural-Language-Unify-All-Industries-and-Fields/1.jpg" alt></p>
@@ -11354,7 +11576,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 			<div class="douban-card-item"><span>书名: </span><strong>起源</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]大卫·克里斯蒂安</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2019-4-10</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>7.9</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.0</span></div>
 		</div>
 	</a>
 </div>
