@@ -1,6 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Cypher 初学者指南</title>
+    <url>/2025/08/09/Cypher-for-Beginners/</url>
+    <content><![CDATA[<p><img src="/2025/08/09/Cypher-for-Beginners/neo4j.jpg" alt></p>
+<p><strong>Knowledge Grahp</strong>（<strong>KG</strong>） 可用于表示现实世界中的不同实体网络并对其关系进行建模，例如：基于人和人的关系构建的社交网络图，基因与蛋白质之间的关系图…… <strong>KG</strong> 代表了一种理解数据的思维范式的转变，这有助于我们理解数据之间的关系，以便我们能够轻松识别数据中隐藏的重要模式并做出更好的决策。尤其是在生成式 LLM 快速发展的今天，<strong>KG</strong> 可以作为一种结构化的知识表示方式，为 LLM 提供更准确、更丰富、更精简的上下文信息，从而提升 LLM 的性能。</p>
+<span id="more"></span>
+<h2 id="图数据库与-neo4j-简介">图数据库与 Neo4j 简介</h2>
+<p>传统的<em>关系型数据库</em>（RDBMS）使用<em>表</em>（table）来存储数据，并通过<em>外键</em>（foreign key）在不同的表之间链接数据。而<em>图数据库</em>（Graph Database）则用<em>节点</em>（Node）和<em>关系</em>（Relationship）来存储数据，对于网络、社交关系、知识图谱等复杂关联的数据表示具有天然的优势。</p>
+<p><a href="https://neo4j.com/">Neo4j</a> 是当前最流行的图数据库之一，Neo4j 中的基本概念包括：</p>
+<ul>
+<li><strong>节点 (Node)</strong>: 图中的实体，用 <code>()</code> 表示</li>
+<li><strong>标签 (Labels)</strong>: 节点的分类，如 <code>:Person</code>, <code>:Movie</code></li>
+<li><strong>属性 (Properties)</strong>: 节点和关系的键值对数据，（如 <code>&#123;name: &quot;Alice&quot;, age: 30&#125;</code>）</li>
+<li><strong>关系 (Relationship)</strong>: 连接节点的边，可以有方向和类型（如 <code>ACTED_IN</code>、<code>FRIEND_OF</code>），用 <code>--&gt;</code> 或 <code>-[]-&gt;</code>表示</li>
+</ul>
+<p>Alice 是 Bob 的朋友，在 Neo4j 中可以表示为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(:Person &#123;name: &quot;Alice&quot;&#125;)-[:FRIEND_OF]-&gt;(:Person &#123;name: &quot;Bob&quot;&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="neo4j-desktop-安装与使用">Neo4j Desktop 安装与使用</h3>
+<p>对于初学者，建议直接安装 <a href="https://neo4j.com/deployment-center/?desktop-gdb">Neo4j Desktop</a> 版本，Neo4j Desktop 是 Neo4j 官方推出的桌面应用程序（支持 Windows、Mac、Linux 等多个平台），专为简化图形数据库的管理、开发和学习而设计，尤其适合开发者、数据分析师和初学者。其核心优点如下：</p>
+<ul>
+<li>
+<p><strong>一站式图形数据库管理</strong></p>
+<ul>
+<li>便捷的数据库生命周期管理：可直接在界面中创建、启动、停止、删除 Neo4j 数据库（支持社区版和企业版），无需手动配置命令行或服务器参数。</li>
+<li>多版本兼容：支持同时管理多个不同版本的 Neo4j 数据库，方便测试不同版本的特性或兼容性。</li>
+<li>直观的状态监控：通过仪表盘实时显示数据库的运行状态（如内存占用、连接数、查询性能等），便于快速排查问题。</li>
+</ul>
+</li>
+<li>
+<p><strong>集成开发环境（IDE）级体验</strong></p>
+<ul>
+<li>内置 Neo4j Browser：无需额外安装，直接在桌面端打开图形化查询工具 Neo4j Browser，支持编写、运行 Cypher 语句，并以图形化、表格或文本形式展示结果，可视化效果直观。</li>
+<li>项目管理功能：可将数据库、查询脚本、文档等资源归类到 “项目” 中，便于多任务场景下的资源组织（如不同业务场景的数据库隔离）。</li>
+<li>语法高亮与自动补全：Cypher 语句编辑时支持语法高亮、关键字提示和自动补全，减少语法错误，提升编写效率。</li>
+</ul>
+</li>
+<li>
+<p><strong>降低入门与学习门槛</strong></p>
+<ul>
+<li>零配置快速启动：无需手动安装 JDK、配置环境变量或修改复杂的配置文件，下载后即可一键创建并启动数据库，新手可快速上手。</li>
+<li>内置示例数据库：提供多个预配置的示例项目（如电影数据库、社交网络示例），包含现成的节点、关系和查询案例，便于通过实际数据学习 Cypher 和图形数据模型。</li>
+<li>文档与教程集成：内置官方文档入口和学习资源链接，方便随时查阅语法、最佳实践和场景案例。</li>
+</ul>
+</li>
+<li>
+<p><strong>支持扩展与集成</strong></p>
+<ul>
+<li>插件与应用市场：可通过 “应用市场” 安装扩展工具（如数据导入插件、可视化工具），扩展功能边界。</li>
+<li>外部工具集成：支持将数据库连接到外部应用（如 Python、Java 程序），或与其他工具（如 Jupyter Notebook）联动，方便开发和数据分析流程。</li>
+</ul>
+</li>
+</ul>
+<p>安装 Neo4j Desktop 后，我们可以创建一个新的数据库实例，并通过内置的 Neo4j Browser 编写和运行 Cypher 语句。</p>
+<p><img src="/2025/08/09/Cypher-for-Beginners/2.png" alt></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">注意事项
+</p><p>由于 Neo4j Desktop 封禁了中国区的访问，因此安装完成后可能会出现：</p>
+<ul>
+<li>打开应用不显示应用界面（Neo4j Desktop 1.x 版本）</li>
+<li>无法创建数据库实例（Neo4j Desktop 2.x 版本）的情况</li>
+</ul>
+<p>此时，可以通过配置代理的方式来解决该问题。</p>
+</div>
+<h2 id="cypher-语言简介">Cypher 语言简介</h2>
+<p>Cypher 是 Neo4j 的声明式图查询语言，类似 SQL，但专为图模型设计，其基本语法特点如下：</p>
+<ul>
+<li>节点用圆括号 () 表示</li>
+<li>关系用方括号 [] 表示</li>
+<li>箭头 -&gt; 或 &lt;- 表示关系方向</li>
+<li>属性用花括号 {} 表示</li>
+<li>标签用冒号 : 表示</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Knowledge Graph</category>
+      </categories>
+      <tags>
+        <tag>Neo4j</tag>
+        <tag>Cypher</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>在阿里云上部署 Vui 语音模型</title>
     <url>/2025/06/14/Deploy-vui-audio-model/</url>
     <content><![CDATA[<p><img src="/2025/06/14/Deploy-vui-audio-model/tts-basics.jpg" alt></p>
@@ -12761,7 +12917,7 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 			<div class="douban-card-item"><span>书名: </span><strong>不拘一格</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]里德·哈斯廷斯</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2021-1-1</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.2</span></div>
 		</div>
 	</a>
 </div>
