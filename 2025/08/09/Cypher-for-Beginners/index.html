@@ -82,7 +82,7 @@
   <time datetime="2025-08-09T16:47:32.000Z" itemprop="datePublished">2025-08-09</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/Knowledge-Graph/">Knowledge Graph</a>
+    <a class="article-category-link" href="/categories/Neo4j/">Neo4j</a>
   </div>
   
 <div class="word_count">
@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">2.8k</span>
         </span>
     </span>
 
@@ -99,7 +99,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">12 分钟</span>
         </span>
     </span>
 </div>
@@ -127,7 +127,7 @@
 <li><strong>关系 (Relationship)</strong>: 连接节点的边，可以有方向和类型（如 <code>ACTED_IN</code>、<code>FRIEND_OF</code>），用 <code>--&gt;</code> 或 <code>-[]-&gt;</code>表示</li>
 </ul>
 <p>Alice 是 Bob 的朋友，在 Neo4j 中可以表示为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(:Person &#123;name: &quot;Alice&quot;&#125;)-[:FRIEND_OF]-&gt;(:Person &#123;name: &quot;Bob&quot;&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(Alice:Person)-[:FRIEND_OF]-&gt;(Bob:Person)</span><br></pre></td></tr></table></figure>
 <h3 id="neo4j-desktop-安装与使用">Neo4j Desktop 安装与使用</h3>
 <p>对于初学者，建议直接安装 <a target="_blank" rel="noopener" href="https://neo4j.com/deployment-center/?desktop-gdb">Neo4j Desktop</a> 版本，Neo4j Desktop 是 Neo4j 官方推出的桌面应用程序（支持 Windows、Mac、Linux 等多个平台），专为简化图形数据库的管理、开发和学习而设计，尤其适合开发者、数据分析师和初学者。其核心优点如下：</p>
 <ul>
@@ -258,6 +258,197 @@
 <li>属性用花括号 {} 表示</li>
 <li>标签用冒号 : 表示</li>
 </ul>
+<h3 id="创建节点和关系">创建节点和关系</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE (p1:Person &#123;name: &quot;Alice&quot;, age: 30&#125;), </span><br><span class="line">       (p2:Person &#123;name: &quot;Bob&quot;, age: 17&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:Person &#123;name: &quot;Alice&quot;&#125;), (b:Person &#123;name: &quot;Bob&quot;&#125;)</span><br><span class="line">CREATE (a)-[:FRIEND_OF]-&gt;(b)</span><br></pre></td></tr></table></figure>
+<h3 id="查询节点和关系">查询节点和关系</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH path&#x3D;(:Person)-[:FRIEND_OF]-&gt;(:Person) </span><br><span class="line">RETURN path</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/3.png" alt></p>
+<h3 id="条件查询">条件查询</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p:Person) </span><br><span class="line">WHERE p.age &gt; 18</span><br><span class="line">RETURN p</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/4.png" alt></p>
+<h3 id="属性设置与更新">属性设置与更新</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p1:Person &#123;name: &quot;Alice&quot;&#125;)</span><br><span class="line">SET p1.gender &#x3D; &quot;female&quot;</span><br><span class="line"></span><br><span class="line">MATCH (p2:Person &#123;name: &quot;Bob&quot;&#125;)</span><br><span class="line">SET p2.gender &#x3D; &quot;male&quot;</span><br><span class="line"></span><br><span class="line">RETURN p1, p2</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/5.png" alt></p>
+<h3 id="删除节点和关系">删除节点和关系</h3>
+<p><code>DETACH DELETE</code> 会同时删除节点及其所有关系。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p:Person &#123;name: &quot;Alice&quot;&#125;)</span><br><span class="line">DETACH DELETE p</span><br></pre></td></tr></table></figure>
+<h2 id="cypher-语法速查表">Cypher 语法速查表</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">Neo4j Cypher 语法速查表
+</p><p>更多的 Cypher 语法可以参考 <a href="/2025/08/08/Neo4j-Cypher-Syntax-Cheat-Sheet/">Neo4j Cypher 语法速查表</a>。</p>
+</div>
+<h2 id="hpo-the-human-phenotype-ontology">HPO（The Human Phenotype Ontology）</h2>
+<p><a target="_blank" rel="noopener" href="https://hpo.jax.org/">人类表型本体论（HPO）</a> 提供了一套标准化的词汇，用于描述人类疾病中出现的表型异常。HPO 是 Monarch Initiative 的核心成果，致力于生物医学和模式生物数据的语义整合，其最终目标是推动生物医学研究的发展。作为 Monarch Initiative 的一部分，HPO 是全球基因组与健康联盟（GA4GH）战略路线图中的 13 个驱动项目之一的核心组成部分。HPO 中的每个术语都描述了一种表型异常，例如房间隔缺损。HPO 目前包含超过 18,000 个术语，以及超过 156,000 个与遗传性疾病相关的注释。目前，借助 HPO 项目及其他相关项目，人们已经开发出用于表型驱动的鉴别诊断、基因组诊断和转化医学研究的相关软件。</p>
+<p><strong>接下来，我们将利用 HPO 数据构建一个简单的 KG，并使用 Cypher 查询语句对其进行探索。</strong></p>
+<h3 id="neo4j-插件安装">Neo4j 插件安装</h3>
+<p>在 <a target="_blank" rel="noopener" href="https://www.manning.com/books/knowledge-graphs-and-llms-in-action">Knowledge Graphs And LLMs in Action</a> 一书中，提供了根据 HPO 数据构建 KG 的代码示例（<a target="_blank" rel="noopener" href="https://github.com/alenegro81/knowledge-graphs-and-llms-in-action/tree/main/chapters/ch03">chapter_03_code</a>）。我们可以使用该代码来构建 HPO KG。</p>
+<p>该代码使用了 Neo4j 的 <code>APOC</code> 插件和 <code>neosemantics</code> 插件，因此，在运行代码之前，我们需要确保 Neo4j Desktop 中安装了这两个插件。</p>
+<p>Neo4j Desktop 中的插件中心提供了 <code>APOC</code> 插件，我们直接安装即可，但是 <code>neosemantics</code> 插件需要手动安装。我们可以从 <a target="_blank" rel="noopener" href="https://github.com/neo4j-contrib/neosemantics">neosemantics GitHub 仓库</a> 下载插件的 <code>.jar</code> 文件，并将其放置在 Neo4j Desktop 的 <code>plugins</code> 目录下。</p>
+<p>插件安装完毕后，我们需要修改 Neo4j 的配置文件，以允许 <code>APOC</code> 和 <code>neosemantics</code> 插件访问数据库。通过 Neo4j Desktop 插件中心安装的插件会自动增加这些配置项，但是如果是手动安装的插件（例如 <code>neosemantics</code>），我们需要手动添加以下配置到 Neo4j 的 <code>neo4j.conf</code> 文件中：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A comma separated list of procedures and user defined functions that are allowed</span></span><br><span class="line"><span class="comment"># full access to the database through unsupported/insecure internal APIs.</span></span><br><span class="line">dbms.security.procedures.unrestricted=gds.*,n10s.*</span><br><span class="line"></span><br><span class="line"><span class="comment"># A comma separated list of procedures to be loaded by default.</span></span><br><span class="line"><span class="comment"># Leaving this unconfigured will load all procedures found.</span></span><br><span class="line">dbms.security.procedures.allowlist=gds.*,n10s.*,apoc.*</span><br></pre></td></tr></table></figure>
+<p>然后重启 Neo4j 数据库实例，使配置和插件生效。</p>
+<p><img src="/2025/08/09/Cypher-for-Beginners/8.jpg" alt></p>
+<h3 id="构建-hpo-kg">构建 HPO KG</h3>
+<p>按照 <a target="_blank" rel="noopener" href="https://github.com/alenegro81/knowledge-graphs-and-llms-in-action/tree/main/chapters/ch03">chapter_03_code</a> 中的说明，我们可以构建 HPO KG。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">python 版本问题
+</p><p>务必注意，执行代码需要使用 3.10 以下的 python 版本。否则，会报如下的错误：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AttributeError: module <span class="string">'pkgutil'</span> has no attribute <span class="string">'ImpImporter'</span>. Did you mean: <span class="string">'zipimporter'</span>?</span><br></pre></td></tr></table></figure></p>
+</div>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ /usr/bin/python3 chapters/ch03/importer/import_hpo.py</span><br></pre></td></tr></table></figure>
+<p>执行上述命令后，我们就把 HPO 数据导入到 Neo4j 数据库中，并形成了一个简单的 KG。</p>
+<p><img src="/2025/08/09/Cypher-for-Beginners/9.png" alt></p>
  
       <!-- reward -->
       
@@ -333,7 +524,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cypher/" rel="tag">Cypher</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Neo4j/" rel="tag">Neo4j</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cypher/" rel="tag">Cypher</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Knowledge-Graph/" rel="tag">Knowledge Graph</a></li></ul>
 
     </footer>
   </div>
@@ -342,9 +533,9 @@
   <nav class="article-nav">
     
     
-      <a href="/2025/06/14/Deploy-vui-audio-model/" class="article-nav-link">
+      <a href="/2025/08/08/Neo4j-Cypher-Syntax-Cheat-Sheet/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">在阿里云上部署 Vui 语音模型</div>
+        <div class="article-nav-title">Neo4j Cypher 语法速查表</div>
       </a>
     
   </nav>

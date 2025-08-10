@@ -16,7 +16,7 @@
 <li><strong>关系 (Relationship)</strong>: 连接节点的边，可以有方向和类型（如 <code>ACTED_IN</code>、<code>FRIEND_OF</code>），用 <code>--&gt;</code> 或 <code>-[]-&gt;</code>表示</li>
 </ul>
 <p>Alice 是 Bob 的朋友，在 Neo4j 中可以表示为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(:Person &#123;name: &quot;Alice&quot;&#125;)-[:FRIEND_OF]-&gt;(:Person &#123;name: &quot;Bob&quot;&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(Alice:Person)-[:FRIEND_OF]-&gt;(Bob:Person)</span><br></pre></td></tr></table></figure>
 <h3 id="neo4j-desktop-安装与使用">Neo4j Desktop 安装与使用</h3>
 <p>对于初学者，建议直接安装 <a href="https://neo4j.com/deployment-center/?desktop-gdb">Neo4j Desktop</a> 版本，Neo4j Desktop 是 Neo4j 官方推出的桌面应用程序（支持 Windows、Mac、Linux 等多个平台），专为简化图形数据库的管理、开发和学习而设计，尤其适合开发者、数据分析师和初学者。其核心优点如下：</p>
 <ul>
@@ -147,12 +147,980 @@
 <li>属性用花括号 {} 表示</li>
 <li>标签用冒号 : 表示</li>
 </ul>
+<h3 id="创建节点和关系">创建节点和关系</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE (p1:Person &#123;name: &quot;Alice&quot;, age: 30&#125;), </span><br><span class="line">       (p2:Person &#123;name: &quot;Bob&quot;, age: 17&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MATCH (a:Person &#123;name: &quot;Alice&quot;&#125;), (b:Person &#123;name: &quot;Bob&quot;&#125;)</span><br><span class="line">CREATE (a)-[:FRIEND_OF]-&gt;(b)</span><br></pre></td></tr></table></figure>
+<h3 id="查询节点和关系">查询节点和关系</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MATCH path&#x3D;(:Person)-[:FRIEND_OF]-&gt;(:Person) </span><br><span class="line">RETURN path</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/3.png" alt></p>
+<h3 id="条件查询">条件查询</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MATCH (p:Person) </span><br><span class="line">WHERE p.age &gt; 18</span><br><span class="line">RETURN p</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/4.png" alt></p>
+<h3 id="属性设置与更新">属性设置与更新</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MATCH (p1:Person &#123;name: &quot;Alice&quot;&#125;)</span><br><span class="line">SET p1.gender &#x3D; &quot;female&quot;</span><br><span class="line"></span><br><span class="line">MATCH (p2:Person &#123;name: &quot;Bob&quot;&#125;)</span><br><span class="line">SET p2.gender &#x3D; &quot;male&quot;</span><br><span class="line"></span><br><span class="line">RETURN p1, p2</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/5.png" alt></p>
+<h3 id="删除节点和关系">删除节点和关系</h3>
+<p><code>DETACH DELETE</code> 会同时删除节点及其所有关系。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MATCH (p:Person &#123;name: &quot;Alice&quot;&#125;)</span><br><span class="line">DETACH DELETE p</span><br></pre></td></tr></table></figure>
+<h2 id="cypher-语法速查表">Cypher 语法速查表</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">Neo4j Cypher 语法速查表
+</p><p>更多的 Cypher 语法可以参考 <a href="/2025/08/08/Neo4j-Cypher-Syntax-Cheat-Sheet/">Neo4j Cypher 语法速查表</a>。</p>
+</div>
+<h2 id="hpo-the-human-phenotype-ontology">HPO（The Human Phenotype Ontology）</h2>
+<p><a href="https://hpo.jax.org/">人类表型本体论（HPO）</a> 提供了一套标准化的词汇，用于描述人类疾病中出现的表型异常。HPO 是 Monarch Initiative 的核心成果，致力于生物医学和模式生物数据的语义整合，其最终目标是推动生物医学研究的发展。作为 Monarch Initiative 的一部分，HPO 是全球基因组与健康联盟（GA4GH）战略路线图中的 13 个驱动项目之一的核心组成部分。HPO 中的每个术语都描述了一种表型异常，例如房间隔缺损。HPO 目前包含超过 18,000 个术语，以及超过 156,000 个与遗传性疾病相关的注释。目前，借助 HPO 项目及其他相关项目，人们已经开发出用于表型驱动的鉴别诊断、基因组诊断和转化医学研究的相关软件。</p>
+<p><strong>接下来，我们将利用 HPO 数据构建一个简单的 KG，并使用 Cypher 查询语句对其进行探索。</strong></p>
+<h3 id="neo4j-插件安装">Neo4j 插件安装</h3>
+<p>在 <a href="https://www.manning.com/books/knowledge-graphs-and-llms-in-action">Knowledge Graphs And LLMs in Action</a> 一书中，提供了根据 HPO 数据构建 KG 的代码示例（<a href="https://github.com/alenegro81/knowledge-graphs-and-llms-in-action/tree/main/chapters/ch03">chapter_03_code</a>）。我们可以使用该代码来构建 HPO KG。</p>
+<p>该代码使用了 Neo4j 的 <code>APOC</code> 插件和 <code>neosemantics</code> 插件，因此，在运行代码之前，我们需要确保 Neo4j Desktop 中安装了这两个插件。</p>
+<p>Neo4j Desktop 中的插件中心提供了 <code>APOC</code> 插件，我们直接安装即可，但是 <code>neosemantics</code> 插件需要手动安装。我们可以从 <a href="https://github.com/neo4j-contrib/neosemantics">neosemantics GitHub 仓库</a> 下载插件的 <code>.jar</code> 文件，并将其放置在 Neo4j Desktop 的 <code>plugins</code> 目录下。</p>
+<p>插件安装完毕后，我们需要修改 Neo4j 的配置文件，以允许 <code>APOC</code> 和 <code>neosemantics</code> 插件访问数据库。通过 Neo4j Desktop 插件中心安装的插件会自动增加这些配置项，但是如果是手动安装的插件（例如 <code>neosemantics</code>），我们需要手动添加以下配置到 Neo4j 的 <code>neo4j.conf</code> 文件中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># A comma separated list of procedures and user defined functions that are allowed</span></span><br><span class="line"><span class="comment"># full access to the database through unsupported/insecure internal APIs.</span></span><br><span class="line">dbms.security.procedures.unrestricted=gds.*,n10s.*</span><br><span class="line"></span><br><span class="line"><span class="comment"># A comma separated list of procedures to be loaded by default.</span></span><br><span class="line"><span class="comment"># Leaving this unconfigured will load all procedures found.</span></span><br><span class="line">dbms.security.procedures.allowlist=gds.*,n10s.*,apoc.*</span><br></pre></td></tr></table></figure>
+<p>然后重启 Neo4j 数据库实例，使配置和插件生效。</p>
+<p><img src="/2025/08/09/Cypher-for-Beginners/8.jpg" alt></p>
+<h3 id="构建-hpo-kg">构建 HPO KG</h3>
+<p>按照 <a href="https://github.com/alenegro81/knowledge-graphs-and-llms-in-action/tree/main/chapters/ch03">chapter_03_code</a> 中的说明，我们可以构建 HPO KG。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">python 版本问题
+</p><p>务必注意，执行代码需要使用 3.10 以下的 python 版本。否则，会报如下的错误：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">AttributeError: module <span class="string">'pkgutil'</span> has no attribute <span class="string">'ImpImporter'</span>. Did you mean: <span class="string">'zipimporter'</span>?</span><br></pre></td></tr></table></figure></p>
+</div>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ /usr/bin/python3 chapters/ch03/importer/import_hpo.py</span><br></pre></td></tr></table></figure>
+<p>执行上述命令后，我们就把 HPO 数据导入到 Neo4j 数据库中，并形成了一个简单的 KG。</p>
+<p><img src="/2025/08/09/Cypher-for-Beginners/9.png" alt></p>
 ]]></content>
       <categories>
-        <category>Knowledge Graph</category>
+        <category>Neo4j</category>
       </categories>
       <tags>
-        <tag>Neo4j</tag>
+        <tag>Knowledge Graph</tag>
+        <tag>Cypher</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Neo4j Cypher 语法速查表</title>
+    <url>/2025/08/08/Neo4j-Cypher-Syntax-Cheat-Sheet/</url>
+    <content><![CDATA[<p><img src="/2025/08/08/Neo4j-Cypher-Syntax-Cheat-Sheet/CQL.webp" alt></p>
+<p>Cypher 是 Neo4j 的声明式图查询语言，类似 SQL，但专为图模型设计。与其他编程语言或查询语言一样，Cypher 有一套既定的规则，用于编写可读性强且设计良好的结构。如果你对图数据库或 Cypher 还不熟悉，也不用担心，本文将为你提供一个 Cypher 语法速查表，帮助你快速上手。</p>
+<span id="more"></span>
+<h3 id="基本语法表格">基本语法表格</h3>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>命令/语法</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>节点</strong></td>
+<td>(n)</td>
+<td>匹配任意节点</td>
+<td>MATCH (n) RETURN n</td>
+</tr>
+<tr>
+<td><strong>节点</strong></td>
+<td>(n:Label)</td>
+<td>匹配指定标签的节点</td>
+<td>MATCH (p:Person) RETURN p</td>
+</tr>
+<tr>
+<td><strong>节点</strong></td>
+<td>(n:Label {prop: value})</td>
+<td>匹配带属性的节点</td>
+<td>MATCH (p:Person {name: “张三”}) RETURN p</td>
+</tr>
+<tr>
+<td><strong>关系</strong></td>
+<td>-[r]-&gt;</td>
+<td>匹配有向关系</td>
+<td>MATCH (a)-[r]-&gt;(b) RETURN a, r, b</td>
+</tr>
+<tr>
+<td><strong>关系</strong></td>
+<td>-[r:TYPE]-&gt;</td>
+<td>匹配指定类型的关系</td>
+<td>MATCH (a)-[r:KNOWS]-&gt;(b) RETURN a, b</td>
+</tr>
+<tr>
+<td><strong>关系</strong></td>
+<td>-[r:TYPE {prop: value}]-&gt;</td>
+<td>匹配带属性的关系</td>
+<td>MATCH (a)-[r:KNOWS {since: 2020}]-&gt;(b) RETURN a, b</td>
+</tr>
+</tbody>
+</table>
+<h3 id="查询命令表格">查询命令表格</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MATCH</td>
+<td>匹配图中的模式</td>
+<td>MATCH (p:Person) RETURN p</td>
+</tr>
+<tr>
+<td>RETURN</td>
+<td>返回查询结果</td>
+<td>RETURN <a href="http://p.name">p.name</a>, p.age</td>
+</tr>
+<tr>
+<td>RETURN DISTINCT</td>
+<td>返回不重复的结果</td>
+<td>RETURN DISTINCT p.city</td>
+</tr>
+<tr>
+<td>WHERE</td>
+<td>添加过滤条件</td>
+<td>MATCH (p:Person) WHERE p.age &gt; 25 RETURN p</td>
+</tr>
+<tr>
+<td>ORDER BY</td>
+<td>对结果排序</td>
+<td>MATCH (p:Person) RETURN p ORDER BY p.age</td>
+</tr>
+<tr>
+<td>ORDER BY … DESC</td>
+<td>降序排序</td>
+<td>MATCH (p:Person) RETURN p ORDER BY p.age DESC</td>
+</tr>
+<tr>
+<td>LIMIT</td>
+<td>限制返回结果数量</td>
+<td>MATCH (p:Person) RETURN p LIMIT 10</td>
+</tr>
+<tr>
+<td>SKIP</td>
+<td>跳过指定数量的结果</td>
+<td>MATCH (p:Person) RETURN p SKIP 5 LIMIT 10</td>
+</tr>
+</tbody>
+</table>
+<h3 id="创建和修改命令表格">创建和修改命令表格</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CREATE</td>
+<td>创建节点或关系</td>
+<td>CREATE (p:Person {name: “张三”, age: 28})</td>
+</tr>
+<tr>
+<td>MERGE</td>
+<td>匹配或创建（如果不存在）</td>
+<td>MERGE (p:Person {email: “<a href="mailto:zhang@example.com">zhang@example.com</a>”})</td>
+</tr>
+<tr>
+<td>SET</td>
+<td>设置或更新属性</td>
+<td>MATCH (p:Person {name: “张三”}) SET p.age = 30</td>
+</tr>
+<tr>
+<td>SET … :Label</td>
+<td>添加标签</td>
+<td>MATCH (p:Person {name: “张三”}) SET p:Manager</td>
+</tr>
+<tr>
+<td>REMOVE</td>
+<td>移除属性</td>
+<td>MATCH (p:Person {name: “张三”}) REMOVE p.age</td>
+</tr>
+<tr>
+<td>REMOVE … :Label</td>
+<td>移除标签</td>
+<td>MATCH (p:Person {name: “张三”}) REMOVE p:Manager</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>删除关系或节点</td>
+<td>MATCH (p:Person)-[r]-() DELETE r, p</td>
+</tr>
+<tr>
+<td>DETACH DELETE</td>
+<td>删除节点及其所有关系</td>
+<td>MATCH (p:Person {name: “张三”}) DETACH DELETE p</td>
+</tr>
+</tbody>
+</table>
+<h3 id="条件操作符表格">条件操作符表格</h3>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>=</td>
+<td>等于</td>
+<td>WHERE p.age = 25</td>
+</tr>
+<tr>
+<td>&lt;&gt;</td>
+<td>不等于</td>
+<td>WHERE p.age &lt;&gt; 25</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>小于</td>
+<td>WHERE p.age &lt; 30</td>
+</tr>
+<tr>
+<td>&lt;=</td>
+<td>小于等于</td>
+<td>WHERE p.age &lt;= 30</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>大于</td>
+<td>WHERE p.age &gt; 18</td>
+</tr>
+<tr>
+<td>&gt;=</td>
+<td>大于等于</td>
+<td>WHERE p.age &gt;= 18</td>
+</tr>
+<tr>
+<td>AND</td>
+<td>逻辑与</td>
+<td>WHERE p.age &gt; 18 AND p.city = “北京”</td>
+</tr>
+<tr>
+<td>OR</td>
+<td>逻辑或</td>
+<td>WHERE p.age &lt; 18 OR p.age &gt; 65</td>
+</tr>
+<tr>
+<td>NOT</td>
+<td>逻辑非</td>
+<td>WHERE NOT <a href="http://p.name">p.name</a> = “张三”</td>
+</tr>
+<tr>
+<td>IN</td>
+<td>包含在列表中</td>
+<td>WHERE p.age IN [25, 30, 35]</td>
+</tr>
+<tr>
+<td>CONTAINS</td>
+<td>字符串包含</td>
+<td>WHERE <a href="http://p.name">p.name</a> CONTAINS “张”</td>
+</tr>
+<tr>
+<td>STARTS WITH</td>
+<td>字符串开始于</td>
+<td>WHERE <a href="http://p.name">p.name</a> STARTS WITH “张”</td>
+</tr>
+<tr>
+<td>ENDS WITH</td>
+<td>字符串结束于</td>
+<td>WHERE <a href="http://p.name">p.name</a> ENDS WITH “三”</td>
+</tr>
+<tr>
+<td>=~</td>
+<td>正则表达式匹配</td>
+<td>WHERE <a href="http://p.name">p.name</a> =~ “张.*”</td>
+</tr>
+<tr>
+<td>IS NULL</td>
+<td>检查空值</td>
+<td>WHERE p.email IS NULL</td>
+</tr>
+<tr>
+<td>IS NOT NULL</td>
+<td>检查非空值</td>
+<td>WHERE p.email IS NOT NULL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="聚合函数表格">聚合函数表格</h3>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNT()</td>
+<td>计数</td>
+<td>MATCH (p:Person) RETURN COUNT§</td>
+</tr>
+<tr>
+<td>COUNT(DISTINCT)</td>
+<td>去重计数</td>
+<td>MATCH (p:Person) RETURN COUNT(DISTINCT p.city)</td>
+</tr>
+<tr>
+<td>SUM()</td>
+<td>求和</td>
+<td>MATCH (p:Person) RETURN SUM(p.age)</td>
+</tr>
+<tr>
+<td>AVG()</td>
+<td>平均值</td>
+<td>MATCH (p:Person) RETURN AVG(p.age)</td>
+</tr>
+<tr>
+<td>MAX()</td>
+<td>最大值</td>
+<td>MATCH (p:Person) RETURN MAX(p.age)</td>
+</tr>
+<tr>
+<td>MIN()</td>
+<td>最小值</td>
+<td>MATCH (p:Person) RETURN MIN(p.age)</td>
+</tr>
+<tr>
+<td>COLLECT()</td>
+<td>收集为列表</td>
+<td>MATCH (p:Person) RETURN COLLECT(<a href="http://p.name">p.name</a>)</td>
+</tr>
+<tr>
+<td>COLLECT(DISTINCT)</td>
+<td>去重收集</td>
+<td>MATCH (p:Person) RETURN COLLECT(DISTINCT p.city)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="路径匹配表格">路径匹配表格</h3>
+<table>
+<thead>
+<tr>
+<th>语法</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-[*]-&gt;</td>
+<td>任意长度路径</td>
+<td>MATCH (a)-[*]-&gt;(b) RETURN a, b</td>
+</tr>
+<tr>
+<td>-[*1…3]-&gt;</td>
+<td>1到3步路径</td>
+<td>MATCH (a)-[*1…3]-&gt;(b) RETURN a, b</td>
+</tr>
+<tr>
+<td>-[*…5]-&gt;</td>
+<td>最多5步路径</td>
+<td>MATCH (a)-[*…5]-&gt;(b) RETURN a, b</td>
+</tr>
+<tr>
+<td>-[*2…]-&gt;</td>
+<td>至少2步路径</td>
+<td>MATCH (a)-[*2…]-&gt;(b) RETURN a, b</td>
+</tr>
+<tr>
+<td>shortestPath()</td>
+<td>最短路径</td>
+<td>MATCH path = shortestPath((a)-[*]-(b)) RETURN path</td>
+</tr>
+<tr>
+<td>allShortestPaths()</td>
+<td>所有最短路径</td>
+<td>MATCH paths = allShortestPaths((a)-[*]-(b)) RETURN paths</td>
+</tr>
+</tbody>
+</table>
+<h3 id="路径函数表格">路径函数表格</h3>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LENGTH()</td>
+<td>路径长度</td>
+<td>MATCH path = (a)-[*]-(b) RETURN LENGTH(path)</td>
+</tr>
+<tr>
+<td>NODES()</td>
+<td>路径中的节点</td>
+<td>MATCH path = (a)-[*]-(b) RETURN NODES(path)</td>
+</tr>
+<tr>
+<td>RELATIONSHIPS()</td>
+<td>路径中的关系</td>
+<td>MATCH path = (a)-[*]-(b) RETURN RELATIONSHIPS(path)</td>
+</tr>
+<tr>
+<td>startNode()</td>
+<td>关系的起始节点</td>
+<td>MATCH ()-[r]-&gt;() RETURN startNode®</td>
+</tr>
+<tr>
+<td>endNode()</td>
+<td>关系的结束节点</td>
+<td>MATCH ()-[r]-&gt;() RETURN endNode®</td>
+</tr>
+</tbody>
+</table>
+<h3 id="字符串函数表格">字符串函数表格</h3>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UPPER()</td>
+<td>转换为大写</td>
+<td>RETURN UPPER(“hello”) → “HELLO”</td>
+</tr>
+<tr>
+<td>LOWER()</td>
+<td>转换为小写</td>
+<td>RETURN LOWER(“HELLO”) → “hello”</td>
+</tr>
+<tr>
+<td>SIZE()</td>
+<td>字符串长度</td>
+<td>RETURN SIZE(“hello”) → 5</td>
+</tr>
+<tr>
+<td>SUBSTRING()</td>
+<td>截取子字符串</td>
+<td>RETURN SUBSTRING(“hello”, 1, 3) → “ell”</td>
+</tr>
+<tr>
+<td>LEFT()</td>
+<td>左侧截取</td>
+<td>RETURN LEFT(“hello”, 3) → “hel”</td>
+</tr>
+<tr>
+<td>RIGHT()</td>
+<td>右侧截取</td>
+<td>RETURN RIGHT(“hello”, 3) → “llo”</td>
+</tr>
+<tr>
+<td>TRIM()</td>
+<td>去除两端空格</td>
+<td>RETURN TRIM(&quot; hello &quot;) → “hello”</td>
+</tr>
+<tr>
+<td>REPLACE()</td>
+<td>字符串替换</td>
+<td>RETURN REPLACE(“hello”, “l”, “x”) → “hexxo”</td>
+</tr>
+<tr>
+<td>SPLIT()</td>
+<td>字符串分割</td>
+<td>RETURN SPLIT(“a,b,c”, “,”) → [“a”,“b”,“c”]</td>
+</tr>
+<tr>
+<td>toString()</td>
+<td>转换为字符串</td>
+<td>RETURN toString(123) → “123”</td>
+</tr>
+</tbody>
+</table>
+<h3 id="数学函数表格">数学函数表格</h3>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ABS()</td>
+<td>绝对值</td>
+<td>RETURN ABS(-5) → 5</td>
+</tr>
+<tr>
+<td>CEIL()</td>
+<td>向上取整</td>
+<td>RETURN CEIL(4.3) → 5</td>
+</tr>
+<tr>
+<td>FLOOR()</td>
+<td>向下取整</td>
+<td>RETURN FLOOR(4.7) → 4</td>
+</tr>
+<tr>
+<td>ROUND()</td>
+<td>四舍五入</td>
+<td>RETURN ROUND(4.6) → 5</td>
+</tr>
+<tr>
+<td>SQRT()</td>
+<td>平方根</td>
+<td>RETURN SQRT(16) → 4.0</td>
+</tr>
+<tr>
+<td>RAND()</td>
+<td>随机数(0-1)</td>
+<td>RETURN RAND() → 0.123456</td>
+</tr>
+<tr>
+<td>SIGN()</td>
+<td>符号函数</td>
+<td>RETURN SIGN(-5) → -1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="列表函数表格">列表函数表格</h3>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SIZE()</td>
+<td>列表长度</td>
+<td>RETURN SIZE([1,2,3]) → 3</td>
+</tr>
+<tr>
+<td>HEAD()</td>
+<td>列表第一个元素</td>
+<td>RETURN HEAD([1,2,3]) → 1</td>
+</tr>
+<tr>
+<td>LAST()</td>
+<td>列表最后一个元素</td>
+<td>RETURN LAST([1,2,3]) → 3</td>
+</tr>
+<tr>
+<td>TAIL()</td>
+<td>除第一个元素外的列表</td>
+<td>RETURN TAIL([1,2,3]) → [2,3]</td>
+</tr>
+<tr>
+<td>REVERSE()</td>
+<td>反转列表</td>
+<td>RETURN REVERSE([1,2,3]) → [3,2,1]</td>
+</tr>
+<tr>
+<td>RANGE()</td>
+<td>生成数字范围</td>
+<td>RETURN RANGE(1,5) → [1,2,3,4,5]</td>
+</tr>
+<tr>
+<td>UNWIND</td>
+<td>展开列表为行</td>
+<td>UNWIND [1,2,3] AS x RETURN x</td>
+</tr>
+</tbody>
+</table>
+<h3 id="日期时间函数表格">日期时间函数表格</h3>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timestamp()</td>
+<td>当前时间戳(毫秒)</td>
+<td>RETURN timestamp() → 1640995200000</td>
+</tr>
+<tr>
+<td>datetime()</td>
+<td>当前日期时间</td>
+<td>RETURN datetime() → 2024-01-01T00:00:00Z</td>
+</tr>
+<tr>
+<td>date()</td>
+<td>当前日期</td>
+<td>RETURN date() → 2024-01-01</td>
+</tr>
+<tr>
+<td>time()</td>
+<td>当前时间</td>
+<td>RETURN time() → 12:30:45.123</td>
+</tr>
+<tr>
+<td>datetime.now()</td>
+<td>当前日期时间</td>
+<td>RETURN datetime.now()</td>
+</tr>
+<tr>
+<td>date.parse()</td>
+<td>解析日期字符串</td>
+<td>RETURN date(“2024-01-01”)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="类型检查函数表格">类型检查函数表格</h3>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type()</td>
+<td>关系类型</td>
+<td>MATCH ()-[r]-&gt;() RETURN type®</td>
+</tr>
+<tr>
+<td>labels()</td>
+<td>节点标签</td>
+<td>MATCH (n) RETURN labels(n)</td>
+</tr>
+<tr>
+<td>keys()</td>
+<td>属性键列表</td>
+<td>MATCH (n) RETURN keys(n)</td>
+</tr>
+<tr>
+<td>properties()</td>
+<td>所有属性</td>
+<td>MATCH (n) RETURN properties(n)</td>
+</tr>
+<tr>
+<td>id()</td>
+<td>内部ID</td>
+<td>MATCH (n) RETURN id(n)</td>
+</tr>
+<tr>
+<td>exists()</td>
+<td>检查属性是否存在</td>
+<td>MATCH (n) WHERE exists(n.email) RETURN n</td>
+</tr>
+</tbody>
+</table>
+<h3 id="高级查询模式表格">高级查询模式表格</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPTIONAL MATCH</td>
+<td>可选匹配(类似LEFT JOIN)</td>
+<td>MATCH (p:Person) OPTIONAL MATCH §-[r:KNOWS]-&gt;(f) RETURN p, f</td>
+</tr>
+<tr>
+<td>WITH</td>
+<td>传递中间结果</td>
+<td>MATCH (p:Person) WITH p WHERE p.age &gt; 25 RETURN <a href="http://p.name">p.name</a></td>
+</tr>
+<tr>
+<td>UNION</td>
+<td>合并查询结果</td>
+<td>MATCH (p:Person) RETURN <a href="http://p.name">p.name</a> UNION MATCH (c:Company) RETURN <a href="http://c.name">c.name</a></td>
+</tr>
+<tr>
+<td>UNION ALL</td>
+<td>合并所有结果(包含重复)</td>
+<td>MATCH (p:Person) RETURN <a href="http://p.name">p.name</a> UNION ALL MATCH (p:Person) RETURN p.email</td>
+</tr>
+<tr>
+<td>CASE WHEN</td>
+<td>条件表达式</td>
+<td>MATCH (p:Person) RETURN <a href="http://p.name">p.name</a>, CASE WHEN p.age &lt; 18 THEN “未成年” ELSE “成年” END</td>
+</tr>
+<tr>
+<td>FOREACH</td>
+<td>遍历列表执行操作</td>
+<td>MATCH (p:Person) FOREACH (skill IN p.skills</td>
+</tr>
+</tbody>
+</table>
+<h3 id="索引和约束表格">索引和约束表格</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CREATE INDEX</td>
+<td>创建索引</td>
+<td>CREATE INDEX FOR (p:Person) ON (<a href="http://p.name">p.name</a>)</td>
+</tr>
+<tr>
+<td>DROP INDEX</td>
+<td>删除索引</td>
+<td>DROP INDEX FOR (p:Person) ON (<a href="http://p.name">p.name</a>)</td>
+</tr>
+<tr>
+<td>SHOW INDEXES</td>
+<td>显示所有索引</td>
+<td>SHOW INDEXES</td>
+</tr>
+<tr>
+<td>CREATE CONSTRAINT</td>
+<td>创建唯一约束</td>
+<td>CREATE CONSTRAINT FOR (p:Person) REQUIRE p.email IS UNIQUE</td>
+</tr>
+<tr>
+<td>DROP CONSTRAINT</td>
+<td>删除约束</td>
+<td>DROP CONSTRAINT constraint_name</td>
+</tr>
+<tr>
+<td>SHOW CONSTRAINTS</td>
+<td>显示所有约束</td>
+<td>SHOW CONSTRAINTS</td>
+</tr>
+</tbody>
+</table>
+<h3 id="查询分析表格">查询分析表格</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>用法简介</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EXPLAIN</td>
+<td>显示执行计划</td>
+<td>EXPLAIN MATCH (p:Person) WHERE p.age &gt; 25 RETURN p</td>
+</tr>
+<tr>
+<td>PROFILE</td>
+<td>显示执行计划和统计信息</td>
+<td>PROFILE MATCH (p:Person) WHERE p.age &gt; 25 RETURN p</td>
+</tr>
+<tr>
+<td>CALL</td>
+<td>调用存储过程</td>
+<td>CALL db.labels()</td>
+</tr>
+<tr>
+<td>YIELD</td>
+<td>指定过程返回字段</td>
+<td>CALL db.labels() YIELD label</td>
+</tr>
+</tbody>
+</table>
+<h3 id="常用查询示例">常用查询示例</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>查询示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>查找二度好友</strong></td>
+<td>MATCH (me:Person)-[:KNOWS]-(friend)-[:KNOWS]-(fof:Person) WHERE <a href="http://me.name">me.name</a> = “张三” AND fof &lt;&gt; me RETURN DISTINCT <a href="http://fof.name">fof.name</a></td>
+</tr>
+<tr>
+<td><strong>共同好友</strong></td>
+<td>MATCH (a:Person)-[:KNOWS]-(common)-[:KNOWS]-(b:Person) WHERE <a href="http://a.name">a.name</a> = “张三” AND <a href="http://b.name">b.name</a> = “李四” RETURN <a href="http://common.name">common.name</a></td>
+</tr>
+<tr>
+<td><strong>节点度数统计</strong></td>
+<td>MATCH (p:Person)-[r]-() RETURN <a href="http://p.name">p.name</a>, COUNT® AS degree ORDER BY degree DESC</td>
+</tr>
+<tr>
+<td><strong>路径长度查询</strong></td>
+<td>MATCH path = shortestPath((a:Person)-[*]-(b:Person)) WHERE <a href="http://a.name">a.name</a> = “张三” AND <a href="http://b.name">b.name</a> = “李四” RETURN LENGTH(path)</td>
+</tr>
+<tr>
+<td><strong>批量创建关系</strong></td>
+<td>MATCH (a:Person), (b:Person) WHERE a.department = b.department AND a &lt;&gt; b MERGE (a)-[:COLLEAGUE]-&gt;(b)</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+      <categories>
+        <category>Neo4j</category>
+      </categories>
+      <tags>
         <tag>Cypher</tag>
       </tags>
   </entry>
