@@ -338,6 +338,17 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ /usr/bin/python3 chapters/ch03/importer/import_hpo.py</span><br></pre></td></tr></table></figure>
 <p>执行上述命令后，我们就把 HPO 数据导入到 Neo4j 数据库中，并形成了一个简单的 KG。</p>
 <p><img src="/2025/08/09/Cypher-for-Beginners/9.png" alt></p>
+<h3 id="查询-hpo-kg">查询 HPO KG</h3>
+<p>我们现在想要查询一下，与 <code>1 型糖尿病</code>（<code>Diabetes Mellitus Type 1</code>）关联的表型特征（<code>Phnotypic Feature</code>）。我们可以使用以下 Cypher 查询语句：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MATCH path&#x3D;(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(pho:HpoPhenotype)</span><br><span class="line">WHERE dis.id &#x3D; &quot;OMIM:222100&quot;</span><br><span class="line">RETURN path</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/10.png" alt></p>
+<p>在如上的查询中，我们得到了与 <code>1 型糖尿病</code> 相关的表型特征。那么，作为一个临床医生而言，他们还想要知道，有哪些疾病还会与这些表型特征相关联。我们可以使用以下 Cypher 查询语句：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MATCH path&#x3D;(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(phe:HpoPhenotype)</span><br><span class="line">WHERE dis.id &#x3D; &quot;OMIM:222100&quot;</span><br><span class="line">WITH phe AS Type_1_Diabetes_Phe, path AS Type_1_Diabetes_Path</span><br><span class="line">MATCH path &#x3D; (dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(Type_1_Diabetes_Phe)</span><br><span class="line">RETURN Type_1_Diabetes_Path, path</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/11.png" alt></p>
+<p>我们还可以继续查询，在和 <code>1 型糖尿病</code> 相关的表型特征中有关联的疾病中，这些疾病有这些表型特征的特征个数，并按照所包含的特征个数的多少进行降序排列。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MATCH path&#x3D;(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(phe:HpoPhenotype)</span><br><span class="line">WHERE dis.id &#x3D; &quot;OMIM:222100&quot;</span><br><span class="line">WITH phe AS Type_1_Diabetes_Phe, path AS Type_1_Diabetes_Path</span><br><span class="line">MATCH path &#x3D; (dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(Type_1_Diabetes_Phe)</span><br><span class="line">UNWIND dis AS nodes</span><br><span class="line">RETURN dis.id AS disease_id, </span><br><span class="line">dis.label AS disease_name,</span><br><span class="line">collect(Type_1_Diabetes_Phe.label) AS features,</span><br><span class="line">COUNT(nodes) AS num_of_features</span><br><span class="line">ORDER BY num_of_features DESC, disease_name</span><br><span class="line">LIMIT 5</span><br></pre></td></tr></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/12.png" alt></p>
+<p>从如上的结果中，我们能看出，在与 <code>1 型糖尿病</code> 相关的 8 个表型特征中，<code>Bardet-Biedl syndrome 2</code> 疾病包含了其中的 3 个表型特征。</p>
 ]]></content>
       <categories>
         <category>Neo4j</category>
@@ -13885,7 +13896,7 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 			<div class="douban-card-item"><span>书名: </span><strong>不拘一格</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]里德·哈斯廷斯</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2021-1-1</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>8.2</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
 		</div>
 	</a>
 </div>
