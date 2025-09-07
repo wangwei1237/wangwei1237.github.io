@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">418</span>
+            <span class="post-count">2k</span>
         </span>
     </span>
 
@@ -99,7 +99,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">7 分钟</span>
         </span>
     </span>
 </div>
@@ -118,6 +118,108 @@
 <p>在基于我们所构建的 <strong>知识图谱</strong> 数据执行复杂任务之前，检查 <strong>知识图谱</strong> 的质量是必不可少的步骤。<strong>知识图谱</strong> 的质量检查能够确保导入数据的完整性和准确性，及早发现数据异常、关系映射错误等问题，避免低质量数据影响模型效果。同时，<strong>知识图谱</strong> 的质量检查可以为后续的图分析提供可靠的数据基础，确保后续任务的成功。本文将基于 Neo4j 的图数据科学库（GDS）介绍如何评估 <strong>知识图谱</strong> 的质量，主要包括 WCC（弱联通网络）和 Louvain Modularity 这两种算法。</p>
 <span id="more"></span>
 <h2 id="1-wcc-弱联通分量">1. WCC（弱联通分量）</h2>
+<h3 id="1-1-wcc-算法简介">1.1 WCC 算法简介</h3>
+<p>WCC（Weakly Connected Components，弱联通分量）是图论中的一个重要概念。要理解WCC，我们首先需要了解图论中的几个基础概念。</p>
+<ul>
+<li>
+<p><strong>有向图与无向图</strong>：知识图谱本质上是一个有向图，其中实体作为节点，关系作为有向边。例如，<code>17哥</code>→<code>工作于</code>→<code>百度</code> 就构成了一条有向边。</p>
+</li>
+<li>
+<p><strong>强连通与弱连通</strong>：</p>
+<ul>
+<li><strong>强连通</strong>：在有向图中，如果从节点 A 可以通过有向边到达节点 B，并且从节点 B 也可以通过有向边回到节点 A，那么 A 和 B 是强连通的。</li>
+<li><strong>弱连通</strong>：如果我们忽略边的方向，将有向图看作无向图后，如果两个节点之间存在路径，则它们是弱连通的。</li>
+</ul>
+</li>
+<li>
+<p><strong>弱联通分量</strong>：在一个有向图中，最大的弱连通子图就是一个弱联通分量。简单来说，WCC 是指图中所有能够相互到达的节点集合，此处定义的&quot;到达&quot;会忽略边的方向<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。</p>
+</li>
+</ul>
+<p>在一个社交网络图中，人们通过各种关系彼此连接（朋友、同事、家人……）起来。即使这些关系有方向性（比如&quot;关注&quot;关系），但只要两个人之间存在某种路径连接（不考虑方向），他们就属于同一个弱联通分量。如果整个社交网络分成了几个完全独立的小群体，那么每个群体就是一个弱联通分量。</p>
+<p><img src="/2025/08/23/How-to-evaluate-the-quality-of-the-graph/exm_net.png" alt></p>
+<p>在 Neo4j 中，我们可以使用 GDS 库来计算 WCC。例如：</p>
+<ul>
+<li>首先，我们需要将有向图转换为无向图。在 Neo4j 中，我们可以使用 <code>gds.graph.project</code> 方法来实现这一点，并通过设置 <code>orientation: 'UNDIRECTED'</code> 来忽略边的方向。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CALL gds.graph.project(</span><br><span class="line">  &#39;social-graph&#39;,</span><br><span class="line">  &#39;Person&#39;,</span><br><span class="line">  &#123;</span><br><span class="line">      FRIEND_OF: &#123;</span><br><span class="line">          orientation: &#39;UNDIRECTED&#39;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>然后，我们可以使用 <code>gds.wcc.write</code> 方法来计算 WCC，并将结果写入节点属性中。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CALL gds.wcc.write(&#39;social-graph&#39;, &#123;writeProperty: &#39;componentId&#39;&#125;)</span><br><span class="line">YIELD nodePropertiesWritten, componentCount, componentDistribution</span><br></pre></td></tr></table></figure>
+<p>执行上述代码后，我们可以得到以下结果：</p>
+<table>
+<thead>
+<tr>
+<th>nodePropertiesWr</th>
+<th>componentCount</th>
+<th>componentDistribution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>2</td>
+<td>{<br>  min: 2,<br>  p5: 2,<br>  max: 3,<br>  p999: 3,<br>  p99: 3,<br>  p1: 2,<br>  p10: 2,<br>  p90: 3,<br>  p50: 2,<br>  p25: 2,<br>  p75: 3,<br>  p95: 3,<br>  mean: 2.5<br>}</td>
+</tr>
+</tbody>
+</table>
+<p>可以看到如上的一个社交网络中，对于 <code>FRIEND_OF</code> 关系而言，存在 2 个弱联通分量，从图中也可以看出来，这两个弱联通分量分别是：</p>
+<ul>
+<li>Alice，Bob，David</li>
+<li>Charles，Alex</li>
+</ul>
+<h3 id="1-2-wcc的计算方法">1.2 WCC的计算方法</h3>
+<p>计算WCC通常使用以下步骤：</p>
+<ul>
+<li>图的预处理：将有向图转换为无向图，即忽略所有边的方向</li>
+<li>深度优先搜索（<strong>DFS</strong>）或广度优先搜索（<strong>BFS</strong>）：从任意未访问的节点开始，遍历所有可达的节点</li>
+<li>分量标记：将每次搜索到的所有节点标记为同一个连通分量</li>
+<li>重复过程：对所有未访问的节点重复上述过程，直到所有节点都被访问</li>
+</ul>
+<p>标准的 WCC 算法时间复杂度为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>V</mi><mo>+</mo><mi>E</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(V+E)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mclose">)</span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span></span></span></span> 是节点数，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span></span></span></span> 是边数。在实践中，由于实际应用中的图通常非常大，因此通常会使用并行或分布式算法来优化性能。</p>
+<h3 id="1-3-wcc-在知识图谱质量评估中的作用">1.3 WCC 在知识图谱质量评估中的作用</h3>
+<ul>
+<li>
+<p>连通性评估：WCC 数量是评估知识图谱整体连通性的重要指标。理想情况下，一个高质量的知识图谱应该只有一个巨大的弱联通分量，这意味着图谱中的知识是相互关联的整体。如果知识图谱存在多个 WCC，特别是很多小的 WCC，这通常表明：数据集成不充分，存在知识孤岛；某些领域的知识缺失或连接不足；数据质量问题导致实体无法正确链接。</p>
+</li>
+<li>
+<p>知识覆盖度分析：通过分析最大 WCC 的规模占比，可以评估知识图谱的覆盖度。主要 WCC 的节点数占比高，说明大部分知识都被有效组织在一起。<br>
+如果存在多个中等规模的 WCC，这可能表明不同领域间缺乏桥接知识。如果存在大量微小 WCC，通常意味着数据质量问题或实体消歧不充分。</p>
+</li>
+<li>
+<p>图谱完整性检验：如果某些本应相连的知识点被分割在不同的 WCC 中，则说明需要补充相关关系或实体。</p>
+</li>
+<li>
+<p>图谱演化监控：在知识图谱的持续构建过程中，WCC指标可以用来监控图谱质量的变化。如果 WCC 数量减少，通常表明图谱质量在提升，知识间的连接更加充分。如果主要的 WCC 规模在增长，则说明新增知识能够有效融入现有知识体系。如果新增小的 WCC，则需要关注是否存在数据质量问题。</p>
+</li>
+</ul>
+<p>一般而言，在实际应用中，WCC 通常通过以下几个维度来评估知识图谱质量：</p>
+<ul>
+<li>WCC 数量：总的弱联通分量个数</li>
+<li>最大 WCC 占比：最大弱联通分量包含的节点数占总节点数的比例</li>
+<li>WCC 规模分布：不同规模WCC的数量分布</li>
+<li>孤立节点率：只包含单个节点的WCC比例</li>
+</ul>
+<p>一般来说，高质量的知识图谱应该满足：</p>
+<ul>
+<li>WCC 数量相对较少</li>
+<li>存在一个占主导地位的大 WCC（通常应占80%以上的节点）</li>
+<li>小规模 WCC 数量较少</li>
+<li>孤立节点比例较低</li>
+</ul>
+<h3 id="1-4-wcc-的局限性">1.4 WCC 的局限性</h3>
+<p>尽管 WCC 是一个有用的评估指标，但它也有一些局限性：</p>
+<ul>
+<li>
+<p>无法反映语义质量：WCC 只关注结构连通性，无法判断连接的语义合理性。即使图谱结构连通性很好，仍可能存在语义错误。</p>
+</li>
+<li>
+<p>领域特异性：不同领域的知识图谱有不同的特点。某些特定领域可能天然存在多个独立的知识群体，这种情况下多个WCC可能是合理的。</p>
+</li>
+<li>
+<p>规模敏感性：对于不同规模的知识图谱，WCC的评估标准可能需要调整。小规模专业图谱和大规模通用图谱的评估标准应该有所不同。</p>
+</li>
+</ul>
 <h2 id="2-louvain-modularity-算法">2. Louvain Modularity 算法</h2>
 <h2 id="3-gds-库">3. GDS 库</h2>
 <h3 id="3-1-安装-gds-插件">3.1 安装 GDS 插件</h3>
@@ -132,6 +234,14 @@
 </li>
 </ol>
 <h2 id="4-使用-gds-进行图质量评估">4. 使用 GDS 进行图质量评估</h2>
+<h2 id="参考文献">参考文献</h2>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://neo4j.com/docs/graph-data-science/current/algorithms/wcc/">Weakly Connected Components</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
  
       <!-- reward -->
       
