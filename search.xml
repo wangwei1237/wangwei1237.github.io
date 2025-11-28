@@ -1,6 +1,324 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Agent 中的 Context Engineering</title>
+    <url>/2025/11/28/context-engineering-for-AI-agents/</url>
+    <content><![CDATA[<p><img src="/2025/11/28/context-engineering-for-AI-agents/CE.jpeg" alt></p>
+<span id="more"></span>
+<h2 id="1-workflow-agent">1. Workflow &amp; Agent</h2>
+<p><em>Building effective agents</em><sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup> 介绍了 <em>workflow</em> 和 <em>agent</em> 的区别，这两者之间最本质的区别在于：究竟是由谁来控制执行流程。</p>
+<p>如果是由代码编写的规则、流程来控制大语言模型（<em>LLM</em>），那么这种架构就是 <em>workflow</em>；如果是大语言模型（<em>LLM</em>）自主的与环境进行互动、并根据新的信息来自主的决定后续的执行动作，那么这种架构就是 <em>Agent</em>。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/17643155839477.jpg" alt="左图为 workflow，右图为 Agent"></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Workflow (工作流)</th>
+<th>Agent (智能体)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>结构</td>
+<td>线性或树状 (DAG)<br>A → B → C</td>
+<td>循环 (Loop)<br>思考 → 行动 → 观察 → 再思考</td>
+</tr>
+<tr>
+<td>确定性</td>
+<td>高。<br>路径是固定的，输出结果通常比较稳定。</td>
+<td>低。<br>同样的任务，模型可能会选择不同的路径。</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>低。只能处理预设好的场景。</td>
+<td>高。可以处理未知的、开放式的问题。</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>需要在代码中预设 if/else 来处理错误。</td>
+<td>模型自我反思：“哎呀报错了，换个方法试试”。</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>翻译、数据提取、分类、内容生成等定义明确的任务。</td>
+<td>开放式研究、复杂编码任务、多步推理等边界模糊的任务。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><em>start with a simple workflow, move to an agent only when you need to.</em></p>
+</blockquote>
+<p>对于软件交付领域而言，端到端的 CodingAgent 或者 TestingAgent 因为需要多步迭代、并且在不同的迭代过程中需要根据当前的结果与状态来调整执行步骤进而完成代码编写或者软件测试工作，因此简单的 <em>workflow</em> 不足以完成这样的工作，必须采用 <em>Agent</em> 才能实现这种复杂的任务。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/00d6dc12dfbcff77181d77f96b323027.png" alt="00d6dc12dfbcff77181d77f96b323027"></p>
+<p>假设我们要测试一个电商网站的登录功能，TestAgent 会：</p>
+<ol>
+<li>先调用工具打开网页</li>
+<li>再理解当前的网页，解析到用户名、密码的输入框以及登录按钮</li>
+<li>再调用工具执行登录操作</li>
+<li>判断状态→如果登录失败，需要根据错误信息以及调用工具获取更多的领域知识来决策如何解决当前的登录失败</li>
+<li>……</li>
+<li>随着 N 次迭代，这些工具调用信息、信息空间中查询到的信息、对话历史信息就会迅速撑爆上下文窗口……然后，TestAgent 就会因为接下来要讲到的 <em>Context Rot</em> 问题而导致执行性能急剧下降。</li>
+</ol>
+<h2 id="2-context-rot">2. Context Rot</h2>
+<p>2025 年 7 月 14 日，Chroma 公司的研究员通过测试主流模型发现：随着输入 tokens 长度的增加，模型性能反而出现了持续下降的现象。Chroma 把这一现象称之为 <em>Context Rot</em>，并且把他们的发现整理为这篇技术报告 <em>Context Rot: How Increasing Input Tokens Impacts LLM Performance</em><sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642451948931.jpg" alt></p>
+<p>过去，我们总是期望大语言模型的上下文窗口能够变得越来越大，从而我们可以把更多的信息塞进提示词中，以期望提升模型的性能。</p>
+<p>然而，就像人类的记忆容量也有限制一样，大型语言模型（LLMs）在解析大量上下文时也有一个 <em>注意力预算</em>（<em>attention budget</em>），每引入一个新的 token，就会在一定程度上消耗该 <em>注意力预算</em>。</p>
+<p>因此，<em>Context Rot</em> 提醒我们：在一段持续的对话或长文本生成过程中，随着输入信息（Context）的不断累积，大语言模型会逐渐丧失对早期关键信息的“注意力”，导致回答质量下降、逻辑断层或指令遗忘。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/224c5f534db954028ae9e44474887478.jpg" alt="224c5f534db954028ae9e44474887478"></p>
+<p>在 <em>Context Rot</em> 的限制下，大语言模型的上下文窗口是一种边际收益递减的有限资源。长上下文能力不应该仅仅看作是模型的一项技术指标，而更应该看作是一个需要精心设计和管理的系统工程。我们必须为大语言模型精心筛选信息，以避免 <em>Context Rot</em> 现象。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642475708110.jpg" alt></p>
+<p>这种在 Agent 的迭代过程中，为大语言模型（<em>LLM</em>）精心筛选信息的过程就是我们将要介绍的 <em>上下文工程</em>。</p>
+<h3 id="2-1-transformers-架构的天然缺陷">2.1 Transformers 架构的天然缺陷</h3>
+<p>在 <em><a href="/2024/10/16/What-exactly-is-attention/">自注意力究竟是什么？</a></em> 这篇文章中，我们详细介绍了 Transformer 架构，并对其中的 <em>注意力机制</em>（<em>Attention Mechanism</em>）进行了详细的解释。</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Attention</mtext><mo stretchy="false">(</mo><mi mathvariant="bold">Q</mi><mo separator="true">,</mo><mi mathvariant="bold">K</mi><mo separator="true">,</mo><mi mathvariant="bold">V</mi><mo stretchy="false">)</mo><mo>=</mo><mtext>softmax</mtext><mrow><mo fence="true">(</mo><mfrac><mrow><mi mathvariant="bold">Q</mi><msup><mi mathvariant="bold">K</mi><mi>T</mi></msup></mrow><msqrt><msub><mi>d</mi><mi>k</mi></msub></msqrt></mfrac><mo fence="true">)</mo></mrow><mi mathvariant="bold">V</mi></mrow><annotation encoding="application/x-tex">\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax}\left( \frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}} \right) \mathbf{V}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">Attention</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">Q</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf">K</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">V</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.468361em;vertical-align:-0.95003em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5183309999999999em;"><span style="top:-2.25278em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.85722em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.81722em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" viewbox="0 0 400000 1080" preserveaspectratio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.18278000000000005em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">Q</span></span><span class="mord"><span class="mord"><span class="mord mathbf">K</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.93em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">V</span></span></span></span></span></span></p>
+<p>在推理阶段，模型需要计算当前生成的 token 与上下文中几千个 token 之间的注意力。在单个注意力头内，对于某个输入 token，它对所有 tokens 的注意力权重（经过 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mo>⋅</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">softmax(\cdot)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">t</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord">⋅</span><span class="mclose">)</span></span></span></span> 后）会满足：</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext> </mtext><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex"> \sum_i w_i = 1
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.327674em;vertical-align:-1.277669em;"></span><span class="mord"> </span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0500050000000003em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.277669em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></span></p>
+<p>因此当上文过长，token 之间的注意力结果就不容易区分，模型就很难精准地“聚焦”到那个最重要的 token 上。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642961219029.jpg" alt></p>
+<h3 id="2-2-k-v-q-矩阵维度的溢出">2.2 K/V/Q 矩阵维度的溢出</h3>
+<p>除了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mo>⋅</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">softmax(\cdot)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">t</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord">⋅</span><span class="mclose">)</span></span></span></span> 的注意力分散机制外，<em>KV Cache</em> 的量化损失也是导致 <em>Context Rot</em>  的物理根源。</p>
+<p><em>K/V/Q</em> 矩阵的维度本身是固定的（以 <a href="https://huggingface.co/deepseek-ai/DeepSeek-R1-0528/blob/main/config.json">deepseek-R100528</a> 为例，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>Q</mi></msub></mrow><annotation encoding="application/x-tex">d_Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">Q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> = 7168），不会因为输入 tokens 的变长而变大。但是，赋予这些向量的 <em>位置感</em> 的数学机制——<em>旋转位置编码</em>（<em>RoPE</em>）——却会因为上下文过长而失效。</p>
+<p><em>RoPE</em> 通过在多维空间中对向量进行旋转来表示位置。模型在训练时，只见过比如 0 到 4000 的旋转角度。当上下文变成 10000 时，向量被旋转到了一个模型从未见过的高频角度。此时 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mo>⋅</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">softmax(\cdot)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">t</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord">⋅</span><span class="mclose">)</span></span></span></span> 就不再能准确反映相对距离，模型也就无法区分 “第 9000 个词” 和 “第 9005 个词” 的区别。</p>
+<p>就像 <em>uint8</em> 只能表示 0~255 这个 256 个数，但是当用 <em>uint8</em> 存储 256 这个整数时，结果就会变成 0。那么，在 <em>uint8</em> 下，如何区分 0 到底是 0 呢，还是溢出了的 256 呢？</p>
+<h2 id="3-long-horizon-tasks">3. Long-Horizon Tasks</h2>
+<p>在大模型领域，<em>长程任务</em>（<em>long-horizon tasks</em>）是指那些无法通过单次原子操作完成，而必须拆解为一系列具有逻辑依赖关系的连续决策步骤（<em>Sequential Decision Making</em>）才能解决的任务。</p>
+<blockquote>
+<p>我们在第一节中提到的 TestAgent 测试电商网站登录功能的任务，就属于 <em>长程任务</em>。</p>
+</blockquote>
+<p><em>长程任务</em> 不仅仅指“执行时间长”，更强调执行步骤多、步骤之间依赖性强、执行的状态空间大，其核心特征如下：</p>
+<ol>
+<li>
+<p>多步推理与决策（<em>Multi-step Reasoning &amp; Decision Making</em>）：Agent 需要生成一个包含 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span> 个步骤的计划（<em>Plan</em>），即 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>a</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>a</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">a_1, a_2, \dots, a_T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</p>
+</li>
+<li>
+<p>延迟奖励（<em>Delayed Sparse Rewards</em>）：在大多数中间步骤中，Agent 往往得不到及时的、明确的正反馈（<em>Reward</em>）。只有当整条链路执行完毕且成功时，才能判定任务完成。这意味着 Agent 需要具备很强的“自纠错能力”、“自决策能力”以及“规划能力”。</p>
+</li>
+<li>
+<p>时序依赖性（<em>Temporal Dependency</em>）：第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">t</span></span></span></span> 步的动作 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">a_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 严格依赖于第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69841em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 步的执行结果（<em>State</em>）<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">s_{t-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>。一旦中间某一步出现异常，后续的所有步骤都可能失效，从而导致误差累积。</p>
+</li>
+<li>
+<p>动态环境交互（<em>Dynamic Environment Interaction</em>）：Agent 需要不断观察环境的即时反馈来调整下一步动作，而不是盲目执行预设的静态脚本。</p>
+</li>
+</ol>
+<p>因此，Agent 在面对 <em>长程任务</em> 时，常常面临着如下的困难：</p>
+<ul>
+<li>记忆负担：随着执行步骤 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span> 的不断增加，历史轨迹会不断变长，历史信息也会不断增加，Agent 容易因为 <em>Context Rot</em> 现象而忘记最开始的任务目标。</li>
+<li>误差滚雪球：如果 Agent 在第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>5</mn></msub></mrow><annotation encoding="application/x-tex">a_5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">5</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 时产生幻觉（<em>Hallucination</em>）或执行错误，但是由于没有及时纠正，直到第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>25</mn></msub></mrow><annotation encoding="application/x-tex">a_{25}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mtight">5</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 时，整个任务才彻底失败。假设每一步成功率是 95%，执行 20 步后的成功率仅为 $ 0.95^{20} ≈ 35% $。</li>
+</ul>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642216363819.jpg" alt></p>
+<h2 id="4-context-engineering">4. Context Engineering</h2>
+<p><em>上下文工程</em> 就是在大语言模型（LLMs）的 <em>有限注意力预算</em>（<em>finite attention budget</em>）的限制下，精心筛选并找到最小的 <em>high-signal tokens</em> 集合，以最大限度地提高实现某种预期结果的可能性。正如 Anthropic 在 <em>Effective context engineering for AI agents</em><sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup> 中说的那样：</p>
+<blockquote>
+<p>我们对于上下文的不同组成部分（系统提示、工具、示例、消息历史等）的总体指导原则是：要深思熟虑，确保上下文的内容即丰富又简洁。</p>
+<p>Our overall guidance across the different components of context (system prompts, tools, examples, message history, etc) is to be thoughtful and keep your context informative, yet tight. Now let’s dive into dynamically retrieving context at runtime.</p>
+</blockquote>
+<ul>
+<li>令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">U</mi></mrow><annotation encoding="application/x-tex">\mathcal{U}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.09931em;">U</span></span></span></span></span> 表示所有可用的、潜在上下文中的 tokens 的全集（即原始、未过滤的“信息池”）。</li>
+<li>令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> 表示通过上下文工程筛选出的 tokens 子集，满足 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>⊆</mo><mi mathvariant="script">U</mi></mrow><annotation encoding="application/x-tex">S \subseteq \mathcal{U}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.13597em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.09931em;">U</span></span></span></span></span>。</li>
+<li>令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>S</mi><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|S|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord">∣</span></span></span></span> 表示集合 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> 中的 tokens 的数量。</li>
+<li>令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span> 表示“有限注意力预算（<em>finite attention budget</em>）”，即模型能有效处理的最大 token 数量。</li>
+<li>令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span> 表示大语言模型（LLM）的固定参数。</li>
+<li>令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Y</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">Y^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> 表示“期望输出”，即目标输出字符串或答案。</li>
+<li>令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msup><mi>Y</mi><mo>∗</mo></msup><mi mathvariant="normal">∣</mi><mi>S</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P_{\theta}(Y^*|S)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mclose">)</span></span></span></span> 表示模型计算结果的概率：在给定所选上下文 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> 的条件下，生成期望输出 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Y</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">Y^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.688696em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> 的条件概率。</li>
+</ul>
+<p>因此，可以用如下的数学语言来表示 <em>上下文工程</em> 的含义：</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable rowspacing="0.24999999999999992em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mtext>ContextEngineering</mtext><mo>→</mo><msub><mi mathvariant="script">S</mi><mrow><mi>o</mi><mi>p</mi><mi>t</mi></mrow></msub><mo>=</mo><mi><munder><mo><mi mathvariant="normal">argmin</mi><mo>⁡</mo></mo><mrow><mi>S</mi><mo>∈</mo><msup><mi mathvariant="script">S</mi><mo lspace="0em" rspace="0em">∗</mo></msup></mrow></munder></mi><mi mathvariant="normal">∣</mi><mi>S</mi><mi mathvariant="normal">∣</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mtext>for</mtext><mspace width="1em"><msup><mi mathvariant="script">S</mi><mo>∗</mo></msup><mo>=</mo><mi><munder><mo><mi mathvariant="normal">argmax</mi><mo>⁡</mo></mo><mrow><mi>S</mi><mo>⊆</mo><mi mathvariant="script">U</mi></mrow></munder></mi><mrow><mo fence="true">{</mo><msub><mi>P</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msup><mi>Y</mi><mo>∗</mo></msup><mi mathvariant="normal">∣</mi><mi>S</mi><mo stretchy="false">)</mo><mo fence="true">}</mo></mrow></mspace></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mspace width="1em"><mspace width="1em"><mtext>s.t.</mtext><mspace width="1em"><mi mathvariant="normal">∣</mi><mi>S</mi><mi mathvariant="normal">∣</mi><mo>≤</mo><mi>B</mi></mspace></mspace></mspace></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+&amp; \text{ContextEngineering} \rightarrow  \mathcal{S}_{opt} = \underset{S \in \mathcal{S}^{*}}{\operatorname{argmin}} |S|  \\
+&amp; \\
+&amp; \text{for} \quad \mathcal{S}^* = \underset{S \subseteq \mathcal{U}}{\operatorname{argmax}} \left\{ P_{\theta}(Y^*|S) \right\} \\
+&amp; \quad \quad \text{s.t.} \quad |S| \leq B \\
+&amp; \\
+\end{aligned}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:8.780091em;vertical-align:-4.1400455em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.6400455em;"><span style="top:-6.6400455em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span><span style="top:-4.5339045em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span><span style="top:-3.0339045000000002em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span><span style="top:-0.8599545000000006em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span><span style="top:0.6400455000000003em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:4.1400455em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.6400455em;"><span style="top:-6.8000455em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord text"><span class="mord">ContextEngineering</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord"><span class="mord"><span class="mord mathcal" style="margin-right:0.075em;">S</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.28055599999999997em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord"><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.66786em;"><span style="top:-2.161229em;margin-left:0em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mrel mtight">∈</span><span class="mord mtight"><span class="mord mtight"><span class="mord mathcal mtight" style="margin-right:0.075em;">S</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6183428571428571em;"><span style="top:-2.786em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">∗</span></span></span></span></span></span></span></span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span><span class="mop"><span class="mop"><span class="mord mathrm">a</span><span class="mord mathrm">r</span><span class="mord mathrm" style="margin-right:0.01389em;">g</span><span class="mord mathrm">m</span><span class="mord mathrm">i</span><span class="mord mathrm">n</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.966141em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord">∣</span></span></span><span style="top:-4.6939045em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span></span></span><span style="top:-3.1939045000000004em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord text"><span class="mord">for</span></span><span class="mspace" style="margin-right:1em;"></span><span class="mord"><span class="mord"><span class="mord mathcal" style="margin-right:0.075em;">S</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.738696em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord"><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.43056000000000005em;"><span style="top:-2.161229em;margin-left:0em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mrel mtight">⊆</span><span class="mord mtight"><span class="mord mathcal mtight" style="margin-right:0.09931em;">U</span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span><span class="mop"><span class="mop"><span class="mord mathrm">a</span><span class="mord mathrm">r</span><span class="mord mathrm" style="margin-right:0.01389em;">g</span><span class="mord mathrm">m</span><span class="mord mathrm">a</span><span class="mord mathrm">x</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.03395em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">{</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.738696em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">}</span></span></span></span><span style="top:-1.0199545000000008em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:1em;"></span><span class="mord text"><span class="mord">s.t.</span></span><span class="mspace" style="margin-right:1em;"></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span><span style="top:0.4800455000000001em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:4.1400455em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>上下文工程是即是一门艺术、又是一门科学，上下文工程指导我们从不断演变的海量信息中精心筛选出所需要的信息，并将这些信息放入有限的上下文窗口中，从而让 Agent 产出我们最希望的结果。</p>
+<h3 id="4-1-上下文工程与提示词工程之间的区别">4.1 上下文工程与提示词工程之间的区别</h3>
+<p>在使用大型语言模型（LLMs）进行 AI 原生应用开发的早期阶段，编写并优化提示词是工程开发工作中的最主要的部分。</p>
+<ul>
+<li>2024 年，业界提供了各种不同的提示词模版以优化大模型的推理结果，例如 OpenAI 在 <em>Prompt engineering</em><sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup> 中，对如何组织提示词做了详尽的说明。</li>
+<li>2024 年，提示词「神人」李继刚也爆红网络，他写的提示词在各大 AI 社群和提示词网站广为流传。</li>
+<li>同时，为了提升提示词工程的效率，寻找在当前模型下最优的提示词，提示词的快速评估工作也如火如荼。</li>
+</ul>
+<p>提示词工程的核心主要在于如何编写有效的提示词（尤其是系统提示词）以让大模型能够准确的理解用户的意图，并输出用户期望的结果。然而，话术的优化仅限于精准描述与定义问题，这中优化在 LLM ChatBot 时代能够非常好的解决人与大模型沟通的问题。</p>
+<p>但是，对于 <em>长程任务</em> 而言，仅仅优化话术还是不够的，此时必须为大模型提供更多的额外信息（例如：系统指令、工具、模型上下文协议（MCP）、外部数据、消息历史等）才能保证大模型产出我们希望的结果。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642429672199.jpg" alt></p>
+<p>因此，从本质上讲：提示词工程是单次的话术优化，而上下文工程是迭代中的信息筛选，每当我们需要决定向模型传递什么内容时，筛选就会发生，上下文工程就会存在。</p>
+<h2 id="5-context-engineering-in-action">5. Context Engineering in Action</h2>
+<p>为了让 Agent 能够在 <em>长程任务</em> 上高效工作，Anthropic 开发了多种技术来解决 Agent 在面对 <em>长程任务</em> 时所面临的挑战，这些技术包括：压缩（<em>compaction</em>）、结构化笔记（<em>structured note-taking</em>）、多 Agent 架构（<em>multi-agent architectures</em>）。</p>
+<h3 id="5-1-compaction">5.1 Compaction</h3>
+<p><em>压缩</em> 是指当对话接近上下文窗口限制时，对其内容进行总结，并利用该总结重新开启一个新的上下文窗口的做法。<em>压缩</em> 通常是上下文工程中提升长期连贯性的首要手段。从本质上讲，<em>压缩</em> 以高保真的方式提炼上下文窗口的内容，使智能体能够在性能下降最小的情况下继续运行。</p>
+<p><em>压缩</em> 的艺术在于选择保留什么信息以及决策舍弃什么信息。过度激进的压缩策略会导致那些细微但关键的上下文信息丢失，而这些信息的重要性往往只有在 Agent 执行到后面的时候才会显现出来。</p>
+<p>当构建压缩系统时，我们必须在复杂的 Agent 执行轨迹上仔细调整我们的提示词（<em>prompt</em>）。在 <em>压缩</em> 过程中：</p>
+<ul>
+<li>我们必须首先保证最大限度地提高召回率（<em>recall</em>），以确保压缩提示词能从大量的轨迹信息中捕捉到每一个相关信息；</li>
+<li>然后再通过多次迭代来删除多余的提示词内容，从而不断提高精确率（<em>precision</em>）。</li>
+</ul>
+<p>实际上，工具结果清理是最安全、最轻量级的压缩形式之一——确实，Agent 一旦调用过某个工具并得到了结果，在后续的执行中，Agent 为什么还需要再次查看这次工具调用的原始结果呢？在 <em>Managing context on the Claude Developer Platform</em><sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup> 这篇文章中，Anthropic 把工具清理作为特性集成到了Claude 开发者平台。</p>
+<blockquote>
+<p>Today, we’re introducing new capabilities for managing your agents’ context on the Claude Developer Platform: context editing and the memory tool.</p>
+<p>With our latest model, Claude Sonnet 4.5, these capabilities enable developers to build AI agents capable of handling long-running tasks at higher performance and without hitting context limits or losing critical information.</p>
+</blockquote>
+<p>当 Agent 经过多轮的工具调用后，此时累积的历史信息导致提示词的数量已经接近大模型的上下文窗口大小限制。此时，<em>context editing</em> 会自动从上下文窗口中清除过时的工具调用和结果，从而可以在保留对话流程的同时移除过时内容，进而有效延长 Agent 在无需人工干预的情况下的运行时间。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642271057749.jpg" alt></p>
+<h3 id="5-2-structured-note-taking">5.2 Structured Note-Taking</h3>
+<p><em>笔记</em>（<em>note-taking</em>）与 <em>原始信息</em>（<em>raw information</em>）之间的核心区别，本质上是 <strong>认知加工（<em>Cognitive Processing</em>）</strong> 的介入程度。<em>原始信息</em> 是矿石——包含金子，但同时也包含了大量的泥土、杂质和石头）；而 <em>笔记</em> 是提炼后的金块——去除了杂质，改变了形态，并且还会打上了所有者的印记。从另一个角度讲：<em>笔记</em> 是我们思维的快照，具备一定的主观和个性化，是构建自己思维体系的有效形式之一。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/4792b51210851a049a66959f577b0dd0.jpg" alt="4792b51210851a049a66959f577b0dd0"></p>
+<p>在 Agent 领域，<em>结构化笔记</em>——又称为 <em>Agent 记忆</em>——是一种 Agent 定期把 <em>笔记</em>（<em>note</em>）写入大模型上下文窗口之外的持久性存储介质中的技术。在 Agent 的后续执行过程中，Agent 会再次从这些持久性存储介质中把这些 <em>笔记</em> 拉回到上下文窗口。</p>
+<p>利用 <em>结构化笔记</em>，我们能够以最小的开销为 Agent 提供持久记忆能力，从而允许 Agent 在 <em>长程任务</em> 中可以跟踪结果与进度、保留关键的上下文信息与依赖关系，以避免 Agent 在多次迭代之后遗忘原始任务目标的问题。</p>
+<blockquote>
+<p>我们已经走得太远，以至于忘记了为什么而出发。——纪伯伦</p>
+</blockquote>
+<p>在上下文重置后，Agent 会通过阅读之前的 <em>结构化笔记</em>，并继续进行任务执行与探索，这在仅依靠大语言模型（LLM）的上下文窗口来存储所有信息的场景下，是无法实现的。</p>
+<p>同时，<em>结构化笔记</em> 还使得 Agent 能够随着时间的推移而建立自己的知识库，并在不同会话中保持项目状态，新启动的 Agent 也无需重新梳理所有的原始信息就可以学习到之前的、持久保存的知识。另外，对于多 Agent 架构而言，统一的 <em>Agent 记忆</em> 也会解决 Agent 之间的协同问题，Agent 之间不需要通过冗余而又复杂的信息的传输、而是通过共享的 <em>Agent 记忆</em> 来保持统一的系统状态。</p>
+<h3 id="5-3-multi-agent-architectures">5.3 Multi-Agent Architectures</h3>
+<p>多 Agent 架构是解决上下文限制的另一种有效的技术思路。在解决 <em>长程任务</em> 时，我们不再依赖单个Agent 来维持整个任务的状态，而是把任务进行拆分，并且由专门的 Sub-Agent 来处理特定的子任务。</p>
+<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642344199896.jpg" alt></p>
+<p>在 Sub-Agent 处理子任务的时候，这些 Sub-Agent 会具有清晰的上下文窗口，从而避免了 <em>Context Rot</em> 的问题。</p>
+<p>在 多 Agent 架构下，Lead-Agent 主要是在更高层级上对计划进行协调，而 Sub-Agent 负责具体执行更专精的技术工作或使用工具查找相关信息。每个 Sub-Agent 还可能会进行广泛的探索，使用数万个甚至更多的 tokens，但只给 Lead-Agent 返回最精简的、提炼后的摘要信息（通常为1000-2000个标记）作为执行结果。</p>
+<p>在 <em>How we built our multi-agent research system</em><sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup> 中，Anthropic 提到，在复杂研究任务上，多 Agent 架构比单 Agent 系统有显著的改进。</p>
+<h2 id="6-context-engineering-白皮书">6. Context Engineering 白皮书</h2>
+<p>2025 年 11 月 16 日，谷歌发布了 <em>Context Engineering 白皮书</em><sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup>，白皮书中认为：Agent 真正的“智能”，并非仅仅源于底层模型，更重要还在于开发者如何为其“组装”上下文。</p>
+<p>谷歌在白皮书中详细介绍了现在 Agent 的两大基础：会话（<em>Sessions</em>） 与 记忆（<em>Memory</em>），同时也对构建 Agent 的众多底层基础设施的工程实践做了详细的探讨：</p>
+<ul>
+<li>压缩策略（<em>Compaction Strategies</em>）：如何让信息更紧凑。</li>
+<li>数据溯源（<em>Provenance Tracking</em>）：知道每一条信息的来源。</li>
+<li>记忆提取与整合工作流（<em>Extraction &amp; Consolidation</em>）：从对话中提炼价值。</li>
+<li>检索评分（<em>Retrieval Scoring</em>）：决定提取哪段记忆的算法。</li>
+<li>后台处理（<em>Background Processing</em>）：异步处理繁重的记忆整理工作。</li>
+<li>多 Agent 互操作性（<em>Multi-agent Interoperability</em>）：通过共享的、与框架无关的记忆层，实现不同 Agent 之间的协作。</li>
+</ul>
+<p>2025 年 11 月 19 日，谷歌发布了 Gemini3，在 Gemini3 的开发文档 <em>Gemini 3 Developer Guide</em><sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup> 中，我们发现了如下的内容：</p>
+<blockquote>
+<p>To bypass strict validation in these specific scenarios, populate the field with this specific dummy string:</p>
+<p>“thoughtSignature”: “context_engineering_is_the_way_to_go”</p>
+</blockquote>
+<p>由此，也能看出谷歌对于 <em>Context Engineering</em> 是多么的痴迷。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">后记
+</p><p>...</p>
+</div>
+<h2 id="参考文献">参考文献</h2>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="https://www.anthropic.com/engineering/building-effective-agents">Building effective agents</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="https://research.trychroma.com/context-rot">Context Rot: How Increasing Input Tokens Impacts LLM Performance</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p><a href="https://platform.openai.com/docs/guides/prompt-engineering">Prompt engineering</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p><a href="https://claude.com/blog/context-management">Managing context on the Claude Developer Platform</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a href="https://www.anthropic.com/engineering/multi-agent-research-system">How we built our multi-agent research system</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a href="https://www.kaggle.com/whitepaper-context-engineering-sessions-and-memory">Context Engineering: Sessions &amp; Memory</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn8" class="footnote-item"><p><a href="https://ai.google.dev/gemini-api/docs/gemini-3?thinking=high">Gemini 3 Developer Guide</a> <a href="#fnref8" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+]]></content>
+      <categories>
+        <category>LLM</category>
+      </categories>
+      <tags>
+        <tag>Context Engineering</tag>
+        <tag>Context Rot</tag>
+        <tag>Long-Horizon Tasks</tag>
+        <tag>上下文工程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何根据历史胜负数据估计 Elo 打分？</title>
     <url>/2025/11/15/How-to-estimate-the-winning-rate-based-on-historical-match-results/</url>
     <content><![CDATA[<p>最近，Grok4.1 和 Gemini3 模型的发布都提到了人类偏好打分平台——LMArena 大模型竞技场：</p>
@@ -11782,7 +12100,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 		</div>
 		<div class="douban-card-right" style="line-height: 1.7;">
 			<div class="douban-card-item"><span>书名: </span><strong>你的灯亮着吗?</strong></div>
-			<div class="douban-card-item"><span>作者: </span><span>唐纳德・高斯</span></div>
+			<div class="douban-card-item"><span>作者: </span><span>[美]唐纳德·高斯</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2003-1</span></div>
 			<div class="douban-card-item"><span>评分: </span><span>8.0</span></div>
 		</div>
