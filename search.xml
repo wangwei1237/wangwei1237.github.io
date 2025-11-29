@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Agent 中的 Context Engineering</title>
-    <url>/2025/11/28/context-engineering-for-AI-agents/</url>
-    <content><![CDATA[<p><img src="/2025/11/28/context-engineering-for-AI-agents/CE.jpeg" alt></p>
+    <title>Context Engineering for AI Agents</title>
+    <url>/2025/11/29/context-engineering-for-AI-agents/</url>
+    <content><![CDATA[<p><img src="/2025/11/29/context-engineering-for-AI-agents/CE.jpeg" alt></p>
+<p>2025 年 6 月 25 日，在 Andrej Karpathy <a href="https://x.com/karpathy/status/1937902205765607626">推文</a> 的推动下，<em>上下文工程</em>（<em>Context Engineering</em>）一词迅速在 AI 开发者社区中爆火。</p>
+<blockquote>
+<p>+1 for “context engineering” over “prompt engineering”.</p>
+</blockquote>
+<p>但是当时主要精力放在了大模型评估的工作上，因此一直没有时间来深入研究 <em>上下文工程</em>（<em>Context Engineering</em>）。直到最近，在我们构建端到端的 TestingAgent 时，我们遇到了因上下文窗口限制，多轮交互后初始重要字段丢失，导致 TestingAgent 执行失败的问题。我想，是时候来深入研究一下 <em>上下文工程</em>（<em>Context Engineering</em>）了。</p>
 <span id="more"></span>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/lm_trend.png" alt="2025 年每周发布的大模型数量趋势图"></p>
 <h2 id="1-workflow-agent">1. Workflow &amp; Agent</h2>
 <p><em>Building effective agents</em><sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup> 介绍了 <em>workflow</em> 和 <em>agent</em> 的区别，这两者之间最本质的区别在于：究竟是由谁来控制执行流程。</p>
 <p>如果是由代码编写的规则、流程来控制大语言模型（<em>LLM</em>），那么这种架构就是 <em>workflow</em>；如果是大语言模型（<em>LLM</em>）自主的与环境进行互动、并根据新的信息来自主的决定后续的执行动作，那么这种架构就是 <em>Agent</em>。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/17643155839477.jpg" alt="左图为 workflow，右图为 Agent"></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/17643155839477.jpg" alt="左图为 workflow，右图为 Agent"></p>
 <table>
 <thead>
 <tr>
@@ -49,7 +55,7 @@
 <p><em>start with a simple workflow, move to an agent only when you need to.</em></p>
 </blockquote>
 <p>对于软件交付领域而言，端到端的 CodingAgent 或者 TestingAgent 因为需要多步迭代、并且在不同的迭代过程中需要根据当前的结果与状态来调整执行步骤进而完成代码编写或者软件测试工作，因此简单的 <em>workflow</em> 不足以完成这样的工作，必须采用 <em>Agent</em> 才能实现这种复杂的任务。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/00d6dc12dfbcff77181d77f96b323027.png" alt="00d6dc12dfbcff77181d77f96b323027"></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/00d6dc12dfbcff77181d77f96b323027.png" alt></p>
 <p>假设我们要测试一个电商网站的登录功能，TestAgent 会：</p>
 <ol>
 <li>先调用工具打开网页</li>
@@ -61,13 +67,13 @@
 </ol>
 <h2 id="2-context-rot">2. Context Rot</h2>
 <p>2025 年 7 月 14 日，Chroma 公司的研究员通过测试主流模型发现：随着输入 tokens 长度的增加，模型性能反而出现了持续下降的现象。Chroma 把这一现象称之为 <em>Context Rot</em>，并且把他们的发现整理为这篇技术报告 <em>Context Rot: How Increasing Input Tokens Impacts LLM Performance</em><sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642451948931.jpg" alt></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/17642451948931.jpg" alt></p>
 <p>过去，我们总是期望大语言模型的上下文窗口能够变得越来越大，从而我们可以把更多的信息塞进提示词中，以期望提升模型的性能。</p>
 <p>然而，就像人类的记忆容量也有限制一样，大型语言模型（LLMs）在解析大量上下文时也有一个 <em>注意力预算</em>（<em>attention budget</em>），每引入一个新的 token，就会在一定程度上消耗该 <em>注意力预算</em>。</p>
 <p>因此，<em>Context Rot</em> 提醒我们：在一段持续的对话或长文本生成过程中，随着输入信息（Context）的不断累积，大语言模型会逐渐丧失对早期关键信息的“注意力”，导致回答质量下降、逻辑断层或指令遗忘。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/224c5f534db954028ae9e44474887478.jpg" alt="224c5f534db954028ae9e44474887478"></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/224c5f534db954028ae9e44474887478.jpg" alt></p>
 <p>在 <em>Context Rot</em> 的限制下，大语言模型的上下文窗口是一种边际收益递减的有限资源。长上下文能力不应该仅仅看作是模型的一项技术指标，而更应该看作是一个需要精心设计和管理的系统工程。我们必须为大语言模型精心筛选信息，以避免 <em>Context Rot</em> 现象。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642475708110.jpg" alt></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/17642475708110.jpg" alt></p>
 <p>这种在 Agent 的迭代过程中，为大语言模型（<em>LLM</em>）精心筛选信息的过程就是我们将要介绍的 <em>上下文工程</em>。</p>
 <h3 id="2-1-transformers-架构的天然缺陷">2.1 Transformers 架构的天然缺陷</h3>
 <p>在 <em><a href="/2024/10/16/What-exactly-is-attention/">自注意力究竟是什么？</a></em> 这篇文章中，我们详细介绍了 Transformer 架构，并对其中的 <em>注意力机制</em>（<em>Attention Mechanism</em>）进行了详细的解释。</p>
@@ -88,7 +94,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext> </mtext><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex"> \sum_i w_i = 1
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.327674em;vertical-align:-1.277669em;"></span><span class="mord"> </span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0500050000000003em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.277669em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></span></p>
 <p>因此当上文过长，token 之间的注意力结果就不容易区分，模型就很难精准地“聚焦”到那个最重要的 token 上。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642961219029.jpg" alt></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/17642961219029.jpg" alt></p>
 <h3 id="2-2-k-v-q-矩阵维度的溢出">2.2 K/V/Q 矩阵维度的溢出</h3>
 <p>除了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mo>⋅</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">softmax(\cdot)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">t</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord">⋅</span><span class="mclose">)</span></span></span></span> 的注意力分散机制外，<em>KV Cache</em> 的量化损失也是导致 <em>Context Rot</em>  的物理根源。</p>
 <p><em>K/V/Q</em> 矩阵的维度本身是固定的（以 <a href="https://huggingface.co/deepseek-ai/DeepSeek-R1-0528/blob/main/config.json">deepseek-R100528</a> 为例，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>Q</mi></msub></mrow><annotation encoding="application/x-tex">d_Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">Q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> = 7168），不会因为输入 tokens 的变长而变大。但是，赋予这些向量的 <em>位置感</em> 的数学机制——<em>旋转位置编码</em>（<em>RoPE</em>）——却会因为上下文过长而失效。</p>
@@ -119,7 +125,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <li>记忆负担：随着执行步骤 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span> 的不断增加，历史轨迹会不断变长，历史信息也会不断增加，Agent 容易因为 <em>Context Rot</em> 现象而忘记最开始的任务目标。</li>
 <li>误差滚雪球：如果 Agent 在第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>5</mn></msub></mrow><annotation encoding="application/x-tex">a_5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">5</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 时产生幻觉（<em>Hallucination</em>）或执行错误，但是由于没有及时纠正，直到第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>25</mn></msub></mrow><annotation encoding="application/x-tex">a_{25}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mtight">5</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 时，整个任务才彻底失败。假设每一步成功率是 95%，执行 20 步后的成功率仅为 $ 0.95^{20} ≈ 35% $。</li>
 </ul>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642216363819.jpg" alt></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/17642216363819.jpg" alt></p>
 <h2 id="4-context-engineering">4. Context Engineering</h2>
 <p><em>上下文工程</em> 就是在大语言模型（LLMs）的 <em>有限注意力预算</em>（<em>finite attention budget</em>）的限制下，精心筛选并找到最小的 <em>high-signal tokens</em> 集合，以最大限度地提高实现某种预期结果的可能性。正如 Anthropic 在 <em>Effective context engineering for AI agents</em><sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup> 中说的那样：</p>
 <blockquote>
@@ -154,7 +160,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </ul>
 <p>提示词工程的核心主要在于如何编写有效的提示词（尤其是系统提示词）以让大模型能够准确的理解用户的意图，并输出用户期望的结果。然而，话术的优化仅限于精准描述与定义问题，这中优化在 LLM ChatBot 时代能够非常好的解决人与大模型沟通的问题。</p>
 <p>但是，对于 <em>长程任务</em> 而言，仅仅优化话术还是不够的，此时必须为大模型提供更多的额外信息（例如：系统指令、工具、模型上下文协议（MCP）、外部数据、消息历史等）才能保证大模型产出我们希望的结果。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642429672199.jpg" alt></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/17642429672199.jpg" alt></p>
 <p>因此，从本质上讲：提示词工程是单次的话术优化，而上下文工程是迭代中的信息筛选，每当我们需要决定向模型传递什么内容时，筛选就会发生，上下文工程就会存在。</p>
 <h2 id="5-context-engineering-in-action">5. Context Engineering in Action</h2>
 <p>为了让 Agent 能够在 <em>长程任务</em> 上高效工作，Anthropic 开发了多种技术来解决 Agent 在面对 <em>长程任务</em> 时所面临的挑战，这些技术包括：压缩（<em>compaction</em>）、结构化笔记（<em>structured note-taking</em>）、多 Agent 架构（<em>multi-agent architectures</em>）。</p>
@@ -172,10 +178,10 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p>With our latest model, Claude Sonnet 4.5, these capabilities enable developers to build AI agents capable of handling long-running tasks at higher performance and without hitting context limits or losing critical information.</p>
 </blockquote>
 <p>当 Agent 经过多轮的工具调用后，此时累积的历史信息导致提示词的数量已经接近大模型的上下文窗口大小限制。此时，<em>context editing</em> 会自动从上下文窗口中清除过时的工具调用和结果，从而可以在保留对话流程的同时移除过时内容，进而有效延长 Agent 在无需人工干预的情况下的运行时间。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642271057749.jpg" alt></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/17642271057749.jpg" alt></p>
 <h3 id="5-2-structured-note-taking">5.2 Structured Note-Taking</h3>
 <p><em>笔记</em>（<em>note-taking</em>）与 <em>原始信息</em>（<em>raw information</em>）之间的核心区别，本质上是 <strong>认知加工（<em>Cognitive Processing</em>）</strong> 的介入程度。<em>原始信息</em> 是矿石——包含金子，但同时也包含了大量的泥土、杂质和石头）；而 <em>笔记</em> 是提炼后的金块——去除了杂质，改变了形态，并且还会打上了所有者的印记。从另一个角度讲：<em>笔记</em> 是我们思维的快照，具备一定的主观和个性化，是构建自己思维体系的有效形式之一。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/4792b51210851a049a66959f577b0dd0.jpg" alt="4792b51210851a049a66959f577b0dd0"></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/4792b51210851a049a66959f577b0dd0.jpg" alt></p>
 <p>在 Agent 领域，<em>结构化笔记</em>——又称为 <em>Agent 记忆</em>——是一种 Agent 定期把 <em>笔记</em>（<em>note</em>）写入大模型上下文窗口之外的持久性存储介质中的技术。在 Agent 的后续执行过程中，Agent 会再次从这些持久性存储介质中把这些 <em>笔记</em> 拉回到上下文窗口。</p>
 <p>利用 <em>结构化笔记</em>，我们能够以最小的开销为 Agent 提供持久记忆能力，从而允许 Agent 在 <em>长程任务</em> 中可以跟踪结果与进度、保留关键的上下文信息与依赖关系，以避免 Agent 在多次迭代之后遗忘原始任务目标的问题。</p>
 <blockquote>
@@ -185,7 +191,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p>同时，<em>结构化笔记</em> 还使得 Agent 能够随着时间的推移而建立自己的知识库，并在不同会话中保持项目状态，新启动的 Agent 也无需重新梳理所有的原始信息就可以学习到之前的、持久保存的知识。另外，对于多 Agent 架构而言，统一的 <em>Agent 记忆</em> 也会解决 Agent 之间的协同问题，Agent 之间不需要通过冗余而又复杂的信息的传输、而是通过共享的 <em>Agent 记忆</em> 来保持统一的系统状态。</p>
 <h3 id="5-3-multi-agent-architectures">5.3 Multi-Agent Architectures</h3>
 <p>多 Agent 架构是解决上下文限制的另一种有效的技术思路。在解决 <em>长程任务</em> 时，我们不再依赖单个Agent 来维持整个任务的状态，而是把任务进行拆分，并且由专门的 Sub-Agent 来处理特定的子任务。</p>
-<p><img src="/2025/11/28/context-engineering-for-AI-agents/17642344199896.jpg" alt></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/17642344199896.jpg" alt></p>
 <p>在 Sub-Agent 处理子任务的时候，这些 Sub-Agent 会具有清晰的上下文窗口，从而避免了 <em>Context Rot</em> 的问题。</p>
 <p>在 多 Agent 架构下，Lead-Agent 主要是在更高层级上对计划进行协调，而 Sub-Agent 负责具体执行更专精的技术工作或使用工具查找相关信息。每个 Sub-Agent 还可能会进行广泛的探索，使用数万个甚至更多的 tokens，但只给 Lead-Agent 返回最精简的、提炼后的摘要信息（通常为1000-2000个标记）作为执行结果。</p>
 <p>在 <em>How we built our multi-agent research system</em><sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup> 中，Anthropic 提到，在复杂研究任务上，多 Agent 架构比单 Agent 系统有显著的改进。</p>
@@ -206,6 +212,13 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p>“thoughtSignature”: “context_engineering_is_the_way_to_go”</p>
 </blockquote>
 <p>由此，也能看出谷歌对于 <em>Context Engineering</em> 是多么的痴迷。</p>
+<p>2025 年 11 月 7 日，谷歌发表了一篇被称为 <em>Attention is all you need (V2)</em> 的论文 <em>Introducing Nested Learning: A new ML paradigm for continual learning</em><sup class="footnote-ref"><a href="#fn9" id="fnref9">[9]</a></sup>，论文提出了 <em>Nested Learning</em> 框架，从而让模型拥有了自我修改权重与多时间尺度连续记忆的能力，从而也可以很少的解决 <em>Context Rot</em> 问题。在 <em>Nested Learning</em> 框架下，当我们和大语言模型（<em>LLM</em>）对话的时候：</p>
+<ul>
+<li>模型的高频层，在飞速处理我们所说的每个词，理解我们的意图，生成回复，这部分记忆是临时的，对话结束可能就忘了。</li>
+<li>模型的中频层则在以一个稍慢的速度，分析整个对话的主题、我们的情绪、知识盲区，试图形成一个关于这次互动的概要记忆。</li>
+<li>模型的低频层则更慢，它整合过去一段时间里，跟我们的所有互动，模型可能会发现：“哦，这个用户最近总是在问关于古典音乐的问题，而且他似乎对巴赫特别感兴趣，是时候把‘该用户是古典音乐爱好者’这个标签存入关于他的长期档案里了”。</li>
+</ul>
+<p>与上下文工程不同的是，所有的这些记忆不再依赖于上下文窗口而存在，而是通过修改模型的权重直接存储于模型之中。目前看来，在线修改模型的权重，依然是一个非常复杂且昂贵的过程。因此，我仍旧认为，在可遇见的一段时间内，上下文工程依然是提升 Agent 在 <em>长程任务</em> 上执行能力的最有效手段。</p>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -283,7 +296,9 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
   }
   </style>
 <div class="admonition note"><p class="admonition-title">后记
-</p><p>...</p>
+</p><p>当我在研究 <em>Context Engineering</em> 的时候，恰好在工作中遇到了一件事情，这件事情让我深刻体会到了 <em>Context Engineering</em> 的强大。对于同一个原始任务，我和同事对比了两种不同的上下文构建策略构建出的上下文的结果差异，结果发现，精心筛选并组织的上下文，竟然让 Agent 的效果跨越了一个层级！真的令人惊艳，又让我更加痴迷于对 <em>Context Engineering</em> 的研究。</p>
+<p>当我在研究 <em>Context Engineering</em> 的时候，恰好是谷歌发布 <em>Gemini3</em> 与 <em>Nano Banana Pro</em> 的时间，我们第一时间对这两个模型做了深入、全面的评测，正如 <em><a href="https://lmarena.ai/leaderboard/">LMArena</a></em> 榜单上显示的那样，<em>Gemini3</em> 与 <em>Nano Banana Pro</em> 的表现确实非常亮眼。</p>
+<p>得益于 <em>Gemini3</em> 与 <em>Nano Banana Pro</em> 的强大能力，我的<em>Context Engineering</em> 学习之旅也方便了很多，我不停的和 <em>Gemini3</em> 进行对话，询问它关于 <em>Context Engineering</em> 的各种问题，真的是收益匪浅。我还用 <em>Nano Banana Pro</em> 帮我生成了这篇文章中的所有漫画插图，效果真是令人惊艳。</p>
 </div>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
@@ -304,6 +319,8 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <li id="fn7" class="footnote-item"><p><a href="https://www.kaggle.com/whitepaper-context-engineering-sessions-and-memory">Context Engineering: Sessions &amp; Memory</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn8" class="footnote-item"><p><a href="https://ai.google.dev/gemini-api/docs/gemini-3?thinking=high">Gemini 3 Developer Guide</a> <a href="#fnref8" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn9" class="footnote-item"><p><a href="https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/">Introducing Nested Learning: A new ML paradigm for continual learning</a> <a href="#fnref9" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
