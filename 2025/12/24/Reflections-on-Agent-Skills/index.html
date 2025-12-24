@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>对 Agent Skills 的认知与思考 |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Reflections-on-Agent-Skills"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  对 Agent Skills 的认知与思考
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2025/12/24/Reflections-on-Agent-Skills/" class="article-date">
+  <time datetime="2025-12-24T10:00:00.000Z" itemprop="datePublished">2025-12-24</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">14 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p><img src="/2025/12/24/Reflections-on-Agent-Skills/1.png" alt></p>
+<p>自从 12 月 9 日，Anthropic 的 Barry Zhang 和 Mahesh Murag 在内部做了一个名为 <em>Stop Building Agents, Build Skills Instead</em><sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup> 的分享之后，<code>Skills</code> 突然就火了起来。微信公众号、小红书等平台上涌现出了大量的介绍 <code>Skills</code> 的文章。一开始对这个概念也是迷迷糊糊的，于是就花了点时间阅读了 Claude 官方对 <code>Skills</code> 的所有博客与文档，自己也写了一个简单的 <code>Skills</code> 体验了一把这个火得不能再火的技术。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">Skills 的本质
+</p><ul>
+<li><code>Agent Skills</code> 通过工程层面的优化，改变了 <strong>如何管理</strong>、<strong>如何交付</strong>、<strong>如何使用</strong> 大模型能力的方式，让 <code>Agent</code> 的构建更加简便、可控。</li>
+<li>从技术层面看，<code>Agent Skills</code> 并没有改变 <em>LLM</em> 的底层原理，Transformer 架构没变、权重没变、预测下一个 token 的逻辑也没变……</li>
+</ul>
+</div>
+<span id="more"></span>
+<p>等等，我好像想起了另一个类似的技术——<em>微服务</em>。很多工程师会把 <em>微服务</em> 作为一种技术或者一种架构，但实际上，<em>微服务</em> 只是为了让交付节奏更可控、更稳定、更高效的组织结构。为了适应 <em>微服务</em> 这种组织结构，才产生了诸如 <em>Kubernetes</em>、<em>服务网关</em> 等新技术。</p>
+<h2 id="1-skills-的发展节奏">1. Skills 的发展节奏</h2>
+<ul>
+<li>
+<p>2025 年 10 月 16 日，Anthropic 发布了 <code>Agent Skills</code> 以扩展 Claude 在执行特定任务场景下的性能<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。<code>Agent Skills</code> 是一个打包好的目录，该目录下包含了与特定任务相关的指令、脚本和资源。Claude 可以在需要时加载这些内容以完成对应的特定任务。</p>
+</li>
+<li>
+<p>2025 年 12 月 9 日，Anthropic 的 Barry Zhang 和 Mahesh Murag 在内部分享 <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=CEvIs9y1uog">Stop Building Agents, Build Skills Instead</a>（也可以在小宇宙上获取对应的中文播客内容：<a target="_blank" rel="noopener" href="https://www.xiaoyuzhoufm.com/episode/6943bf87c4f10bdeea0d738b">别再从头造 Agent 了：Anthropic 专家揭秘“Agent Skill”如何重塑 AI 协作</a>）中提出了构建 <code>Agent</code> 的新范式——<code>Agent Skills</code>，从而引爆了社区。</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/17664071212332.jpg" alt></p>
+</li>
+<li>
+<p>2025 年 12 月 18 日，Anthropic 发布了跨平台的、具备兼容性的 <code>Agent Skills</code> 开放标准<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>。在 <code>Agent Skills</code> 标准下，非 Cluade 生态的 <em>LLM</em>、<em>Agent</em>、平台也可以使用 <code>Skills</code> 来更方便的扩展自身的能力。</p>
+</li>
+<li>
+<p>2025 年 12 月 19 日，OpenAI 宣布 <a target="_blank" rel="noopener" href="https://developers.openai.com/codex/changelog">在 Codex CLI 和 Codex IDE 中增加了 <code>Skills</code> 能力支持</a>，<code>SKills</code> 从名义上的开放标准走进了实质上的开放标准。我们也在 OpenAI 的开发者文档中发现和 <code>Agent Skills</code> 相关的描述<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>：</p>
+<blockquote>
+<p>Agent Skills let you extend Codex with task-specific capabilities. A skill packages instructions, resources, and optional scripts so Codex can perform a specific workflow reliably. You can share skills across teams or the community, and they build on the open Agent Skills standard.</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="2-agent-skills">2. Agent Skills</h2>
+<p>根据 Anthropic 的介绍，<code>Agent Skills</code> 就是一个整理并打包好的、包含指令、脚本和资源的目录，<code>Agent</code> 可以动态发现并加载 <code>Agent Skills</code> 目录下的内容，从而使得 <code>Agent</code> 可以在特定任务上有更好的表现。</p>
+<p><code>Agent Skills</code> 的详细的目录规范可以参见：<a target="_blank" rel="noopener" href="https://agentskills.io/specification">Agent Skills-Specification</a>。</p>
+<p>通过 <code>Agent Skills</code>，我们可以把某领域的专业知识打包成可组合、可扩展、可迁移的资源，Claude 可以使用这些资源来扩展能力，从而把通用 <code>Agent</code> 变为符合特定领域需求的专业 <code>Agent</code>。</p>
+<p>为 <code>Agent</code> 构建 <code>Skills</code>，就如同为新员工整理的入职指南文档。我们无需为每个场景构建零散的、定制化的 <code>Agent</code>，我们可以通过沉淀和分享自己的专业知识，并通过可组合的 <code>Skills</code> 以允许我们的 <code>Agent</code> 具备专业化能力<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>。</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/e447e5048f150fe4459d8f2585cf3066.png" alt></p>
+<h2 id="3-skills-与渐进式信息披露">3. Skills 与渐进式信息披露</h2>
+<p><code>Agent Skills</code> 的核心设计原则就是 <em>渐进式信息披露</em>，该设计原则使得 <code>Agent Skills</code> 更加灵活性，也使其扩展性更好，最重要的是可以保持与大模型交互过程中的 <code>Context</code> 内容始终保持精简。</p>
+<ol>
+<li><code>SKILL.md</code> 文件中的 <em>YAML</em> 格式的元数据是 <em>渐进式信息披露</em> 的第一层级：Claude 仅根据元数据中提供的信息，就足以知道需要在何时使用哪种 <code>skill</code>。</li>
+<li><code>SKILL.md</code> 文件中的剩余信息是 <em>渐进式信息披露</em> 的第二层级：该内容提供了如何使用该 <code>skill</code> 的全部内容，包括 <code>skill</code> 的概述、代码示例…… 如果 Claude 认为某 <code>skill</code> 与当前任务有关，Claude 就会读取完整的 <code>SKILL.md</code> 并将其加载到上下文中。</li>
+<li>随着 <code>Agent Skills</code> 越来越复杂，<code>SKILL.md</code> 文件可能会包含越来过多的背景信息，而根据 <a href="/2025/11/29/context-engineering-for-AI-agents/">Context Engineering for AI Agents</a> 中的 <em>Context Rot</em> 的问题，我们无法把所有的这些信息都放到单个 <code>SKILL.md</code>文件。有时候，有些背景信息仅与特定的应用场景有关，例如 <a target="_blank" rel="noopener" href="https://github.com/anthropics/skills/tree/main/skills/pdf">PDF skill</a> 中的表单填充能力，此时，把这些仅与特定场景关联的信息全部放到所有场景的背景信息中，不但会导致上下文不断增加，还容易因为 <em>Context Rot</em> 导致模型性能下降。我们可以把这些信息进行拆分并将其置于 <code>Agent Skills</code> 目录下的单独文件，同时在 <code>SKILL.md</code> 中通过文件名来引用这些单独的信息文件。而类似这些附加的链接文件则属于 <em>渐进式信息披露</em> 的第三层级：Claude 可以根据需要来选择浏览和发现这些特殊场景的 <code>skill</code> 信息。</li>
+</ol>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/17663818747722.jpg" alt></p>
+<p><em>渐进式信息披露</em> 就像一本精心组织、策划的书籍一样，先从序言开始，然后是目录，接下来是具体章节内容，最后是相关的附录内容。这种精心安排的方式，能够让 Claude 只在需要时才加载必要的信息，从而有效的避免了 <code>Context Rot</code>，即为大模型提供了足够的信息、同时又让大模型保持较高的性能。</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/17663826189780.jpg" alt></p>
+<p>实际上，人类在通过翻阅工具类书籍、手册完成任务时，也不会从头到尾阅读完整本书：</p>
+<ol>
+<li>我们首先会了解下这本手册的适用范围，是 Java 语言还是 C++ 语言，是底层网络库还是应用层的传输协议，是面相用户的还是面相开发者的……</li>
+<li>然后我们会通过目录了解手册都包含哪些内容，并于我们当前的人物进行匹配，圈定需要使用哪部分内容才能解决当前的任务。</li>
+<li>最后，我们加载圈定的章节内容，并详细阅读，最终尝试利用新学到的知识解决当前的任务。</li>
+</ol>
+<p>例如，如果我想了解 <em>假设检验</em> 的相关内容，我只需要阅读 <a href="/introduction_to_probability_and_statistics/chapter_8/8.html"><em>第 8 章</em></a> 的内容就可以了，没必要阅读完整的一本书。</p>
+<p>以 <code>PDF skill</code> 为例，在 <code>Agent Skills</code> 的 <em>渐进式信息披露</em> 机制下，随着与用户之间的交互，Claude 的 <code>Context Window</code> 的变化如下图所示：</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/17663862891763.jpg" alt></p>
+<ol>
+<li>最开始的时候，<code>Context Window</code> 仅包含 <em>系统提示词</em>、<em>每个已安装 <code>Skills</code> 的元数据</em>、<em>用户的初始消息</em></li>
+<li>Claude 通过调用 <code>Bash</code> 工具读取 <code>pdf/SKILL.md</code> 的内容来触发 <code>PDF skill</code></li>
+<li>根据 <code>SKILL.md</code> 的描述，Claude 继续选择读取 <code>PDF skill</code> 的 <code>forms.md</code> 文件内容来获取如何填充表单的信息</li>
+<li>最后，Claude 从 <code>PDF skill</code> 加载相关指令后，继续处理用户的任务</li>
+</ol>
+<h2 id="4-skills-与-代码执行">4. Skills 与 代码执行</h2>
+<p>以本地文件系统构建起来的 <code>Skills</code> 与生俱来的最大优势就是可以直接利用本地文件系统提供的强大能力：<em>Bash 能力</em>、<em>Command 能力</em>、<em>代码脚本能力</em>……</p>
+<p>虽然直接使用大模型也可以完成一项任务，但有的任务更适合通过代码、程序来完成。例如，我们可以让大模型对数据进行排序，但是直接调用本地文件系统中的排序程序反而是一种更高效的任务执行方式。尤其是，当我们需要保持任务结果的确定性时，代码、程序是更为合适的选择，毕竟大模型的执行存在概率性的问题。</p>
+<p>以 <code>PDF skill</code> 中的表单填充能力为例，在 <code>pdf/forms.md</code> 中就明确告知了大模型：如何使执行本地的 python 脚本来完成表单填充任务。</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/17665550024178.jpg" alt></p>
+<p>作为非英语母语的人，每次在阅读全是大写字母的英文文献时我总是感觉会非常吃力：</p>
+<blockquote>
+<p>HELLO, MY NAME IS WANG WEI. I AM A COMPUTER ENGINEER.</p>
+</blockquote>
+<blockquote>
+<p>hello, my name is wang wei. i am a computer engineer.</p>
+</blockquote>
+<p>于是，我就想用 <code>Skills</code> 来实现：把 PDF 文献中的大写字母转成小写字母，从而提升阅读的效率。当然，这可能并不是一个痛点，但是我们就假定以这个场景来介绍 <code>Skills</code> 如何执通过行本地代码解决这个假定的任务。</p>
+<h3 id="4-1-创建-skill-文件">4.1 创建 SKILL 文件</h3>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/cc_skill_demo.png" alt></p>
+<h3 id="4-2-实现-pdf-lowercase-py">4.2 实现 pdf_lowercase.py</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;主函数&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) != <span class="number">3</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;用法: python pdf_lowercase.py &lt;输入PDF路径&gt; &lt;输出PDF路径&gt;&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;示例: python pdf_lowercase.py input.pdf output.pdf&quot;</span>)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    input_path = sys.argv[<span class="number">1</span>]</span><br><span class="line">    output_path = sys.argv[<span class="number">2</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 确保输出目录存在</span></span><br><span class="line">    output_dir = os.path.dirname(output_path)</span><br><span class="line">    <span class="keyword">if</span> output_dir <span class="keyword">and</span> <span class="keyword">not</span> os.path.exists(output_dir):</span><br><span class="line">        os.makedirs(output_dir)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 处理PDF</span></span><br><span class="line">    success = process_pdf(input_path, output_path)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> success:</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<h3 id="4-3-部署">4.3 部署</h3>
+<p>按照 <code>Skills</code> 的规范组织好目录，并将整个目录放到如下的目录 <code>$&#123;PROJECT_BASE_DIR&#125;/.claude/skills/</code>，我们就可以让 Claude 调用该 <code>Skills</code> 实现字母大小写转换的任务了。</p>
+<p>关于 <code>pdf-case-converter</code> 的全部代码，可以参考：<a target="_blank" rel="noopener" href="https://github.com/wangwei1237/agent-skills/tree/main/pdf-lowercase-skill">pdf-lowercase-skill</a>。</p>
+<p>试想一下，如果有一个 100 页的文档需要转换（当然，实际生活中可能不存在这种场景），如果让大模型来完成转换，首先要面对的问题就是 <code>tokens</code> 成本的问题，其次还有可能会导致 <code>context window</code> 爆炸的问题。但是，如果采用 <code>Skills</code> 调用本地代码的方式，就完美的解决了成本与 <code>context window</code> 的问题。</p>
+<!--video example-->
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=115772269527051&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<h2 id="5-skills-与-mcp">5. Skills 与 MCP</h2>
+<p>作为 <code>MCP</code> 的有效补充，<code>Skills</code> 也大大增加了 <em>LLM</em> 的能力边界，让 <em>LLM</em> 可以完成的任务规模得以扩张，<em>LLM</em> 从单点任务跨越到了完成更复杂、更垂直、更专业任务的 <em>pipeline</em>。</p>
+<p>2025 年，12 月 19 日，当 <code>Skills</code> 概念大火的时候，为了避免开发者对 <code>MCP</code> 和 <code>Skills</code> 之间的混淆和误用，Anthropic 发布了一篇博客 <em><a target="_blank" rel="noopener" href="https://claude.com/blog/extending-claude-capabilities-with-skills-mcp-servers">Extending Claude’s capabilities with skills and MCP servers</a></em> 来阐述二者之间的区别与差异，同时还给出了 2 个例子来阐述如何在实际应用中联合使用 <code>MCP</code> 和 <code>Skills</code> 技术完成特定的任务<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup>。</p>
+<blockquote>
+<p>Since launching Skills, two of the biggest questions we’ve heard from customers are: “How do skills and MCP work together? When should I use one versus the other?”</p>
+</blockquote>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/17664670800710.jpg" alt></p>
+<p>作为协议层，<code>MCP</code> 统一了真实环境中的所有工具与 <em>LLM</em> 的交互方式；作为能力层，<code>MCP</code> 允许大模型通过自主的调用工具来获取实时信息，例如天气信息、科技新闻……</p>
+<p>但是，对于某个垂类行业，例如 <em>科技跟踪日报</em> ——根据每天的各大媒体报道的科技新闻对当前的各方向的技术进行跟踪报道——这种非常垂直的任务，单纯使用 <code>MCP</code> 是不够的。</p>
+<p><code>MCP</code> 只能获取到最新的科技信息，如果根据这些信息撰写出最终的报告，需要一套复杂的业务编排流程。而 <code>Agent Skills</code> 的目标就是用来解决类似规模的垂类任务。</p>
+<p><code>MCP</code> 是工具的开放，而 <code>Agent Skills</code> 则是业务流的开放。</p>
+<h2 id="6-skills-的本质">6. Skills 的本质</h2>
+<h3 id="6-1-工程上的优化">6.1 工程上的优化</h3>
+<p>在 <code>Skills</code> 之前，<em>科技跟踪日报</em> 可以通过构建一个 <code>Agent</code> 来实现，实现该 <code>Agent</code> 的 <em>系统提示词</em>、<em>业务流</em>、<em>信息处理</em> 等所有的信息都通过硬编码封装在 <code>Agent</code> 中，很难与别人分享，也很难形成规模化的复用。更重要的是，如果要更新 <code>Agent</code> 的能力，还需要手动修改 <em>提示词</em> 或者代码，管理和维护的成本也就相对较高。</p>
+<p>但是，在 <code>Agent Skills</code> 机制下，原来硬编码的 <em>业务流程</em>、<em>系统提示词</em> 等信息都以模块化的方式组织在了 <code>Skills</code> 对应的目录下。我们可以非常方便的把 <em>科技跟踪日报</em> <code>skill</code> 集成到其他的 <code>Agent</code> 以实现对应的能力，我们也可以非常方便的通过修改 <code>SKILL.md</code> 文件中的描述来更新 <code>Agent</code> 的能力。</p>
+<p>正如 Anthropic 在 <code>Agent Skills</code> 的 <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">博客</a> 中所说的那样：对于 <code>Skills</code> 这一功能，我们感到无比兴奋。<code>Skills</code> 可以帮助企业和个人更方便的分享他们所处行业的 <em>背景信息</em> 和 <em>工作流程</em>。</p>
+<blockquote>
+<p>We’re especially excited about the opportunity for Skills to help organizations and individuals share their context and workflows with Claude.</p>
+</blockquote>
+<p>本质上讲：<code>Agent Skills</code> 通过工程层面的优化，改变了 <strong>如何管理</strong>、<strong>如何交付</strong>、<strong>如何使用</strong> 大模型能力的方式，让 <code>Agent</code> 的构建更加简便、可控。从技术层面看，<code>Agent Skills</code> 并没有改变 <em>LLM</em> 的底层原理，Transformer 架构没变、权重没变、预测下一个 token 的逻辑也没变……</p>
+<h3 id="6-2-上下文工程策略">6.2 上下文工程策略</h3>
+<p>…</p>
+<h2 id="参考文献">参考文献</h2>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=CEvIs9y1uog">Stop Building Agents, Build Skills Instead</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://claude.com/blog/skills">Introducing Agent Skills</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://agentskills.io/home"> Agent Skills Open Standard</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://developers.openai.com/codex/skills">OpenAI Developers: Agent Skills</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Equipping agents for the real world with Agent Skills</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://claude.com/blog/extending-claude-capabilities-with-skills-mcp-servers">Extending Claude’s capabilities with skills and MCP servers</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2025/12/24/Reflections-on-Agent-Skills/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent-Skills/" rel="tag">Agent Skills</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Claude/" rel="tag">Claude</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Claude-Code/" rel="tag">Claude Code</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2025/11/29/context-engineering-for-AI-agents/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Context Engineering for AI Agents</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "ppRS6IT7xMHmCl54L7ynIC2Z-gzGzoHsz",
+    app_key: "qEmM49ZlU6LOwXCHjzMUECKu",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "快来评论吧~",
+    recordIP: true,
+    visitor: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2025
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
+        
+    
+ 
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
