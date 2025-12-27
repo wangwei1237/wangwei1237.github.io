@@ -183,7 +183,13 @@
 </blockquote>
 <p>本质上讲：<code>Agent Skills</code> 通过工程层面的优化，改变了 <strong>如何管理</strong>、<strong>如何交付</strong>、<strong>如何使用</strong> 大模型能力的方式，让 <code>Agent</code> 的构建更加简便、可控。从技术层面看，<code>Agent Skills</code> 并没有改变 <em>LLM</em> 的底层原理，Transformer 架构没变、权重没变、预测下一个 token 的逻辑也没变……</p>
 <h3 id="6-2-上下文工程策略">6.2 上下文工程策略</h3>
-<p>…</p>
+<p><code>Agent Skills</code> 通过本地文件系统的组织结构，帮我们实现了 Agent 的高效管理与交付。同时，<code>Agent Skills</code> 的 <em>渐进式信息披露</em> 机制，让大模型在处理复杂任务时，只需要加载必要的信息即可。因此，从另一个角度讲，<code>Agent Skills</code> 其实还是一种非常有效的 <em>上下文工程策略</em>，从而避免了 <code>Context Rot</code> 的问题。</p>
+<p><code>Skills</code> 与 <code>MCP</code> 的机制完全不同。在 <code>MCP</code> 架构中，无论模型是否会用到某个工具，都需要将所有的工具定义加载到 <code>Context Window</code> 中，从而会导致 <code>Context Window</code> 的无效膨胀。Cluade 在 <em><a href="https://www.anthropic.com/engineering/advanced-tool-use">Introducing advanced tool use on the Claude Developer Platform</a></em><sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup> 中提出了 <em>Tool Search Tool</em> 能力来避免 <code>MCP</code> 中加载所有工具定义带来的 <code>Context Window</code> 膨胀的问题。</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/tst.webp" alt></p>
+<p>在 <code>Skills</code> 之前，上下文工程的机制主要是如何在对话过程中精简 <code>Context Window</code>，而 <code>Skills</code> 则反其道而行之，采用 <em>非必要不加载</em> 的方式来精简 <code>Context Window</code>。</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/ce-skills.jpg" alt></p>
+<p><code>Skills</code> 的出现，扩展了上下文工程的思路，让我们在构建大模型应用时，有了更多的选择。传统的 <em>上下文工程</em> 主要解决长程任务的多轮对话过程因为 <em>对话历史</em> 和 <em>工具调用</em> 导致的 <code>Context Window</code> 膨胀，而 <code>Skills</code> 则主要解决系统提示词增加导致的 <code>Context Window</code> 膨胀问题。</p>
+<p>同时，我们也需要认识到：<code>Skills</code> 通过 <em>非必要不加载</em>（把不用的规则卸载）的方式解决系统提示词的膨胀，但是对于历史对话和工具调用的膨胀问题，<code>Skills</code> 仍然无能为力。</p>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -199,6 +205,8 @@
 <li id="fn5" class="footnote-item"><p><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Equipping agents for the real world with Agent Skills</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn6" class="footnote-item"><p><a href="https://claude.com/blog/extending-claude-capabilities-with-skills-mcp-servers">Extending Claude’s capabilities with skills and MCP servers</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a href="https://www.anthropic.com/engineering/advanced-tool-use">Introducing advanced tool use on the Claude Developer Platform</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
@@ -267,7 +275,7 @@
 <p><em>start with a simple workflow, move to an agent only when you need to.</em></p>
 </blockquote>
 <p>对于软件交付领域而言，端到端的 CodingAgent 或者 TestingAgent 因为需要多步迭代、并且在不同的迭代过程中需要根据当前的结果与状态来调整执行步骤进而完成代码编写或者软件测试工作，因此简单的 <em>workflow</em> 不足以完成这样的工作，必须采用 <em>Agent</em> 才能实现这种复杂的任务。</p>
-<p><img src="/2025/11/29/context-engineering-for-AI-agents/00d6dc12dfbcff77181d77f96b323027.png" alt></p>
+<p><img src="/2025/11/29/context-engineering-for-AI-agents/ce_arch.png" alt></p>
 <p>假设我们要测试一个电商网站的登录功能，TestAgent 会：</p>
 <ol>
 <li>先调用工具打开网页</li>
@@ -14940,7 +14948,7 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 			<div class="douban-card-item"><span>书名: </span><strong>不拘一格</strong></div>
 			<div class="douban-card-item"><span>作者: </span><span>[美]里德·哈斯廷斯</span></div>
 			<div class="douban-card-item"><span>出版年份: </span><span>2021-1-1</span></div>
-			<div class="douban-card-item"><span>评分: </span><span>8.2</span></div>
+			<div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
 		</div>
 	</a>
 </div>

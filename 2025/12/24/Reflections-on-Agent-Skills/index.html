@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.6k</span>
+            <span class="post-count">4.1k</span>
         </span>
     </span>
 
@@ -99,7 +99,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14 分钟</span>
+            <span class="post-count">16 分钟</span>
         </span>
     </span>
 </div>
@@ -294,7 +294,13 @@
 </blockquote>
 <p>本质上讲：<code>Agent Skills</code> 通过工程层面的优化，改变了 <strong>如何管理</strong>、<strong>如何交付</strong>、<strong>如何使用</strong> 大模型能力的方式，让 <code>Agent</code> 的构建更加简便、可控。从技术层面看，<code>Agent Skills</code> 并没有改变 <em>LLM</em> 的底层原理，Transformer 架构没变、权重没变、预测下一个 token 的逻辑也没变……</p>
 <h3 id="6-2-上下文工程策略">6.2 上下文工程策略</h3>
-<p>…</p>
+<p><code>Agent Skills</code> 通过本地文件系统的组织结构，帮我们实现了 Agent 的高效管理与交付。同时，<code>Agent Skills</code> 的 <em>渐进式信息披露</em> 机制，让大模型在处理复杂任务时，只需要加载必要的信息即可。因此，从另一个角度讲，<code>Agent Skills</code> 其实还是一种非常有效的 <em>上下文工程策略</em>，从而避免了 <code>Context Rot</code> 的问题。</p>
+<p><code>Skills</code> 与 <code>MCP</code> 的机制完全不同。在 <code>MCP</code> 架构中，无论模型是否会用到某个工具，都需要将所有的工具定义加载到 <code>Context Window</code> 中，从而会导致 <code>Context Window</code> 的无效膨胀。Cluade 在 <em><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/advanced-tool-use">Introducing advanced tool use on the Claude Developer Platform</a></em><sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup> 中提出了 <em>Tool Search Tool</em> 能力来避免 <code>MCP</code> 中加载所有工具定义带来的 <code>Context Window</code> 膨胀的问题。</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/tst.webp" alt></p>
+<p>在 <code>Skills</code> 之前，上下文工程的机制主要是如何在对话过程中精简 <code>Context Window</code>，而 <code>Skills</code> 则反其道而行之，采用 <em>非必要不加载</em> 的方式来精简 <code>Context Window</code>。</p>
+<p><img src="/2025/12/24/Reflections-on-Agent-Skills/ce-skills.jpg" alt></p>
+<p><code>Skills</code> 的出现，扩展了上下文工程的思路，让我们在构建大模型应用时，有了更多的选择。传统的 <em>上下文工程</em> 主要解决长程任务的多轮对话过程因为 <em>对话历史</em> 和 <em>工具调用</em> 导致的 <code>Context Window</code> 膨胀，而 <code>Skills</code> 则主要解决系统提示词增加导致的 <code>Context Window</code> 膨胀问题。</p>
+<p>同时，我们也需要认识到：<code>Skills</code> 通过 <em>非必要不加载</em>（把不用的规则卸载）的方式解决系统提示词的膨胀，但是对于历史对话和工具调用的膨胀问题，<code>Skills</code> 仍然无能为力。</p>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -310,6 +316,8 @@
 <li id="fn5" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Equipping agents for the real world with Agent Skills</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn6" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://claude.com/blog/extending-claude-capabilities-with-skills-mcp-servers">Extending Claude’s capabilities with skills and MCP servers</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/advanced-tool-use">Introducing advanced tool use on the Claude Developer Platform</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
