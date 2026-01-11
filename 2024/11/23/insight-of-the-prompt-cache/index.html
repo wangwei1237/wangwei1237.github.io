@@ -6,6 +6,29 @@
 
     <head>
       <meta charset="utf-8" />
+      <meta name="description" content="在介绍了 Transformer 模型、GPT 模型、大模型的运行时推理和 KV Cache 后，我们终于越来越接近于最原始的目标：OpenAI 2024 年 10 月 1 日发布的 Prompt Caching in the API。这篇文章，我们就来介绍一下 Prompt Cache 相关技术的发展并对 OpenAI 的 Prompt Caching 技术方案进行简单的分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Prompt Cache 究竟是什么？">
+<meta property="og:url" content="https://wangwei1237.github.io/2024/11/23/insight-of-the-prompt-cache/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="在介绍了 Transformer 模型、GPT 模型、大模型的运行时推理和 KV Cache 后，我们终于越来越接近于最原始的目标：OpenAI 2024 年 10 月 1 日发布的 Prompt Caching in the API。这篇文章，我们就来介绍一下 Prompt Cache 相关技术的发展并对 OpenAI 的 Prompt Caching 技术方案进行简单的分析。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/23/insight-of-the-prompt-cache/context_caching.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/23/insight-of-the-prompt-cache/17325377216331.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/23/insight-of-the-prompt-cache/17325398113275.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/23/insight-of-the-prompt-cache/17325284975396.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/23/insight-of-the-prompt-cache/17325296211790.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/23/insight-of-the-prompt-cache/pic_prompt.png">
+<meta property="article:published_time" content="2024-11-23T22:17:05.000Z">
+<meta property="article:modified_time" content="2026-01-11T12:39:12.653Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="Prompt Cache">
+<meta property="article:tag" content="LLM Interface">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2024/11/23/insight-of-the-prompt-cache/context_caching.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="wangwei1237">
+      
        
       <meta name="keywords" content="17哥,17g,17G,17" />
        

@@ -6,6 +6,41 @@
 
     <head>
       <meta charset="utf-8" />
+      <meta name="description" content="在 自注意力究竟是什么？ 和 从 Transformer 到 GPT 中，我们介绍了 Transformer 架构的详细细节，并介绍了基于 Transformer 的 GPT 架构的细节。距离我们探究 Prompt Caching 的原理又近了一步。就像 程序 和 进程 之间的区别一样，Prompt Caching 属于运行时的范畴，因此在探究 Prompt Caching 的原理之前，我们还要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大模型的运行时推理和 KV Cache">
+<meta property="og:url" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="在 自注意力究竟是什么？ 和 从 Transformer 到 GPT 中，我们介绍了 Transformer 架构的详细细节，并介绍了基于 Transformer 的 GPT 架构的细节。距离我们探究 Prompt Caching 的原理又近了一步。就像 程序 和 进程 之间的区别一样，Prompt Caching 属于运行时的范畴，因此在探究 Prompt Caching 的原理之前，我们还要">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/Prefill-and-decoding-phase-in-the-LLM-inference.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320037998361.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17319145519382.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17319151377664.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17319839433982.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17319876353902.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17319948375916.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320000591724.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320030900440.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320028806804.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320781354210.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320783298264.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320783489548.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320800431179.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320806601823.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/17320807534949.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/kv_cache_cacluation_demo.gif">
+<meta property="article:published_time" content="2024-11-16T09:17:39.000Z">
+<meta property="article:modified_time" content="2026-01-11T12:39:12.476Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="Prefill">
+<meta property="article:tag" content="KV Cache">
+<meta property="article:tag" content="Runtime Inference">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2024/11/16/The-LLMs-Runtime-Inference-and-KV-Cache/Prefill-and-decoding-phase-in-the-LLM-inference.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="wangwei1237">
+      
        
       <meta name="keywords" content="17哥,17g,17G,17" />
        

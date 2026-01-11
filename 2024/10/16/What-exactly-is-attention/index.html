@@ -6,6 +6,45 @@
 
     <head>
       <meta charset="utf-8" />
+      <meta name="description" content="最近的 1 年多以来，一直使用 文心一言、豆包、Kimi 等大模型来帮助自己提高各种场景的效率，但是一直没有对当前大模型的底层原理做深入了解。在编写 Large Language Model in Action 这本书的时候，我也曾说过：  这是一本关于大语言模型实践的书籍，而不是一本深入研究大语言模型的运行原理和底层算法的书籍。  但是，2024 年 10 月 1 日，OpenAI 发布了 P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自注意力究竟是什么？">
+<meta property="og:url" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="最近的 1 年多以来，一直使用 文心一言、豆包、Kimi 等大模型来帮助自己提高各种场景的效率，但是一直没有对当前大模型的底层原理做深入了解。在编写 Large Language Model in Action 这本书的时候，我也曾说过：  这是一本关于大语言模型实践的书籍，而不是一本深入研究大语言模型的运行原理和底层算法的书籍。  但是，2024 年 10 月 1 日，OpenAI 发布了 P">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/1.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/zmatrix.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/vec_matrix.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/w_xy.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/sattention.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/qkv.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/msattention.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/msattention_2.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/wo_note.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/pe_input_x.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/pe_hot_image.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/encoder.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/decode_demo1.gif">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/encoder_decoder_demo1.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/mask_demo.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/mask_demo_2.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/m_r_qkv.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/m_r_q_mul_k.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/m_r_attention.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/encoder_decoder.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/transformer.png">
+<meta property="article:published_time" content="2024-10-16T17:19:11.000Z">
+<meta property="article:modified_time" content="2026-01-11T12:39:12.529Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="Attention">
+<meta property="article:tag" content="自注意力机制">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2024/10/16/What-exactly-is-attention/1.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="wangwei1237">
+      
        
       <meta name="keywords" content="17哥,17g,17G,17" />
        
