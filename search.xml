@@ -308,8 +308,100 @@ what else is dead?</p>
 <h2 id="评测精度的本质">评测精度的本质</h2>
 <p>正如下图所示，大模型评测体系一般由如下五个部分构成：评测数据集、评测方法、打分与排序策略、评测指标、评测场景。</p>
 <p><img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/Evals_system.jpeg" alt></p>
-<h2 id="test">TEST</h2>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/wangwei1237/status/2019673608726200554"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>要系统化的研究评测精度，必须像拆解精密仪器的零件一样自顶向下的拆解评测系统的构件，并进行分析。</p>
+<h3 id="评测数据集">评测数据集</h3>
+<p>评测数据集是评测的基石，决定评测系统精度的“物理上限”。</p>
+<ul>
+<li>如果数据集中充满歧义问题或错误答案，评测系统就会把模型的“正确推理”误判为错误，引入巨大的评估噪音。</li>
+<li>如果模型在预训练阶段已经记住了评测数据集中的数据，那么评测精度将直接归零。因此，在评测过程中，必须动态更新、或者使用非公开的私有数据集来保持评测精度。</li>
+<li>数据集难度梯度必须有合理的分布。如果数据集太简单，所有模型都得高分（天花板效应），评测精度就无法区分前沿模型的微小能力差。反之，如果数据集太难，则会导致地板效应，评测精度也无法区分模型的优势区。</li>
+</ul>
+<p>在 <a href="/2025/03/29/Seven-Principles-for-Large-Model-Evaluation/">大模型评测 7 条原则</a> 中，我们已经解决了评测数据集的前 2 个问题。所以在评测数据集上，我们还需要解决数据集的难度梯度分布问题的问题，从而提升评测数据集的质量，进而提升评测精度。</p>
+<h3 id="评测方法">评测方法</h3>
+<p>评测方法是决定评测精度的“观测探针”。评测方法定义了我们如何向模型提问以及如何捕获模型的表现。在 <a href="/2026/01/25/Study-Anthropic-s-agent-evaluation-practices-thoroughly/">深入研究 Anthropic 的 Agent 评估实践</a> 中，我们深入研究了 Anthropic 的 Agent 评测方法，其中也提到了不同评测方法之间的特点与差异。</p>
+<p><img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/evals_methods.png" alt></p>
+<h3 id="打分与排序策略">打分与排序策略</h3>
+<p>打分与排序策略决定评测精度的“统计显著性”。当我们拿到了一堆原始分数或胜负关系后，如何将它们聚合为最终的榜单，直接关系到结果的置信区间。我们发现，在模型盲测中，经常会出现“A 胜 B，B 胜 C，C 胜 A”的情况。简单的算术平均运算无法处理这种动态博弈。采用类似 LMArena 的 Bradley-Terry 模型或 Elo 积分系统，能够将离散的胜负关系平滑地映射为连续的能力值以及对应的置信区间。置信区间能明确告诉我们：两个模型相差 10 分，到底是因为真正的能力差距，还是仅仅因为采样带来的噪音波动。</p>
+<h3 id="评测指标">评测指标</h3>
+<p>评测指标决定评测精度的“刻度粒度”，是将模型的表现量化为数字的函数。评测指标越粗糙，丢失的信息就越多。例如，不仅评测一段代码是否 Pass，还要引入圈复杂度、运行耗时、安全性等细粒度指标。这种多维度的切割，使得评测从“一维的标量”变成了“高维的向量”，极大提升了对模型能力的刻画精度。随着评测指标的增加，虽然信息保留的越多、结果的可解释性越强，但是“高维向量”带来的“维灾”也导致了打分区分度不断降低的问题。</p>
+<p><img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/evals_metrics.png" alt></p>
+<h3 id="评测场景">评测场景</h3>
+<p>评测场景决定了我们的评测结果在实际业务中是否真的“好用”。脱离场景谈精度，往往是刻舟求剑。高精度的评测场景必须与实际的产品形态和业务流量分布高度对齐。</p>
+<h2 id="数据集质量模型">数据集质量模型</h2>
+<p>经过综合分析之后，我们决定先从“评测的基石”——评测数据集质量入手，来提升评测精度，进而提升评测结果的区分度。</p>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/wangwei1237/status/2011248314256326845"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>我们设计了一个模型来评估数据集的质量，并基于这个模型对数据集进行了新的调整。</p>
+<p><img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/ds_quality.png" alt></p>
+<ul>
+<li>
+<p>数据覆盖的分类：分类的覆盖面决定了我们能否探测到模型的“能力盲区”，如果分类存在缺失，得出的评测结论就是片面的。</p>
+</li>
+<li>
+<p>每类数据的分布：分布的均衡性直接决定着最终的打分结果，如果数据分布不均（例如 80% 都是简单的单人肖像生成），评测结果就会被这些“送分题”主导，导致各家模型的分数都挤在 90 分以上，无法真实反映模型应对复杂、边缘场景的鲁棒性。</p>
+</li>
+<li>
+<p>提示词的复杂度（长度）：在多模态评测中，提示词的复杂度直接对应了对模型的 <strong>指令遵循能力</strong> 的压力测试。简单的提示词（如“一只狗”）只能测试基础生成能力。高复杂度提示词则会叠加多个维度的约束：主体描述 + 动作 + 背景 + 环境光 + 风格 + 镜头参数。例如：“一只戴着红色飞行员护目镜的柯基（主体+服饰），正从老旧的双翼飞机上跳下（动作+背景），背景是黄昏时的粉色云层（环境光），使用鱼眼镜头拍摄，具有强烈的运动模糊效果（镜头参数）。”随着各大厂商基础画质的提升，高质量的评测数据集必须包含大量高复杂度提示词，用来检验模型是否会“漏词”（Omission，比如画了柯基但忘了护目镜）或“概念混淆”（Concept Bleeding，比如把狗的毛变成了红色）。复杂度越高，越能筛选出真正理解自然语言语义。而越复杂的提示词，其长度也会越大。但是，并不意味着提示词越长、就越复杂，一味的堆叠提示词的长度反而会让模型抓不住重点，导致性能下降。<br>
+<img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/complex.png" alt></p>
+</li>
+<li>
+<p>提示词的专业度：复杂的提示词不一定很长，也可能很短、但是包含大量专业术语。专业的提示词不会使用“看起来很真实”这种模糊表述，而是会使用摄影、摄像、超写实等专业术语。专业度高的数据集能够探测模型能力的“天花板”。它不仅要求模型懂日常语言，还要求模型深刻理解专业视觉参数的映射关系。如果数据集缺乏专业提示词，就无法评估该模型是否具备作为生产力工具（如影视分镜、广告素材生成）的潜力</p>
+</li>
+</ul>
+<h2 id="提示词的复杂度">提示词的复杂度</h2>
+<p>直到我在 𝕏 上看到 <a href="https://x.com/berryxia">@berryxia</a> 生成的如下的图片，我才意识到，我们的提示词写的太简单了。<a href="https://x.com/berryxia">@berryxia</a> 用 2600+ 长度的提示词生成了如下的这种炫酷的效果。带着好奇，我检查了我们的评测数据的长度分布：90% 的提示词长度 &lt; 90 个字。过于简短的数据集很难生成更为复杂的图片，因此也无法有效评测到更优秀的的模型的实际能力。</p>
+<p><img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/xihongshi.jpeg" alt="2600个字的提示词生成的图片效果"></p>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/berryxia/status/2005843077098004853"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>接下来，我疯狂的在 𝕏 上学习优秀创作者（<a href="https://x.com/ZaraIrahh">@ZaraIrahh</a>、<a href="https://x.com/yyyole">@yyyole</a>、<a href="https://x.com/sidona">@sidona</a>、<a href="https://x.com/VoxcatAI">@VoxcatAI</a>、<a href="https://x.com/94vanAI">@94vanAI</a>……）的提示词是如何构建的。然后我发现，这些更优秀的效果的提示词的长度大多都在几百、甚至上千。</p>
+<p><img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/all_1.png" alt></p>
+<ul>
+<li>
+<p>人与动漫角色的合照：<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/ZaraIrahh/status/2005816508602278010"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+</li>
+<li>
+<p>植物百科照片：<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/yyyole/status/2007332916200702179"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+</li>
+<li>
+<p>人物特写照片：<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/sidona/status/2011354796746494335"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+</li>
+<li>
+<p>OOTD照片：<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/sidona/status/2011116211518517461"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+</li>
+<li>
+<p>厚涂油画风格照片：<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/VoxcatAI/status/1999554624257446249"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+</li>
+<li>
+<p>创意图片：<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/94vanAI/status/2006537483111247899"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+</li>
+</ul>
+<h2 id="提示词的专业度">提示词的专业度</h2>
+<p>随着对优秀效果的提示词的学习，我还发现：除了提示词的长度外，优秀的提示词还包含大量专业术语。这些专业术语不仅包括摄影、摄像、超写实等专业术语，还包括了镜头参数、环境光、风格、构图等专业术语。这些专业术语不仅能够帮助模型更好的理解提示词，还能够帮助模型更好的生成图片。</p>
+<p>有时候简单的几个专业词汇的描述，就能够让模型生成出非常炫酷、专业、符合需求的高质量图片，例如：“16mm 超广定焦，高强度直闪灯光，富士经典负片（NC）”。</p>
+<ul>
+<li><strong>果冻风格的可爱卡通效果</strong>：“生成图片，<code>日系软萌涂鸦</code>、<code>Q版简笔</code>、<code>粉彩马卡龙</code>、果冻半透明、<code>高光反射</code>、轻厚涂、贴纸感、低细节治愈系，「主题」「比例」”。</li>
+</ul>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/VoxcatAI/status/2008582973659234741"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<ul>
+<li><strong>现代风格的室内自拍效果</strong>：在不到 100 个字的提示词中，包含了大量的专业术语，例如：<code>ultra-realistic modern</code>、<code>front-facing selfie camera angle</code>、<code>realistic proportions</code>、 <code>minimalist </code>、<code>cinematic lighting</code>、<code>high detail</code>、<code>sharp focus</code>、<code>instagram aesthetic</code>、<code>photorealistic</code>。</li>
+</ul>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/xmiiru_/status/2011726482427523235"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<ul>
+<li><strong>OOTD 怀旧风格效果</strong>：在 100 多个字的提示词中，也包含了大量的专业术语，例如：<code>golden hour sunlight</code>、<code>vintage</code>、<code>late afternoon warm light</code>、<code>Kodak Gold 200</code>、<code>nostalgic tones</code>、<code>heavy film grain</code>、<code>faded vintage look</code>、<code>magazine editorial aesthetic</code></li>
+</ul>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/sidona/status/2015820392993374542"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<h2 id="优化效果">优化效果</h2>
+<p>根据如上的评测数据质量标准，我们对评测数据集进行了优化，并重新对模型进行的新的评测，最终我们发现评测精度得到了显著提升。很多之前无法区分的模型，现在已经能够明显区分开来。</p>
+<p>例如，我们有一个风格转换的 Query：<em>将图片转换成热血动漫风格</em>。在优化之前，模型之间的区分度非常低。但是增加专业度之后，模型之间的区分度立竿见影。</p>
+<p><img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/yuanshi.png" alt="原提示词：将图片转换成热血动漫风格"><br>
+<img src="/2026/02/06/How-to-Improve-the-Dataset-Quality-for-LLM-Evals/youhua.png" alt="优化后提示词：生成极具辨识度的2D扁平卡通插画风格，极粗的黑色轮廓线描边，手绘矢量感，Q版可爱人物造型，赛璐珞平涂上色（大色块，无渐变），高对比度配色。纯粹的插画作品，无任何游戏UI界面。"></p>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/wangwei1237/status/2011248314256326845"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<ul>
+<li>唐僧师徒 4 人的生成效果：</li>
+</ul>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/wangwei1237/status/2011082920027644321"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<ul>
+<li>刺绣的生成效果：</li>
+</ul>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/wangwei1237/status/2011209082133496153"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 ]]></content>
       <categories>
         <category>LLM</category>
