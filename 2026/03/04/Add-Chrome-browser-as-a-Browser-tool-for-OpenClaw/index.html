@@ -6,17 +6,17 @@
 
     <head>
       <meta charset="utf-8" />
-      <meta name="description" content="在 OpenClaw 初体验 中，我在阿里云的 ECS 主机上部署了 OpenClaw，并用它做了些初步的尝试。有时候，可能想浏览某些网页，但是这些网页在手机上的浏览体验又不好，所以此时就可以通过 IM 软件让 OpenClaw 调用 Chrome 浏览器来帮我们打开页面并截图。比如我想每天上班的时候扫一眼 Github Trending 的内容，这个时候就可以通过 OpenClaw 调用 Ch">
+      <meta name="description" content="在 OpenClaw 初体验 中，我在阿里云的 ECS 主机上部署了 OpenClaw，并用它做了些初步的尝试。有时候，可能想浏览某些网页，但是这些网页在手机上的浏览体验又不好，所以此时就可以通过 IM 软件让 OpenClaw 调用 Chrome 浏览器来帮我们打开页面并截图。 我想每天上班的时候扫一眼 Github Trending 的内容（我在手机上没法直接访问这个页面，当然也有方法，但是">
 <meta property="og:type" content="article">
 <meta property="og:title" content="为 OpneClaw 增加 Chrome 作为 Browser 工具">
 <meta property="og:url" content="https://wangwei1237.github.io/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/index.html">
 <meta property="og:site_name" content="17哥">
-<meta property="og:description" content="在 OpenClaw 初体验 中，我在阿里云的 ECS 主机上部署了 OpenClaw，并用它做了些初步的尝试。有时候，可能想浏览某些网页，但是这些网页在手机上的浏览体验又不好，所以此时就可以通过 IM 软件让 OpenClaw 调用 Chrome 浏览器来帮我们打开页面并截图。比如我想每天上班的时候扫一眼 Github Trending 的内容，这个时候就可以通过 OpenClaw 调用 Ch">
+<meta property="og:description" content="在 OpenClaw 初体验 中，我在阿里云的 ECS 主机上部署了 OpenClaw，并用它做了些初步的尝试。有时候，可能想浏览某些网页，但是这些网页在手机上的浏览体验又不好，所以此时就可以通过 IM 软件让 OpenClaw 调用 Chrome 浏览器来帮我们打开页面并截图。 我想每天上班的时候扫一眼 Github Trending 的内容（我在手机上没法直接访问这个页面，当然也有方法，但是">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/openclaw_chrome.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/github_trends.png">
 <meta property="article:published_time" content="2026-03-04T20:40:37.000Z">
-<meta property="article:modified_time" content="2026-03-04T13:10:47.935Z">
+<meta property="article:modified_time" content="2026-03-07T04:23:33.524Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="Chrome">
@@ -117,7 +117,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">895</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -126,7 +126,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">3 分钟</span>
+            <span class="post-count">7 分钟</span>
         </span>
     </span>
 </div>
@@ -142,40 +142,183 @@
     <div class="article-entry" itemprop="articleBody">
        
   <p><img src="/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/openclaw_chrome.png" alt></p>
-<p>在 <a href="/2026/02/22/First-Experience-with-OpenClaw/">OpenClaw 初体验</a> 中，我在阿里云的 ECS 主机上部署了 OpenClaw，并用它做了些初步的尝试。有时候，可能想浏览某些网页，但是这些网页在手机上的浏览体验又不好，所以此时就可以通过 IM 软件让 OpenClaw 调用 Chrome 浏览器来帮我们打开页面并截图。比如我想每天上班的时候扫一眼 Github Trending 的内容，这个时候就可以通过 OpenClaw 调用 Chrome 浏览器来打开这个页面并截图发给我了。</p>
+<p>在 <a href="/2026/02/22/First-Experience-with-OpenClaw/">OpenClaw 初体验</a> 中，我在阿里云的 ECS 主机上部署了 OpenClaw，并用它做了些初步的尝试。有时候，可能想浏览某些网页，但是这些网页在手机上的浏览体验又不好，所以此时就可以通过 IM 软件让 OpenClaw 调用 Chrome 浏览器来帮我们打开页面并截图。</p>
+<p>我想每天上班的时候扫一眼 Github Trending 的内容（我在手机上没法直接访问这个页面，当然也有方法，但是我嫌麻烦），这个时候就可以通过 OpenClaw 调用 Chrome 浏览器来打开这个页面并截图发给我了。</p>
 <span id="more"></span>
 <p><img src="/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/github_trends.png" alt></p>
-<p>然而，在纯净的云主机（Ubuntu 22.04）上以 <code>root</code> 用户安装 Chrome 浏览器，并配置 OpenClaw 的过程中却遇到了很多坑。本文将详细记录在云主机上从零配置 OpenClaw + Chrome 环境的全过程，避免大家遇到那些让人抓狂的“权限坑”。</p>
-<h2 id="1-环境准备与-chrome-避坑安装">1. 环境准备与 Chrome 避坑安装</h2>
-<p>很多开发者在 Ubuntu 22.04 上的第一直觉是执行 <code>apt install chromium-browser</code>。<strong>请立刻停止这个操作！</strong></p>
-<p>Ubuntu 22.04 的源中，Chromium 默认被打包成了 Snap 格式。Snap 拥有极其严苛的 AppArmor 沙箱隔离，天生禁止访问 <code>/root</code> 目录。如果你在 root 下运行 OpenClaw，这会导致后续 Agent 试图写入用户数据（Profile）时彻底崩溃。</p>
-<p><strong>正确的姿势：安装官方原生 DEB 版 Google Chrome。</strong></p>
-<h3 id="1-1-彻底卸载可能存在的-snap-版-chromium">1.1 彻底卸载可能存在的 Snap 版 Chromium</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt remove --purge chromium-browser -y</span><br><span class="line">sudo snap remove chromium</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="1-2-下载并安装官方原生-chrome">1.2 下载并安装官方原生 Chrome</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载 Google Chrome 官方最新稳定版</span></span><br><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过 apt 安装（自动解析并安装底层的图形/字体依赖）</span></span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb -y</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="1-3-安装中文字体-防止截图变-豆腐块">1.3 安装中文字体（防止截图变“豆腐块”）</h3>
-<p>对于国内云服务器，这一步不可或缺：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install -y fonts-noto-cjk</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="2-配置-openclaw-权限与核心参数">2. 配置 OpenClaw 权限与核心参数</h2>
-<p>安装完底层浏览器后，必须在 OpenClaw 的网关配置中为其放行，并解决云主机 <code>root</code> 运行的核心安全冲突。</p>
+<p>在纯净的 Ubuntu 22.04 云主机上以 <code>root</code> 用户安装 Chrome 浏览器并配置 OpenClaw 时，我遇到了不少的坑。本文将详细记录在云主机上从零配置 OpenClaw + Chrome 环境的全过程，避免大家遇到那些让人抓狂的“权限坑”。</p>
+<h2 id="1-chrome-安装避坑">1. Chrome 安装避坑</h2>
+<p>我在 Ubuntu 22.04 上安装 Chrome 时最开始的方式是执行：<code>apt install chromium-browser</code>。<strong>务必立刻停止这个操作！</strong></p>
+<p><strong>deb to snap transition</strong>：</p>
+<ul>
+<li>
+<p>从 Ubuntu 19.10 开始，Canonical 将 chromium-browser 做成了过渡包（transitional package），该包并不包含真正的 DEB 程序，仅包含包装脚本、桌面文件和依赖声明，并明确依赖 snapd 和 chromium Snap 包。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
+</li>
+<li>
+<p>因此 <code>apt install chromium-browser</code> 命令安装的 Chrome 实际上是 <a target="_blank" rel="noopener" href="https://snapcraft.io/">Snap</a> 版本的 Chrome。若系统未安装 snapd，该过渡包会先通过 apt 安装 snapd，再从 Snap Store 拉取 Chromium。</p>
+</li>
+</ul>
+<p>而 Snap 拥有极其严苛的 AppArmor 沙箱隔离<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>，其默认规则就是：禁止访问任何系统敏感目录和其他用户目录。<code>/root</code> 目录是超级用户目录，属于最高敏感路径，因此，AppArmor 会直接拦截对其目录下的文件访问请求<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>：</p>
+<ul>
+<li>读：deny</li>
+<li>写：deny</li>
+<li>执行：deny</li>
+<li>列出文件：deny</li>
+</ul>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">安装官方原生 DEB 版 Google Chrome
+</p><ol>
+<li>
+<p>彻底卸载可能存在的 Snap 版 Chromium
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt remove --purge chromium-browser -y</span><br><span class="line">sudo snap remove chromium</span><br></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>下载并安装官方原生 Chrome
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载 Google Chrome 官方最新稳定版</span></span><br><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过 apt 安装（自动解析并安装底层的图形/字体依赖）</span></span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb -y</span><br></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>安装中文字体（防止截图变“豆腐块”）
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install -y fonts-noto-cjk</span><br></pre></td></tr></table></figure></p>
+</li>
+</ol>
+</div>
+<h2 id="2-配置-openclaw">2. 配置 OpenClaw</h2>
+<p>安装完 Chrome 浏览器后，必须在 OpenClaw 的网关配置中为 Browser 工具开放权限，并解决云主机 <code>root</code> 运行的核心安全冲突。</p>
 <h3 id="2-1-开启-browser-工具权限">2.1 开启 browser 工具权限</h3>
-<p>OpenClaw 暴露了 <code>first-class agent tools</code>，其中 <code>browser</code> 工具专门用于控制受管的浏览器。打开全局配置文件 <code>~/.openclaw/openclaw.json</code>，将其加入白名单，可以使用 <code>tools.allow</code> 数组来实现：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;agents&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;defaults&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;tools&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;allow&quot;</span>: [<span class="string">&quot;exec&quot;</span>, <span class="string">&quot;shell&quot;</span>, <span class="string">&quot;browser&quot;</span>, <span class="string">&quot;web_fetch&quot;</span>] </span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="2-2-注入免沙箱-no-sandbox-灵魂配置">2.2 注入免沙箱（No-Sandbox）灵魂配置</h3>
-<p>由于 Chrome 拒绝在 <code>root</code> 用户下带沙箱运行，必须在 OpenClaw 配置中显式关闭沙箱限制。在终端执行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openclaw config <span class="built_in">set</span> browser.noSandbox <span class="literal">true</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="2-3-重启网关使配置生效">2.3 重启网关使配置生效</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openclaw gateway restart</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="3-实战测试：snapshot-与-screenshot-的区别">3. 实战测试：Snapshot 与 Screenshot 的区别</h2>
-<p>配置完成后，就可以通过 OpenClaw 命令行直接测试浏览器的核心动作了。</p>
-<h3 id="3-1-提取结构化文本-喂给大模型">3.1 提取结构化文本（喂给大模型）</h3>
-<p>如果你需要提取页面的可读内容，执行 <code>snapshot</code> 动作。它会返回提取的 aria/ai 节点信息，适合让 LLM 进行总结分析：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw snapshot</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="3-2-截取视觉画面-人类审核-图像识别">3.2 截取视觉画面（人类审核/图像识别）</h3>
-<p>如果你需要真实的网页截图，执行 <code>screenshot</code> 动作。该动作会在底层执行截屏，并返回一个包含媒体路径的图像块（image block + MEDIA:<path></path>）：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw screenshot</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><em>执行后，控制台会返回图片在服务器上的绝对路径，你可以通过 <code>cp</code> 命令将其拷贝并下载查看。</em></p>
+<p>OpenClaw 从 3.2 版本开始对工具调用实施了更严格的权限控制，从而希望有效解决饱受诟病的安全问题。针对工具调用的安全控制能力，OpenClaw 3.2 版本增加了：精细化的工具访问控制、执行环境隔离、运行时行为约束等安全策略<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>。</p>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2028981937843650602"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>另外，根据 OpenClaw 官方文档的描述<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>：</p>
+<blockquote>
+<p>OpenClaw can run a dedicated Chrome/Brave/Edge/Chromium profile that the agent controls.<br>
+It is isolated from your personal browser and is managed through a small local control service inside the Gateway (loopback only).</p>
+</blockquote>
+<p>OpenClaw 支持在 <code>openclaw.json</code> 中通过 <code>tools.allow</code>、<code>tools.deny</code> 全局配置工具的黑白名单，并且黑名单优先级高于白名单，从而阻止没有权限的工具发送给模型，进而避免无权限的工具的执行。</p>
+<p>因此，需要首先在全局配置文件 <code>~/.openclaw/openclaw.json</code> 中把 <code>browser</code> 工具加入白名单：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;agents&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;defaults&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;tools&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;allow&quot;</span>: [<span class="string">&quot;exec&quot;</span>, <span class="string">&quot;shell&quot;</span>, <span class="string">&quot;browser&quot;</span>, <span class="string">&quot;web_fetch&quot;</span>] </span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-关闭沙箱-no-sandbox-限制">2.2 关闭沙箱（No-Sandbox）限制</h3>
+<p>沙箱是 Chrome 的核心安全机制。当 Chrome 打开一个网页时，它会把网页里的 HTML 渲染、JavaScript 执行等操作，全都关进一个“隔离的 Sandbox” 里运行。<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup></p>
+<p>而在 Linux 的世界中，<code>root</code> 是拥有绝对权限的超级用户，如果以 <code>root</code> 身份运行 Chrome，这就产生了一个巨大的安全悖论：</p>
+<blockquote>
+<p>沙箱的存在是为了限制权限，但 <code>root</code> 账号却偏偏拥有无限权限</p>
+</blockquote>
+<p>因此，在 Chrome 中，有一条硬性规定：检测到当前用户是 <code>root</code> 账号时，浏览器会直接退出，绝不在 <code>root</code> 下带着沙箱运行，没有意义。<sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup></p>
+<blockquote>
+<p>Running as root without --no-sandbox is not supported.</p>
+</blockquote>
+<p>但是对于 docker 容器来说，容器已经对安全性做了控制与隔离，因此在容器内以 <code>root</code> 用户运行 Chrome 是没有问题的。此时可以使用 <code>--no-sandbox</code> 参数来关闭沙箱，从而以 <code>root</code> 用户身份运行 Chrome。</p>
+<p>同样的，当在 <code>root</code> 账号下用 OpenClaw 控制浏览器时，也必须在 OpenClaw 配置中显式关闭沙箱限制：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw config <span class="built_in">set</span> browser.noSandbox <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-3-重启网关">2.3 重启网关</h3>
+<p>配置完成后，重启 OpenClaw 网关服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw gateway restart</span><br></pre></td></tr></table></figure>
+<h2 id="3-snapshot-与-screenshot">3. snapshot 与 screenshot</h2>
+<p>可以用如下的命令来验证浏览器工具是否可用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw status</span><br><span class="line">openclaw browser --browser-profile openclaw start</span><br><span class="line">openclaw browser --browser-profile openclaw open https:&#x2F;&#x2F;www.baidu.com</span><br><span class="line">openclaw browser --browser-profile openclaw snapshot</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p><strong>Snapshot 提取结构化文本</strong>：如果需要提取页面的可读内容，我们可以执行 <code>snapshot</code> 动作。这个操作会返回当前网页完整的 HTML 字符串、JSON 格式的 DOM 树结构，非常适合让 LLM 对其进行总结与分析。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw snapshot</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>Screenshot 截取视觉画面</strong>：如果需要真实的网页截图，需要执行 <code>screenshot</code> 动作。该动作会在底层执行截屏，并返回一个包含媒体路径的图像块（image block + MEDIA:<path></path>）。执行命令后，控制台会返回图片在服务器上的绝对路径，我们可以通过 <code>cp</code> 命令将其拷贝并下载查看。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw screenshot</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://ubuntu.com/blog/chromium-in-ubuntu-deb-to-snap-transition">Chromium in Ubuntu – deb to snap transition</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://snapcraft.io/docs/reference/system-architecture/">Snap System architecture</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://snapcraft.io/docs/explanation/security/snap-confinement/index.html">Snap confinement</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://docs.openclaw.ai/tools">OpenClaw Tools</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://docs.openclaw.ai/tools/browser">OpenClaw Browser Tool</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://chromium.googlesource.com/chromium/src/+/HEAD/docs/design/sandbox.md">Chrome Sandbox</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://issues.chromium.org/issues/40480798">Exit instead of crashing when running as root without --no-sandbox</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
  
       <!-- reward -->
       
