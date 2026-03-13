@@ -154,6 +154,185 @@
     
     
     <article
+  id="post-I-asked-OpenClaw-to-help-deploy-the-LLMs"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/"
+    >我让 OpenClaw 🦞 帮我部署模型</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/" class="article-date">
+  <time datetime="2026-03-13T17:53:42.000Z" itemprop="datePublished">2026-03-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/1.png" alt></p>
+<p>在 <a href="/2026/03/08/I-let-OpenClaw-do-OP-for-me/">我让 OpenClaw 🦞 为我当 OP</a> 这篇文章中，我介绍了我是如何让 OpenClaw 帮我管理服务器集群的。</p>
+<p>过了几天，我就开始想搞一点更复杂的事情。既然 OpenClaw 都可以帮我管理服务器集群了，那为什么不能让它帮我部署模型呢？反正我每次部署模型不也是先登录 GPU 服务器，然后在上面执行各种 CLI 操作（下载模型、配置虚拟环境、下载依赖……）？并且每次遇到部署问题时，我也是截个图直接丢给大模型……</p> 
+      <a class="article-more-link" href="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" rel="tag">模型部署</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-I-asked-OpenClaw-to-help-deploy-the-LLMs/model-deploy/SKILL"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+     
+    <div class="article-meta">
+      <a href="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/model-deploy/SKILL/" class="article-date">
+  <time datetime="2026-03-13T15:12:21.541Z" itemprop="datePublished">2026-03-13</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1>Model Deploy</h1>
+<p>在 GPU 服务器上使用 vLLM 部署大语言模型。<strong>目前仅支持在 vLLM 推理引擎上部署大模型</strong>。</p>
+<h2 id="快速开始">快速开始</h2>
+<p>在 ModelScope 平台，模型一般采用  <code>&lt;MODEL_ORG&gt;/&lt;MODEL_NAME&gt;</code> 来唯一识别，例如 <code>Qwen/Qwen3.5-0.8B</code> 而言，<code>MODEL_ORG</code> 为 Qwen，<code>MODEL_NAME</code> 为 Qwen3.5-0.8B。</p>
+<h3 id="qwen-系列模型部署">Qwen 系列模型部署</h3>
+<p>对于 Qwen 系的模型部署，请使用 <code>scripts/deploy.sh</code> 部署脚本，该脚本的使用方式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">用法: [环境变量] deploy.sh &lt;model_name&gt;</span><br><span class="line"></span><br><span class="line">示例:</span><br><span class="line">  PORT=8001 \</span><br><span class="line">  GPU_COUNT=4 \</span><br><span class="line">  ./deploy.sh Qwen3.5-0.8B</span><br><span class="line"></span><br><span class="line">环境变量:</span><br><span class="line">  ENV_NAME        conda 环境名称 (默认: vllm)</span><br><span class="line">  PORT            服务端口 (默认: 8000)</span><br><span class="line">  GPU_COUNT       GPU 并行数 (默认: 1)</span><br><span class="line">  PROXY           代理地址 (默认: http://&#123;proxyaddress&#125;:&#123;port&#125;)</span><br><span class="line">  MODEL_BASE_PATH 模型存储路径 (默认: /home/work/models)</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MODEL_ORG</td>
+<td>模型组织</td>
+<td>Qwen</td>
+</tr>
+<tr>
+<td>MODEL_NAME</td>
+<td>模型名称</td>
+<td>Qwen3.5-0.8B</td>
+</tr>
+<tr>
+<td>ENV_NAME</td>
+<td>conda 环境</td>
+<td>vllm</td>
+</tr>
+<tr>
+<td>PORT</td>
+<td>模型服务端口</td>
+<td>8000</td>
+</tr>
+<tr>
+<td>GPU_COUNT</td>
+<td>GPU 并行数</td>
+<td>1</td>
+</tr>
+<tr>
+<td>PROXY</td>
+<td>代理地址</td>
+<td>http://{proxyaddress}:{port}</td>
+</tr>
+<tr>
+<td>MODEL_BASE_PATH</td>
+<td>模型本地存储路径</td>
+<td>/home/work/models</td>
+</tr>
+</tbody>
+</table>
+<h2 id="部署步骤">部署步骤</h2>
+<ul>
+<li>
+<p>从用户请求中提取需要部署的：模型名称（MODEL_NAME），模型组织（MODEL_ORG），需要部署的服务器地址（TARGET_HOST），部署账号（TARGET_USER）等所需要的信息。</p>
+</li>
+<li>
+<p>把 <code>./skills/model-deploy/scripts/deploy.sh</code> 复制到目标服务器的指定路径下，例如 <code>$HOME/wangwei17</code>。</p>
+</li>
+<li>
+<p>在目标服务器上给部署脚本增加可执行权限。</p>
+</li>
+<li>
+<p>在目标服务器上执行部署脚本。必须采用如下的方式来部署：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh <span class="variable">$&#123;TARGET_USER&#125;</span>@<span class="variable">$&#123;TARGET_HOST&#125;</span> <span class="string">&quot;cd <span class="variable">$HOME</span>/17 &amp;&amp; PORT=8001 &amp;&amp; ./deploy.sh Qwen3.5-0.8B&quot;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>部署完成后，在目标服务器上执行 <code>curl http://127.0.0.1:8001/v1/chat/completions</code> 测试模型服务是否启动成功。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://127.0.0.1:8001/v1/chat/completions \</span><br><span class="line">  -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">      &quot;messages&quot;: [&#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;你好&quot;&#125;],</span></span><br><span class="line"><span class="string">      &quot;max_tokens&quot;: 512</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+<h2 id="约束说明">约束说明</h2>
+<ul>
+<li>在目标服务器上执行命令必须采用如下的方式：<code>ssh $&#123;TARGET_USER&#125;@$&#123;TARGET_HOST&#125; &quot;$&#123;CMD&#125;&quot;</code>。</li>
+</ul>
+<h2 id="常见问题">常见问题</h2>
+<ul>
+<li><strong>端口占用</strong>: 检查 <code>netstat -tlnp | grep &lt;port&gt;</code></li>
+<li><strong>版本问题</strong>: 运行 <code>pip install vllm --upgrade</code></li>
+<li><strong>网络问题</strong>: 配置代理 <code>export https_proxy=&quot;http://&#123;proxyaddress&#125;:&#123;port&#125;&quot;</code></li>
+<li><strong>GPU memory 不足</strong>: 运行 <code>nvidia-smi</code> 查看显存使用情况，找到满足显存需求的的 GPU 卡编号 GPU_FAN，然后运行 <code>export CUDA_VISIBLE_DEVICES=$GPU_FAN</code> 来指定部署使用的 GPU 卡，然后重新执行部署脚本。</li>
+</ul>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-I-let-OpenClaw-do-OP-for-me"
   class="article article-type-post"
   itemscope
@@ -713,122 +892,6 @@
     <footer class="article-footer">
        
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Bradley-Terry/" rel="tag">Bradley-Terry</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elo/" rel="tag">Elo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pairwise-Comparisons/" rel="tag">Pairwise Comparisons</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-How-to-evaluate-the-quality-of-the-graph"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2025/08/23/How-to-evaluate-the-quality-of-the-graph/"
-    >如何评估知识图谱的质量</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2025/08/23/How-to-evaluate-the-quality-of-the-graph/" class="article-date">
-  <time datetime="2025-08-23T09:16:00.000Z" itemprop="datePublished">2025-08-23</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Neo4j/">Neo4j</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p><img src="/2025/08/23/How-to-evaluate-the-quality-of-the-graph/1.png" alt></p>
-<p>在基于我们所构建的 <strong>知识图谱</strong> 数据执行复杂任务之前，检查 <strong>知识图谱</strong> 的质量是必不可少的步骤。<strong>知识图谱</strong> 的质量检查能够确保导入数据的完整性和准确性，及早发现数据异常、关系映射错误等问题，避免低质量数据影响模型效果。同时，<strong>知识图谱</strong> 的质量检查可以为后续的图分析提供可靠的数据基础，确保后续任务的成功。本文将基于 Neo4j 的图数据科学库（GDS）介绍如何评估 <strong>知识图谱</strong> 的质量，主要包括 WCC（弱联通网络）和 Louvain Modularity 这两种算法。</p> 
-      <a class="article-more-link" href="/2025/08/23/How-to-evaluate-the-quality-of-the-graph/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GDS/" rel="tag">GDS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Louvain-Modularity/" rel="tag">Louvain Modularity</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WCC/" rel="tag">WCC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%BE%E8%B4%A8%E9%87%8F/" rel="tag">图质量</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%B1%E8%81%94%E9%80%9A%E5%88%86%E9%87%8F/" rel="tag">弱联通分量</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-Cypher-for-Beginners"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2025/08/09/Cypher-for-Beginners/"
-    >Cypher 初学者指南</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2025/08/09/Cypher-for-Beginners/" class="article-date">
-  <time datetime="2025-08-09T16:47:32.000Z" itemprop="datePublished">2025-08-09</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Neo4j/">Neo4j</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p><img src="/2025/08/09/Cypher-for-Beginners/neo4j.jpg" alt></p>
-<p><strong>Knowledge Grahp</strong>（<strong>KG</strong>） 可用于表示现实世界中的不同实体网络并对其关系进行建模，例如：基于人和人的关系构建的社交网络图，基因与蛋白质之间的关系图…… <strong>KG</strong> 代表了一种理解数据的思维范式的转变，这有助于我们理解数据之间的关系，以便我们能够轻松识别数据中隐藏的重要模式并做出更好的决策。尤其是在生成式 LLM 快速发展的今天，<strong>KG</strong> 可以作为一种结构化的知识表示方式，为 LLM 提供更准确、更丰富、更精简的上下文信息，从而提升 LLM 的性能。</p> 
-      <a class="article-more-link" href="/2025/08/09/Cypher-for-Beginners/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cypher/" rel="tag">Cypher</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Knowledge-Graph/" rel="tag">Knowledge Graph</a></li></ul>
 
     </footer>
   </div>

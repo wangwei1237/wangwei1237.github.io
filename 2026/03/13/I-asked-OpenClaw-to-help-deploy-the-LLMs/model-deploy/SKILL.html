@@ -1,0 +1,107 @@
+<hr>
+<h2 id="name-model-deploydescription-use-this-skill-when-users-request-to-deploy-llms-qwen-deepseek-etc-on-specified-gpu-servers-and-start-the-model-service-this-skill-can-download-models-using-modelscope-start-the-vllm-inference-service">name: model-deploy<br>
+description: Use this skill when users request to deploy LLMs (Qwen, DeepSeek, etc.) on specified GPU servers and start the model service. This skill can Download models using ModelScope; Start the vLLM inference service.</h2>
+<h1>Model Deploy</h1>
+<p>在 GPU 服务器上使用 vLLM 部署大语言模型。<strong>目前仅支持在 vLLM 推理引擎上部署大模型</strong>。</p>
+<h2 id="快速开始">快速开始</h2>
+<p>在 ModelScope 平台，模型一般采用  <code>&lt;MODEL_ORG&gt;/&lt;MODEL_NAME&gt;</code> 来唯一识别，例如 <code>Qwen/Qwen3.5-0.8B</code> 而言，<code>MODEL_ORG</code> 为 Qwen，<code>MODEL_NAME</code> 为 Qwen3.5-0.8B。</p>
+<h3 id="qwen-系列模型部署">Qwen 系列模型部署</h3>
+<p>对于 Qwen 系的模型部署，请使用 <code>scripts/deploy.sh</code> 部署脚本，该脚本的使用方式如下：</p>
+<pre><code class="language-bash">用法: [环境变量] deploy.sh &lt;model_name&gt;
+
+示例:
+  PORT=8001 \
+  GPU_COUNT=4 \
+  ./deploy.sh Qwen3.5-0.8B
+
+环境变量:
+  ENV_NAME        conda 环境名称 (默认: vllm)
+  PORT            服务端口 (默认: 8000)
+  GPU_COUNT       GPU 并行数 (默认: 1)
+  PROXY           代理地址 (默认: http://{proxyaddress}:{port})
+  MODEL_BASE_PATH 模型存储路径 (默认: /home/work/models)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MODEL_ORG</td>
+<td>模型组织</td>
+<td>Qwen</td>
+</tr>
+<tr>
+<td>MODEL_NAME</td>
+<td>模型名称</td>
+<td>Qwen3.5-0.8B</td>
+</tr>
+<tr>
+<td>ENV_NAME</td>
+<td>conda 环境</td>
+<td>vllm</td>
+</tr>
+<tr>
+<td>PORT</td>
+<td>模型服务端口</td>
+<td>8000</td>
+</tr>
+<tr>
+<td>GPU_COUNT</td>
+<td>GPU 并行数</td>
+<td>1</td>
+</tr>
+<tr>
+<td>PROXY</td>
+<td>代理地址</td>
+<td>http://{proxyaddress}:{port}</td>
+</tr>
+<tr>
+<td>MODEL_BASE_PATH</td>
+<td>模型本地存储路径</td>
+<td>/home/work/models</td>
+</tr>
+</tbody>
+</table>
+<h2 id="部署步骤">部署步骤</h2>
+<ul>
+<li>
+<p>从用户请求中提取需要部署的：模型名称（MODEL_NAME），模型组织（MODEL_ORG），需要部署的服务器地址（TARGET_HOST），部署账号（TARGET_USER）等所需要的信息。</p>
+</li>
+<li>
+<p>把 <code>./skills/model-deploy/scripts/deploy.sh</code> 复制到目标服务器的指定路径下，例如 <code>$HOME/wangwei17</code>。</p>
+</li>
+<li>
+<p>在目标服务器上给部署脚本增加可执行权限。</p>
+</li>
+<li>
+<p>在目标服务器上执行部署脚本。必须采用如下的方式来部署：</p>
+</li>
+</ul>
+<pre><code class="language-bash">ssh ${TARGET_USER}@${TARGET_HOST} &quot;cd $HOME/17 &amp;&amp; PORT=8001 &amp;&amp; ./deploy.sh Qwen3.5-0.8B&quot;
+</code></pre>
+<ul>
+<li>部署完成后，在目标服务器上执行 <code>curl http://127.0.0.1:8001/v1/chat/completions</code> 测试模型服务是否启动成功。</li>
+</ul>
+<pre><code class="language-bash">curl -X POST http://127.0.0.1:8001/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+      &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;你好&quot;}],
+      &quot;max_tokens&quot;: 512
+  }'
+</code></pre>
+<h2 id="约束说明">约束说明</h2>
+<ul>
+<li>在目标服务器上执行命令必须采用如下的方式：<code>ssh ${TARGET_USER}@${TARGET_HOST} &quot;${CMD}&quot;</code>。</li>
+</ul>
+<h2 id="常见问题">常见问题</h2>
+<ul>
+<li><strong>端口占用</strong>: 检查 <code>netstat -tlnp | grep &lt;port&gt;</code></li>
+<li><strong>版本问题</strong>: 运行 <code>pip install vllm --upgrade</code></li>
+<li><strong>网络问题</strong>: 配置代理 <code>export https_proxy=&quot;http://{proxyaddress}:{port}&quot;</code></li>
+<li><strong>GPU memory 不足</strong>: 运行 <code>nvidia-smi</code> 查看显存使用情况，找到满足显存需求的的 GPU 卡编号 GPU_FAN，然后运行 <code>export CUDA_VISIBLE_DEVICES=$GPU_FAN</code> 来指定部署使用的 GPU 卡，然后重新执行部署脚本。</li>
+</ul>
