@@ -137,7 +137,7 @@
 <p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/10_11.jpg" alt></p>
 <p>我稍加修改，就得到了一个可以直接使用的模型部署的 Skill——<a href="https://github.com/wangwei1237/wangwei1237.github.io_src/tree/master/source/_posts/I-asked-OpenClaw-to-help-deploy-the-LLMs/model-deploy"><strong>model-deploy</strong></a>。</p>
 <blockquote>
-<p>备注：该 Skill 在 MiniMax-M2.5 上测试通过，可以点击 <a href="(https://github.com/wangwei1237/wangwei1237.github.io_src/tree/master/source/_posts/I-asked-OpenClaw-to-help-deploy-the-LLMs/model-deploy)">链接</a> 获取该 Skill 的代码。</p>
+<p>备注：该 Skill 在 MiniMax-M2.5 上测试通过，可以点击 <a href="(https://github.com/wangwei1237/wangwei1237.github.io_src/tree/master/source/_posts/I-asked-OpenClaw-to-help-deploy-the-LLMs/model-deploy)">链接</a> 获取该 Skill 的代码。或者使用 <code>clawhub search model-deploy</code>、<code>clawhub install model-deploy</code> 来安装该 Skill。</p>
 </blockquote>
 <p>我把该 Skill 挂载到我的 OpenClaw 实例上，然后让它帮我部署模型。为了避免大模型使用 Session 会话中的对话历史获取知识，而没有从 <code>model-deploy</code> 技能获取知识，我首先用 <code>/new</code> 指令创建了一个新的对话 Session。</p>
 <p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/12.jpg" alt></p>
@@ -167,95 +167,6 @@
         <tag>OpenClaw</tag>
         <tag>模型部署</tag>
       </tags>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/model-deploy/SKILL/</url>
-    <content><![CDATA[<h1>Model Deploy</h1>
-<p>在 GPU 服务器上使用 vLLM 部署大语言模型。<strong>目前仅支持在 vLLM 推理引擎上部署大模型</strong>。</p>
-<h2 id="快速开始">快速开始</h2>
-<p>在 ModelScope 平台，模型一般采用  <code>&lt;MODEL_ORG&gt;/&lt;MODEL_NAME&gt;</code> 来唯一识别，例如 <code>Qwen/Qwen3.5-0.8B</code> 而言，<code>MODEL_ORG</code> 为 Qwen，<code>MODEL_NAME</code> 为 Qwen3.5-0.8B。</p>
-<h3 id="qwen-系列模型部署">Qwen 系列模型部署</h3>
-<p>对于 Qwen 系的模型部署，请使用 <code>scripts/deploy.sh</code> 部署脚本，该脚本的使用方式如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">用法: [环境变量] deploy.sh &lt;model_name&gt;</span><br><span class="line"></span><br><span class="line">示例:</span><br><span class="line">  PORT=8001 \</span><br><span class="line">  GPU_COUNT=4 \</span><br><span class="line">  ./deploy.sh Qwen3.5-0.8B</span><br><span class="line"></span><br><span class="line">环境变量:</span><br><span class="line">  ENV_NAME        conda 环境名称 (默认: vllm)</span><br><span class="line">  PORT            服务端口 (默认: 8000)</span><br><span class="line">  GPU_COUNT       GPU 并行数 (默认: 1)</span><br><span class="line">  PROXY           代理地址 (默认: http://&#123;proxyaddress&#125;:&#123;port&#125;)</span><br><span class="line">  MODEL_BASE_PATH 模型存储路径 (默认: /home/work/models)</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>变量</th>
-<th>说明</th>
-<th>默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MODEL_ORG</td>
-<td>模型组织</td>
-<td>Qwen</td>
-</tr>
-<tr>
-<td>MODEL_NAME</td>
-<td>模型名称</td>
-<td>Qwen3.5-0.8B</td>
-</tr>
-<tr>
-<td>ENV_NAME</td>
-<td>conda 环境</td>
-<td>vllm</td>
-</tr>
-<tr>
-<td>PORT</td>
-<td>模型服务端口</td>
-<td>8000</td>
-</tr>
-<tr>
-<td>GPU_COUNT</td>
-<td>GPU 并行数</td>
-<td>1</td>
-</tr>
-<tr>
-<td>PROXY</td>
-<td>代理地址</td>
-<td>http://{proxyaddress}:{port}</td>
-</tr>
-<tr>
-<td>MODEL_BASE_PATH</td>
-<td>模型本地存储路径</td>
-<td>/home/work/models</td>
-</tr>
-</tbody>
-</table>
-<h2 id="部署步骤">部署步骤</h2>
-<ul>
-<li>
-<p>从用户请求中提取需要部署的：模型名称（MODEL_NAME），模型组织（MODEL_ORG），需要部署的服务器地址（TARGET_HOST），部署账号（TARGET_USER）等所需要的信息。</p>
-</li>
-<li>
-<p>把 <code>./skills/model-deploy/scripts/deploy.sh</code> 复制到目标服务器的指定路径下，例如 <code>$HOME/wangwei17</code>。</p>
-</li>
-<li>
-<p>在目标服务器上给部署脚本增加可执行权限。</p>
-</li>
-<li>
-<p>在目标服务器上执行部署脚本。必须采用如下的方式来部署：</p>
-</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh <span class="variable">$&#123;TARGET_USER&#125;</span>@<span class="variable">$&#123;TARGET_HOST&#125;</span> <span class="string">&quot;cd <span class="variable">$HOME</span>/17 &amp;&amp; PORT=8001 &amp;&amp; ./deploy.sh Qwen3.5-0.8B&quot;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>部署完成后，在目标服务器上执行 <code>curl http://127.0.0.1:8001/v1/chat/completions</code> 测试模型服务是否启动成功。</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST http://127.0.0.1:8001/v1/chat/completions \</span><br><span class="line">  -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">      &quot;messages&quot;: [&#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;你好&quot;&#125;],</span></span><br><span class="line"><span class="string">      &quot;max_tokens&quot;: 512</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
-<h2 id="约束说明">约束说明</h2>
-<ul>
-<li>在目标服务器上执行命令必须采用如下的方式：<code>ssh $&#123;TARGET_USER&#125;@$&#123;TARGET_HOST&#125; &quot;$&#123;CMD&#125;&quot;</code>。</li>
-</ul>
-<h2 id="常见问题">常见问题</h2>
-<ul>
-<li><strong>端口占用</strong>: 检查 <code>netstat -tlnp | grep &lt;port&gt;</code></li>
-<li><strong>版本问题</strong>: 运行 <code>pip install vllm --upgrade</code></li>
-<li><strong>网络问题</strong>: 配置代理 <code>export https_proxy=&quot;http://&#123;proxyaddress&#125;:&#123;port&#125;&quot;</code></li>
-<li><strong>GPU memory 不足</strong>: 运行 <code>nvidia-smi</code> 查看显存使用情况，找到满足显存需求的的 GPU 卡编号 GPU_FAN，然后运行 <code>export CUDA_VISIBLE_DEVICES=$GPU_FAN</code> 来指定部署使用的 GPU 卡，然后重新执行部署脚本。</li>
-</ul>
-]]></content>
   </entry>
   <entry>
     <title>我让 OpenClaw 🦞 为我当 OP</title>
