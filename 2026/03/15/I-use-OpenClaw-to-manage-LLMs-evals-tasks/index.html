@@ -6,14 +6,17 @@
 
     <head>
       <meta charset="utf-8" />
-      <meta property="og:type" content="article">
+      <meta name="description" content="虽然 LLM 的能力现在已经非常强大，但是对于多模态大模型的评测而言，仍然需要进行大量的人工评测工作。所以，我们也会看到，类似 Arean 平台的这种基于人类偏好打分的榜单，依然是我们评估大模型性能的有效参考。 我们参考 LMArena 团队开源的榜单算法 Arena Rank 构建了自己的大模型 Side-by-Side 评测系统，来满足我们对大模型评测的需求。">
+<meta property="og:type" content="article">
 <meta property="og:title" content="我让 OpenClaw 🦞 管理大模型评测任务">
 <meta property="og:url" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/index.html">
 <meta property="og:site_name" content="17哥">
+<meta property="og:description" content="虽然 LLM 的能力现在已经非常强大，但是对于多模态大模型的评测而言，仍然需要进行大量的人工评测工作。所以，我们也会看到，类似 Arean 平台的这种基于人类偏好打分的榜单，依然是我们评估大模型性能的有效参考。 我们参考 LMArena 团队开源的榜单算法 Arena Rank 构建了自己的大模型 Side-by-Side 评测系统，来满足我们对大模型评测的需求。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/1.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/2.png">
 <meta property="article:published_time" content="2026-03-15T19:20:25.000Z">
-<meta property="article:modified_time" content="2026-03-15T14:59:36.978Z">
+<meta property="article:modified_time" content="2026-03-17T13:25:40.331Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="任务管理">
@@ -107,7 +110,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">0</span>
+            <span class="post-count">661</span>
         </span>
     </span>
 
@@ -116,13 +119,15 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">2 分钟</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
@@ -130,7 +135,41 @@
     <div class="article-entry" itemprop="articleBody">
        
   <p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/1.png" alt></p>
+<p>虽然 LLM 的能力现在已经非常强大，但是对于多模态大模型的评测而言，仍然需要进行大量的人工评测工作。所以，我们也会看到，类似 <a target="_blank" rel="noopener" href="https://arena.ai/leaderboard">Arean</a> 平台的这种基于人类偏好打分的榜单，依然是我们评估大模型性能的有效参考。</p>
+<p>我们参考 LMArena 团队开源的榜单算法 <a target="_blank" rel="noopener" href="https://arena.ai/blog/arena-rank/">Arena Rank</a> 构建了自己的大模型 Side-by-Side 评测系统，来满足我们对大模型评测的需求。</p>
 <span id="more"></span>
+<h2 id="side-by-side-评测系统">Side-by-Side 评测系统</h2>
+<p>与 LMArena 不同的是，在我的系统中，用户的偏好打分的样本是我们预先准备好的，而不是用户自己上传的。在我们的系统中，我们会讲待用户打分的样本组织成一个任务，同时我们会招募打分用户为这个任务打分。</p>
+<p>以文生图任务为例，平台的打分过程如下图所示：</p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/2.png" alt="Side-by-Side 偏好打分"></p>
+<p>当用户打分完成之后，我们会利用 <a target="_blank" rel="noopener" href="https://arena.ai/blog/arena-rank/">Arena Rank</a> 算法来更新所有模型的评分与榜单信息。</p>
+<p>所以，在我们的系统中，一个评测任务的基本流程如下：</p>
+<pre class="mermaid">graph LR
+    A[创建评估任务] --> B[发布招募信息]
+    B --> C[用户报名]
+    C --> D[创建群聊]
+    D --> E[群聊中发布任务链接]
+    E --> F[定期跟进进度]
+    F --> G[计算 Elo 排序]
+
+    style A fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style B fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style C fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style D fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style E fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style F fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style G fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px</pre>
+<p>在 OpenClaw 出现之前，我们需要安排专人来完成如上所述的评测任务的创建、发布、招募、跟进、计算等整个流程。有时候，我们一天也会创建多个评测任务，这个时候负责管理评测任务的同学就会焦头烂额。</p>
+<p>在用了一段时间的 OpenClaw 之后，我发现 OpenClaw 具备如下的四大特性，这四大特性让 OpenClaw 非常适合用来管理大模型的评测任务。</p>
+<ul>
+<li>更强大的记忆能力（跨天级别长程任务）</li>
+<li>更强大的主机控制能力（系统管理员级别）</li>
+<li>更强大的交互能力（多端 IM 触达，随时、随地的触达）</li>
+<li>更强大的 Agent 蜂群能力（多 Agent 协同）</li>
+</ul>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2033849102954598823"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>于是，我们心动了，我们决定用技术手段来解决我们评测专员的烦恼，我们决定让 OpenClaw 来管理我们的评测任务。</p>
+<h2 id="openclaw-的基本能力">OpenClaw 的基本能力</h2>
  
       <!-- reward -->
       
