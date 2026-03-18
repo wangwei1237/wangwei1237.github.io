@@ -39,6 +39,217 @@
 <div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/wangwei1237/status/2033849102954598823"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <p>于是，我们心动了，我们决定用技术手段来解决我们评测专员的烦恼，我们决定让 OpenClaw 来管理我们的评测任务。</p>
 <h2 id="openclaw-的基本能力">OpenClaw 的基本能力</h2>
+<p>这是一个典型的 <code>pipeline skill</code> <sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>，在正式开始之前，我们需要先来梳理一下这个 <code>agent</code> 需要的能力并梳理 OpenClaw 能提供的能力，从而方便我们后续的 <code>skill</code> 开发。</p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/agent_types.jpeg" alt></p>
+<h3 id="workspace-文件加载时机">Workspace 文件加载时机</h3>
+<p>OpenClaw 的行为主要由 <code>worksapce</code> 文件而非隐藏的 <code>prompt</code> 文件定义。正确设置 <em><a href="http://SOUL.md">SOUL.md</a></em>、<em><a href="http://AGENTS.md">AGENTS.md</a></em>、<em><a href="http://USER.md">USER.md</a></em>、<em><a href="http://MEMORY.md">MEMORY.md</a></em> 以及 <em><a href="http://TOOLS.md">TOOLS.md</a></em> 等文件以及了解每个文件的作用及其加载时机，对于实现我们的目标至关重要。</p>
+<p>OpenClaw 会在 session 启动的时候去读取 <code>~/.openclaw/workspace/</code> 下的相关文件，具体的区别和作用如下所示<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>作用</th>
+<th>加载时机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://AGENTS.md">AGENTS.md</a></td>
+<td>Operating instructions, priorities, workflow rules</td>
+<td>Every session</td>
+</tr>
+<tr>
+<td><a href="http://SOUL.md">SOUL.md</a></td>
+<td>Personality, tone, values, behavioral constraints</td>
+<td>Every session</td>
+</tr>
+<tr>
+<td><a href="http://USER.md">USER.md</a></td>
+<td>About you — name, preferences, style</td>
+<td>Every session</td>
+</tr>
+<tr>
+<td><a href="http://IDENTITY.md">IDENTITY.md</a></td>
+<td>Agent name, role, goals, voice</td>
+<td>Every session</td>
+</tr>
+<tr>
+<td><a href="http://TOOLS.md">TOOLS.md</a></td>
+<td>Local tool notes, calendar IDs, conventions</td>
+<td>Every session</td>
+</tr>
+<tr>
+<td><a href="http://HEARTBEAT.md">HEARTBEAT.md</a></td>
+<td>Checklist for periodic heartbeat runs</td>
+<td>Heartbeat only</td>
+</tr>
+<tr>
+<td><a href="http://BOOTSTRAP.md">BOOTSTRAP.md</a></td>
+<td>First-run interview — auto-deleted after</td>
+<td>First run</td>
+</tr>
+<tr>
+<td><a href="http://MEMORY.md">MEMORY.md</a></td>
+<td>Long-term curated memory (optional)</td>
+<td>Main DM only</td>
+</tr>
+<tr>
+<td>memory/YYYY-MM-DD.md</td>
+<td>Daily logs — today + yesterday loaded</td>
+<td>Every session</td>
+</tr>
+</tbody>
+</table>
+<p>因此，如果我们想在群聊启动时、或者在群聊中通过 <code>/new</code> 命令创建一个新的群聊 <code>session</code> 的时候，让群聊能够记起之前的内容，那么最好不要把记忆放在 <code>MEMORY.md</code> 文件中。<code>TOOLS.md</code> 文件是一个不错的选择。</p>
+<h3 id="跨-session-通信能力">跨 session 通信能力</h3>
+<p>在 OpenClaw 中，默认情况下，所有的 “私聊（DM）” 共用一个“主会话（main session）”，以保证对话的连贯性；而不同的 “群聊（Group）” 或者 “频道” 则会拥有各自的“独立会话（isolated sessions）”。<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
+<p>如果你的 OpenClaw 可以接收来自多个用户的私信消息，此时，所有用户将共享相同的“主会话”上下文，这会导致用户之间的私人信息泄露，进而带来安全风险。比如我的 OpenClaw 授权给了我的很多同事，他们每天都会和我用同一个 🦞 来私聊并处理工作上的事情，而我不想让其他的同事知道我和 🦞 都聊了什么。</p>
+<p>这个时候，就需要使用 <code>session.dmScope</code> 来控制私聊会话的隔离范围，保证不同用户之间的会话隔离。<sup class="footnote-ref"><a href="#fn3" id="fnref3:1">[3:1]</a></sup></p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ~/.openclaw/openclaw.json</span></span><br><span class="line">&#123;</span><br><span class="line">  session: &#123;</span><br><span class="line">    <span class="comment">// Secure DM mode: isolate DM context per channel + sender.</span></span><br><span class="line">    dmScope: &quot;per-channel-peer&quot;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">* main (default): all DMs share the main session <span class="keyword">for</span> continuity.</span><br><span class="line">* per-peer: isolate by sender id across channels.</span><br><span class="line">* per-channel-peer: isolate by channel + sender (recommended <span class="keyword">for</span> multi-user inboxes).</span><br><span class="line">* per-account-channel-peer: isolate by account + channel + sender (recommended <span class="keyword">for</span> multi-account inboxes). </span><br></pre></td></tr></table></figure>
+<p>当多个私聊、多个群聊以单独的 session 运行时，接下来需要考虑的问题就是：如何让这些相互隔离的 sessions 保持一定的信息互通（只互通关系的信息）。整个评测的过程是在不同的私聊、群聊中不停的切换，没有一定的跨 session 能力，🦞 就会给人一种暂时性失忆的印象。</p>
+<p><strong>是的，有时候就是这么矛盾，既要保证信息隔离，又要保证一定的信息互通。</strong></p>
+<h3 id="文件读写能力">文件读写能力</h3>
+<p>文件操作最基本的能力就是对文件路径的访问能力，根据 OpenClaw 的 <em>官方文档</em>：<code>agent</code> 的 <code>workspace</code> 目录就是当前 <code>agent</code> 的默认 <code>CWD</code>，在 <code>agent</code> 的 <code>context</code> 中，所有的 <em>相对路径</em> 均基于 <code>workspace</code> 进行解析。当然，绝对路径可以访问主机的其他位置。<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup><sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup><sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup></p>
+<blockquote>
+<p>OpenClaw uses a single agent workspace directory (agents.defaults.workspace) as the agent’s only working directory (cwd) for tools and context.</p>
+<p>The workspace is the default cwd, not a hard sandbox. Tools resolve relative paths against the workspace, but absolute paths can still reach elsewhere on the host unless sandboxing is enabled.</p>
+<p>Workspace note: each agent’s workspace is the default cwd, not a hard sandbox. Relative paths resolve inside the workspace, but absolute paths can reach other host locations unless sandboxing is enabled.</p>
+</blockquote>
+<p>这一点非常重要，因为接下来我们在写 <code>skill</code> 的时候，会经常涉及到文件路径的解析问题：</p>
+<ul>
+<li>在 <code>SKILL.md</code> 中引用其他参考文件；</li>
+<li>在 <code>SKILL.md</code> 中执行 <code>scripts</code> 路径下的某个脚本；</li>
+<li>……</li>
+</ul>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">CWD 路径问题
+</p><p>在 Claude Code 中写 <code>skill</code> 时，<code>CWD</code> 路径就是该 <code>skill</code> 的路径。所以，对于 Claude Code 而言，<code>SKILL.md</code> 中所有的 <em>相对路径</em> 均基于 <code>skill</code> 的路径进行解析。</p>
+<p>但是，在 OpenClaw 中，规则变了：<code>workspace</code> 目录才是 <code>agent</code> 的默认 <code>CWD</code>。因此，对于 OpenClaw 来说，<code>SKILL.md</code> 中所有的 <em>相对路径</em> 均基于 <code>workspace</code> 进行解析。</p>
+</div>
+<p>从 3.2 版本开始，为了解决饱受诟病的安全问题，OpenClaw 对工具调用实施了更严格的权限控制，并且默认情况下，OpenClaw 无法对主机上的文件系统进行写、执行等操作。如果需要执行写、执行等操作，需要显式在 OpenClaw 的配置文件中对相关工具进行授权。<sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup></p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&quot;tools&quot;: &#123;</span><br><span class="line">  &quot;profile&quot;: &quot;full&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多-agent-协同能力">多 Agent 协同能力</h3>
+<p>整个评估过程，核心会涉及到三个阶段：发起任务、跟进任务状态、销毁任务。可以用一个 Agent 来完成这所有的阶段，但是拆分成多个 Agent 实现起来可能会更容易维护。</p>
+<ul>
+<li>每次任务都会重新执行 Main Agent，Main Agent 只负责发起任务并生成 Status Agent（跟进任务） 和 Killer Agent（销毁任务）
+<ul>
+<li>每一次评估任务都会创建单独的 Status Agent 来跟踪当前的评估任务状态</li>
+<li>如果 Killer Agent 已经存在了就不需要重新创建</li>
+<li>Main Agent 完成任务后就退出了</li>
+</ul>
+</li>
+<li>Status Agent 和 Killer Agent 会周期性的醒来并执行相应的任务。</li>
+<li>当 Killer Agent 发现某个任务已经完成，则会结束对应 Status Agent，这样这个任务的 Status Agent 就不需要再占用资源。</li>
+</ul>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/4.png" alt></p>
+<p>OpenClaw 中的 Cron 即是调度器、更是一个非常强大的 Agent Spawn 工具<sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup>。</p>
+<blockquote>
+<p>Cron is the Gateway’s built-in scheduler. It persists jobs, wakes the agent at the right time, and can optionally deliver output back to a chat.</p>
+</blockquote>
+<p>当我们使用 <code>--session isolated</code> 和 <code>--message</code> 创建定时任务时，OpenClaw 会以 <code>--message</code> 指定的内容作为提示词创建一个新的 Agent，并以 <code>--cron</code> 中指定的调度周期定期唤醒该 Agent。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openclaw cron add \</span><br><span class="line">--name <span class="string">&quot;<span class="variable">$&#123;job-name&#125;</span>&quot;</span> \</span><br><span class="line">--cron <span class="string">&quot;*/3 * * * *&quot;</span> \</span><br><span class="line">--tz <span class="string">&quot;Asia/Shanghai&quot;</span> \</span><br><span class="line">--session isolated \</span><br><span class="line">--message <span class="string">&quot;<span class="variable">$&#123;MESSAGE&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>此时，每次定时任务触发，OpenClaw 都会强制生成一个全新的 Session ID（以 cron:&lt;<a href="http://job.id">job.id</a>&gt; 作为 Session Key），并且完全不会复用之前的闲置会话，从而避免任务多次执行过程中的上下文污染。</p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/8.png" alt></p>
+<h2 id="工程实现">工程实现</h2>
+<p>》》》</p>
+<h2 id="参考文献">参考文献</h2>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="https://x.com/GoogleCloudTech/status/2033953579824758855">5 Agent Skill design patterns every ADK developer should know</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="https://openclawcheatsheet.com/">OpenClaw Cheat Sheet</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="https://docs.openclaw.ai/concepts/session#secure-dm-mode-recommended-for-multi-user-setups">OpenClaw: Session Management</a> <a href="#fnref3" class="footnote-backref">↩︎</a> <a href="#fnref3:1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p><a href="https://docs.openclaw.ai/concepts/agent#workspace-required">OpenClaw: Workspace Required</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p><a href="https://docs.openclaw.ai/concepts/agent-workspace">OpenClaw: Agent Workspace</a> <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a href="https://docs.openclaw.ai/concepts/multi-agent">OpenClaw: Multi Agent</a> <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p><a href="https://docs.openclaw.ai/tools">OpenClaw: Tools</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn8" class="footnote-item"><p><a href="https://docs.openclaw.ai/automation/cron-jobs">OpenClaw Cron Jobs</a> <a href="#fnref8" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
 ]]></content>
       <categories>
         <category>LLM</category>
