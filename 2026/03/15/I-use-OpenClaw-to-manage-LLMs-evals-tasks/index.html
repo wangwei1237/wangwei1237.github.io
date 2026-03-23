@@ -16,7 +16,6 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/1.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/2.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/agent_types.jpeg">
-<meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/4.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/8.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/task_json.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/baoming.png">
@@ -24,7 +23,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/result.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/debug.png">
 <meta property="article:published_time" content="2026-03-15T19:20:25.000Z">
-<meta property="article:modified_time" content="2026-03-21T07:24:15.825Z">
+<meta property="article:modified_time" content="2026-03-23T08:30:51.836Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="任务管理">
@@ -363,7 +362,7 @@
 <li>Status Agent 和 Killer Agent 会周期性的醒来并执行相应的任务。</li>
 <li>当 Killer Agent 检测到任务完成时，会终止相应的 Status Agent，以释放资源。</li>
 </ul>
-<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/4.png" alt></p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/8.png" alt></p>
 <p>OpenClaw 中的 Cron 即是调度器、更是一个非常强大的 Agent Spawn 工具<sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup>。</p>
 <blockquote>
 <p>Cron is the Gateway’s built-in scheduler. It persists jobs, wakes the agent at the right time, and can optionally deliver output back to a chat.</p>
@@ -371,7 +370,6 @@
 <p>当我们使用 <code>--session isolated</code> 和 <code>--message</code> 创建定时任务时，OpenClaw 会以 <code>--message</code> 指定的内容作为提示词创建一个新的 Agent，并以 <code>--cron</code> 中指定的调度周期定期唤醒该 Agent。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">openclaw cron add \</span><br><span class="line">--name <span class="string">&quot;<span class="variable">$&#123;job-name&#125;</span>&quot;</span> \</span><br><span class="line">--cron <span class="string">&quot;*/3 * * * *&quot;</span> \</span><br><span class="line">--tz <span class="string">&quot;Asia/Shanghai&quot;</span> \</span><br><span class="line">--session isolated \</span><br><span class="line">--message <span class="string">&quot;<span class="variable">$&#123;MESSAGE&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
 <p>此时，每次定时任务触发，OpenClaw 都会强制生成一个全新的 Session ID（以 cron:&lt;<a target="_blank" rel="noopener" href="http://job.id">job.id</a>&gt; 作为 Session Key），并且完全不会复用之前的闲置会话，从而避免任务多次执行过程中的上下文污染。</p>
-<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/8.png" alt></p>
 <h2 id="工程实现">工程实现</h2>
 <h3 id="长短期记忆分离">长短期记忆分离</h3>
 <p>整个评估流程是相对固定的、需要长期记住的。但是每个评估任务是一个相对短期的概念，评测任务结束之后，OpenClaw 不需要对这个任务有任何的记忆。在这种场景下：</p>
