@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/result.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/debug.png">
 <meta property="article:published_time" content="2026-03-15T19:20:25.000Z">
-<meta property="article:modified_time" content="2026-03-26T07:55:16.960Z">
+<meta property="article:modified_time" content="2026-03-27T11:31:17.590Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="任务管理">
@@ -124,7 +124,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">4.8k</span>
+            <span class="post-count">5k</span>
         </span>
     </span>
 
@@ -133,7 +133,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">19 分钟</span>
+            <span class="post-count">20 分钟</span>
         </span>
     </span>
 </div>
@@ -406,6 +406,13 @@
 <p>因此，调试 Skill 时，不能只关注最终结果，还需仔细检查和分析所有中间过程（如工具调用、执行结果等），以寻找优化空间。</p>
 <p>在调试过程中，我们可以利用 OpenClaw 的 WEBUI 查看每次对话的详细信息，以观察其在任务执行过程中的具体行为。</p>
 <p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/debug.png" alt></p>
+<h2 id="后记">后记</h2>
+<p>后来，在学习 Anthropic 的 <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness design for long-running application development</a> 时，里面对解决模型所面临的上下文窗口焦虑问题时所提到的方案<sup class="footnote-ref"><a href="#fn9" id="fnref9">[9]</a></sup>：</p>
+<blockquote>
+<p>Context resets—clearing the context window entirely and starting a fresh agent, combined with a structured handoff that carries the previous agent’s state and the next steps—addresses both these issues.<br>
+A reset provides a clean slate, at the cost of the handoff artifact having enough state for the next agent to pick up the work cleanly.</p>
+</blockquote>
+<p>这与我们在 Main Agent 中通过 Cron 来定期创建新的 Status Agent 有异曲同工之处。</p>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -425,6 +432,8 @@
 <li id="fn7" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://docs.openclaw.ai/tools">OpenClaw: Tools</a> <a href="#fnref7" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn8" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://docs.openclaw.ai/automation/cron-jobs">OpenClaw Cron Jobs</a> <a href="#fnref8" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn9" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness design for long-running application development</a> <a href="#fnref9" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
