@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/4.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/5.jpg">
 <meta property="article:published_time" content="2026-03-28T08:38:18.000Z">
-<meta property="article:modified_time" content="2026-03-28T04:26:14.789Z">
+<meta property="article:modified_time" content="2026-03-29T03:03:49.283Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="Chrome DevTools MCP">
 <meta property="article:tag" content="Browser use">
@@ -111,7 +111,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.6k</span>
+            <span class="post-count">2.9k</span>
         </span>
     </span>
 
@@ -120,7 +120,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">10 分钟</span>
+            <span class="post-count">11 分钟</span>
         </span>
     </span>
 </div>
@@ -187,7 +187,7 @@
 </ul>
 <p>辅助场景下，Playwright 是流水线上的“无情机器”，适合确定性的 E2E 测试和后台爬虫，但不适合作为需要与人类环境共享上下文的“AI 副驾驶”。</p>
 <h2 id="browser-use">Browser-use</h2>
-<p>Browser-use 是目前开源社区极具代表性的高层 Agent 框架。值得注意的是，其最新版本已经进行了一次重大的底层重构：彻底抛弃了 Playwright，全面转向直接使用纯 CDP (Chrome DevTools Protocol) 与浏览器进行通信，以追求更极致的性能。</p>
+<p>Browser-use 是目前开源社区极具代表性的高层 Agent 框架。值得注意的是，从 <a target="_blank" rel="noopener" href="https://github.com/browser-use/browser-use/blob/0.6.0rc1/pyproject.toml">0.6.0</a> 版本开始，Browser-use 作了一次重大底层重构：彻底抛弃了 Playwright，全面转向直接使用纯 CDP (Chrome DevTools Protocol) 与浏览器进行通信，以追求更极致的性能。</p>
 <p>Browser-use 的核心哲学是视觉驱动。它不关心网页底层用了什么前端框架，而是直接对网页进行截图，提取出可交互元素的边界框（Bbox），并将这些带有坐标标签的图片喂给具备视觉能力的大模型（如 Claude 3.5 Sonnet）。大模型像人类一样“看”网页，然后输出诸如“点击带有购物车图标的按钮”的自然语言指令。</p>
 <p><strong>Browser-use 的优势：</strong></p>
 <p>极强的鲁棒性（抗干扰）： 网页改版、按钮换位置、甚至底层的 React 状态乱了都没关系，只要人眼能看懂，模型就能看懂并操作。</p>
@@ -261,6 +261,60 @@
 <p><strong>Chrome DevTools MCP 的劣势：</strong></p>
 <p>对大模型的逻辑推理和代码编写能力要求极高，因为它操作的不再是直观的 UI，而是底层的 JSON 数据和 JS 运行时。</p>
 <p>整体看，Chrome DevTools MCP 配合 AI Coding Agent 是构建大模型自动化评测流水线、进行复杂集群环境调试的首选协议层方案。</p>
+<h2 id="不同方式之间的对比">不同方式之间的对比</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">评估维度</th>
+<th style="text-align:left">Playwright</th>
+<th style="text-align:left">Browser-use (纯 CDP 版)</th>
+<th style="text-align:left">Chrome DevTools MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>抽象层级</strong></td>
+<td style="text-align:left">底层通信</td>
+<td style="text-align:left">高层业务 Agent</td>
+<td style="text-align:left">标准协议中间件</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>驱动方式</strong></td>
+<td style="text-align:left">纯代码驱动</td>
+<td style="text-align:left">视觉与自然语言</td>
+<td style="text-align:left">Function Calling</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>应对 UI 变化的稳定性</strong></td>
+<td style="text-align:left">极低（高度依赖 DOM 结构）</td>
+<td style="text-align:left"><strong>极高（像人类一样视觉识别）</strong></td>
+<td style="text-align:left">中等（依赖模型动态生成查询脚本）</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>状态共享与免登录能力</strong></td>
+<td style="text-align:left">困难（默认沙盒环境）</td>
+<td style="text-align:left">弱（需 AI 自主操作登录表单）</td>
+<td style="text-align:left"><strong>极强（直接复用已登录会话）</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Token 消耗</strong></td>
+<td style="text-align:left">零消耗（无需 LLM 介入）</td>
+<td style="text-align:left">极高（大量多模态图像计算）</td>
+<td style="text-align:left">极低（仅传递结构化的短文本和 JSON）</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>核心适用场景</strong></td>
+<td style="text-align:left">CI/CD 流水线、纯确定性爬虫</td>
+<td style="text-align:left">跨应用 C 端操作、非结构化任务辅助</td>
+<td style="text-align:left">内部复杂系统集成、实时异常排查调试</td>
+</tr>
+</tbody>
+</table>
+<p>3 月 29 日，OpenClaw 的作者 Peter Steinberger 发了一篇推文，推文中也提到：</p>
+<blockquote>
+<p>The Chrome extension has been removed since Google added native access in 144+, which is simpler, but yes, it does require a one-time setting change.</p>
+</blockquote>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/steipete/status/2037988925818519763"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
