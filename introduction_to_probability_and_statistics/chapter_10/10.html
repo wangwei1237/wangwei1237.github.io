@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.31">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; 方差分析 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）</title>
+<title>Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 10&nbsp; 方差分析</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,9 +21,8 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -68,16 +67,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../chapter_11/11.html" rel="next">
 <link href="../chapter_9/9.html" rel="prev">
 <link href="../favicon.png" rel="icon" type="image/png">
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-03fb0c48514f8f3b3611eb54e83d3f6f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -106,7 +104,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -136,12 +134,12 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="10&nbsp; 方差分析 – Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
+<meta property="og:title" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版） - 10&nbsp; 方差分析">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Introduction to Probability and Statistics for Engineers and Scientists（中文版）">
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -156,7 +154,7 @@ window.Quarto = {
     </a>
   </div>
             <div id="quarto-search" class="" title="搜索"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="切换导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -167,7 +165,7 @@ window.Quarto = {
 <span class="menu-text">博客</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-bookshelf" role="img">
 </i> 
  <span class="menu-text">书籍</span>
@@ -194,18 +192,18 @@ window.Quarto = {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
+          <div class="quarto-navbar-tools">
     <a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapter_10/10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">方差分析</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -315,13 +313,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_14/14.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Life testing</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">寿命测试</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_15/15.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Simulation, bootstrap statistical methods, and permutation tests</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">模拟、自助法统计以及置换检验</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -344,9 +342,9 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
  <span class="menu-text">附录</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -382,7 +380,7 @@ window.Quarto = {
   <li><a href="#sec-10_6" id="toc-sec-10_6" class="nav-link" data-scroll-target="#sec-10_6"><span class="header-section-number">10.6</span> 有交互效应的双因素方差分析</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_10/10.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>反馈问题</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_10/10.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -421,7 +419,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>正如在 <a href="../chapter_9/9.html#sec-9_5" class="quarto-xref"><span>小节 9.5</span></a> 中对 <strong>变异</strong> 这个术语的解释，此处再次做如下的强调。</p>
+<p>正如在 <a href="../chapter_9/9.html#sec-9_5" class="quarto-xref"><span>章节 9.5</span></a> 中对 <strong>变异</strong> 这个术语的解释，此处再次做如下的强调。</p>
 <p><strong>变异量</strong>（<em>the amount of variation</em>）是指一组数据中的变异性，即数据的波动或分散程度。这种波动可以是由多种因素引起的，包括个体差异、测量误差、随机误差等。在后续的翻译章节中，我们会根据具体的场景交叉使用 <strong>变异量</strong> 和 <strong>数据波动</strong>，如无特殊说明，这些指的都是一个概念。</p>
 <p>同时，我们会避免使用 <strong>数据差异</strong>（<em>difference</em>） 来指代 <strong>变异量</strong> 的概念，因为在数学中，<strong>数据差异</strong> 更多指代两个数据之间的差值，因此和我们所讨论的数据的波动和分布程度并不是一个概念。</p>
 </div>
@@ -433,10 +431,10 @@ window.Quarto = {
 <blockquote class="blockquote">
 <p>本章内容还需要继续修改。</p>
 </blockquote>
-<p>在 <a href="../chapter_8/8.html#sec-8_4" class="quarto-xref"><span>小节 8.4</span></a>、<a href="../chapter_8/8.html#sec-8_5_1" class="quarto-xref"><span>小节 8.5.1</span></a>、<a href="../chapter_8/8.html#sec-8_6_1" class="quarto-xref"><span>小节 8.6.1</span></a>、<a href="../chapter_8/8.html#sec-8_7_1" class="quarto-xref"><span>小节 8.7.1</span></a> 章节中，我们研究了关于两个总体均值的假设检验。在本章中，我们将研究关于多个总体均值的假设检验。</p>
-<p>在 <a href="#sec-10_3" class="quarto-xref"><span>小节 10.3</span></a> 中，假设我们有来自 <span class="math inline">\(m\)</span> 个不同总体的样本，每个样本的大小为 <span class="math inline">\(n\)</span>，我们希望使用这些数据来检验 <span class="math inline">\(m\)</span> 个总体均值相等的假设。对于这种场景，由于随机变量的均值仅取决于一个因素——即随机变量来自哪个样本——因此称这种情况为 <strong>单因素方差分析</strong>（<em>one-way analysis of variance</em>）。在 <a href="#sec-10_3_2" class="quarto-xref"><span>小节 10.3.2</span></a> 中，我们展示了如何获得 <span class="math inline">\(\binom{m}{2}\)</span> 对总体均值之间的 <strong>多重比较</strong>（<em>multiple comparisons</em>）。在第 <a href="#sec-10_3_3" class="quarto-xref"><span>小节 10.3.3</span></a> 中展示了当 <span class="math inline">\(m\)</span> 个样本之间的样本大小不同时，如何检验总体均值相等的假设。</p>
-<p>在 <a href="#sec-10_4" class="quarto-xref"><span>小节 10.4</span></a> 和 <a href="#sec-10_5" class="quarto-xref"><span>小节 10.5</span></a> 中，我们将介绍由两个因素决定因变量均值的模型。在这些模型中，我们可以把自变量排列在一个矩阵中，在这个矩阵中，每一行和每一列都代表着一个因素或条件，矩阵中的元素代表着自变量的观测数据。此时，某个因变量的均值同时依赖于矩阵中的行和列。这种模型称为 <strong>双因素方差分析</strong>（<em>two-way analysis of variance</em>）。我们假设因变量的均值受到自变量的 <strong>加性方式</strong>（<em>additive fashion</em>）影响，具体地，第 <span class="math inline">\(i\)</span> 行、第 <span class="math inline">\(j\)</span> 列的变量对应的响应均值可以表示为 <span class="math inline">\(\mu + \alpha_i + \beta_j\)</span>。在 <a href="#sec-10_4" class="quarto-xref"><span>小节 10.4</span></a> 中，我们将介绍如何估计 <span class="math inline">\(\alpha_i\)</span>、<span class="math inline">\(\beta_j\)</span>。在 <a href="#sec-10_5" class="quarto-xref"><span>小节 10.5</span></a> 中将介绍如何进行检验假设，即某个特定因素不会影响结果的均值。</p>
-<p>在 <a href="#sec-10_6" class="quarto-xref"><span>小节 10.6</span></a> 中，我们将介绍因变量的均值允许以非线性方式取决于自变量所在的行和列的情况，从而允许两个因素之间存在 <strong>交互作用</strong>（<em>interaction</em>）。我们还将介绍如何检验不存在交互作用的假设，以及关于不存在行效应和列效应对因变量均值影响的假设。</p>
+<p>在 <a href="../chapter_8/8.html#sec-8_4" class="quarto-xref"><span>章节 8.4</span></a>、<a href="../chapter_8/8.html#sec-8_5_1" class="quarto-xref"><span>章节 8.5.1</span></a>、<a href="../chapter_8/8.html#sec-8_6_1" class="quarto-xref"><span>章节 8.6.1</span></a>、<a href="../chapter_8/8.html#sec-8_7_1" class="quarto-xref"><span>章节 8.7.1</span></a> 章节中，我们研究了关于两个总体均值的假设检验。在本章中，我们将研究关于多个总体均值的假设检验。</p>
+<p>在 <a href="#sec-10_3" class="quarto-xref"><span>章节 10.3</span></a> 中，假设我们有来自 <span class="math inline">\(m\)</span> 个不同总体的样本，每个样本的大小为 <span class="math inline">\(n\)</span>，我们希望使用这些数据来检验 <span class="math inline">\(m\)</span> 个总体均值相等的假设。对于这种场景，由于随机变量的均值仅取决于一个因素——即随机变量来自哪个样本——因此称这种情况为 <strong>单因素方差分析</strong>（<em>one-way analysis of variance</em>）。在 <a href="#sec-10_3_2" class="quarto-xref"><span>章节 10.3.2</span></a> 中，我们展示了如何获得 <span class="math inline">\(\binom{m}{2}\)</span> 对总体均值之间的 <strong>多重比较</strong>（<em>multiple comparisons</em>）。在第 <a href="#sec-10_3_3" class="quarto-xref"><span>章节 10.3.3</span></a> 中展示了当 <span class="math inline">\(m\)</span> 个样本之间的样本大小不同时，如何检验总体均值相等的假设。</p>
+<p>在 <a href="#sec-10_4" class="quarto-xref"><span>章节 10.4</span></a> 和 <a href="#sec-10_5" class="quarto-xref"><span>章节 10.5</span></a> 中，我们将介绍由两个因素决定因变量均值的模型。在这些模型中，我们可以把自变量排列在一个矩阵中，在这个矩阵中，每一行和每一列都代表着一个因素或条件，矩阵中的元素代表着自变量的观测数据。此时，某个因变量的均值同时依赖于矩阵中的行和列。这种模型称为 <strong>双因素方差分析</strong>（<em>two-way analysis of variance</em>）。我们假设因变量的均值受到自变量的 <strong>加性方式</strong>（<em>additive fashion</em>）影响，具体地，第 <span class="math inline">\(i\)</span> 行、第 <span class="math inline">\(j\)</span> 列的变量对应的响应均值可以表示为 <span class="math inline">\(\mu + \alpha_i + \beta_j\)</span>。在 <a href="#sec-10_4" class="quarto-xref"><span>章节 10.4</span></a> 中，我们将介绍如何估计 <span class="math inline">\(\alpha_i\)</span>、<span class="math inline">\(\beta_j\)</span>。在 <a href="#sec-10_5" class="quarto-xref"><span>章节 10.5</span></a> 中将介绍如何进行检验假设，即某个特定因素不会影响结果的均值。</p>
+<p>在 <a href="#sec-10_6" class="quarto-xref"><span>章节 10.6</span></a> 中，我们将介绍因变量的均值允许以非线性方式取决于自变量所在的行和列的情况，从而允许两个因素之间存在 <strong>交互作用</strong>（<em>interaction</em>）。我们还将介绍如何检验不存在交互作用的假设，以及关于不存在行效应和列效应对因变量均值影响的假设。</p>
 <p>在本章中，我们假设所有的数据都服从正态分布，并且都具有相同（虽然未知）的方差 <span class="math inline">\(\sigma^2\)</span>。使用 ANOVA 来检验和总体均值有关的多个参数的原假设 <span class="math inline">\(H_0\)</span>，需要基于从共同的总体方差 $ ^2 $ 中推导出的两个估计量。第一个估计量是 <span class="math inline">\(\sigma^2\)</span> 的估计量，并且无论原假设是否为真，该估计量都是 <span class="math inline">\(\sigma^2\)</span> 的有效估计量。第二个估计量也是 <span class="math inline">\(\sigma^2\)</span> 的估计量，只是仅在 <span class="math inline">\(H_0\)</span> 为真时，该估计量才是 <span class="math inline">\(\sigma^2\)</span> 的有效估计量。此外，当 <span class="math inline">\(H_0\)</span> 不成立时，第二个估计量往往会超过 <span class="math inline">\(\sigma^2\)</span>。检验方法就是比较这两个估计量的值，并在第二个估计量与第一个估计量的比率足够大时拒绝 <span class="math inline">\(H_0\)</span>。换句话说，当 <span class="math inline">\(H_0\)</span> 为真时，这两个估计量应彼此接近（因为它们在这种情况下都是 <span class="math inline">\(\sigma^2\)</span> 的估计量），而当 <span class="math inline">\(H_0\)</span> 不为真时，第二个估计量通常应比第一个大，因此当第二个估计量显著大于第一个时，拒绝 <span class="math inline">\(H_0\)</span> 是自然的选择。</p>
 <p>我们将使用和卡方随机变量有关的事实来获得方差 <span class="math inline">\(\sigma^2\)</span> 的估计量。假设 <span class="math inline">\(X_1, \dots, X_N\)</span> 是独立的正态分布随机变量，它们可能具有不同的均值但却具有相同的方差 <span class="math inline">\(\sigma^2\)</span>，并且设 <span class="math inline">\(\mu_i = E[X_i]\)</span>，其中 <span class="math inline">\(i = 1, \dots, N\)</span>。</p>
 <p>由于随机变量</p>
@@ -454,12 +452,12 @@ window.Quarto = {
 <p>如果我们用 <span class="math inline">\(k\)</span> 个参数的线性函数来表示每个 <span class="math inline">\(E[X_i]\)</span>，并用这 <span class="math inline">\(k\)</span> 个参数的估计量来替换这 <span class="math inline">\(k\)</span> 个参数，那么我们得到的表达式仍然是卡方分布，但是其自由度将因为每个参数由其估计量来代替而减少 1。</p>
 <p>为了说明如上的结论，我们考虑所有均值已知并且相等的情况，即：</p>
 <p><span class="math inline">\(E[X_i] = \mu, \quad i = 1, \dots, N\)</span></p>
-<p>因为此时只有一个需要估计的参数，因此 <span class="math inline">\(k = 1\)</span>。把公共均值 <span class="math inline">\(\mu\)</span> 的估计量 <span class="math inline">\(\overline{X}\)</span> 代入 <a href="#eq-10_2_1" class="quarto-xref">式&nbsp;<span>10.1</span></a> 得到如下的量：</p>
+<p>因为此时只有一个需要估计的参数，因此 <span class="math inline">\(k = 1\)</span>。把公共均值 <span class="math inline">\(\mu\)</span> 的估计量 <span class="math inline">\(\overline{X}\)</span> 代入 <a href="#eq-10_2_1" class="quarto-xref">方程式&nbsp;<span>10.1</span></a> 得到如下的量：</p>
 <p><span id="eq-10_2_2"><span class="math display">\[
 \sum_{i=1}^{N} \frac{(X_i - \overline{X})^2}{\sigma^2}
 \tag{10.2}\]</span></span></p>
-<p>则 <a href="#eq-10_2_2" class="quarto-xref">式&nbsp;<span>10.2</span></a> 是一个自由度为 <span class="math inline">\(N - 1\)</span> 的卡方分布随机变量。</p>
-<p>在所有均值都相等的情况下，数据 <span class="math inline">\(X_1, \dots, X_N\)</span> 均来自同一个正态分布总体，因此 <a href="#eq-10_2_2" class="quarto-xref">式&nbsp;<span>10.2</span></a> 等价与 <span class="math inline">\((N - 1)S^2/\sigma^2\)</span>，其中 <span class="math inline">\(S^2\)</span> 是样本方差。换句话说，在这种场景下的结论就是：<span class="math inline">\((N - 1)S^2/\sigma^2\)</span> 是自由度为 <span class="math inline">\(N - 1\)</span> 的卡方分布随机变量（参见 <a href="../chapter_6/6.html#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a>）。</p>
+<p>则 <a href="#eq-10_2_2" class="quarto-xref">方程式&nbsp;<span>10.2</span></a> 是一个自由度为 <span class="math inline">\(N - 1\)</span> 的卡方分布随机变量。</p>
+<p>在所有均值都相等的情况下，数据 <span class="math inline">\(X_1, \dots, X_N\)</span> 均来自同一个正态分布总体，因此 <a href="#eq-10_2_2" class="quarto-xref">方程式&nbsp;<span>10.2</span></a> 等价与 <span class="math inline">\((N - 1)S^2/\sigma^2\)</span>，其中 <span class="math inline">\(S^2\)</span> 是样本方差。换句话说，在这种场景下的结论就是：<span class="math inline">\((N - 1)S^2/\sigma^2\)</span> 是自由度为 <span class="math inline">\(N - 1\)</span> 的卡方分布随机变量（参见 <a href="../chapter_6/6.html#thm-6_5_1" class="quarto-xref">定理&nbsp;<span>6.2</span></a>）。</p>
 </section>
 <section id="sec-10_3" class="level2" data-number="10.3">
 <h2 data-number="10.3" class="anchored" data-anchor-id="sec-10_3"><span class="header-section-number">10.3</span> 单因素方差分析</h2>
@@ -474,19 +472,19 @@ window.Quarto = {
 \tag{10.3}\]</span></span></p>
 <p>为了获得 <span class="math inline">\(m\)</span> 个未知参数 <span class="math inline">\(\mu_1, \dots, \mu_m\)</span> 的估计量，设 <span class="math inline">\(X_i.\)</span> 表示第 <span class="math inline">\(i\)</span> 个样本中所有元素的平均值，即：</p>
 <p><span class="math inline">\(X_i. = \frac{1}{n} \sum_{j=1}^{n} X_{ij}\)</span></p>
-<p><span class="math inline">\(X_i.\)</span> 是第 <span class="math inline">\(i, \ i = 1, \dots, m\)</span> 个总体的样本均值，因此是总体均值 <span class="math inline">\(\mu_i\)</span> 的估计量。因此，用 <span class="math inline">\(\mu_i\)</span> 的估计量 <span class="math inline">\(X_i.\)</span> 替代 <a href="#eq-10_3_1" class="quarto-xref">式&nbsp;<span>10.3</span></a> 中的 <span class="math inline">\(\mu_i\)</span>，得到：</p>
+<p><span class="math inline">\(X_i.\)</span> 是第 <span class="math inline">\(i, \ i = 1, \dots, m\)</span> 个总体的样本均值，因此是总体均值 <span class="math inline">\(\mu_i\)</span> 的估计量。因此，用 <span class="math inline">\(\mu_i\)</span> 的估计量 <span class="math inline">\(X_i.\)</span> 替代 <a href="#eq-10_3_1" class="quarto-xref">方程式&nbsp;<span>10.3</span></a> 中的 <span class="math inline">\(\mu_i\)</span>，得到：</p>
 <p><span id="eq-10_3_2"><span class="math display">\[
 \sum_{i=1}^{m} \sum_{j=1}^{n} \frac{(X_{ij} - X_i.)^2}{\sigma^2}
 \tag{10.4}\]</span></span></p>
-<p><a href="#eq-10_3_2" class="quarto-xref">式&nbsp;<span>10.4</span></a> 是自由度为 <span class="math inline">\(nm - m\)</span> 的卡方分布。（每估计一个参数，自由度就会减少 1。）</p>
+<p><a href="#eq-10_3_2" class="quarto-xref">方程式&nbsp;<span>10.4</span></a> 是自由度为 <span class="math inline">\(nm - m\)</span> 的卡方分布。（每估计一个参数，自由度就会减少 1。）</p>
 <p>令 <span class="math inline">\(SS_W = \sum_{i=1}^{m} \sum_{j=1}^{n} (X_{ij} - X_i.)^2\)</span></p>
-<p>因此，<a href="#eq-10_3_2" class="quarto-xref">式&nbsp;<span>10.4</span></a> 变为 <span class="math inline">\(SS_W/\sigma^2\)</span>。</p>
+<p>因此，<a href="#eq-10_3_2" class="quarto-xref">方程式&nbsp;<span>10.4</span></a> 变为 <span class="math inline">\(SS_W/\sigma^2\)</span>。</p>
 <p>由于卡方分布随机变量的期望值等于其自由度，因此：<span class="math inline">\(E[SS_W/\sigma^2] = nm - m\)</span>，即 <span class="math inline">\(E\left[\frac{SS_W}{nm - m}\right] = \sigma^2\)</span>。</p>
 <p>我们因此得到了方差 <span class="math inline">\(\sigma^2\)</span> 的第一个估计量，即 <span class="math inline">\(\frac{SS_W}{nm - m}\)</span>。注意，对于该估计量而言，我们并没有对原假设的真假作任何的假设。也就是说，无论原假设是否为真，我们都将有该估计量。</p>
 <div id="def-10_3_1" class="theorem definition">
 <p><span class="theorem-title"><strong>定义 10.1</strong></span> <strong>组内平方和</strong>（<em>within samples sum of squares</em>）</p>
 <p><span class="math inline">\(SS_W = \sum_{i=1}^{m} \sum_{j=1}^{n} (X_{ij} - X_{i.})^2\)</span></p>
-<p>因为 <span class="math inline">\(SS_W\)</span> 是利用样本均值代替 <a href="#eq-10_3_1" class="quarto-xref">式&nbsp;<span>10.3</span></a> 中的总体均值而得到的统计量，因此，我们称 <span class="math inline">\(SS_W\)</span> 为 <strong>组内平方和</strong>（<em>within samples sum of squares</em>）。</p>
+<p>因为 <span class="math inline">\(SS_W\)</span> 是利用样本均值代替 <a href="#eq-10_3_1" class="quarto-xref">方程式&nbsp;<span>10.3</span></a> 中的总体均值而得到的统计量，因此，我们称 <span class="math inline">\(SS_W\)</span> 为 <strong>组内平方和</strong>（<em>within samples sum of squares</em>）。</p>
 <p><span class="math inline">\(\frac{SS_W}{nm - m}\)</span> 是 <span class="math inline">\(\sigma^2\)</span> 的一个估计量。<span class="math inline">\(\blacksquare\)</span></p>
 </div>
 <p>方差 <span class="math inline">\(\sigma^2\)</span> 的第二个估计量是只有在原假设为真时的估计量。假设 <span class="math inline">\(H_0\)</span> 为真，因此所有总体均值 <span class="math inline">\(\mu_i\)</span> 相等，即 <span class="math inline">\(\mu_i = \mu\)</span>。此时，所有 <span class="math inline">\(m\)</span> 个样本均值 <span class="math inline">\(X_1., X_2., \dots, X_m.\)</span> 都将具有相同的均值 <span class="math inline">\(\mu\)</span> 和相同的方差 <span class="math inline">\(\sigma^2/n\)</span>。因此，对 <span class="math inline">\(X_i.\)</span> 标准化后的随机变量 <span class="math inline">\(\frac{X_i. - \mu}{\sqrt{\sigma^2 / n}} = \frac{\sqrt{n}(X_i. - \mu)}{\sigma}\)</span> 的平方和是一个自由度为 <span class="math inline">\(m\)</span> 的卡方分布随机变量。</p>
@@ -496,7 +494,7 @@ window.Quarto = {
 \tag{10.5}\]</span></span></p>
 <p>当所有的总体均值都等于 <span class="math inline">\(\mu\)</span> 时，<span class="math inline">\(\mu\)</span> 的估计量是所有 <span class="math inline">\(nm\)</span> 个数据值的平均值。也就是说，<span class="math inline">\(\mu\)</span> 的估计量是 <span class="math inline">\(X_{..}\)</span>，即：</p>
 <p><span class="math inline">\(X_{..} = \frac{1}{nm} \sum_{i=1}^{m} \sum_{j=1}^{n} X_{ij} = \frac{1}{m} \sum_{i=1}^{m} X_i.\)</span></p>
-<p>用 <span class="math inline">\(X_{..}\)</span> 代替 <a href="#eq-10_3_3" class="quarto-xref">式&nbsp;<span>10.5</span></a> 中的位置参数 <span class="math inline">\(\mu\)</span>，则当 <span class="math inline">\(H_0\)</span> 为真时，有：</p>
+<p>用 <span class="math inline">\(X_{..}\)</span> 代替 <a href="#eq-10_3_3" class="quarto-xref">方程式&nbsp;<span>10.5</span></a> 中的位置参数 <span class="math inline">\(\mu\)</span>，则当 <span class="math inline">\(H_0\)</span> 为真时，有：</p>
 <p><span class="math inline">\(\frac{n \sum_{i=1}^{m} {(X_i. - X_{..})^2}}{\sigma^2} \sim \chi_{m-1}^2\)</span></p>
 <p>如果我们定义 <span class="math inline">\(SS_B\)</span> 为</p>
 <p><span class="math inline">\(SS_B = n \sum_{i=1}^{m} (X_i. - X_{..})^2\)</span></p>
@@ -554,8 +552,8 @@ E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
 </div>
 </div>
 <div id="exr-10_3_a" class="theorem exercise">
-<p><span class="theorem-title"><strong>习题 10.1</strong></span> 一家汽车租赁公司使用 15 台相同的发动机在固定速度下测试 3 种不同的汽油品牌。每种汽油品牌都分配了其中的 5 台发动机，并且每台发动机分配了10 加仑汽油。以下的数据表示了不同发动机在汽油耗尽时所获得的总里程数：</p>
-<table class="caption-top table">
+<p><span class="theorem-title"><strong>练习 10.1</strong></span> 一家汽车租赁公司使用 15 台相同的发动机在固定速度下测试 3 种不同的汽油品牌。每种汽油品牌都分配了其中的 5 台发动机，并且每台发动机分配了10 加仑汽油。以下的数据表示了不同发动机在汽油耗尽时所获得的总里程数：</p>
+<table class="table">
 <thead>
 <tr class="header">
 <th>汽油品牌</th>
@@ -580,9 +578,9 @@ E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
 <p>在 5% 的显著性水平下，检验假设：发动机的平均里程不受汽油品牌的影响。</p>
 </div>
 <div id="sol-10_3_a" class="proof solution">
-<p><span class="proof-title"><em>解 10.1</em>. </span>我们手动计算 <a href="#exr-10_3_a" class="quarto-xref">习题&nbsp;<span>10.1</span></a> 的结果。</p>
+<p><span class="proof-title"><em>答案 10.1</em>. </span>我们手动计算 <a href="#exr-10_3_a" class="quarto-xref">练习&nbsp;<span>10.1</span></a> 的结果。</p>
 <p>首先需要注意的是，每个数据值减去一个常数不会影响检验统计量的值。因此，我们从每个数据值中减去 220，得到以下信息：</p>
-<table class="caption-top table">
+<table class="table">
 <thead>
 <tr class="header">
 <th>汽油品牌</th>
@@ -668,14 +666,14 @@ E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
 <p>在倒数第二个等式中，<span class="math inline">\(\sum_{i=1}^{m} \frac{(Y_i - Y_{.})^2}{(m-1)}\)</span> 是总体方差 <span class="math inline">\(\frac{\sigma^2}{n}\)</span> 的无偏估计量，并且最后一个等式是因为 <span class="math inline">\(E[Y_i - Y_{.}] = E[Y_i] - E[Y_{.}] = \mu_. - \mu_. = 0\)</span>。最后，在结果的等式两边都除以 <span class="math inline">\(m-1\)</span> 得到：</p>
 <p><span class="math inline">\(E\left[\frac{\sum_{i=1}^{m} (X_{i.} - X_{..})^2}{m-1}\right] = \frac{\sigma^2}{n} + \frac{\sum_{i=1}^{m} (\mu_i - \mu_.)^2}{(m-1)}\)</span></p>
 <p>因为 <span class="math inline">\(\sum_{i=1}^{m} (\mu_i - \mu_.)^2 \geq 0\)</span>，当且仅当所有 <span class="math inline">\(\mu_i\)</span> 相等时等号成立，所以 <span class="math inline">\(E\left[\frac{SS_B}{m-1}\right] \geq \sigma^2\)</span>。</p>
-<p><a href="#tbl-10_1" class="quarto-xref">表&nbsp;<span>10.1</span></a> 总结了本节的结果：</p>
-<div id="tbl-10_1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<p><a href="#tbl-10_1" class="quarto-xref">表格&nbsp;<span>10.1</span></a> 总结了本节的结果：</p>
+<div id="tbl-10_1" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-表&nbsp;10.1: 单因素方差分析表；在显著性水平 <span class="math inline">\(\alpha\)</span> 下的检验，当 <span class="math inline">\(TS \geq F_{\alpha, m-1, nm-m}\)</span> 时拒绝 <span class="math inline">\(H_0\)</span>，否则不拒绝 <span class="math inline">\(H_0\)</span>；如果 <span class="math inline">\(TS = v\)</span>，则 <span class="math inline">\(p-\text{value} = P\{F_{m-1, nm-m} \geq v\}\)</span>
+表格&nbsp;10.1: 单因素方差分析表；在显著性水平 <span class="math inline">\(\alpha\)</span> 下的检验，当 <span class="math inline">\(TS \geq F_{\alpha, m-1, nm-m}\)</span> 时拒绝 <span class="math inline">\(H_0\)</span>，否则不拒绝 <span class="math inline">\(H_0\)</span>；如果 <span class="math inline">\(TS = v\)</span>，则 <span class="math inline">\(p-\text{value} = P\{F_{m-1, nm-m} \geq v\}\)</span>
 </figcaption>
 <div aria-describedby="tbl-10_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 20%">
 <col style="width: 20%">
@@ -821,7 +819,7 @@ E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
 [2,]  5.5    9  6.5</code></pre>
 </div>
 </div>
-<p>接下来，我们将使用 R 来解决 <a href="#exr-10_3_a" class="quarto-xref">习题&nbsp;<span>10.1</span></a> 中所示的单因素方差分析问题。</p>
+<p>接下来，我们将使用 R 来解决 <a href="#exr-10_3_a" class="quarto-xref">练习&nbsp;<span>10.1</span></a> 中所示的单因素方差分析问题。</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>gas1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">220</span>, <span class="dv">251</span>, <span class="dv">226</span>, <span class="dv">246</span>, <span class="dv">260</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>gas2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">244</span>, <span class="dv">235</span>, <span class="dv">232</span>, <span class="dv">242</span>, <span class="dv">225</span>)</span>
@@ -850,10 +848,10 @@ E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
 <p><span class="math inline">\(X_i. - X_j. - W &lt; \mu_i - \mu_j &lt; X_i. - X_j. + W\)</span></p>
 <p>其中，</p>
 <p><span class="math inline">\(W = \frac{1}{\sqrt{n}}C(m, nm - m, \alpha)\sqrt{\frac{SS_W}{nm - m}}\)</span></p>
-<p>并且，附录中的 <a href="../appendices.html#tbl-A_2" class="quarto-xref">表&nbsp;<span>A.1</span></a> 给出了 <span class="math inline">\(\alpha = 0.05\)</span> 和 <span class="math inline">\(\alpha = 0.01\)</span> 时，<span class="math inline">\(C(m, nm - m, \alpha)\)</span> 的值。</p>
+<p>并且，附录中的 <a href="../appendices.html#tbl-A_2" class="quarto-xref">表格&nbsp;<span>A.1</span></a> 给出了 <span class="math inline">\(\alpha = 0.05\)</span> 和 <span class="math inline">\(\alpha = 0.01\)</span> 时，<span class="math inline">\(C(m, nm - m, \alpha)\)</span> 的值。</p>
 <div id="exr-10_3_b" class="theorem exercise">
-<p><span class="theorem-title"><strong>习题 10.2</strong></span> 某大学声称，对于该大学而言，来自三个不同高中的学生的第一学年的平均成绩没有差异。下表给出了随机选择的 12 名学生的第一学年的平均成绩，其中每个高中选取 4 名学生。假设显著性水平为 5%，这些数据是否推翻了该大学的主张？如果是，请确定来自不同高中的学生的平均成绩之间的差异的置信区间，以便我们可以在 95% 的置信水平下相信所有的置信区间都是成立的。</p>
-<table class="caption-top table">
+<p><span class="theorem-title"><strong>练习 10.2</strong></span> 某大学声称，对于该大学而言，来自三个不同高中的学生的第一学年的平均成绩没有差异。下表给出了随机选择的 12 名学生的第一学年的平均成绩，其中每个高中选取 4 名学生。假设显著性水平为 5%，这些数据是否推翻了该大学的主张？如果是，请确定来自不同高中的学生的平均成绩之间的差异的置信区间，以便我们可以在 95% 的置信水平下相信所有的置信区间都是成立的。</p>
+<table class="table">
 <thead>
 <tr class="header">
 <th>学校 1</th>
@@ -886,7 +884,7 @@ E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
 </table>
 </div>
 <div id="sol-10_3_b" class="proof solution">
-<p><span class="proof-title"><em>解 10.2</em>. </span>首先，共有 <span class="math inline">\(m = 3\)</span> 个样本，每个样本的大小为 <span class="math inline">\(n = 4\)</span>。使用 R 进行计算得到的结果如下：</p>
+<p><span class="proof-title"><em>答案 10.2</em>. </span>首先，共有 <span class="math inline">\(m = 3\)</span> 个样本，每个样本的大小为 <span class="math inline">\(n = 4\)</span>。使用 R 进行计算得到的结果如下：</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>school1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2</span>, <span class="fl">3.4</span>, <span class="fl">3.3</span>, <span class="fl">3.5</span>)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>school2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.4</span>, <span class="fl">3.0</span>, <span class="fl">3.7</span>, <span class="fl">3.3</span>)</span>
@@ -910,7 +908,7 @@ E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
 <p>因此，我们会拒绝：来自三个高中的学生在第一学年的平均成绩相等的假设。</p>
 <p>为了确定总体均值差异的置信区间，首先注意到样本均值为：</p>
 <p><span class="math inline">\(X_1 = 3.350, \quad X_2 = 3.350, \quad X_3 = 2.775\)</span></p>
-<p>从附录 <a href="../appendices.html#tbl-A_2" class="quarto-xref">表&nbsp;<span>A.1</span></a> 中，我们看到 <span class="math inline">\(C(3, 9, 0.05) = 3.95\)</span>，因此 <span class="math inline">\(W = \frac{3.95}{\sqrt{4}} \cdot \sqrt{0.0431} = 0.410\)</span>，我们得到以下置信区间：</p>
+<p>从附录 <a href="../appendices.html#tbl-A_2" class="quarto-xref">表格&nbsp;<span>A.1</span></a> 中，我们看到 <span class="math inline">\(C(3, 9, 0.05) = 3.95\)</span>，因此 <span class="math inline">\(W = \frac{3.95}{\sqrt{4}} \cdot \sqrt{0.0431} = 0.410\)</span>，我们得到以下置信区间：</p>
 <p><span class="math inline">\(\begin{align} -0.410 &lt; &amp;\mu_1 - \mu_2 &lt; 0.410 \\ 0.165 &lt; &amp;\mu_1 - \mu_3 &lt; 0.985 \\ 0.165 &lt; &amp;\mu_2 - \mu_3 &lt; 0.985 \end{align}\)</span></p>
 <p>因此，在 95% 的置信水平下，我们可以得出结论：</p>
 <ul>
@@ -966,10 +964,10 @@ E\left[\frac{SS_B}{(m - 1)}\right] = \sigma^2
 </section>
 <section id="sec-10_4" class="level2" data-number="10.4">
 <h2 data-number="10.4" class="anchored" data-anchor-id="sec-10_4"><span class="header-section-number">10.4</span> 双因素方差分析：引言和参数估计</h2>
-<p>虽然我们可以用 <a href="#sec-10_3" class="quarto-xref"><span>小节 10.3</span></a> 中的模型研究数据集中的单个因素的影响，但我们还可以研究多个因素的影响。在本节中，我们假设每个数据值都受到两个因素的影响。</p>
+<p>虽然我们可以用 <a href="#sec-10_3" class="quarto-xref"><span>章节 10.3</span></a> 中的模型研究数据集中的单个因素的影响，但我们还可以研究多个因素的影响。在本节中，我们假设每个数据值都受到两个因素的影响。</p>
 <div id="exm-10_4_a" class="theorem example">
-<p><span class="theorem-title"><strong>例 10.1</strong></span> 对 5 名学生进行了 4 种不同标准的阅读测试，测试的结果如下表所示。表中的 20 个数据受到两个因素的影响：考试因素和学生因素。考试因素有 4 个可能的取值或 <strong>水平</strong>（<em>levels</em>），学生因素有 5 个可能的取值或 <strong>水平</strong>（<em>levels</em>）。</p>
-<table class="caption-top table">
+<p><span class="theorem-title"><strong>例子 10.1</strong></span> 对 5 名学生进行了 4 种不同标准的阅读测试，测试的结果如下表所示。表中的 20 个数据受到两个因素的影响：考试因素和学生因素。考试因素有 4 个可能的取值或 <strong>水平</strong>（<em>levels</em>），学生因素有 5 个可能的取值或 <strong>水平</strong>（<em>levels</em>）。</p>
+<table class="table">
 <thead>
 <tr class="header">
 <th>考试标准</th>
@@ -1027,8 +1025,8 @@ X_{m1} &amp; X_{m2} &amp; \dots &amp; X_{mj} &amp; \dots &amp; X_{mn}
 \end{matrix}
 \]</span></p>
 <p>因此，我们称第一个因素为 “行” 因素，称第二个因素为 “列” 因素。</p>
-<p>如 <a href="#sec-10_3" class="quarto-xref"><span>小节 10.3</span></a> 中，我们假设数据 <span class="math inline">\(X_{ij}, i = 1, \dots, m; j = 1, \dots, n\)</span> 是具有相同方差 <span class="math inline">\(\sigma^2\)</span> 的独立正态分布随机变量。然而，在第 <a href="#sec-10_3" class="quarto-xref"><span>小节 10.3</span></a> 中，我们假设，只有一个因素（即它所属样本的均值）会影响数据点的均值。而在本节中，我们则假设，数据点的均值以 <strong>加性方式</strong>（<em>additive manner</em>）取决于其所在的行和列。</p>
-<p>在 <a href="#sec-10_3" class="quarto-xref"><span>小节 10.3</span></a> 的模型中，我们令 <span class="math inline">\(X_{ij}\)</span> 表示第 <span class="math inline">\(i\)</span> 个样本中第 <span class="math inline">\(j\)</span> 个成员的值，那么模型可以符号化表示为：</p>
+<p>如 <a href="#sec-10_3" class="quarto-xref"><span>章节 10.3</span></a> 中，我们假设数据 <span class="math inline">\(X_{ij}, i = 1, \dots, m; j = 1, \dots, n\)</span> 是具有相同方差 <span class="math inline">\(\sigma^2\)</span> 的独立正态分布随机变量。然而，在第 <a href="#sec-10_3" class="quarto-xref"><span>章节 10.3</span></a> 中，我们假设，只有一个因素（即它所属样本的均值）会影响数据点的均值。而在本节中，我们则假设，数据点的均值以 <strong>加性方式</strong>（<em>additive manner</em>）取决于其所在的行和列。</p>
+<p>在 <a href="#sec-10_3" class="quarto-xref"><span>章节 10.3</span></a> 的模型中，我们令 <span class="math inline">\(X_{ij}\)</span> 表示第 <span class="math inline">\(i\)</span> 个样本中第 <span class="math inline">\(j\)</span> 个成员的值，那么模型可以符号化表示为：</p>
 <p><span class="math inline">\(E[X_{ij}] = \mu_i\)</span></p>
 <p>如果我们令 <span class="math inline">\(\mu\)</span> 表示 <span class="math inline">\(\mu_i\)</span> 的平均值，即</p>
 <p><span class="math inline">\(\mu = \frac{1}{m} \sum_{i=1}^{m} \mu_i\)</span></p>
@@ -1089,8 +1087,8 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 <p><span class="math inline">\(\blacksquare\)</span></p>
 </div>
 <div id="exr-10_4_b" class="theorem exercise">
-<p><span class="theorem-title"><strong>习题 10.3</strong></span> 下表的数据来自 <a href="#exm-10_4_a" class="quarto-xref">例&nbsp;<span>10.1</span></a>，请使用这些数据估计模型的参数。</p>
-<table class="caption-top table">
+<p><span class="theorem-title"><strong>练习 10.3</strong></span> 下表的数据来自 <a href="#exm-10_4_a" class="quarto-xref">例子&nbsp;<span>10.1</span></a>，请使用这些数据估计模型的参数。</p>
+<table class="table">
 <colgroup>
 <col style="width: 12%">
 <col style="width: 12%">
@@ -1178,7 +1176,7 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 </table>
 </div>
 <div id="sol-10_4_b" class="proof solution">
-<p><span class="proof-title"><em>解 10.3</em>. </span>估计量为：</p>
+<p><span class="proof-title"><em>答案 10.3</em>. </span>估计量为：</p>
 <p><span class="math inline">\(\hat{\mu} = 74\)</span></p>
 <p><span class="math inline">\(\hat{\alpha_1} = 72.8 - 74 = -1.2 \quad \hat{\beta_1} = 76.5 - 74 = 2.5\)</span></p>
 <p><span class="math inline">\(\hat{\alpha_2} = 75 - 74 = 1 \quad \hat{\beta_2} = 70 - 74 = -4\)</span></p>
@@ -1225,7 +1223,7 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 <p>我们称统计量 <span class="math inline">\(SS_e\)</span> 为 <strong>误差平方和</strong>：</p>
 <p><span class="math inline">\(SS_e = \sum_{i=1}^{m} \sum_{j=1}^{n} (X_{ij} - X_{i.} - X_{.j} + X_{..})^2\)</span> <span class="math inline">\(\blacksquare\)</span></p>
 </div>
-<p>如果我们认为某个值与我们所估计的均值之间的差异是“误差”（<em>error</em>），那么 <span class="math inline">\(SS_e\)</span> 就等于这些误差的平方的总和。由于 <span class="math inline">\(SS_e / \sigma^2\)</span> 就是 <a href="#eq-10_5_1" class="quarto-xref">式&nbsp;<span>10.8</span></a>，所以我们知道 <span class="math inline">\(SS_e / \sigma^2\)</span> 是一个自由度为 <span class="math inline">\((n-1)(m-1)\)</span> 的卡方分布随机变量。因为卡方分布随机变量的期望值等于其自由度，所以：</p>
+<p>如果我们认为某个值与我们所估计的均值之间的差异是“误差”（<em>error</em>），那么 <span class="math inline">\(SS_e\)</span> 就等于这些误差的平方的总和。由于 <span class="math inline">\(SS_e / \sigma^2\)</span> 就是 <a href="#eq-10_5_1" class="quarto-xref">方程式&nbsp;<span>10.8</span></a>，所以我们知道 <span class="math inline">\(SS_e / \sigma^2\)</span> 是一个自由度为 <span class="math inline">\((n-1)(m-1)\)</span> 的卡方分布随机变量。因为卡方分布随机变量的期望值等于其自由度，所以：</p>
 <p><span class="math inline">\(E[SS_e/\sigma^2] = (n-1)(m-1)\)</span></p>
 <p>即：</p>
 <p><span class="math inline">\(E\left[\frac{SS_e}{(n-1)(m-1)}\right] = \sigma^2\)</span></p>
@@ -1263,14 +1261,14 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 <p><span class="math inline">\(\begin{align} \text{拒绝} \quad &amp;H_0, \quad \text{如果} \ TS \geq F_{\alpha, m-1, (n-1)(m-1)} \\ \text{不拒绝} \quad &amp;H_0, \quad \text{否则}\end{align}\)</span></p>
 <p>或者，可以通过计算检验统计量 <span class="math inline">\(v\)</span> 的 <span class="math inline">\(p-\text{value}\)</span> 来进行检验：</p>
 <p><span class="math inline">\(p-\text{value} = P(F_{m-1,(n-1)(m-1)} \geq v)\)</span></p>
-<p>类似的，我们同样可以使用如上的方法检验列效应的原假设，即检验所有的 <span class="math inline">\(\beta_j = 0\)</span> 的原假设。<a href="#tbl-10_2" class="quarto-xref">表&nbsp;<span>10.2</span></a> 和 <a href="#tbl-10_2_1" class="quarto-xref">表&nbsp;<span>10.3</span></a> 对本节介绍的 <strong>行效应</strong> 和 <strong>列效应</strong> 的假设检验方法进行了总结。同时，可以使用 R 来计算相关的 <span class="math inline">\(p-\text{value}\)</span>。</p>
-<div id="tbl-10_2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<p>类似的，我们同样可以使用如上的方法检验列效应的原假设，即检验所有的 <span class="math inline">\(\beta_j = 0\)</span> 的原假设。<a href="#tbl-10_2" class="quarto-xref">表格&nbsp;<span>10.2</span></a> 和 <a href="#tbl-10_2_1" class="quarto-xref">表格&nbsp;<span>10.3</span></a> 对本节介绍的 <strong>行效应</strong> 和 <strong>列效应</strong> 的假设检验方法进行了总结。同时，可以使用 R 来计算相关的 <span class="math inline">\(p-\text{value}\)</span>。</p>
+<div id="tbl-10_2" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-表&nbsp;10.2: 行平方和，列平方和以及误差平方和
+表格&nbsp;10.2: 行平方和，列平方和以及误差平方和
 </figcaption>
 <div aria-describedby="tbl-10_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 33%">
 <col style="width: 33%">
@@ -1304,13 +1302,13 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 </div>
 </figure>
 </div>
-<div id="tbl-10_2_1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-10_2_1" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10_2_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-表&nbsp;10.3: 双因素方差分析（<em>Two-Factor ANOVA</em>），<span class="math inline">\(N = (n-1)(m-1)\)</span>
+表格&nbsp;10.3: 双因素方差分析（<em>Two-Factor ANOVA</em>），<span class="math inline">\(N = (n-1)(m-1)\)</span>
 </figcaption>
 <div aria-describedby="tbl-10_2_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 25%">
 <col style="width: 25%">
@@ -1344,21 +1342,21 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 </figure>
 </div>
 <div id="exm-10_5_a" class="theorem example">
-<p><span class="theorem-title"><strong>例 10.2</strong></span> 以下数据表示在热排放附近的 6 个站点收集的、大型无脊椎动物的不同种类的数量，数据收集的时间为 1970 年至 1977 年。</p>
+<p><span class="theorem-title"><strong>例子 10.2</strong></span> 以下数据表示在热排放附近的 6 个站点收集的、大型无脊椎动物的不同种类的数量，数据收集的时间为 1970 年至 1977 年。</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-注记
+注释
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>热排放通常是指来自工业设施（如发电厂、工厂或其他热力系统）的废热，通常以温水或蒸汽的形式排放到附近的水体或空气中。因为水温的上升可能改变栖息地的条件，影响物种的多样性和数量，所以这种排放可能会对周围的环境、生态系统以及水生生物产生影响。</p>
 </div>
 </div>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 8%">
 <col style="width: 15%">
@@ -1503,7 +1501,7 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 </section>
 <section id="sec-10_6" class="level2" data-number="10.6">
 <h2 data-number="10.6" class="anchored" data-anchor-id="sec-10_6"><span class="header-section-number">10.6</span> 有交互效应的双因素方差分析</h2>
-<p>在 <a href="#sec-10_4" class="quarto-xref"><span>小节 10.4</span></a> 和 <a href="#sec-10_5" class="quarto-xref"><span>小节 10.5</span></a> 中，我们讨论了观察数据的分布依赖于两个因素——称之为 <strong>行因素</strong> 和 <strong>列因素</strong>——的场景。具体来说，我们假设 <span class="math inline">\(X_{ij}\)</span> 的均值可以表示为两部分的和——一部分取决于数据所在的行，另一部分取决于数据所在的列。即我们假设</p>
+<p>在 <a href="#sec-10_4" class="quarto-xref"><span>章节 10.4</span></a> 和 <a href="#sec-10_5" class="quarto-xref"><span>章节 10.5</span></a> 中，我们讨论了观察数据的分布依赖于两个因素——称之为 <strong>行因素</strong> 和 <strong>列因素</strong>——的场景。具体来说，我们假设 <span class="math inline">\(X_{ij}\)</span> 的均值可以表示为两部分的和——一部分取决于数据所在的行，另一部分取决于数据所在的列。即我们假设</p>
 <p><span class="math inline">\(X_{ij} \sim \mathcal{N}(\mu + \alpha_i + \beta_j, \sigma^2), \quad i = 1, \ldots, m, \quad j = 1, \ldots, n\)</span></p>
 <p>然而，上述模型的问题是：上述模型总是假设 <strong>行因素</strong> 和 <strong>列因素</strong> 的效应是可加的，它不允许 <strong>行因素</strong> 和 <strong>列因素</strong> 之间存在 <strong>交互效应</strong>。</p>
 <p>例如，考虑如下的实验，在该实验中，我们需要比较四个不同的工人在使用三台不同机器时，生产的次品数量的均值。在分析结果时，我们可能假设，对于不同的工人而言，使用某台机器产生的次品数量的增量是相同的。但是，也存在如下的可能：同一机器对于不同工人而言所产生的次品数量的增量并不一致，也就是说，可能存在 <span class="math inline">\(\text{工人-机器}\)</span> 的 <strong>交互效应</strong>（<em>interation</em>）。而在加性模型中，不允许存在这种 <strong>交互效应</strong>。</p>
@@ -1543,7 +1541,7 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 <p>我们将对上述参数进行估计，并检验以下原假设：</p>
 <p><span class="math inline">\(\begin{align} H_0^r: \alpha_i &amp;= 0, \quad \text{for all} \ i \\ H_0^c: \beta_j &amp;= 0, \quad \text{for all} \ j \\ H_0^{int}: \gamma_{ij} &amp;= 0, \quad \text{for all} \ i, j \end{align}\)</span></p>
 <p>也就是说，<span class="math inline">\(H_0^r\)</span> 是没有行效应的假设，<span class="math inline">\(H_0^c\)</span> 是没有列效应的假设，<span class="math inline">\(H_0^{int}\)</span> 是没有行和列之间交互效应的假设。</p>
-<p>根据 <a href="#eq-10_6_1" class="quarto-xref">式&nbsp;<span>10.9</span></a> 和 <span class="math inline">\(E[X_{ijk}] = \mu_{ij} = \mu + \alpha_i + \beta_j + \gamma_{ij}\)</span> 可以得到：</p>
+<p>根据 <a href="#eq-10_6_1" class="quarto-xref">方程式&nbsp;<span>10.9</span></a> 和 <span class="math inline">\(E[X_{ijk}] = \mu_{ij} = \mu + \alpha_i + \beta_j + \gamma_{ij}\)</span> 可以得到：</p>
 <p><span class="math inline">\(\begin{align} E[X_{ij.}] &amp;= \mu_{ij} = \mu + \alpha_i + \beta_j + \gamma_{ij} \\ E[X_{i..}] &amp;= \mu + \alpha_i \\ E[X_{.j.}] &amp;= \mu + \beta_j \\ E[X_{...}] &amp;= \mu \end{align}\)</span></p>
 <p>因此，各参数的无偏估计量为：</p>
 <p><span class="math inline">\(\begin{align} \hat{\mu} &amp;= X_{...} \\ \hat{\beta}_j &amp;= X_{.j.} - X_{...} \\ \hat{\alpha}_i &amp;= X_{i..} - X_{...} \\ \hat{\gamma}_{ij} &amp;= X_{ij.} - \hat{\mu} - \hat{\beta}_j - \hat{\alpha}_i = X_{ij.} - X_{i..} - X_{.j.} + X_{...} \end{align}\)</span></p>
@@ -1593,14 +1591,14 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 <p><span class="math inline">\(\begin{align} \text{拒绝} \quad &amp; H_0^r \quad \text{如果} \quad \frac{SS_r/(m-1)}{SS_e/[nm(l-1)]} &gt; F_{\alpha, m-1, nm(l-1)} \\ \text{不拒绝} \quad &amp; H_0^r \quad \text{否则} \end{align}\)</span></p>
 <p>如果令：<span class="math inline">\(\frac{SS_r/(m-1)}{SS_e/[nm(l-1)]} = v\)</span>，则 <span class="math inline">\(p-\text{value}\)</span> 为：</p>
 <p><span class="math inline">\(p\text{-value} = P\{F_{m-1, nm(l-1)} &gt; v\}\)</span></p>
-<p>同理，也可以得到 <span class="math inline">\(H_0 : \beta_j = 0\)</span> 的检验结果。<a href="#tbl-10_3" class="quarto-xref">表&nbsp;<span>10.4</span></a> 对本节的 <strong>方差分析</strong>（<em>ANOVA</em>）相关信息进行了总结。</p>
-<div id="tbl-10_3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<p>同理，也可以得到 <span class="math inline">\(H_0 : \beta_j = 0\)</span> 的检验结果。<a href="#tbl-10_3" class="quarto-xref">表格&nbsp;<span>10.4</span></a> 对本节的 <strong>方差分析</strong>（<em>ANOVA</em>）相关信息进行了总结。</p>
+<div id="tbl-10_3" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-表&nbsp;10.4: 对于 <span class="math inline">\(m\)</span> 行 <span class="math inline">\(n\)</span> 列的每个 <span class="math inline">\(X_{ij}\)</span> 都有 <span class="math inline">\(l\)</span> 个观察数据时的双因素方差分析，其中 <span class="math inline">\(N=nm(l-1)\)</span>
+表格&nbsp;10.4: 对于 <span class="math inline">\(m\)</span> 行 <span class="math inline">\(n\)</span> 列的每个 <span class="math inline">\(X_{ij}\)</span> 都有 <span class="math inline">\(l\)</span> 个观察数据时的双因素方差分析，其中 <span class="math inline">\(N=nm(l-1)\)</span>
 </figcaption>
 <div aria-describedby="tbl-10_3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 3%">
 <col style="width: 7%">
@@ -1659,8 +1657,8 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 </div>
 <p>注意，对于前面介绍的所有的检验而言，只有在相关的 <span class="math inline">\(F-\text{统计量}\)</span> 较大时，我们才会拒绝原假设。因为当 <span class="math inline">\(H_0\)</span> 不成立时，<span class="math inline">\(F-\text{统计量}\)</span> 的分子的分布往往会变大；而不论 <span class="math inline">\(H_0\)</span> 是否成立，<span class="math inline">\(F-\text{统计量}\)</span> 的分母的分布都是相同的。所以只有较大的（而不是较小的）<span class="math inline">\(F-\text{统计量}\)</span> 的值才会让我们拒绝原假设。</p>
 <div id="exr-10_6_a" class="theorem exercise">
-<p><span class="theorem-title"><strong>习题 10.4</strong></span> 我们认为，某种特定类型的发电机的寿命会受到所使用的材料以及所使用场所的温度的影响。下表显示了由三种不同材料制造的发电机在两种不同温度下使用时的 24 台发电机的寿命数据。该数据是否可以表明，发电机的材料和工作场所的温度确实会影响发电机的寿命？是否有证据可以表明材料和工作场所的温度对发电机的寿命存在交互效应？</p>
-<table class="caption-top table">
+<p><span class="theorem-title"><strong>练习 10.4</strong></span> 我们认为，某种特定类型的发电机的寿命会受到所使用的材料以及所使用场所的温度的影响。下表显示了由三种不同材料制造的发电机在两种不同温度下使用时的 24 台发电机的寿命数据。该数据是否可以表明，发电机的材料和工作场所的温度确实会影响发电机的寿命？是否有证据可以表明材料和工作场所的温度对发电机的寿命存在交互效应？</p>
+<table class="table">
 <thead>
 <tr class="header">
 <th>材料</th>
@@ -1688,7 +1686,7 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 </table>
 </div>
 <div id="sol-10_6_a" class="proof solution">
-<p><span class="proof-title"><em>解 10.4</em>. </span>计算得出用于检验材料和温度之间没有交互效应的 <span class="math inline">\(F-\text{统计量}\)</span> 的值为 0.64525，其 <span class="math inline">\(p-\text{value}\)</span> 为：</p>
+<p><span class="proof-title"><em>答案 10.4</em>. </span>计算得出用于检验材料和温度之间没有交互效应的 <span class="math inline">\(F-\text{统计量}\)</span> 的值为 0.64525，其 <span class="math inline">\(p-\text{value}\)</span> 为：</p>
 <p><span class="math inline">\(p-\text{value} = P(F_{2,18} &gt; 0.64525) &gt; 1 - pf(0.64525, 2, 18)\)</span></p>
 <div class="cell">
 <details class="code-fold">
@@ -1734,242 +1732,228 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/wangwei1237\.github\.io\/introduction_to_probability_and_statistics\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
     };
-    anchorJS.add('.anchored');
-    const isCodeAnnotation = (el) => {
-      for (const clz of el.classList) {
-        if (clz.startsWith('code-annotation-')) {                     
-          return true;
-        }
-      }
-      return false;
+    if (contentFn) {
+      config.content = contentFn;
     }
-    const onCopySuccess = function(e) {
-      // button target
-      const button = e.trigger;
-      // don't keep focus
-      button.blur();
-      // flash "checked"
-      button.classList.add('code-copy-button-checked');
-      var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "已复制");
-      let tooltip;
-      if (window.bootstrap) {
-        button.setAttribute("data-bs-toggle", "tooltip");
-        button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "已复制");
-        tooltip = new bootstrap.Tooltip(button, 
-          { trigger: "manual", 
-            customClass: "code-copy-button-tooltip",
-            offset: [0, -8]});
-        tooltip.show();    
-      }
-      setTimeout(function() {
-        if (tooltip) {
-          tooltip.hide();
-          button.removeAttribute("data-bs-title");
-          button.removeAttribute("data-bs-toggle");
-          button.removeAttribute("data-bs-placement");
-        }
-        button.setAttribute("title", currentTitle);
-        button.classList.remove('code-copy-button-checked');
-      }, 1000);
-      // clear code selection
-      e.clearSelection();
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
     }
-    const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
-        }
-        return codeEl.innerText;
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
     }
-    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-      text: getTextToCopy
-    });
-    clipboard.on('success', onCopySuccess);
-    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-        text: getTextToCopy,
-        container: window.document.getElementById('quarto-embedded-source-code-modal')
-      });
-      clipboardModal.on('success', onCopySuccess);
-    }
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/wangwei1237\.github\.io\/introduction_to_probability_and_statistics\/");
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
-          }
-        }
-      }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'quarto',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config); 
-    }
-    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-    for (var i=0; i<noterefs.length; i++) {
-      const ref = noterefs[i];
-      tippyHover(ref, function() {
-        // use id or data attribute instead here
-        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-        try { href = new URL(href).hash; } catch {}
-        const id = href.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note) {
-          return note.innerHTML;
-        } else {
-          return "";
-        }
-      });
-    }
-    const xrefs = window.document.querySelectorAll('a.quarto-xref');
-    const processXRef = (id, note) => {
-      // Strip column container classes
-      const stripColumnClz = (el) => {
-        el.classList.remove("page-full", "page-columns");
-        if (el.children) {
-          for (const child of el.children) {
-            stripColumnClz(child);
-          }
-        }
-      }
-      stripColumnClz(note)
-      if (id === null || id.startsWith('sec-')) {
-        // Special case sections, only their first couple elements
-        const container = document.createElement("div");
-        if (note.children && note.children.length > 2) {
-          container.appendChild(note.children[0].cloneNode(true));
-          for (let i = 1; i < note.children.length; i++) {
-            const child = note.children[i];
-            if (child.tagName === "P" && child.innerText === "") {
-              continue;
-            } else {
-              container.appendChild(child.cloneNode(true));
-              break;
-            }
-          }
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(container);
-          }
-          return container.innerHTML
-        } else {
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(note);
-          }
-          return note.innerHTML;
-        }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
       } else {
-        // Remove any anchor links if they are present
-        const anchorLink = note.querySelector('a.anchorjs-link');
-        if (anchorLink) {
-          anchorLink.remove();
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
         }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        if (note.classList.contains("callout")) {
-          return note.outerHTML;
-        } else {
-          return note.innerHTML;
-        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
       }
     }
-    for (var i=0; i<xrefs.length; i++) {
-      const xref = xrefs[i];
-      tippyHover(xref, undefined, function(instance) {
-        instance.disable();
-        let url = xref.getAttribute('href');
-        let hash = undefined; 
-        if (url.startsWith('#')) {
-          hash = url;
-        } else {
-          try { hash = new URL(url).hash; } catch {}
-        }
-        if (hash) {
-          const id = hash.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note !== null) {
-            try {
-              const html = processXRef(id, note.cloneNode(true));
-              instance.setContent(html);
-            } finally {
-              instance.enable();
-              instance.show();
-            }
-          } else {
-            // See if we can fetch this
-            fetch(url.split('#')[0])
-            .then(res => res.text())
-            .then(html => {
-              const parser = new DOMParser();
-              const htmlDoc = parser.parseFromString(html, "text/html");
-              const note = htmlDoc.getElementById(id);
-              if (note !== null) {
-                const html = processXRef(id, note);
-                instance.setContent(html);
-              } 
-            }).finally(() => {
-              instance.enable();
-              instance.show();
-            });
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
           }
         } else {
-          // See if we can fetch a full url (with no hash to target)
-          // This is a special case and we should probably do some content thinning / targeting
-          fetch(url)
+          // See if we can fetch this
+          fetch(url.split('#')[0])
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.querySelector('main.content');
+            const note = htmlDoc.getElementById(id);
             if (note !== null) {
-              // This should only happen for chapter cross references
-              // (since there is no id in the URL)
-              // remove the first header
-              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-                note.children[0].remove();
-              }
-              const html = processXRef(null, note);
+              const html = processXRef(id, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1977,161 +1961,185 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
             instance.show();
           });
         }
-      }, function(instance) {
-      });
-    }
-        let selectedAnnoteEl;
-        const selectorForAnnotation = ( cell, annotation) => {
-          let cellAttr = 'data-code-cell="' + cell + '"';
-          let lineAttr = 'data-code-annotation="' +  annotation + '"';
-          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-          return selector;
-        }
-        const selectCodeLines = (annoteEl) => {
-          const doc = window.document;
-          const targetCell = annoteEl.getAttribute("data-target-cell");
-          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-          const lineIds = lines.map((line) => {
-            return targetCell + "-" + line;
-          })
-          let top = null;
-          let height = null;
-          let parent = null;
-          if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
-            }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
-            }
-            selectedAnnoteEl = annoteEl;
-          }
-        };
-        const unselectCodeLines = () => {
-          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-          elementsIds.forEach((elId) => {
-            const div = window.document.getElementById(elId);
-            if (div) {
-              div.remove();
-            }
-          });
-          selectedAnnoteEl = undefined;
-        };
-          // Handle positioning of the toggle
-      window.addEventListener(
-        "resize",
-        throttle(() => {
-          elRect = undefined;
-          if (selectedAnnoteEl) {
-            selectCodeLines(selectedAnnoteEl);
-          }
-        }, 10)
-      );
-      function throttle(fn, ms) {
-      let throttle = false;
-      let timer;
-        return (...args) => {
-          if(!throttle) { // first call gets through
-              fn.apply(this, args);
-              throttle = true;
-          } else { // all the others get throttled
-              if(timer) clearTimeout(timer); // cancel #2
-              timer = setTimeout(() => {
-                fn.apply(this, args);
-                timer = throttle = false;
-              }, ms);
-          }
-        };
-      }
-        // Attach click handler to the DT
-        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-        for (const annoteDlNode of annoteDls) {
-          annoteDlNode.addEventListener('click', (event) => {
-            const clickedEl = event.target;
-            if (clickedEl !== selectedAnnoteEl) {
-              unselectCodeLines();
-              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-              if (activeEl) {
-                activeEl.classList.remove('code-annotation-active');
-              }
-              selectCodeLines(clickedEl);
-              clickedEl.classList.add('code-annotation-active');
-            } else {
-              // Unselect the line
-              unselectCodeLines();
-              clickedEl.classList.remove('code-annotation-active');
-            }
-          });
-        }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
       } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
             }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
         });
       }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
     }
-  });
-  </script>
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
 <script src="https://utteranc.es/client.js" repo="wangwei1237/introduction_to_probability_and_statistics" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 <nav class="page-navigation">
@@ -2154,7 +2162,7 @@ E[X_{.j} - X_{..}] &amp;= \beta_j
     </div>   
     <div class="nav-footer-center">
 <p>Copyright Wang Wei. All Rights Reserved.</p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_10/10.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>反馈问题</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_10/10.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
