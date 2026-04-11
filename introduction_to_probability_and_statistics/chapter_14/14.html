@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -335,9 +369,18 @@ window.Quarto = {
   <ul>
   <li><a href="#sec-14_1" id="toc-sec-14_1" class="nav-link active" data-scroll-target="#sec-14_1"><span class="header-section-number">14.1</span> 引言</a></li>
   <li><a href="#sec-14_2" id="toc-sec-14_2" class="nav-link" data-scroll-target="#sec-14_2"><span class="header-section-number">14.2</span> 失效率函数</a></li>
-  <li><a href="#the-exponential-distribution-in-life-testing." id="toc-the-exponential-distribution-in-life-testing." class="nav-link" data-scroll-target="#the-exponential-distribution-in-life-testing."><span class="header-section-number">14.3</span> The exponential distribution in life testing.</a></li>
-  <li><a href="#a-two-sample-problem" id="toc-a-two-sample-problem" class="nav-link" data-scroll-target="#a-two-sample-problem"><span class="header-section-number">14.4</span> A two-sample problem</a></li>
-  <li><a href="#the-weibull-distribution-in-life-testing" id="toc-the-weibull-distribution-in-life-testing" class="nav-link" data-scroll-target="#the-weibull-distribution-in-life-testing"><span class="header-section-number">14.5</span> The Weibull distribution in life testing</a></li>
+  <li><a href="#sec-14_3" id="toc-sec-14_3" class="nav-link" data-scroll-target="#sec-14_3"><span class="header-section-number">14.3</span> 寿命测试中的指数分布</a>
+  <ul class="collapse">
+  <li><a href="#sec-14_3_1" id="toc-sec-14_3_1" class="nav-link" data-scroll-target="#sec-14_3_1"><span class="header-section-number">14.3.1</span> 同时测试——在第 <span class="math inline">\(r\)</span> 次失效时停止</a></li>
+  <li><a href="#sec-14_3_2" id="toc-sec-14_3_2" class="nav-link" data-scroll-target="#sec-14_3_2"><span class="header-section-number">14.3.2</span> 序贯测试</a></li>
+  <li><a href="#sec-14_3_3" id="toc-sec-14_3_3" class="nav-link" data-scroll-target="#sec-14_3_3"><span class="header-section-number">14.3.3</span> 同时测试——在固定时间停止</a></li>
+  <li><a href="#sec-14_3_4" id="toc-sec-14_3_4" class="nav-link" data-scroll-target="#sec-14_3_4"><span class="header-section-number">14.3.4</span> 贝叶斯方法</a></li>
+  </ul></li>
+  <li><a href="#sec-14_4" id="toc-sec-14_4" class="nav-link" data-scroll-target="#sec-14_4"><span class="header-section-number">14.4</span> 双样本问题</a></li>
+  <li><a href="#sec-14_5" id="toc-sec-14_5" class="nav-link" data-scroll-target="#sec-14_5"><span class="header-section-number">14.5</span> 威布尔分布在寿命测试中的应用</a>
+  <ul class="collapse">
+  <li><a href="#sec-14_5_1" id="toc-sec-14_5_1" class="nav-link" data-scroll-target="#sec-14_5_1"><span class="header-section-number">14.5.1</span> 基于最小二乘法的参数估计</a></li>
+  </ul></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_14/14.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
@@ -367,7 +410,7 @@ window.Quarto = {
 <section id="sec-14_1" class="level2" data-number="14.1">
 <h2 data-number="14.1" class="anchored" data-anchor-id="sec-14_1"><span class="header-section-number">14.1</span> 引言</h2>
 <p>在本章节中，我们研究的总体将具有寿命（<em>lifetimes</em>）特性，我们假设样本的寿命为相互独立的随机变量，并且这些随机变量服从相同的、参数未知的分布。我们的研究重点就是利用现有数据来估计这些随机变量的参数。</p>
-<p>在 <a href="#sec-14_2" class="quarto-xref"><span>章节 14.2</span></a> 中，我们将介绍 <strong>失效率函数</strong>（<em>hazard rate function</em>）的概念，危险率函数是一个用于描述寿命分布的非常实用的工程概念。在 <span class="quarto-unresolved-ref">?sec-14_3</span> 中，我们将假设寿命分布为指数分布，并展示如何在不同的抽样方案下，估计该指数分布的均值（包括点估计、区间估计和贝叶斯估计）。在 <span class="quarto-unresolved-ref">?sec-14_4</span> 中，我们提出了一种假设检验方法，以推断两个指数分布总体是否具有相同的均值。在 <span class="quarto-unresolved-ref">?sec-14_5</span> 中，我们将探讨用于估计威布尔（<em>Weibull</em>）分布参数的两种方法。</p>
+<p>在 <a href="#sec-14_2" class="quarto-xref"><span>章节 14.2</span></a> 中，我们将介绍 <strong>失效率函数</strong>（<em>hazard rate function</em>）的概念，危险率函数是一个用于描述寿命分布的非常实用的工程概念。在 <a href="#sec-14_3" class="quarto-xref"><span>章节 14.3</span></a> 中，我们将假设寿命分布为指数分布，并展示如何在不同的抽样方案下，估计该指数分布的均值（包括点估计、区间估计和贝叶斯估计）。在 <a href="#sec-14_4" class="quarto-xref"><span>章节 14.4</span></a> 中，我们提出了一种假设检验方法，以推断两个指数分布总体是否具有相同的均值。在 <a href="#sec-14_5" class="quarto-xref"><span>章节 14.5</span></a> 中，我们将探讨用于估计威布尔（<em>Weibull</em>）分布参数的两种方法。</p>
 </section>
 <section id="sec-14_2" class="level2" data-number="14.2">
 <h2 data-number="14.2" class="anchored" data-anchor-id="sec-14_2"><span class="header-section-number">14.2</span> 失效率函数</h2>
@@ -449,19 +492,628 @@ P\{A \text{ 岁吸烟者达到 } B \text{ 岁}\} &amp;= \exp\left\{-\int_A^B \la
 <p><strong>关于术语的说明</strong></p>
 <p>当我们说 <span class="math inline">\(X\)</span> 具有失效率函数 <span class="math inline">\(\lambda(t)\)</span> 时，更准确的意思是指 <span class="math inline">\(X\)</span> 的分布函数具有失效率函数 <span class="math inline">\(\lambda(t)\)</span>。</p>
 </section>
-<section id="the-exponential-distribution-in-life-testing." class="level2" data-number="14.3">
-<h2 data-number="14.3" class="anchored" data-anchor-id="the-exponential-distribution-in-life-testing."><span class="header-section-number">14.3</span> The exponential distribution in life testing.</h2>
+<section id="sec-14_3" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="sec-14_3"><span class="header-section-number">14.3</span> 寿命测试中的指数分布</h2>
+<section id="sec-14_3_1" class="level3" data-number="14.3.1">
+<h3 data-number="14.3.1" class="anchored" data-anchor-id="sec-14_3_1"><span class="header-section-number">14.3.1</span> 同时测试——在第 <span class="math inline">\(r\)</span> 次失效时停止</h3>
+<p>假设我们正在测试一些寿命服从均值为 <span class="math inline">\(\theta\)</span>（未知）的指数分布的项目。我们将 <span class="math inline">\(n\)</span> 个独立的项目同时进行测试，并在总共出现 <span class="math inline">\(r\)</span>（<span class="math inline">\(r \leq n\)</span>）次失效时停止实验。问题是利用观测到的数据来估计均值 <span class="math inline">\(\theta\)</span>。</p>
+<p>观测到的数据如下：</p>
+<p><span id="eq-14_3_1"><span class="math display">\[
+x_1 \leq x_2 \leq \dots \leq x_r, \quad i_1, i_2, \dots, i_r
+\tag{14.3}\]</span></span></p>
+<p>其中，<span class="math inline">\(x_j\)</span> 表示第 <span class="math inline">\(j\)</span> 次失效发生的时间，而 <span class="math inline">\(i_j\)</span> 表示第 <span class="math inline">\(j\)</span> 个失效的项目编号。也就是说，如果我们令 <span class="math inline">\(X_i\)</span>（<span class="math inline">\(i=1, \dots, n\)</span>）表示第 <span class="math inline">\(i\)</span> 个组件的寿命，那么当以下条件满足时，观测数据如 <a href="#eq-14_3_1" class="quarto-xref">方程式&nbsp;<span>14.3</span></a> 所示：</p>
+<p><span class="math display">\[
+X_{i_1} = x_1, X_{i_2} = x_2, \dots, X_{i_r} = x_r
+\]</span></p>
+<p>且其余 <span class="math inline">\(n-r\)</span> 个 <span class="math inline">\(X_j\)</span> 均大于 <span class="math inline">\(x_r\)</span>。</p>
+<p>由于 <span class="math inline">\(X_{i_j}\)</span> 的概率密度函数为：</p>
+<p><span class="math display">\[
+f_{X_{i_j}}(x_j) = \frac{1}{\theta} e^{-x_j/\theta}, \quad j=1, \dots, r
+\]</span></p>
+<p>根据独立性，<span class="math inline">\(X_{i_j}\)</span>（<span class="math inline">\(j=1, \dots, r\)</span>）的联合概率密度为：</p>
+<p><span class="math display">\[
+f_{X_{i_1}, \dots, X_{i_r}}(x_1, \dots, x_r) = \prod_{j=1}^r \frac{1}{\theta} e^{-x_j/\theta}
+\]</span></p>
+<p>此外，根据独立性，其余 <span class="math inline">\(n-r\)</span> 个 <span class="math inline">\(X\)</span> 均大于 <span class="math inline">\(x_r\)</span> 的概率为：</p>
+<p><span class="math display">\[
+P\{X_j &gt; x_r \text{ 对于 } j \neq i_1, \dots, i_r\} = (e^{-x_r/\theta})^{n-r}
+\]</span></p>
+<p>因此，观测数据的 <strong>似然</strong> (<em>likelihood</em>) 函数 <span class="math inline">\(L(x_1, \dots, x_r, i_1, \dots, i_r)\)</span> 在 <span class="math inline">\(x_1 \leq x_2 \leq \dots \leq x_r\)</span> 时为：</p>
+<p><span id="eq-14_3_2"><span class="math display">\[
+\begin{align}
+L(x_1, \dots, x_r, i_1, \dots, i_r) &amp;= f_{X_{i_1}, \dots, X_{i_r}}(x_1, \dots, x_r) P\{X_j &gt; x_r, j \neq i_1, \dots, i_r\} \notag \\
+&amp;= \frac{1}{\theta} e^{-x_1/\theta} \dots \frac{1}{\theta} e^{-x_r/\theta} (e^{-x_r/\theta})^{n-r} \notag \\
+&amp;= \frac{1}{\theta^r} \exp \left\{ - \frac{\sum_{i=1}^r x_i + (n-r)x_r}{\theta} \right\}
+\end{align}
+\tag{14.4}\]</span></span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+说明
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#eq-14_3_2" class="quarto-xref">方程式&nbsp;<span>14.4</span></a> 中的似然函数不仅指定了前 <span class="math inline">\(r\)</span> 次失效发生的时间 <span class="math inline">\(x_1 \leq x_2 \leq \dots \leq x_r\)</span>，还指定了失效项目的顺序 <span class="math inline">\(i_1, i_2, \dots, i_r\)</span>。如果我们只关心前 <span class="math inline">\(r\)</span> 次失效的时间，由于从 <span class="math inline">\(n\)</span> 个项目中选择 <span class="math inline">\(r\)</span> 个项目失效并排序共有 <span class="math inline">\(n(n-1)\dots(n-r+1) = n!/(n-r)!\)</span> 种可能，因此联合密度函数在 <span class="math inline">\(x_1 \leq x_2 \leq \dots \leq x_r\)</span> 时为：</p>
+<p><span class="math display">\[
+f(x_1, x_2, \dots, x_r) = \frac{n!}{(n-r)!} \frac{1}{\theta^r} \exp \left\{ - \frac{\sum_{i=1}^r x_i + (n-r)x_r}{\theta} \right\}
+\]</span></p>
+</div>
+</div>
+<p>为了获得 <span class="math inline">\(\theta\)</span> 的 <strong>最大似然估计量</strong> (<em>maximum likelihood estimator</em>)，我们对 <a href="#eq-14_3_2" class="quarto-xref">方程式&nbsp;<span>14.4</span></a> 两边取对数：</p>
+<p><span class="math display">\[
+\log L(x_1, \dots, x_r, i_1, \dots, i_r) = -r \log \theta - \frac{\sum_{i=1}^r x_i + (n-r)x_r}{\theta}
+\]</span></p>
+<p>求导得：</p>
+<p><span class="math display">\[
+\frac{\partial}{\partial \theta} \log L = -\frac{r}{\theta} + \frac{\sum_{i=1}^r x_i + (n-r)x_r}{\theta^2}
+\]</span></p>
+<p>令导数为 0 并求解，得到最大似然估计值 <span class="math inline">\(\hat{\theta}\)</span> 为：</p>
+<p><span class="math display">\[
+\hat{\theta} = \frac{\sum_{i=1}^r x_i + (n-r)x_r}{r}
+\]</span></p>
+<p>如果我们令 <span class="math inline">\(X_{(i)}\)</span> 表示第 <span class="math inline">\(i\)</span> 次失效发生的时间（<span class="math inline">\(X_{(i)}\)</span> 称为第 <span class="math inline">\(i\)</span> 个 <strong>顺序统计量</strong> (<em>order statistic</em>)），那么 <span class="math inline">\(\theta\)</span> 的最大似然估计量为：</p>
+<p><span id="eq-14_3_3"><span class="math display">\[
+\begin{align}
+\hat{\theta} &amp;= \frac{\sum_{i=1}^r X_{(i)} + (n-r)X_{(r)}}{r} \notag \\
+&amp;= \frac{\tau}{r}
+\end{align}
+\tag{14.5}\]</span></span></p>
+<p>其中 <span class="math inline">\(\tau\)</span> 定义为 <a href="#eq-14_3_3" class="quarto-xref">方程式&nbsp;<span>14.5</span></a> 中的分子，称为 <strong>总测试时间统计量</strong> (<em>total-time-on-test statistic</em>)。我们这样称呼它是因为第 <span class="math inline">\(i\)</span> 个失效的项目运行了时间 <span class="math inline">\(X_{(i)}\)</span>，而其他 <span class="math inline">\(n-r\)</span> 个项目在整个测试期间（持续时间为 <span class="math inline">\(X_{(r)}\)</span>）都在运行。因此，所有项目在测试中的时间总和等于 <span class="math inline">\(\tau\)</span>。</p>
+<p>为了获得 <span class="math inline">\(\theta\)</span> 的置信区间，我们需要确定 <span class="math inline">\(\tau\)</span> 的分布。回想 <span class="math inline">\(X_{(i)}\)</span> 是第 <span class="math inline">\(i\)</span> 次失效的时间，我们将重写 <span class="math inline">\(\tau\)</span> 的表达式。与其将每个项目在测试中的时间相加，不如计算每两次相邻失效之间产生的额外测试时间。令 <span class="math inline">\(Y_i\)</span>（<span class="math inline">\(i=1, \dots, r\)</span>）表示第 <span class="math inline">\(i-1\)</span> 次和第 <span class="math inline">\(i\)</span> 次失效之间产生的额外测试时间。到第一次失效 <span class="math inline">\(X_{(1)}\)</span> 为止，所有 <span class="math inline">\(n\)</span> 个项目都在运行，因此总测试时间为：</p>
+<p><span class="math display">\[
+Y_1 = n X_{(1)}
+\]</span></p>
+<p>在第一次和第二次失效之间，共有 <span class="math inline">\(n-1\)</span> 个项目在运行，因此：</p>
+<p><span class="math display">\[
+Y_2 = (n-1)(X_{(2)} - X_{(1)})
+\]</span></p>
+<p>一般地，有：</p>
+<p><span class="math display">\[
+\begin{align*}
+Y_1 &amp;= n X_{(1)} \\
+Y_2 &amp;= (n-1)(X_{(2)} - X_{(1)}) \\
+&amp;\vdots \\
+Y_j &amp;= (n-j+1)(X_{(j)} - X_{(j-1)}) \\
+&amp;\vdots \\
+Y_r &amp;= (n-r+1)(X_{(r)} - X_{(r-1)})
+\end{align*}
+\]</span></p>
+<p>且</p>
+<p><span class="math display">\[
+\tau = \sum_{j=1}^r Y_j
+\]</span></p>
+<p>这种表示方法的意义在于 <span class="math inline">\(Y_j\)</span> 的分布很容易获得。由于第一次失效的时间 <span class="math inline">\(X_{(1)}\)</span> 是 <span class="math inline">\(n\)</span> 个独立指数寿命（率均为 <span class="math inline">\(1/\theta\)</span>）的最小值，由 <span class="quarto-unresolved-ref">?sec-5_6_1</span> 中的命题 5.6.1 可知，它服从率为 <span class="math inline">\(n/\theta\)</span> 的指数分布。也就是说，<span class="math inline">\(X_{(1)}\)</span> 服从均值为 <span class="math inline">\(\theta/n\)</span> 的指数分布，因此 <span class="math inline">\(n X_{(1)}\)</span> 服从均值为 <span class="math inline">\(\theta\)</span> 的指数分布。此外，在第一次失效发生的时刻，剩余的 <span class="math inline">\(n-1\)</span> 个项目由于指数分布的无记忆性，就像新的一样，因此每个项目都有额外的寿命服从均值为 <span class="math inline">\(\theta\)</span> 的指数分布；因此，直到其中一个失效的额外时间服从率为 <span class="math inline">\((n-1)/\theta\)</span> 的指数分布。也就是说，独立于 <span class="math inline">\(X_{(1)}\)</span>，<span class="math inline">\(X_{(2)} - X_{(1)}\)</span> 服从均值为 <span class="math inline">\(\theta/(n-1)\)</span> 的指数分布，因此 <span class="math inline">\(Y_2 = (n-1)(X_{(2)} - X_{(1)})\)</span> 服从均值为 <span class="math inline">\(\theta\)</span> 的指数分布。事实上，继续这个论证可以得到以下结论：</p>
+<p><span id="eq-14_3_4"><span class="math display">\[
+Y_1, \dots, Y_r \text{ 是独立的指数随机变量，每个的均值均为 } \theta
+\tag{14.6}\]</span></span></p>
+<p>由于独立同分布的指数随机变量之和服从伽马分布（推论 5.7.2），我们得到：</p>
+<p><span class="math display">\[
+\tau \sim \text{gamma}(r, 1/\theta)
+\]</span></p>
+<p>即 <span class="math inline">\(\tau\)</span> 服从参数为 <span class="math inline">\(r\)</span> 和 <span class="math inline">\(1/\theta\)</span> 的伽马分布。等价地，回想参数为 <span class="math inline">\((r, 1/\theta)\)</span> 的伽马随机变量等价于 <span class="math inline">\(\theta/2\)</span> 乘以自由度为 <span class="math inline">\(2r\)</span> 的卡方随机变量（见 <a href="../chapter_5/5.html#sec-5_8_1" class="quarto-xref"><span>章节 5.8.1</span></a>），我们得到：</p>
+<p><span id="eq-14_3_5"><span class="math display">\[
+\frac{2\tau}{\theta} \sim \chi^2_{2r}
+\tag{14.7}\]</span></span></p>
+<p>即 <span class="math inline">\(2\tau/\theta\)</span> 服从自由度为 <span class="math inline">\(2r\)</span> 的卡方分布。因此，</p>
+<p><span class="math display">\[
+P\{\chi^2_{1-\alpha/2, 2r} &lt; 2\tau/\theta &lt; \chi^2_{\alpha/2, 2r}\} = 1 - \alpha
+\]</span></p>
+<p>于是 <span class="math inline">\(\theta\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 置信区间为：</p>
+<p><span id="eq-14_3_6"><span class="math display">\[
+\theta \in \left( \frac{2\tau}{\chi^2_{\alpha/2, 2r}}, \frac{2\tau}{\chi^2_{1-\alpha/2, 2r}} \right)
+\tag{14.8}\]</span></span></p>
+<p>单侧置信区间可以类似地获得。</p>
+<div id="exr-14_3_1" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 14.2</strong></span> 将 50 个晶体管同时进行测试，当第 15 次失效发生时结束测试。如果所有晶体管的总测试时间等于 525 小时，请确定晶体管平均寿命的 95% 置信区间。假设潜在分布是指数分布。</p>
+</div>
+<div id="sol-14_3_1" class="proof solution">
+<p><span class="proof-title"><em>答案 14.2</em>. </span>R 给出：</p>
+<p><span class="math display">\[
+\chi^2_{.025, 30} = 46.97924, \quad \chi^2_{.975, 30} = 16.79077
+\]</span></p>
+<p>因此，使用 <a href="#eq-14_3_6" class="quarto-xref">方程式&nbsp;<span>14.8</span></a>，我们可以以 95% 的置信度断言：</p>
+<p><span class="math display">\[
+\theta \in (22.35, 62.17)
+\]</span></p>
+</div>
+<p>在检验关于 <span class="math inline">\(\theta\)</span> 的假设时，我们可以使用 <a href="#eq-14_3_6" class="quarto-xref">方程式&nbsp;<span>14.8</span></a> 来确定测试数据的 <span class="math inline">\(p\)</span> 值。例如，假设我们对以下单侧检验感兴趣：</p>
+<p><span class="math display">\[
+H_0: \theta \geq \theta_0
+\]</span></p>
+<p>相对于备择假设</p>
+<p><span class="math display">\[
+H_1: \theta &lt; \theta_0
+\]</span></p>
+<p>测试方法是首先计算测试统计量 <span class="math inline">\(2\tau/\theta_0\)</span> 的值（记为 <span class="math inline">\(v\)</span>），然后计算当 <span class="math inline">\(H_0\)</span> 为真时，自由度为 <span class="math inline">\(2r\)</span> 的卡方随机变量小于或等于 <span class="math inline">\(v\)</span> 的概率。这个概率就是 <span class="math inline">\(p\)</span> 值，它代表了如果 <span class="math inline">\(H_0\)</span> 为真，观测到像 <span class="math inline">\(2\tau/\theta_0\)</span> 这么小（极大值）概率的可能性。如果显著性水平 <span class="math inline">\(\alpha\)</span> 至少与该 <span class="math inline">\(p\)</span> 值一样大，则应拒绝该假设。</p>
+<div id="exr-14_3_2" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 14.3</strong></span> 一家电池生产商声称其生产的项目寿命服从指数分布，平均寿命至少为 150 小时。为了验证这一说法，将 100 节电池同时进行测试，计划在第 20 次失效发生时停止。如果在实验结束时，所有 100 节电池的总测试时间等于 1800，是否应接受生产商的说法？</p>
+</div>
+<div id="sol-14_3_2" class="proof solution">
+<p><span class="proof-title"><em>答案 14.3</em>. </span>由于 <span class="math inline">\(2\tau/\theta_0 = 3600/150 = 24\)</span>，因此 <span class="math inline">\(p\)</span> 值为：</p>
+<p><span class="math display">\[
+p\text{-value} = P\{\chi^2_{40} \leq 24\} = \text{pchisq}(24, 40) = .02127977
+\]</span></p>
+<p>因此，应在 5% 的显著性水平下拒绝生产商的说法（实际上在任何大于或等于 .021 的显著性水平下都会拒绝）。</p>
+</div>
+<p>从 <a href="#eq-14_3_5" class="quarto-xref">方程式&nbsp;<span>14.7</span></a> 可以看出，估计量 <span class="math inline">\(\tau/r\)</span> 的精度仅取决于 <span class="math inline">\(r\)</span> 而非 <span class="math inline">\(n\)</span>（投入测试的项目数）。<span class="math inline">\(n\)</span> 的重要性在于通过选择足够大的 <span class="math inline">\(n\)</span>，我们可以确保测试很有可能持续时间较短。事实上，<span class="math inline">\(X_{(r)}\)</span>（测试结束的时间）的矩很容易获得。由于（令 <span class="math inline">\(X_{(0)} \equiv 0\)</span>）：</p>
+<p><span class="math display">\[
+X_{(j)} - X_{(j-1)} = \frac{Y_j}{n-j+1}, \quad j=1, \dots, r
+\]</span></p>
+<p>求和得到：</p>
+<p><span class="math display">\[
+X_{(r)} = \sum_{j=1}^r \frac{Y_j}{n-j+1}
+\]</span></p>
+<p>根据 <a href="#eq-14_3_4" class="quarto-xref">方程式&nbsp;<span>14.6</span></a>，<span class="math inline">\(X_{(r)}\)</span> 是 <span class="math inline">\(r\)</span> 个独立指数随机变量之和，这些变量的均值分别为 <span class="math inline">\(\theta/n, \theta/(n-1), \dots, \theta/(n-r+1)\)</span>。利用这一点，我们看到：</p>
+<p><span id="eq-14_3_7"><span class="math display">\[
+E[X_{(r)}] = \sum_{j=1}^r \frac{\theta}{n-j+1} = \theta \sum_{j=n-r+1}^n \frac{1}{j}
+\tag{14.9}\]</span></span></p>
+<p><span class="math display">\[
+\text{Var}(X_{(r)}) = \sum_{j=1}^r \left( \frac{\theta}{n-j+1} \right)^2 = \theta^2 \sum_{j=n-r+1}^n \frac{1}{j^2}
+\]</span></p>
+<p>其中第二个等式利用了指数随机变量的方差等于其均值平方的事实。当 <span class="math inline">\(n\)</span> 较大时，我们可以按如下方式近似上述和：</p>
+<p><span class="math display">\[
+\begin{align*}
+\sum_{j=n-r+1}^n \frac{1}{j} &amp;\approx \int_{n-r+1}^n \frac{dx}{x} = \log \left( \frac{n}{n-r+1} \right) \\
+\sum_{j=n-r+1}^n \frac{1}{j^2} &amp;\approx \int_{n-r+1}^n \frac{dx}{x^2} = \frac{1}{n-r+1} - \frac{1}{n} = \frac{r-1}{n(n-r+1)}
+\end{align*}
+\]</span></p>
+<p>因此，例如，如果在 <a href="#exr-14_3_2" class="quarto-xref">练习&nbsp;<span>14.3</span></a> 中真实的平均寿命为 120 小时，则测试长度的期望和方差大约为：</p>
+<p><span class="math display">\[
+\begin{align*}
+E[X_{(20)}] &amp;\approx 120 \log \left( \frac{100}{81} \right) = 25.29 \\
+\text{Var}(X_{(20)}) &amp;\approx (120)^2 \frac{19}{100(81)} = 33.78
+\end{align*}
+\]</span></p>
 </section>
-<section id="a-two-sample-problem" class="level2" data-number="14.4">
-<h2 data-number="14.4" class="anchored" data-anchor-id="a-two-sample-problem"><span class="header-section-number">14.4</span> A two-sample problem</h2>
+<section id="sec-14_3_2" class="level3" data-number="14.3.2">
+<h3 data-number="14.3.2" class="anchored" data-anchor-id="sec-14_3_2"><span class="header-section-number">14.3.2</span> 序贯测试</h3>
+<p>假设我们有无限量的项目，每个项目的寿命服从未知均值为 <span class="math inline">\(\theta\)</span> 的指数分布，这些项目将按顺序进行测试，即第一个项目投入测试，失效后立即更换为第二个项目，依此类推。也就是说，一旦一个项目失效，它就会立即在寿命测试中被下一个项目替换。我们假设在某个固定时间 <span class="math inline">\(T\)</span> 测试结束。</p>
+<p>观测到的数据将包括： 数据：<span class="math inline">\(r, x_1, x_2, \dots, x_r\)</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define key time points</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">12</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="fu">c</span>(<span class="st">"0"</span>, <span class="st">"sum(X[i], i=1, r)"</span>, <span class="st">"T"</span>, <span class="st">"sum(X[i], i=1, r+1)"</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_label =</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"Time of rth failure"</span>, <span class="st">""</span>, <span class="st">"Time of (r+1)st failure"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Main timeline</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Marks</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Mathematical labels (above the line)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> label), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">1.5</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># English descriptive labels (below the line)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> text_label), <span class="at">vjust =</span> <span class="fl">2.5</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Scale and theme</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">15</span>)) <span class="sc">+</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="st">"cm"</span>))</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-14_1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-14_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="14_files/figure-html/fig-14_1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;14.1: 时间 <span class="math inline">\(T\)</span> 之前发生的 <span class="math inline">\(r\)</span> 次失效
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>其解释是到时间 <span class="math inline">\(T\)</span> 为止共有 <span class="math inline">\(r\)</span> 次失效，其中第 <span class="math inline">\(i\)</span> 个测试项目运行了时间 <span class="math inline">\(x_i\)</span>。如果在时间 <span class="math inline">\(T\)</span> 之前发生了 <span class="math inline">\(r\)</span> 次失效，则观测数据如下：</p>
+<p><span id="eq-14_3_8"><span class="math display">\[
+X_i = x_i, \quad i=1, \dots, r, \quad \sum_{i=1}^r x_i &lt; T
+\tag{14.10}\]</span></span></p>
+<p><span class="math display">\[
+X_{r+1} &gt; T - \sum_{i=1}^r x_i
+\]</span></p>
+<p>其中 <span class="math inline">\(X_i\)</span> 是第 <span class="math inline">\(i\)</span> 个投入使用的组件的泛函寿命。这是因为，为了发生 <span class="math inline">\(r\)</span> 次失效，第 <span class="math inline">\(r\)</span> 次失效必须在时间 <span class="math inline">\(T\)</span> 之前发生——即 <span class="math inline">\(\sum_{i=1}^r X_i &lt; T\)</span>——且第 <span class="math inline">\((r+1)\)</span> 个项目的泛函寿命必须超过 <span class="math inline">\(T - \sum_{i=1}^r X_i\)</span>（见 <a href="#fig-14_1" class="quarto-xref">图&nbsp;<span>14.1</span></a>）。</p>
+<p>根据 <a href="#eq-14_3_8" class="quarto-xref">方程式&nbsp;<span>14.10</span></a>，我们得到数据 <span class="math inline">\(r, x_1, \dots, x_r\)</span> 的似然函数如下：</p>
+<p><span class="math display">\[
+\begin{align*}
+f(r, x_1, \dots, x_r | \theta) &amp;= f_{X_1, \dots, X_r}(x_1, \dots, x_r) P\left\{ X_{r+1} &gt; T - \sum_{i=1}^r x_i \right\}, \quad \sum_{i=1}^r x_i &lt; T \\
+&amp;= \frac{1}{\theta^r} e^{-\sum_{i=1}^r x_i/\theta} e^{-(T - \sum_{i=1}^r x_i)/\theta} \\
+&amp;= \frac{1}{\theta^r} e^{-T/\theta}
+\end{align*}
+\]</span></p>
+<p>因此，</p>
+<p><span class="math display">\[
+\log f(r, x_1, \dots, x_r | \theta) = -r \log \theta - \frac{T}{\theta}
+\]</span></p>
+<p>于是</p>
+<p><span class="math display">\[
+\frac{\partial}{\partial \theta} \log f(r, x_1, \dots, x_r | \theta) = -\frac{r}{\theta} + \frac{T}{\theta^2}
+\]</span></p>
+<p>令导数为 0 并求解，得到最大似然估计值为：</p>
+<p><span class="math display">\[
+\hat{\theta} = \frac{T}{r}
+\]</span></p>
+<p>由于 <span class="math inline">\(T\)</span> 是所有项目的总测试时间，这再次表明，指数分布未知均值的最大似然估计值等于总测试时间除以这段时间内观测到的失效次数。</p>
+<p>如果我们令 <span class="math inline">\(N(T)\)</span> 表示到时间 <span class="math inline">\(T\)</span> 为止的失效次数，那么 <span class="math inline">\(\theta\)</span> 的最大似然估计量为 <span class="math inline">\(T/N(T)\)</span>。假设 <span class="math inline">\(N(T)\)</span> 的观测值为 <span class="math inline">\(N(T)=r\)</span>。为了确定 <span class="math inline">\(\theta\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 置信区间估计值，我们首先要确定 <span class="math inline">\(\theta_L\)</span> 和 <span class="math inline">\(\theta_U\)</span>，使得：</p>
+<p><span class="math display">\[
+P_{\theta_U}\{N(T) \geq r\} = \frac{\alpha}{2}, \quad P_{\theta_L}\{N(T) \leq r\} = \frac{\alpha}{2}
+\]</span></p>
+<p>其中 <span class="math inline">\(P_\theta(A)\)</span> 表示在假设 <span class="math inline">\(\theta\)</span> 是真实均值的情况下计算事件 <span class="math inline">\(A\)</span> 的概率。<span class="math inline">\(\theta\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 置信区间估计值为：</p>
+<p><span class="math display">\[
+\theta \in (\theta_L, \theta_U)
+\]</span></p>
+<p>为了理解为什么不包含那些 <span class="math inline">\(\theta &lt; \theta_L\)</span> 或 <span class="math inline">\(\theta &gt; \theta_U\)</span> 的 <span class="math inline">\(\theta\)</span> 值，请注意 <span class="math inline">\(P_\theta\{N(T) \geq r\}\)</span> 随 <span class="math inline">\(\theta\)</span> 递减，而 <span class="math inline">\(P_\theta\{N(T) \leq r\}\)</span> 随 <span class="math inline">\(\theta\)</span> 递增（为什么？）。因此， 如果 <span class="math inline">\(\theta &lt; \theta_L\)</span>，那么 <span class="math inline">\(P_\theta\{N(T) \leq r\} &lt; P_{\theta_L}\{N(T) \leq r\} = \frac{\alpha}{2}\)</span> 如果 <span class="math inline">\(\theta &gt; \theta_U\)</span>，那么 <span class="math inline">\(P_\theta\{N(T) \geq r\} &lt; P_{\theta_U}\{N(T) \geq r\} = \frac{\alpha}{2}\)</span></p>
+<p>接下来需要确定 <span class="math inline">\(\theta_L\)</span> 和 <span class="math inline">\(\theta_U\)</span>。为此，首先注意事件 <span class="math inline">\(N(T) \geq r\)</span> 等价于第 <span class="math inline">\(r\)</span> 次失效在时间 <span class="math inline">\(T\)</span> 之前或之时发生的陈述。也就是说，</p>
+<p><span class="math display">\[
+N(T) \geq r \iff X_1 + \dots + X_r \leq T
+\]</span></p>
+<p>因此</p>
+<p><span class="math display">\[
+\begin{align*}
+P_\theta\{N(T) \geq r\} &amp;= P_\theta\{X_1 + \dots + X_r \leq T\} \\
+&amp;= P\{\text{gamma}(r, 1/\theta) \leq T\} \\
+&amp;= P\left\{ \frac{\theta}{2} \chi^2_{2r} \leq T \right\} \\
+&amp;= P\{\chi^2_{2r} \leq 2T/\theta\}
+\end{align*}
+\]</span></p>
+<p>因此，在 <span class="math inline">\(\theta = \theta_U\)</span> 处评估上述式子，并利用 <span class="math inline">\(P\{\chi^2_{2r} \leq \chi^2_{1-\alpha/2, 2r}\} = \alpha/2\)</span>，我们得到：</p>
+<p><span class="math display">\[
+\frac{\alpha}{2} = P\left\{ \chi^2_{2r} \leq \frac{2T}{\theta_U} \right\}
+\]</span></p>
+<p>并且</p>
+<p><span class="math display">\[
+\frac{2T}{\theta_U} = \chi^2_{1-\alpha/2, 2r}
+\]</span></p>
+<p>或</p>
+<p><span class="math display">\[
+\theta_U = 2T/\chi^2_{1-\alpha/2, 2r}
+\]</span></p>
+<p>类似地，我们可以证明</p>
+<p><span class="math display">\[
+\theta_L = 2T/\chi^2_{\alpha/2, 2r}
+\]</span></p>
+<p>因此 <span class="math inline">\(\theta\)</span> 的 <span class="math inline">\(100(1-\alpha)\%\)</span> 置信区间估计值为：</p>
+<p><span class="math display">\[
+\theta \in (2T/\chi^2_{\alpha/2, 2r}, 2T/\chi^2_{1-\alpha/2, 2r})
+\]</span></p>
+<div id="exm-14_3_3" class="theorem example">
+<p><span class="theorem-title"><strong>例子 14.1</strong></span> 如果一次一个项目的序贯测试在固定的 <span class="math inline">\(T = 500\)</span> 小时内产生了 10 次失效，那么 <span class="math inline">\(\theta\)</span> 的最大似然估计值为 <span class="math inline">\(500/10 = 50\)</span> 小时。 <span class="math inline">\(\theta\)</span> 的 95% 置信区间估计值为：</p>
+<p><span class="math display">\[
+0 \in (1000/\chi^2_{.025, 20}, 1000/\chi^2_{.975, 20})
+\]</span></p>
+<p>R 给出：</p>
+<p><span class="math display">\[
+\chi^2_{.025, 20} = 34.16961, \quad \chi^2_{.975, 20} = 9.590777
+\]</span></p>
+<p>所以，以 95% 的置信度，</p>
+<p><span class="math display">\[
+\theta \in (29.27, 103.52)
+\]</span></p>
+</div>
+<p>如果我们想检验假设</p>
+<p><span class="math display">\[
+H_0: \theta = \theta_0
+\]</span></p>
+<p>相对于备择假设</p>
+<p><span class="math display">\[
+H_1: \theta \neq \theta_0
+\]</span></p>
+<p>那么我们首先要确定 <span class="math inline">\(N(T)\)</span> 的值。如果 <span class="math inline">\(N(T) = r\)</span>，那么在满足以下任一条件时拒绝该假设：</p>
+<p><span class="math display">\[
+P_{\theta_0}\{N(T) \leq r\} \leq \frac{\alpha}{2} \quad \text{或} \quad P_{\theta_0}\{N(T) \geq r\} \leq \frac{\alpha}{2}
+\]</span></p>
+<p>换句话说，如果在由下式给出的 <span class="math inline">\(p\)</span> 值小于或等于显著性水平 <span class="math inline">\(\alpha\)</span> 时，将拒绝 <span class="math inline">\(H_0\)</span>：</p>
+<p><span class="math display">\[
+\begin{align*}
+p\text{-value} &amp;= 2 \min(P_{\theta_0}\{N(T) \geq r\}, P_{\theta_0}\{N(T) \leq r\}) \\
+&amp;= 2 \min(P_{\theta_0}\{N(T) \geq r\}, 1 - P_{\theta_0}\{N(T) \geq r + 1\}) \\
+&amp;= 2 \min\left( P\left\{ \chi^2_{2r} \leq \frac{2T}{\theta_0} \right\}, 1 - P\left\{ \chi^2_{2(r+1)} \leq \frac{2T}{\theta_0} \right\} \right)
+\end{align*}
+\]</span></p>
+<p>单侧检验的 <span class="math inline">\(p\)</span> 值可以类似地获得。</p>
+<div id="exr-14_3_4" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 14.4</strong></span> 一家公司声称其生产的半导体平均寿命至少为 25 小时。为了证实这一说法，一家独立的测试服务机构决定对该公司的半导体逐个进行测试，共测试 600 小时。如果在此期间有 30 个半导体失效，我们对该公司说法的有效性能得出什么结论？在 10% 的水平下进行测试。</p>
+</div>
+<div id="sol-14_3_4" class="proof solution">
+<p><span class="proof-title"><em>答案 14.4</em>. </span>这是一个单侧检验：</p>
+<p><span class="math display">\[
+H_0: \theta \geq 25 \quad \text{相对于} \quad H_1: \theta &lt; 25
+\]</span></p>
+<p>确定 <span class="math inline">\(p\)</span> 值的相关概率是：如果平均寿命为 25，发生至少 30 次失效的概率。即：</p>
+<p><span class="math display">\[
+\begin{align*}
+p\text{-value} &amp;= P_{25}\{N(600) \geq 30\} \\
+&amp;= P\{\chi^2_{60} \leq 1200/25\} \\
+&amp;= .1321236 \quad (\text{来自 R})
+\end{align*}
+\]</span></p>
+<p>因此，当显著性水平为 .10 时，应接受 <span class="math inline">\(H_0\)</span>。</p>
+</div>
 </section>
-<section id="the-weibull-distribution-in-life-testing" class="level2" data-number="14.5">
-<h2 data-number="14.5" class="anchored" data-anchor-id="the-weibull-distribution-in-life-testing"><span class="header-section-number">14.5</span> The Weibull distribution in life testing</h2>
+<section id="sec-14_3_3" class="level3" data-number="14.3.3">
+<h3 data-number="14.3.3" class="anchored" data-anchor-id="sec-14_3_3"><span class="header-section-number">14.3.3</span> 同时测试——在固定时间停止</h3>
+<p>再次假设我们正在测试寿命服从独立同分布、均值均为 <span class="math inline">\(\theta\)</span>（未知）的指数随机变量的项目。如 <a href="#sec-14_3_1" class="quarto-xref"><span>章节 14.3.1</span></a> 所述，将 <span class="math inline">\(n\)</span> 个项目同时投入测试，但现在我们假设测试要在某个固定时间 <span class="math inline">\(T\)</span> 停止，或者在所有 <span class="math inline">\(n\)</span> 个项目全部失效时停止——以先到者为准。问题是利用观测数据来估计 <span class="math inline">\(\theta\)</span>。</p>
+<p>观测数据如下： 数据：<span class="math inline">\(i_1, i_2, \dots, i_r, \quad x_1, x_2, \dots, x_r\)</span> 其解释是当编号为 <span class="math inline">\(i_1, \dots, i_r\)</span> 的 <span class="math inline">\(r\)</span> 个项目被观测到分别在时间 <span class="math inline">\(x_1, \dots, x_r\)</span> 失效，而其余 <span class="math inline">\(n-r\)</span> 个项目到时间 <span class="math inline">\(T\)</span> 尚未失效时，得到上述结果。</p>
+<p>由于项目在时间 <span class="math inline">\(T\)</span> 之前尚未失效当且仅当其寿命大于 <span class="math inline">\(T\)</span>，我们看到上述数据的似然函数为：</p>
+<p><span class="math display">\[
+\begin{align*}
+f(i_1, \dots, i_r, x_1, \dots, x_r) &amp;= f_{X_{i_1}, \dots, X_{i_r}}(x_1, \dots, x_r) P\{X_j &gt; T, j \neq i_1, \dots, i_r\} \\
+&amp;= \frac{1}{\theta} e^{-x_1/\theta} \dots \frac{1}{\theta} e^{-x_r/\theta} (e^{-T/\theta})^{n-r} \\
+&amp;= \frac{1}{\theta^r} \exp \left\{ - \frac{\sum_{i=1}^r x_i + (n-r)T}{\theta} \right\}
+\end{align*}
+\]</span></p>
+<p>为了获得最大似然估计值，取对数得到：</p>
+<p><span class="math display">\[
+\log f(i_1, \dots, i_r, x_1, \dots, x_r) = -r \log \theta - \frac{\sum_{i=1}^r x_i + (n-r)T}{\theta}
+\]</span></p>
+<p>于是，</p>
+<p><span class="math display">\[
+\frac{\partial}{\partial \theta} \log f(i_1, \dots, i_r, x_1, \dots, x_r) = -\frac{r}{\theta} + \frac{\sum_{i=1}^r x_i + (n-r)T}{\theta^2}
+\]</span></p>
+<p>令导数为 0 并求解，得到最大似然估计值 <span class="math inline">\(\hat{\theta}\)</span> 为：</p>
+<p><span class="math display">\[
+\hat{\theta} = \frac{\sum_{i=1}^r x_i + (n-r)T}{r}
+\]</span></p>
+<p>因此，如果我们令 <span class="math inline">\(R\)</span> 表示到时间 <span class="math inline">\(T\)</span> 为止失效的项目数，并令 <span class="math inline">\(X_{(i)}\)</span> 为第 <span class="math inline">\(i\)</span> 个最小的失效时间，<span class="math inline">\(i=1, \dots, R\)</span>，那么 <span class="math inline">\(\theta\)</span> 的最大似然估计量为：</p>
+<p><span class="math display">\[
+\hat{\theta} = \frac{\sum_{i=1}^R X_{(i)} + (n-R)T}{R}
+\]</span></p>
+<p>令 <span class="math inline">\(\tau\)</span> 表示所有项目在寿命测试中的时间总和。那么，因为 <span class="math inline">\(R\)</span> 个失效的项目在测试中的时间为 <span class="math inline">\(X_{(1)}, \dots, X_{(R)}\)</span>，而 <span class="math inline">\(n-R\)</span> 个未失效的项目在测试中的时间均为 <span class="math inline">\(T\)</span>，所以：</p>
+<p><span class="math display">\[
+\tau = \sum_{i=1}^R X_{(i)} + (n-R)T
+\]</span></p>
+<p>从而我们可以将最大似然估计量写为：</p>
+<p><span class="math display">\[
+\hat{\theta} = \frac{\tau}{R}
+\]</span></p>
+<p>换言之，平均寿命的最大似然估计量（如 <a href="#sec-14_3_1" class="quarto-xref"><span>章节 14.3.1</span></a> 和 <a href="#sec-14_3_2" class="quarto-xref"><span>章节 14.3.2</span></a> 中的寿命测试程序所示）等于总测试时间除以观测到的失效项目数。</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>正如读者可能已经猜到的那样，事实证明，对于指数分布的所有可能寿命测试方案，未知均值 <span class="math inline">\(\theta\)</span> 的最大似然估计量将始终等于总测试时间除以观测到的失效次数。为了看清这一点，考虑任何测试情况，并假设数据结果是：<span class="math inline">\(r\)</span> 个项目在分别测试了时间 <span class="math inline">\(x_1, \dots, x_r\)</span> 后被观测到失效，而 <span class="math inline">\(s\)</span> 个项目在测试结束时尚未失效——此时它们分别测试了时间 <span class="math inline">\(y_1, \dots, y_s\)</span>。这一结果的似然函数将是：</p>
+<p><span id="eq-14_3_9"><span class="math display">\[
+\begin{align}
+\text{likelihood} &amp;= K \frac{1}{\theta} e^{-x_1/\theta} \dots \frac{1}{\theta} e^{-x_r/\theta} e^{-y_1/\theta} \dots e^{-y_s/\theta} \notag \\
+&amp;= \frac{K}{\theta^r} \exp \left\{ - \frac{\sum_{i=1}^r x_i + \sum_{i=1}^s y_i}{\theta} \right\}
+\end{align}
+\tag{14.11}\]</span></span></p>
+<p>其中 <span class="math inline">\(K\)</span> 是测试方案和数据的函数，不取决于 <span class="math inline">\(\theta\)</span>。（例如，<span class="math inline">\(K\)</span> 可能与测试程序有关，其中停止测试的决定可能取决于观测数据，或者是随机的。）根据前述内容，<span class="math inline">\(\theta\)</span> 的最大似然估计值将是：</p>
+<p><span id="eq-14_3_10"><span class="math display">\[
+\hat{\theta} = \frac{\sum_{i=1}^r x_i + \sum_{i=1}^s y_i}{r}
+\tag{14.12}\]</span></span></p>
+<p>但是 <span class="math inline">\(\sum_{i=1}^r x_i + \sum_{i=1}^s y_i\)</span> 正是总测试时间统计量，因此 <span class="math inline">\(\theta\)</span> 的最大似然估计量确实是总测试时间除以这段时间的失效次数。</p>
+</div>
+</div>
+<p>对于本节中描述的寿命测试方案，<span class="math inline">\(\tau/R\)</span> 的分布相当复杂<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>，因此我们将无法轻易推导 <span class="math inline">\(\theta\)</span> 的置信区间估计量。事实上，我们不会进一步探讨这个问题，而是考虑估计 <span class="math inline">\(\theta\)</span> 的贝叶斯方法。</p>
+</section>
+<section id="sec-14_3_4" class="level3" data-number="14.3.4">
+<h3 data-number="14.3.4" class="anchored" data-anchor-id="sec-14_3_4"><span class="header-section-number">14.3.4</span> 贝叶斯方法</h3>
+<p>假设将具有独立同分布指数寿命、未知均值为 <span class="math inline">\(\theta\)</span> 的项目投入寿命测试。那么，正如 <a href="#sec-14_3_3" class="quarto-xref"><span>章节 14.3.3</span></a> 中给出的备注所述，数据的似然函数可以表示为：</p>
+<p><span class="math display">\[
+f(\text{data}|\theta) = \frac{K}{\theta^r} e^{-t/\theta}
+\]</span></p>
+<p>其中 <span class="math inline">\(t\)</span> 是总测试时间——即所用所有项目的测试时间之和——而 <span class="math inline">\(r\)</span> 是给定数据的观测失效次数。</p>
+<p>令 <span class="math inline">\(\lambda = 1/\theta\)</span> 表示指数分布的率。在贝叶斯方法中，使用率 <span class="math inline">\(\lambda\)</span> 而不是其倒数更方便。根据前述内容我们看到：</p>
+<p><span class="math display">\[
+f(\text{data}|\lambda) = K \lambda^r e^{-\lambda t}
+\]</span></p>
+<p>如果我们假设在测试之前，<span class="math inline">\(\lambda\)</span> 按照先验密度 <span class="math inline">\(g(\lambda)\)</span> 分布，那么给定观测数据的 <span class="math inline">\(\lambda\)</span> 后验密度如下：</p>
+<p><span id="eq-14_3_11"><span class="math display">\[
+\begin{align}
+f(\lambda|\text{data}) &amp;= \frac{f(\text{data}|\lambda)g(\lambda)}{\int f(\text{data}|\lambda)g(\lambda) d\lambda} \notag \\
+&amp;= \frac{\lambda^r e^{-\lambda t} g(\lambda)}{\int \lambda^r e^{-\lambda t} g(\lambda) d\lambda}
+\end{align}
+\tag{14.13}\]</span></span></p>
+<p>当 <span class="math inline">\(g\)</span> 是参数为（比如）<span class="math inline">\((b, a)\)</span> 的伽马密度函数时，上述后验密度处理起来特别方便——也就是说，当</p>
+<p><span class="math display">\[
+g(\lambda) = \frac{a e^{-a\lambda}(a\lambda)^{b-1}}{\Gamma(b)}, \quad \lambda &gt; 0
+\]</span></p>
+<p>对于某些非负常数 <span class="math inline">\(a\)</span> 和 <span class="math inline">\(b\)</span>。事实上，对于这一 <span class="math inline">\(g\)</span> 的选择，我们根据 <a href="#eq-14_3_11" class="quarto-xref">方程式&nbsp;<span>14.13</span></a> 得到：</p>
+<p><span class="math display">\[
+\begin{align*}
+f(\lambda|\text{data}) &amp;= C e^{-(a+t)\lambda} \lambda^{r+b-1} \\
+&amp;= K e^{-(a+t)\lambda} [(a+t)\lambda]^{b+r-1}
+\end{align*}
+\]</span></p>
+<p>其中 <span class="math inline">\(C\)</span> 和 <span class="math inline">\(K\)</span> 不取决于 <span class="math inline">\(\lambda\)</span>。因为我们将前述内容识别为参数为 <span class="math inline">\((b+r, a+t)\)</span> 的伽马密度，所以我们可以将其改写为：</p>
+<p><span class="math display">\[
+f(\lambda|\text{data}) = \frac{(a+t) e^{-(a+t)\lambda} [(a+t)\lambda]^{b+r-1}}{\Gamma(b+r)}, \quad \lambda &gt; 0
+\]</span></p>
+<p>换言之，如果 <span class="math inline">\(\lambda\)</span> 的先验分布是参数为 <span class="math inline">\((b, a)\)</span> 的伽马分布，那么无论测试方案如何，给定数据的 <span class="math inline">\(\lambda\)</span>（后验）条件分布是参数为 <span class="math inline">\((b+R, a+\tau)\)</span> 的伽马分布，其中 <span class="math inline">\(\tau\)</span> 和 <span class="math inline">\(R\)</span> 分别代表总测试时间统计量和观测失效次数。由于参数为 <span class="math inline">\((b, a)\)</span> 的伽马随机变量的均值等于 <span class="math inline">\(b/a\)</span>（见 <span class="quarto-unresolved-ref">?sec-5_7</span>），我们可以得出结论，<span class="math inline">\(\lambda\)</span> 的贝叶斯估计量 <span class="math inline">\(E[\lambda|\text{data}]\)</span> 为：</p>
+<p><span class="math display">\[
+E[\lambda|\text{data}] = \frac{b+R}{a+\tau}
+\]</span></p>
+<div id="exr-14_3_5" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 14.5</strong></span> 假设将 20 个具有指数寿命分布、未知率 <span class="math inline">\(\lambda\)</span> 的项目在不同时间投入寿命测试。当测试结束时，有 10 次观测到的失效——它们的寿命（以小时计）为 5, 7, 6.2, 8.1, 7.9, 15, 18, 3.9, 4.6, 5.8。未失效的 10 个项目在测试终止时，已在测试中经历的时间（以小时计）分别为 3, 3.2, 4.1, 1.8, 1.6, 2.7, 1.2, 5.4, 10.3, 1.5。如果测试前认为 <span class="math inline">\(\lambda\)</span> 可以被视为参数为 (2, 20) 的伽马随机变量，那么 <span class="math inline">\(\lambda\)</span> 的贝叶斯估计值是多少？</p>
+</div>
+<div id="sol-14_3_5" class="proof solution">
+<p><span class="proof-title"><em>答案 14.5</em>. </span>由于</p>
+<p><span class="math display">\[
+\tau = 116.1, \quad R = 10
+\]</span></p>
+<p>由此得 <span class="math inline">\(\lambda\)</span> 的贝叶斯估计值为：</p>
+<p><span class="math display">\[
+E[\lambda|\text{data}] = \frac{12}{136.1} = .088
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+备注
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>正如我们所见，为指数分布的率选择伽马先验分布使得所得计算相当简单。虽然从应用的角度来看，这并不是一个充分的理由，但通常会做出这样的选择，理由之一是固定伽马先验分布的两个参数所提供的灵活性通常能够使人合理地接近其真实的先验感受。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-14_4" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="sec-14_4"><span class="header-section-number">14.4</span> 双样本问题</h2>
+<p>某公司建立了两个独立的工厂来生产真空管。公司假设工厂 I 生产的真空管寿命服从均值为 <span class="math inline">\(\theta_1\)</span> 的指数分布，而工厂 II 生产的真空管寿命服从均值为 <span class="math inline">\(\theta_2\)</span> 的指数分布。为了检验这两个工厂是否存在差异（至少在它们生产的真空管寿命方面），公司从工厂 I 抽取了 <span class="math inline">\(n\)</span> 个真空管，从工厂 II 抽取了 <span class="math inline">\(m\)</span> 个真空管，并测量了它们的寿命。那么，他们如何确定这两个工厂生产的真空管是否确实相同呢？</p>
+<p>若令 <span class="math inline">\(X_1, \dots, X_n\)</span> 表示工厂 I 生产的 <span class="math inline">\(n\)</span> 个真空管的寿命，并令 <span class="math inline">\(Y_1, \dots, Y_m\)</span> 表示工厂 II 生产的 <span class="math inline">\(m\)</span> 个真空管的寿命。当 <span class="math inline">\(X_i\)</span> (<span class="math inline">\(i = 1, \dots, n\)</span>) 是来自均值为 <span class="math inline">\(\theta_1\)</span> 的指数分布的随机样本，且 <span class="math inline">\(Y_i\)</span> (<span class="math inline">\(i = 1, \dots, m\)</span>) 是来自均值为 <span class="math inline">\(\theta_2\)</span> 的指数分布的随机样本时，问题就转化为检验假设 <span class="math inline">\(\theta_1 = \theta_2\)</span>。此外，假设这两个样本是相互独立的。</p>
+<p>为了开发关于 <span class="math inline">\(\theta_1 = \theta_2\)</span> 的检验方法，我们首先注意到 <span class="math inline">\(\sum_{i=1}^n X_i\)</span> 和 <span class="math inline">\(\sum_{i=1}^m Y_i\)</span>（作为独立同分布指数随机变量之和）是独立的 <strong>伽马</strong> (<em>gamma</em>) 随机变量，其参数分别为 <span class="math inline">\((n, 1/\theta_1)\)</span> 和 <span class="math inline">\((m, 1/\theta_2)\)</span>。因此，根据伽马分布与卡方分布的等价性可知： <span class="math display">\[
+\frac{2}{\theta_1} \sum_{i=1}^n X_i \sim \chi_{2n}^2
+\]</span> <span class="math display">\[
+\frac{2}{\theta_2} \sum_{i=1}^m Y_i \sim \chi_{2m}^2
+\]</span></p>
+<p>由 <strong><span class="math inline">\(F\)</span>-分布</strong> (<em>F-distribution</em>) 的定义可以得出： <span class="math display">\[
+\frac{\frac{2}{2n\theta_1} \sum_{i=1}^n X_i}{\frac{2}{2m\theta_2} \sum_{i=1}^m Y_i} \sim F_{2n,2m}
+\]</span></p>
+<p>也就是说，如果 <span class="math inline">\(\bar{X}\)</span> 和 <span class="math inline">\(\bar{Y}\)</span> 分别是两个样本的均值，那么 <span class="math inline">\(\frac{\theta_2 \bar{X}}{\theta_1 \bar{Y}}\)</span> 服从自由度为 <span class="math inline">\(2n\)</span> 和 <span class="math inline">\(2m\)</span> 的 <span class="math inline">\(F\)</span>-分布。</p>
+<p>因此，当假设 <span class="math inline">\(\theta_1 = \theta_2\)</span> 成立时，<span class="math inline">\(\bar{X}/\bar{Y}\)</span> 服从自由度为 <span class="math inline">\(2n\)</span> 和 <span class="math inline">\(2m\)</span> 的 <span class="math inline">\(F\)</span>-分布。这启发了如下关于 <span class="math inline">\(\theta_1 = \theta_2\)</span> 的检验方法：</p>
+<p><strong>检验：</strong> <span class="math inline">\(H_0: \theta_1 = \theta_2\)</span> 对抗备择假设 <span class="math inline">\(H_1: \theta_1 \neq \theta_2\)</span></p>
+<p><strong>步骤 1：</strong> 选择显著性水平 <span class="math inline">\(\alpha\)</span>。</p>
+<p><strong>步骤 2：</strong> 确定检验统计量 <span class="math inline">\(\bar{X}/\bar{Y}\)</span> 的值 —— 设其值为 <span class="math inline">\(v\)</span>。</p>
+<p><strong>步骤 3：</strong> 计算 <span class="math inline">\(P\{F \leq v\}\)</span>，其中 <span class="math inline">\(F \sim F_{2n,2m}\)</span>。如果该概率小于 <span class="math inline">\(\alpha/2\)</span>（这发生在 <span class="math inline">\(\bar{X}\)</span> 显著小于 <span class="math inline">\(\bar{Y}\)</span> 时），或者大于 <span class="math inline">\(1 - \alpha/2\)</span>（这发生在 <span class="math inline">\(\bar{X}\)</span> 显著大于 <span class="math inline">\(\bar{Y}\)</span> 时），则拒绝原假设。</p>
+<p>换句话说，检验数据的 <strong><span class="math inline">\(p\)</span>-值</strong> (<em>p-value</em>) 由下式给出： <span class="math display">\[
+p\text{-值} = 2 \min(P\{F \leq v\}, 1 - P\{F \leq v\})
+\]</span></p>
+<div id="exr-14_4_1" class="theorem exercise">
+<p><span class="theorem-title"><strong>练习 14.6</strong></span> 在显著性水平为 5% 时，检验如下假设：两个工厂生产的物品具有相同的指数寿命分布。已知来自第一个工厂的 10 个样本的总寿命为 420 小时，而来自第二个工厂的 15 个样本的总寿命为 510 小时。</p>
+</div>
+<div id="sol-14_4_1" class="proof solution">
+<p><span class="proof-title"><em>答案 14.6</em>. </span>检验统计量 <span class="math inline">\(\bar{X}/\bar{Y}\)</span> 的值为 <span class="math inline">\(42/34 = 1.2353\)</span>。为了计算自由度为 20 和 30 的 <span class="math inline">\(F\)</span> 随机变量小于该值的概率，我们使用 R 语言：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pf</span>(<span class="fl">1.2353</span>, <span class="dv">20</span>, <span class="dv">30</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] 0.6553309</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>由于 <span class="math inline">\(p\)</span>-值等于 <span class="math inline">\(2(1 - 0.6553) = 0.6894\)</span>，我们不能拒绝 <span class="math inline">\(H_0\)</span>。</p>
+</div>
+</section>
+<section id="sec-14_5" class="level2" data-number="14.5">
+<h2 data-number="14.5" class="anchored" data-anchor-id="sec-14_5"><span class="header-section-number">14.5</span> 威布尔分布在寿命测试中的应用</h2>
+<p>虽然当假设<strong>失效率函数</strong>（<em>hazard rate function</em>）<span class="math inline">\(\lambda(t)\)</span> 随时间保持不变时，会导出<strong>指数分布</strong>（<em>exponential distribution</em>）作为寿命分布，但在许多实际情况中，假设 <span class="math inline">\(\lambda(t)\)</span> 随时间增加或减少往往更为现实。此类失效率函数的一个示例由下式给出： <span id="eq-14_5_1"><span class="math display">\[
+\lambda(t) = \alpha \beta t^{\beta-1}, \quad t &gt; 0
+\tag{14.14}\]</span></span> 其中 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 是正常数。其失效率函数由 <a href="#eq-14_5_1" class="quarto-xref">方程式&nbsp;<span>14.14</span></a> 给出的分布称为参数为 <span class="math inline">\((\alpha, \beta)\)</span> 的<strong>威布尔分布</strong>（<em>Weibull distribution</em>）。注意，当 <span class="math inline">\(\beta &gt; 1\)</span> 时，<span class="math inline">\(\lambda(t)\)</span> 递增；当 <span class="math inline">\(\beta &lt; 1\)</span> 时，<span class="math inline">\(\lambda(t)\)</span> 递减；而当 <span class="math inline">\(\beta = 1\)</span> 时，<span class="math inline">\(\lambda(t)\)</span> 为常数（此时简化为指数分布）。</p>
+<p>根据 <a href="#eq-14_5_1" class="quarto-xref">方程式&nbsp;<span>14.14</span></a> ，威布尔分布的分布函数如下： <span id="eq-14_5_2"><span class="math display">\[
+\begin{align}
+F(t) &amp;= 1 - \exp \left\{ - \int_0^t \lambda(s) ds \right\}, \quad t &gt; 0 \\
+     &amp;= 1 - \exp \{ -\alpha t^\beta \}
+\end{align}
+\tag{14.15}\]</span></span> 对其求导可得其<strong>密度函数</strong>（<em>density function</em>）： <span id="eq-14_5_3"><span class="math display">\[
+f(t) = \alpha \beta t^{\beta-1} \exp \{ -\alpha t^\beta \}, \quad t &gt; 0
+\tag{14.16}\]</span></span> <a href="#fig-14_2" class="quarto-xref">图&nbsp;<span>14.2</span></a> 展示了不同 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 取值下的该密度函数。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>代码</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x_vals <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">2.5</span>, <span class="at">length.out =</span> <span class="dv">500</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># alpha = 1 for all plots, varying beta</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(params, <span class="cf">function</span>(b) {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Weibull(alpha, beta) density is alpha * beta * t^(beta-1) * exp(-alpha * t^beta)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># R's dweibull(x, shape=beta, scale=alpha^(-1/beta))</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> x_vals, </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">dweibull</span>(x_vals, <span class="at">shape =</span> b, <span class="at">scale =</span> <span class="dv">1</span>), </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">param =</span> <span class="fu">paste0</span>(<span class="st">"alpha=1, beta="</span>, b)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, df_list)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>param) <span class="sc">+</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.5</span>)) <span class="sc">+</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"t"</span>, <span class="at">y =</span> <span class="st">"f(t)"</span>) <span class="sc">+</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>))</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-14_2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-14_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="14_files/figure-html/fig-14_2-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;14.2: 威布尔密度函数图
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>假设 <span class="math inline">\(X_1, \dots, X_n\)</span> 是来自上述分布的一个样本。为了估计未知参数 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>，我们可以采用<strong>最大似然法</strong>（<em>maximum likelihood method</em>）。由 <a href="#eq-14_5_3" class="quarto-xref">方程式&nbsp;<span>14.16</span></a> 可得其似然函数为： <span id="eq-14_5_4"><span class="math display">\[
+f(x_1, \dots, x_n) = \alpha^n \beta^n x_1^{\beta-1} \dots x_n^{\beta-1} \exp \left\{ -\alpha \sum_{i=1}^n x_i^\beta \right\}
+\tag{14.17}\]</span></span> 取对数得： <span id="eq-14_5_5"><span class="math display">\[
+\log f(x_1, \dots, x_n) = n \log \alpha + n \log \beta + (\beta - 1) \sum_{i=1}^n \log x_i - \alpha \sum_{i=1}^n x_i^\beta
+\tag{14.18}\]</span></span> 求偏导数： <span class="math display">\[
+\frac{\partial}{\partial \alpha} \log f(x_1, \dots, x_n) = \frac{n}{\alpha} - \sum_{i=1}^n x_i^\beta
+\]</span> <span class="math display">\[
+\frac{\partial}{\partial \beta} \log f(x_1, \dots, x_n) = \frac{n}{\beta} + \sum_{i=1}^n \log x_i - \alpha \sum_{i=1}^n x_i^\beta \log x_i
+\]</span> 令偏导数为零，可得<strong>最大似然估计量</strong>（<em>maximum likelihood estimators</em>）<span class="math inline">\(\hat{\alpha}\)</span> 和 <span class="math inline">\(\hat{\beta}\)</span> 是下列方程组的解： <span id="eq-14_5_6"><span class="math display">\[
+\hat{\alpha} = \frac{n}{\sum_{i=1}^n x_i^{\hat{\beta}}}
+\tag{14.19}\]</span></span> <span id="eq-14_5_7"><span class="math display">\[
+\frac{n}{\hat{\beta}} + \sum_{i=1}^n \log x_i = \hat{\alpha} \sum_{i=1}^n x_i^{\hat{\beta}} \log x_i
+\tag{14.20}\]</span></span> 或者将 <a href="#eq-14_5_6" class="quarto-xref">方程式&nbsp;<span>14.19</span></a> 代入 <a href="#eq-14_5_7" class="quarto-xref">方程式&nbsp;<span>14.20</span></a> 得： <span id="eq-14_5_8"><span class="math display">\[
+\frac{n + \hat{\beta} \sum_{i=1}^n \log x_i}{\hat{\beta}} = \frac{n \sum_{i=1}^n x_i^{\hat{\beta}} \log x_i}{\sum_{i=1}^n x_i^{\hat{\beta}}}
+\tag{14.21}\]</span></span> 后一个方程可以通过数值方法求解出 <span class="math inline">\(\hat{\beta}\)</span>，进而确定 <span class="math inline">\(\hat{\alpha}\)</span>。然而，与其深入研究这种方法，不如考虑第二种方法，它不仅计算上更简单，而且仿真研究表明，它往往能提供更准确的估计。</p>
+<section id="sec-14_5_1" class="level3" data-number="14.5.1">
+<h3 data-number="14.5.1" class="anchored" data-anchor-id="sec-14_5_1"><span class="header-section-number">14.5.1</span> 基于最小二乘法的参数估计</h3>
+<p><strong>最小二乘法</strong>（<em>least squares method</em>）也可以用于估计参数。设 <span class="math inline">\(X_1, \dots, X_n\)</span> 是来自以下分布的一个样本： <span class="math display">\[
+F(x) = 1 - e^{-\alpha x^\beta}, \quad x \geq 0
+\]</span> 注意， <span class="math display">\[
+\log(1 - F(x)) = -\alpha x^\beta
+\]</span> 或 <span class="math display">\[
+\log \left( \frac{1}{1 - F(x)} \right) = \alpha x^\beta
+\]</span> 两边再取对数可得： <span id="eq-14_5_9"><span class="math display">\[
+\log \log \left( \frac{1}{1 - F(x)} \right) = \beta \log x + \log \alpha
+\tag{14.22}\]</span></span> 现在设 <span class="math inline">\(X_{(1)} &lt; X_{(2)} &lt; \dots &lt; X_{(n)}\)</span> 表示<strong>顺序统计量</strong>（<em>ordered sample values</em>）——即对于 <span class="math inline">\(i = 1, \dots, n\)</span>， <span class="math display">\[
+X_{(i)} = X_1, \dots, X_n \text{ 中的第 } i \text{ 个最小观测值}
+\]</span> 并假设观测结果为 <span class="math inline">\(X_{(i)} = x_{(i)}\)</span>。如果我们能够近似计算量 <span class="math inline">\(\log \log (1 / [1 - F(x_{(i)})])\)</span> —— 设其近似值为 <span class="math inline">\(y_i\)</span> —— 那么根据 <a href="#eq-14_5_9" class="quarto-xref">方程式&nbsp;<span>14.22</span></a> ，我们可以得出： <span id="eq-14_5_10"><span class="math display">\[
+y_i \approx \beta \log x_{(i)} + \log \alpha, \quad i = 1, \dots, n
+\tag{14.23}\]</span></span> 然后我们可以选择 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 来使误差平方和最小——即选择 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 来使下式最小： <span class="math display">\[
+\text{最小化 } \sum_{i=1}^n (y_i - \beta \log x_{(i)} - \log \alpha)^2
+\]</span> 事实上，利用命题 9.2.1，我们得到当 <span class="math inline">\(\alpha = \hat{\alpha}\)</span>，<span class="math inline">\(\beta = \hat{\beta}\)</span> 时达到上述最小值，其中 <span id="eq-14_5_11"><span class="math display">\[
+\hat{\beta} = \frac{\sum_{i=1}^n y_i \log x_{(i)} - n \overline{\log x} \bar{y}}{\sum_{i=1}^n (\log x_{(i)})^2 - n (\overline{\log x})^2}
+\tag{14.24}\]</span></span> <span id="eq-14_5_12"><span class="math display">\[
+\log \hat{\alpha} = \bar{y} - \hat{\beta} \overline{\log x}
+\tag{14.25}\]</span></span> 其中 <span class="math display">\[
+\overline{\log x} = \sum_{i=1}^n (\log x_{(i)}) / n, \quad \bar{y} = \sum_{i=1}^n y_i / n
+\]</span> 为了利用上述方法，我们需要能够确定近似 <span class="math inline">\(\log \log (1 / [1 - F(x_{(i)})]) = \log [-\log (1 - F(x_{(i)}))]\)</span> 的值 <span class="math inline">\(y_i\)</span>，<span class="math inline">\(i = 1, \dots, n\)</span>。我们现在介绍两种不同的方法。</p>
+<p><strong>方法 1</strong>：该方法利用以下事实： <span id="eq-14_5_13"><span class="math display">\[
+E[F(X_{(i)})] = \frac{i}{n + 1}
+\tag{14.26}\]</span></span> 然后用 <span class="math inline">\(E[F(X_{(i)})]\)</span> 来近似 <span class="math inline">\(F(x_{(i)})\)</span>。因此，该方法建议使用： <span id="eq-14_5_14"><span class="math display">\[
+\begin{align}
+y_i &amp;= \log \{ -\log (1 - E[F(X_{(i)})]) \} \\
+    &amp;= \log \left\{ -\log \left( 1 - \frac{i}{n + 1} \right) \right\} \\
+    &amp;= \log \left\{ -\log \left( \frac{n + 1 - i}{n + 1} \right) \right\}
+\end{align}
+\tag{14.27}\]</span></span></p>
+<p><strong>方法 2</strong>：该方法利用以下事实： <span id="eq-14_5_15"><span class="math display">\[
+E[-\log (1 - F(X_{(i)}))] = \frac{1}{n} + \frac{1}{n-1} + \frac{1}{n-2} + \dots + \frac{1}{n-i+1}
+\tag{14.28}\]</span></span> 然后用上述期望值来近似 <span class="math inline">\(-\log(1 - F(x_{(i)}))\)</span>。因此，这第二种方法建议设置： <span id="eq-14_5_16"><span class="math display">\[
+y_i = \log \left[ \frac{1}{n} + \frac{1}{n-1} + \dots + \frac{1}{n-i+1} \right]
+\tag{14.29}\]</span></span></p>
+<p><strong>附注</strong></p>
+<p>（a） 目前尚不清楚哪种方法对威布尔分布的参数提供了更优的估计，需要进行大量的<strong>仿真研究</strong>（<em>simulation studies</em>）来确定。</p>
+<p>（b） 等式 <a href="#eq-14_5_13" class="quarto-xref">方程式&nbsp;<span>14.26</span></a> 和 <a href="#eq-14_5_15" class="quarto-xref">方程式&nbsp;<span>14.28</span></a> 的证明（这些等式对于来自任何连续分布 <span class="math inline">\(F\)</span> 的大小为 <span class="math inline">\(n\)</span> 的样本中的第 <span class="math inline">\(i\)</span> 个顺序统计量 <span class="math inline">\(X_{(i)}\)</span> 均成立）见习题 28-30。</p>
+</section>
 </section>
 <section id="problems" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
 
 
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p><span class="citation" data-cites="footnote-14_3_1">[<a href="../references.html#ref-footnote-14_3_1" role="doc-biblioref"><strong>footnote-14_3_1?</strong></a>]</span><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
