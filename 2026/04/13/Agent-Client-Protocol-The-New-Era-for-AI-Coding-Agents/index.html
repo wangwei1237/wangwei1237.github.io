@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+      <meta name="description" content="10 年前，也就是 2016 年，为了解决 VS Code 多语言支持重复开发的问题，微软团队基于 TypeScript Server 的通信机制，开始设计通用协议，以解决编辑器与语言服务解耦。[1] 同年的 6 月 27 日，微软在 DevNation 大会上正式宣布开源 LSP，从而解决了“针对同一语言，每个编辑器都要重写一遍智能提示”的噩梦，也标志着现代 IDE 进入了新的时代。[2] 多">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent Client Protocol（ACP）: AI Coding Agents 的新时代">
+<meta property="og:url" content="https://wangwei1237.github.io/2026/04/13/Agent-Client-Protocol-The-New-Era-for-AI-Coding-Agents/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="10 年前，也就是 2016 年，为了解决 VS Code 多语言支持重复开发的问题，微软团队基于 TypeScript Server 的通信机制，开始设计通用协议，以解决编辑器与语言服务解耦。[1] 同年的 6 月 27 日，微软在 DevNation 大会上正式宣布开源 LSP，从而解决了“针对同一语言，每个编辑器都要重写一遍智能提示”的噩梦，也标志着现代 IDE 进入了新的时代。[2] 多">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/04/13/Agent-Client-Protocol-The-New-Era-for-AI-Coding-Agents/1.png">
+<meta property="article:published_time" content="2026-04-13T14:58:15.000Z">
+<meta property="article:modified_time" content="2026-04-17T09:35:04.528Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="ACP">
+<meta property="article:tag" content="AI Coding Agent">
+<meta property="article:tag" content="Agent Client Protocol">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2026/04/13/Agent-Client-Protocol-The-New-Era-for-AI-Coding-Agents/1.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="@wangwei1237">
+      
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Agent Client Protocol（ACP）: AI Coding Agents 的新时代 |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js"></script>
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Agent-Client-Protocol-The-New-Era-for-AI-Coding-Agents"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Agent Client Protocol（ACP）: AI Coding Agents 的新时代
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2026/04/13/Agent-Client-Protocol-The-New-Era-for-AI-Coding-Agents/" class="article-date">
+  <time datetime="2026-04-13T14:58:15.000Z" itemprop="datePublished">2026-04-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">12 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p><img src="/2026/04/13/Agent-Client-Protocol-The-New-Era-for-AI-Coding-Agents/1.png" alt></p>
+<p>10 年前，也就是 2016 年，为了解决 VS Code 多语言支持重复开发的问题，微软团队基于 <a target="_blank" rel="noopener" href="https://github.com/Microsoft/TypeScript/tree/main/src/server">TypeScript Server</a> 的通信机制，开始设计通用协议，以解决编辑器与语言服务解耦。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup> 同年的 6 月 27 日，微软在 DevNation 大会上正式宣布开源 LSP，从而解决了“针对同一语言，每个编辑器都要重写一遍智能提示”的噩梦，也标志着现代 IDE 进入了新的时代。<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
+<p>多年以后，同样的情况出现在了 AI Coding Agent 的领域——2025 年 8 月 27 日，Zed Industries 在博客 <a target="_blank" rel="noopener" href="https://zed.dev/blog/bring-your-own-agent-to-zed">Bring Your Own Agent to Zed — Featuring Gemini CLI</a> 中正式公开 ACP 协议，并推出 Zed 中整合的 Gemini CLI 作为首个 ACP 的参考实现。<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
+<span id="more"></span>
+<h2 id="为什么需要-acp？">为什么需要 ACP？</h2>
+<p>截至目前，市面上已有至少 17 款成熟的 AI Coding Agent（Claude Code、Cursor、Codex CLI、Gemini CLI、Windsurf、Cline、goose、Kimi CLI、OpenCode……）。同时，至少有 6~7 款主流的编码 IDE（VS Code、IntelliJ/JetBrains、Zed、Neovim、Cursor……）。</p>
+<p>每一个 AI Coding Agent 都需要与不同的 IDE 进行集成。如果想在 JetBrains 中使用 Claude Code？JetBrains 团队就得在 JetBrains IDE 中开发适配 Claude Code。想在 Neovim 中使用 Claude Code？不好意思，也得重新适配。</p>
+<p>这种重复的集成工作，反反复复地出现在整个工具链生态，不仅造成了厂商锁定效应，还拖慢了创新步伐。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">厂商锁定效应
+</p><p>厂商锁定效应是指用户在选择了某款 AI Coding Agent 后，如果只有特定的 IDE 支持该 Coding Agent，则用户后续更换 Coding Agent 或者 IDE 的 <strong>转换成本</strong> 就会非常昂贵，导致其在未来一段时期内不得不依赖特定的 Coding Agent 或者 IDE。</p>
+<p>通俗地说，就是“一旦上了贼船，就很难下来”。</p>
+</div>
+<p>而 ACP 协议就是为了解决这个问题而提出，它的作用和 10 年前的 LSP 协议一样，都是为了建立一套通用标准，从而实现 AI Coding Agent 与 IDE 之间的解耦。</p>
+<h2 id="acp-的时间节点">ACP 的时间节点</h2>
+<p>2025 年初，Zed Industries 团队正在优化 “agentic editing” 功能，恰在此时，谷歌方面联系到他们，希望与 Zed 探讨如何在 Zed 中更深度地集成 Gemini CLI。尽管当时 Zed 已经可以在其嵌入式终端中运行 Gemini CLI 了，但通过 ANSI 转义码进行通信的方式，无法满足现代 IDE 丰富交互的需求。</p>
+<p>正如 Zed 在博客中说的那样<sup class="footnote-ref"><a href="#fn3" id="fnref3:1">[3:1]</a></sup>：“我们需要一种比 ANSI 转义码更结构化的通信方式。” 这促成了 ACP 的诞生——一个极简的 JSON-RPC 框架，它允许任意 Client 通过定义完善的 schema 与任意 Agent 进行通信。</p>
+<blockquote>
+<p>After shipping agentic editing earlier this year, the next big task on our roadmap was making that experience extensible.</p>
+<p>As luck would have it, that’s around the time when Google decided to reach out. The Gemini CLI team was having a great experience using their agent in Zed’s integrated terminal, and they wanted to explore what deeper integration could look like.</p>
+<p>Command-line agents are cool because their simplicity makes them easy to run anywhere—including as a subprocess of another application. Zed was already running Gemini CLI inside our embedded terminal emulator, but we needed a more structured way of communicating than ANSI escape codes.</p>
+<p>So we defined a minimal set of JSON-RPC endpoints to relay user requests to the agent and render its responses. The result is the <strong>Agent Client Protocol</strong>, a lean framework that lets any client talk to any agent, as long as they follow the schema.</p>
+</blockquote>
+<p>ACP 协议于 2025 年 8 月推出，以 Gemini CLI 作为参考实现，同年 9 月便迅速集成了 Claude Code，同年 10 月又迅速集成了 Codex……</p>
+<p>如今，ACP 是一款采用 Apache 2.0 开源许可协议的项目，背后有 Zed、谷歌、JetBrains 等行业巨头以及日益壮大的 IDE 插件开发者社区提供支持。我们可以在 ACP 协议的官网查看目前所有的 <a target="_blank" rel="noopener" href="https://agentclientprotocol.com/get-started/agents">Clients</a> 和 <a target="_blank" rel="noopener" href="https://agentclientprotocol.com/get-started/clients">Agents</a>。</p>
+<h2 id="acp-协议简介">ACP 协议简介</h2>
+<p>ACP 是一种 JSON-RPC 2.0 协议，其核心原则简单明了：</p>
+<ul>
+<li>Client：各类编辑器，如 Zed、JetBrains、VS Code 等，主要负责管理用户的编程环境</li>
+<li>Agent：各类 AI Coding Agent，如 Claude Code、Gemini CLI、OpenClaw 等，主要负责思考与工具执行</li>
+<li>Client 与 Agent 之间通过标准输入输出流通信（智能体以子进程形式运行），或通过 HTTP 协议通信（远程智能体）</li>
+</ul>
+<p>关于 ACP 协议的详细内容，此处不再过多介绍了，具体可以参见：<a target="_blank" rel="noopener" href="https://agentclientprotocol.com/get-started/introduction">ACP 协议的官网</a>。</p>
+<h2 id="acp-中的核心概念与流程">ACP 中的核心概念与流程</h2>
+<h3 id="ide-与-agent-的-acp-通信">IDE 与 Agent 的 ACP 通信</h3>
+<pre class="mermaid">flowchart LR
+  subgraph ClientEditor ["Client (Editor)"]
+      Editor["Zed / JetBrains / Neovim"]
+  end
+
+  subgraph AgentAI ["Agent (AI)"]
+      Agent["Claude Code / Gemini CLI"]
+  end
+
+  Editor -- "session/prompt" --> Agent
+  Agent -- "session/update" --> Editor
+  Agent -- "fs/read_text_file" --> Editor
+  Agent -- "terminal/create" --> Editor
+  Agent -- "request_permission" --> Editor</pre>
+<h3 id="acp-的全生命周期图">ACP 的全生命周期图</h3>
+<pre class="mermaid">sequenceDiagram
+  participant User
+  participant Client as Client (Zed)
+  participant Agent as Agent (Gemini CLI)
+  participant LLM
+
+  Note over Client, Agent: 1. Initialization
+  Client->>Agent: initialize
+  Agent-->>Client: capabilities + version
+
+  Note over Client, Agent: 2. Session Setup
+  Client->>Agent: session/new
+  Agent-->>Client: sessionId
+
+  Note over Client, Agent: 3. Prompt Turn
+  User->>Client: "Run tests and fix failures"
+  Client->>Agent: session/prompt
+  Agent->>LLM: Process prompt
+  LLM-->>Agent: Response + tool calls
+  Agent->>Client: session/update (plan)
+  Agent->>Client: session/update (tool_call: pending)
+
+  Note over Client, Agent: 4. Tool Execution
+  Agent->>Client: terminal/create
+  Client-->>Agent: terminalId
+  Agent->>Client: session/update (tool_call: in_progress)
+  Note left of Client: Shows live terminal output
+  Agent->>Client: terminal/output
+  Client-->>Agent: output + exitStatus
+  Agent->>Client: session/update (tool_call: completed)
+
+  Note over Client, Agent: 5. File Operations
+  Agent->>Client: fs/read_text_file
+  Client-->>Agent: file content
+  Agent->>Client: session/request_permission
+  Client-->>Agent: allowed
+  Agent->>Client: fs/write_text_file
+  Client-->>Agent: success
+  Agent->>Client: session/update (diff)
+
+  Note over Client, Agent: 6. Completion
+  Agent-->>Client: session/prompt response (end_turn)</pre>
+<h3 id="terminals-命令的时序图">Terminals 命令的时序图</h3>
+<pre class="mermaid">sequenceDiagram
+  participant Agent
+  participant Client
+
+  Agent->>Client: terminal/create
+  Note right of Client: command: "npm test"<br>args: ["--coverage"]<br>cwd: "/project"
+  Client-->>Agent: { terminalId: "term_001" }
+
+  Agent->>Client: session/update
+  Note left of Agent: tool_call_update<br>status: in_progress<br>content: [terminal embed]
+
+  Note right of Client: Displays live output
+  Agent->>Client: terminal/wait_for_exit
+  Note right of Client: Command runs...
+  Client-->>Agent: { }
+
+  Agent->>Client: terminal/output
+  Client-->>Agent: { output: "...", exitStatus: { exitCode: 0 } }
+
+  Agent->>Client: terminal/release
+  Client-->>Agent: { }</pre>
+<h3 id="权限请求时序图">权限请求时序图</h3>
+<pre class="mermaid">sequenceDiagram
+  participant Agent
+  participant Client
+  participant User
+
+  Agent->>Client: session/request_permission
+  Note right of Client: toolCall: { title: "Delete old_file.txt" }<br>options: [allow_once, allow_always, reject]
+
+  Client->>User: Show permission dialog
+  User-->>Client: Click "Allow"
+
+  Client-->>Agent: { outcome: "selected", optionId: "allow_once" }
+  Note left of Agent: Proceeds with tool execution</pre>
+<h2 id="acp-协议的优点">ACP 协议的优点</h2>
+<h3 id="1-摆脱厂商绑定">1. 摆脱厂商绑定</h3>
+<p>还记得我们当初不得不在 Cursor、VS Code 或是特定终端代理之间艰难抉择的情况吗？有了 ACP 协议，我们完全可以根据自己的喜好选择最趁手的编辑器，再根据当前的任务需求选择最合适的代理：</p>
+<ul>
+<li><strong>开发复杂功能</strong>：选用擅长架构设计和逻辑推理的代理。</li>
+<li><strong>调试疑难杂症</strong>：切换到更擅长解析堆栈追踪和日志信息的代理。</li>
+<li><strong>编写测试用例</strong>：选择专攻测试驱动开发的专业代理。</li>
+</ul>
+<p>我们的编辑器对此毫无感知，所有的底层交互均由 ACP 协议统一处理，真正实现了工具链的自由组合。</p>
+<h3 id="2-适配任务的最佳工具">2. 适配任务的最佳工具</h3>
+<p>LLM 的迭代速度极快，往往快到令人应接不暇。昨天还表现最优的模型，可能短短一周后就被新的模型所超越。如果采用专属的集成方案，我们只能被动等待编辑器厂商的支持。</p>
+<p>而借助 ACP，我们获得了前所未有的敏捷性：</p>
+<ul>
+<li><strong>即插即用</strong>：新智能体发布 → 接入 ACP → 即可在我们的编辑器中无缝使用。</li>
+<li><strong>零等待成本</strong>：无需等待插件更新，无需更换编辑器，更无需重新适应操作习惯。</li>
+</ul>
+<h3 id="3-提升团队协作的灵活性">3. 提升团队协作的灵活性</h3>
+<p>在实际的开发团队中，我们经常会看到这样的场景：前端开发者钟爱 Claude Code，后端工程师对一款针对技术栈微调的定制化 Agent 深信不疑，而运维人员则习惯于另一套完全不同的工具。</p>
+<p>ACP 协议能够确保无论个人偏好如何，所有人都能顺畅协作。每个人都可以使用自己得心应手的编辑器和信赖的 Agent。这同时也让团队的入职流程变得更加简便——新开发者加入时，只需告诉他们：“用你最顺手的编辑器就行，这些是我们团队在用的智能代理，它们全都兼容可用。”</p>
+<h3 id="4-面向未来的前瞻性设计">4. 面向未来的前瞻性设计</h3>
+<p>我们正处于智能体时代的早期阶段，新功能和新范式每周都在不断涌现。未来的智能体不仅能写代码，还能够实现：</p>
+<ul>
+<li>复杂的浏览器自动化操作</li>
+<li>深度的数据库查询与分析</li>
+<li>执行跨系统的复杂工作流</li>
+<li>与其他智能体进行多模态协同工作</li>
+</ul>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p>没有什么事情是不能通过抽象一层来解决的，如果有，那就再抽象一层。</p>
+</div>
+<h2 id="参考文献">参考文献</h2>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://github.com/microsoft/language-server-protocol/wiki/Protocol-History">LSP History</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://code.visualstudio.com/blogs/2016/06/27/common-language-protocol">A Common Protocol for Languages</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a target="_blank" rel="noopener" href="https://zed.dev/blog/bring-your-own-agent-to-zed">Bring Your Own Agent to Zed — Featuring Gemini CLI</a> <a href="#fnref3" class="footnote-backref">↩︎</a> <a href="#fnref3:1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2026/04/13/Agent-Client-Protocol-The-New-Era-for-AI-Coding-Agents/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ACP/" rel="tag">ACP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI-Coding-Agent/" rel="tag">AI Coding Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent-Client-Protocol/" rel="tag">Agent Client Protocol</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">通过 Chrome DevTools MCP 增强 Agent 的浏览器操控能力</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "ppRS6IT7xMHmCl54L7ynIC2Z-gzGzoHsz",
+    app_key: "qEmM49ZlU6LOwXCHjzMUECKu",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "快来评论吧~",
+    recordIP: true,
+    visitor: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2026
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+ 
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
