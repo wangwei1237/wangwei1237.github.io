@@ -225,7 +225,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_5/5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">特殊的随机变量</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">特殊的随机变量 {#sec-5}s</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -291,7 +291,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapter_16/16.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Machine learning and big data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">机器学习与大数据</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -339,10 +339,17 @@ window.Quarto = {
   <li><a href="#sec-15_2_1" id="toc-sec-15_2_1" class="nav-link" data-scroll-target="#sec-15_2_1"><span class="header-section-number">15.2.1</span> 蒙特卡罗模拟方法</a></li>
   </ul></li>
   <li><a href="#sec-15_3" id="toc-sec-15_3" class="nav-link" data-scroll-target="#sec-15_3"><span class="header-section-number">15.3</span> 自助法</a></li>
-  <li><a href="#permutation-tests" id="toc-permutation-tests" class="nav-link" data-scroll-target="#permutation-tests"><span class="header-section-number">15.4</span> Permutation tests</a></li>
-  <li><a href="#generating-discrete-random-variables" id="toc-generating-discrete-random-variables" class="nav-link" data-scroll-target="#generating-discrete-random-variables"><span class="header-section-number">15.5</span> Generating discrete random variables</a></li>
-  <li><a href="#generating-continuous-random-variables" id="toc-generating-continuous-random-variables" class="nav-link" data-scroll-target="#generating-continuous-random-variables"><span class="header-section-number">15.6</span> Generating continuous random variables</a></li>
-  <li><a href="#determining-the-number-of-simulation-runs-in-a-monte-carlo-study" id="toc-determining-the-number-of-simulation-runs-in-a-monte-carlo-study" class="nav-link" data-scroll-target="#determining-the-number-of-simulation-runs-in-a-monte-carlo-study"><span class="header-section-number">15.7</span> Determining the number of simulation runs in a Monte Carlo study</a></li>
+  <li><a href="#sec-15_4" id="toc-sec-15_4" class="nav-link" data-scroll-target="#sec-15_4"><span class="header-section-number">15.4</span> 置换检验</a>
+  <ul class="collapse">
+  <li><a href="#sec-15_4_1" id="toc-sec-15_4_1" class="nav-link" data-scroll-target="#sec-15_4_1"><span class="header-section-number">15.4.1</span> 置换检验中的正态近似</a></li>
+  <li><a href="#sec-15_4_2" id="toc-sec-15_4_2" class="nav-link" data-scroll-target="#sec-15_4_2"><span class="header-section-number">15.4.2</span> 两样本置换检验</a></li>
+  </ul></li>
+  <li><a href="#sec-15_5" id="toc-sec-15_5" class="nav-link" data-scroll-target="#sec-15_5"><span class="header-section-number">15.5</span> 离散随机变量的生成</a></li>
+  <li><a href="#sec-15_6" id="toc-sec-15_6" class="nav-link" data-scroll-target="#sec-15_6"><span class="header-section-number">15.6</span> 连续随机变量的生成</a>
+  <ul class="collapse">
+  <li><a href="#sec-15_6_1" id="toc-sec-15_6_1" class="nav-link" data-scroll-target="#sec-15_6_1"><span class="header-section-number">15.6.1</span> 正态随机变量的生成</a></li>
+  </ul></li>
+  <li><a href="#sec-15_7" id="toc-sec-15_7" class="nav-link" data-scroll-target="#sec-15_7"><span class="header-section-number">15.7</span> 确定蒙特卡罗研究中的模拟运行次数</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/edit/main/chapter_15/15.qmd" class="toc-action"><i class="bi bi-github"></i>编辑该页面</a></li><li><a href="https://github.com/wangwei1237/introduction_to_probability_and_statistics/issues/new" class="toc-action"><i class="bi empty"></i>报告问题</a></li></ul></div></nav>
@@ -372,7 +379,7 @@ window.Quarto = {
 <section id="sec-15_1" class="level2" data-number="15.1">
 <h2 data-number="15.1" class="anchored" data-anchor-id="sec-15_1"><span class="header-section-number">15.1</span> 引言</h2>
 <p>在本章中，我们将介绍两种强大的现代统计技术：自助法（<em>bootstrap</em>）统计方法和置换（<em>permutation</em>）检验。这两种方法都是非参数方法，他们不对任何潜在概率分布做特定假设。自助法使我们能够衡量参数估计量的有效性，而置换检验则提供了检验某些统计假设的新方法。然而，这两种方法在实施过程中都需要大量的计算。执行所需计算的最有效且高效的方法是使用 <strong>模拟</strong>（<em>simulation</em>），这也是本章的第三个主题。</p>
-<p>在 <a href="#sec-15_2" class="quarto-xref"><span>章节 15.2</span></a> 中，我们将介绍模拟的关键——随机数（<em>random numbers</em>），我们将展示如何使用随机数来生成随机排列和随机子集。在 <a href="#sec-15_2_1" class="quarto-xref"><span>章节 15.2.1</span></a> 中，我们将介绍用于计算近似期望的蒙特卡罗（<em>Monte Carlo</em>）模拟方法。在 <a href="#sec-15_3" class="quarto-xref"><span>章节 15.3</span></a> 中，我们将介绍自助法统计，并展示如何应用蒙特卡罗模拟方法来进行所需的分析。在 <span class="quarto-unresolved-ref">?sec-15_4</span> 中，我们将讨论置换检验：一种用于确定数据序列是否来自单一总体分布的非参数检验方法。在后续的各节中，我们将继续研究模拟。在 <span class="quarto-unresolved-ref">?sec-15_5</span> 和 <span class="quarto-unresolved-ref">?sec-15_6</span> 中，我们将展示如何使用随机数来生成任意连续、离散随机变量的值，在 <span class="quarto-unresolved-ref">?sec-15_7</span> 中，我们将研究何时可以结束蒙特卡罗模拟过程。</p>
+<p>在 <a href="#sec-15_2" class="quarto-xref"><span>章节 15.2</span></a> 中，我们将介绍模拟的关键——随机数（<em>random numbers</em>），我们将展示如何使用随机数来生成随机排列和随机子集。在 <a href="#sec-15_2_1" class="quarto-xref"><span>章节 15.2.1</span></a> 中，我们将介绍用于计算近似期望的蒙特卡罗（<em>Monte Carlo</em>）模拟方法。在 <a href="#sec-15_3" class="quarto-xref"><span>章节 15.3</span></a> 中，我们将介绍自助法统计，并展示如何应用蒙特卡罗模拟方法来进行所需的分析。在 <a href="#sec-15_4" class="quarto-xref"><span>章节 15.4</span></a> 中，我们将讨论置换检验：一种用于确定数据序列是否来自单一总体分布的非参数检验方法。在后续的各节中，我们将继续研究模拟。在 <a href="#sec-15_5" class="quarto-xref"><span>章节 15.5</span></a> 和 <a href="#sec-15_6" class="quarto-xref"><span>章节 15.6</span></a> 中，我们将展示如何使用随机数来生成任意连续、离散随机变量的值，在 <a href="#sec-15_7" class="quarto-xref"><span>章节 15.7</span></a> 中，我们将研究何时可以结束蒙特卡罗模拟过程。</p>
 </section>
 <section id="sec-15_2" class="level2" data-number="15.2">
 <h2 data-number="15.2" class="anchored" data-anchor-id="sec-15_2"><span class="header-section-number">15.2</span> 随机数</h2>
@@ -635,17 +642,170 @@ MSE_{F_e}(S_n^2)=E_{F_e}[(S_n^2 - \theta_e)^2]=E_{F_e}\left[\left(\frac{\sum_{i 
 <p><span class="math inline">\(\blacksquare\)</span></p>
 </div>
 </section>
-<section id="permutation-tests" class="level2" data-number="15.4">
-<h2 data-number="15.4" class="anchored" data-anchor-id="permutation-tests"><span class="header-section-number">15.4</span> Permutation tests</h2>
+<section id="sec-15_4" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="sec-15_4"><span class="header-section-number">15.4</span> 置换检验</h2>
+<p>假设我们想要检验原假设 <span class="math inline">\(H_0\)</span> ：数据 <span class="math inline">\(X_1, \ldots, X_N\)</span> 是来自某个未指定分布的样本。<strong>置换检验</strong> (<em>permutation tests</em>) 是对该假设的一种检验，其中 <span class="math inline">\(p\)</span> 值的计算是在已知观测到的数据值集合 <span class="math inline">\(S\)</span> 但不知道具体哪个数据值对应 <span class="math inline">\(X_1\)</span> 、哪个对应 <span class="math inline">\(X_2\)</span> 等的前提下进行的。例如，若 <span class="math inline">\(N = 3\)</span> 且 <span class="math inline">\(X_1 = 5, X_2 = 7, X_3 = 2\)</span> ，那么 <span class="math inline">\(p\)</span> 值的计算条件是已知数据值集合 <span class="math inline">\(S = \{2, 5, 7\}\)</span> 。<span class="math inline">\(p\)</span> 值的计算利用了这样一个事实：在原假设为真时，给定数据值集合 <span class="math inline">\(S\)</span> ，将这 <span class="math inline">\(N\)</span> 个值分配给原始数据的 <span class="math inline">\(N!\)</span> 种可能方式中的每一种都是等可能的。也就是说，假设 <span class="math inline">\(N = 3\)</span> 且数据值集合如前所述为 <span class="math inline">\(S = \{2, 5, 7\}\)</span> 。现在原假设 <span class="math inline">\(H_0\)</span> 指出 <span class="math inline">\(X_1, X_2, X_3\)</span> 是独立同分布的。因此，如果 <span class="math inline">\(H_0\)</span> 为真，那么在给定数据集 <span class="math inline">\(S\)</span> 的情况下，向量 <span class="math inline">\((X_1, X_2, X_3)\)</span> 等于值 <span class="math inline">\(2, 5, 7\)</span> 的 <span class="math inline">\(3!\)</span> 种置换中的任何一种的概率都是相等的。</p>
+<p>置换检验的实施过程如下。根据备择假设，选择一个检验统计量 <span class="math inline">\(T(X_1, \ldots, X_N)\)</span> 。暂时假设检验统计量的较大值是备择假设的证据。然后观测数据值，设 <span class="math inline">\(X_i = x_i, i = 1, \ldots, N\)</span> ，并计算 <span class="math inline">\(T(x_1, \ldots, x_N)\)</span> 的值。令 <span class="math inline">\(S = \{x_1, \ldots, x_N\}\)</span> 为由 <span class="math inline">\(N\)</span> 个观测值组成的无序集合。那么，如果检验统计量的值为 <span class="math inline">\(T(x_1, \ldots, x_N) = t\)</span> ，则由这些数据产生的原假设的 <span class="math inline">\(p\)</span> 值为：</p>
+<p><span id="eq-15_4_1"><span class="math display">\[ p\text{-value} = P_{H_0}(T(X_1, \ldots, X_N) \geq t \mid S = \{x_1, \ldots, x_N\})  \tag{15.1}\]</span></span></p>
+<p>现在，在 <span class="math inline">\(H_0\)</span> 下，<span class="math inline">\(X_1, \ldots, X_N\)</span> 等可能地等于 <span class="math inline">\(x_1, \ldots, x_N\)</span> 的 <span class="math inline">\(N!\)</span> 种置换中的任何一种。因此，令 <span class="math inline">\(I_1, \ldots, I_N\)</span> 为一个随机向量，它等可能地取 <span class="math inline">\(1, \ldots, N\)</span> 的 <span class="math inline">\(N!\)</span> 种置换中的任何一种，我们可以将上述 <span class="math inline">\(p\)</span> 值写为：</p>
+<p><span id="eq-15_4_2"><span class="math display">\[
+\begin{align*}
+p\text{-value} &amp;= P(T(x_{I_1}, x_{I_2}, \ldots, x_{I_N}) \geq t) \\
+&amp;= \frac{\text{满足 } T(x_{i_1}, x_{i_2}, \ldots, x_{i_N}) \geq t \text{ 的置换 } (i_1, \ldots, i_N) \text{ 的个数}}{N!}
+\end{align*}
+\tag{15.2}\]</span></span></p>
+<p>为了说明，假设要在 <span class="math inline">\(N\)</span> 周内观测数据，其中 <span class="math inline">\(X_i\)</span> 是在第 <span class="math inline">\(i\)</span> 周观测到的数据值，并且我们想要检验原假设：</p>
+<p><span class="math inline">\(H_0\)</span> ：<span class="math inline">\(X_1, \ldots, X_N\)</span> 是独立同分布的</p>
+<p>对抗备择假设：</p>
+<p><span class="math inline">\(H_1\)</span> ：<span class="math inline">\(X_i\)</span> 随 <span class="math inline">\(i\)</span> 的增加而呈现增加趋势</p>
+<p>现在，如果原假设为真且数据是独立同分布的，那么在已知值集合 <span class="math inline">\(\{X_1, \ldots, X_N\}\)</span> 但不知道哪个值对应 <span class="math inline">\(X_1\)</span> 或哪个对应 <span class="math inline">\(X_2\)</span> 等的情况下，统计量 <span class="math inline">\(\sum_{j=1}^N j X_j\)</span> 的分布就好像我们随机配对了两个数据集 <span class="math inline">\(\{1, \ldots, N\}\)</span> 和 <span class="math inline">\(\{X_1, \ldots, X_N\}\)</span> 然后对这 <span class="math inline">\(N\)</span> 对配对值的乘积求和。另一方面，如果备择假设为真，那么 <span class="math inline">\(\sum_{j=1}^N j X_j\)</span> 往往比我们仅仅随机配对值时的趋势更大。这是因为两个同等大小集合的配对值之和在最大值与最大值配对、次大值与次大值配对等情况下达到最大。（在统计学术语中，当 <span class="math inline">\(X_j\)</span> 随 <span class="math inline">\(j\)</span> 增加而增加时，数据对 <span class="math inline">\((j, X_j), j = 1, \ldots, N\)</span> 的相关系数较大。）因此，<span class="math inline">\(H_0\)</span> 对抗 <span class="math inline">\(H_1\)</span> 的一种可能的置换检验是：</p>
+<ol type="1">
+<li>观测数据值——设 <span class="math inline">\(X_j = x_j, j = 1, \ldots, N\)</span> 。</li>
+<li>令 <span class="math inline">\(t = \sum_{j=1}^N j x_j\)</span> 。</li>
+<li>确定由下式给出的 <span class="math inline">\(p\)</span> 值： <span id="eq-15_4_3"><span class="math display">\[ p\text{-value} = P\left(\sum_{j=1}^N I_j x_j \geq t\right)  \tag{15.3}\]</span></span> 其中 <span class="math inline">\(I_1, \ldots, I_N\)</span> 等可能地为 <span class="math inline">\(1, \ldots, N\)</span> 的 <span class="math inline">\(N!\)</span> 种置换中的任何一种。</li>
+</ol>
+<p>上述 <span class="math inline">\(p\)</span> 值可以通过使用 <a href="#exm-15_2_b" class="quarto-xref">例子&nbsp;<span>15.2</span></a> 的方法生成随机置换进行模拟近似。</p>
+<div id="exm-15_4_a" class="theorem example">
+<p><span class="theorem-title"><strong>例子 15.6</strong></span> 为了确定 DVD 播放机的周销量是否呈下降趋势，一家大型电子商店的经理记录了过去 12 周的此类销量，从第 1 周到第 12 周（本周）的结果如下： <span class="math display">\[22, 24, 20, 18, 16, 14, 15, 15, 13, 17, 12, 14\]</span> 这些数据是否足够强大，足以拒绝销量分布随时间不变的原假设，从而使经理能够得出销量呈下降趋势的结论？</p>
+<p><strong>解</strong> ：令原假设为销量分布随时间不变，备择假设为销量呈下降趋势。因此，如果备择假设为真，那么第 <span class="math inline">\(j\)</span> 周的销量 <span class="math inline">\(X_j\)</span> 与 <span class="math inline">\(j\)</span>之间将存在负相关。因此，<span class="math inline">\(\sum_{j=1}^{12} j X_j\)</span> 的相对较小值将是支持备择假设的证据。现在，设 <span class="math inline">\(x_j\)</span> 为 <span class="math inline">\(X_j\)</span> 的观测值，销售数据给出： <span class="math display">\[ \sum_{j=1}^{12} j x_j = 1178 \]</span> 因此，数据来自同一分布的原假设对抗数据随时间递减的备择假设的置换检验的 <span class="math inline">\(p\)</span> 值由下式给出： <span class="math display">\[ p\text{-value} = P\left(\sum_{j=1}^{12} I_j x_j \leq 1178\right) \]</span> 其中 <span class="math inline">\(I_1, \ldots, I_{12}\)</span> 等可能地为 <span class="math inline">\(1, \ldots, 12\)</span> 的 <span class="math inline">\(12!\)</span> 种置换中的任何一种。使用 <span class="math inline">\(10^5\)</span> 次运行进行的模拟得出： <span class="math display">\[ p\text{-value} \approx .00039 \]</span> 这引导我们拒绝销量分布随时间不变的原假设。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<p>虽然 <span class="math inline">\(\sum_{j=1}^N j X_j\)</span> 是最常用于检验 <span class="math inline">\(X_1, \ldots, X_n\)</span> 独立同分布原假设对抗 <span class="math inline">\(X_j\)</span> 随 <span class="math inline">\(j\)</span> 增加而增加的备择假设的检验统计量，但它并不是唯一的可能性。实际上，我们可以选择任何形式为 <span class="math inline">\(\sum_{j=1}^N a_j X_j\)</span> 的检验统计量，其中 <span class="math inline">\(a_1 &lt; a_2 &lt; \ldots &lt; a_n\)</span> 。（例如，我们可以选择 <span class="math inline">\(a_j = j^2\)</span> 。）与前述类似，首先确定统计量的值，设其为 <span class="math inline">\(t\)</span> 。因为当备择假设为真时，较大的 <span class="math inline">\(a_j\)</span> 值往往会与较大的数据值配对，从而使得 <span class="math inline">\(\sum_{j=1}^N a_j X_j\)</span> 趋向于变得更大。因此，当 <span class="math inline">\(t\)</span> 较大时，我们同样希望拒绝原假设。于是，所得的 <span class="math inline">\(p\)</span> 值为： <span id="eq-15_4_4"><span class="math display">\[ p\text{-value} = P\left(\sum_{j=1}^N a_{I_j} x_j \geq t\right)  \tag{15.4}\]</span></span> 其中 <span class="math inline">\(I_1, \ldots, I_N\)</span> 等可能地为 <span class="math inline">\(1, \ldots, N\)</span> 的 <span class="math inline">\(N!\)</span> 种置换中的任何一种。</p>
+<p>根据备择假设的不同，我们可以选择其他的常数 <span class="math inline">\(a_j, j = 1, \ldots, N\)</span> 来检验数据值独立同分布的原假设。例如，如果备择假设是数据在中间值趋于更高而在极端值趋于更低，那么我们可以让检验统计量的形式为 <span class="math inline">\(T = \sum_{j=1}^N a_j X_j\)</span> ，其中 <span class="math inline">\(a_1, \ldots, a_N\)</span> 使得中间位置的常数比两端的更大。例如，我们可以使用 <span class="math inline">\(a_j = j(N - j), j = 1, \ldots, N\)</span> 。由于这同样使得当备择假设为真时，较大的数据值更有可能与较大的常数配对，因此当 <span class="math inline">\(T\)</span> 较大时，我们仍然希望拒绝原假设。</p>
+<section id="sec-15_4_1" class="level3" data-number="15.4.1">
+<h3 data-number="15.4.1" class="anchored" data-anchor-id="sec-15_4_1"><span class="header-section-number">15.4.1</span> 置换检验中的正态近似</h3>
+<p>虽然不如进行模拟那样准确，但可以通过假设检验统计量近似服从正态分布来估算置换检验的 <span class="math inline">\(p\)</span> 值。现在，在数据值独立同分布的原假设下，给定数据集 <span class="math inline">\(S = \{x_1, \ldots, x_N\}\)</span> ，随机变量 <span class="math inline">\(X_i\)</span> 等可能地为这 <span class="math inline">\(N\)</span> 个值中的任何一个，并且当 <span class="math inline">\(i \neq j\)</span> 时，随机向量 <span class="math inline">\((X_i, X_j)\)</span> 等可能地取 <span class="math inline">\(x_k, x_r (r \neq k)\)</span> 这 <span class="math inline">\(N(N - 1)\)</span> 个值中的任何一个。因此，给定 <span class="math inline">\(S = \{x_1, \ldots, x_N\}\)</span> ：</p>
+<p><span id="eq-15_4_5"><span class="math display">\[ E[X_i] = \frac{1}{N} \sum_{i=1}^N x_i = \bar{x}  \tag{15.5}\]</span></span> <span id="eq-15_4_6"><span class="math display">\[ E[X_i^2] = \frac{1}{N} \sum_{i=1}^N x_i^2  \tag{15.6}\]</span></span> <span id="eq-15_4_7"><span class="math display">\[
+\begin{align*}
+E[X_i X_j] &amp;= \frac{1}{N(N - 1)} \sum_k \sum_{r \neq k} x_k x_r \\
+&amp;= \frac{1}{N(N - 1)} \left( \sum_k \sum_r x_k x_r - \sum_k \sum_{r=k} x_k x_r \right) \\
+&amp;= \frac{1}{N(N - 1)} \left( \sum_k x_k \sum_r x_r - \sum_k x_k^2 \right) \\
+&amp;= \frac{1}{N(N - 1)} \left( N^2 \bar{x}^2 - \sum_{k=1}^N x_k^2 \right)
+\end{align*}
+\tag{15.7}\]</span></span></p>
+<p>因此，令 <span class="math inline">\(v = \text{Var}(X_i)\)</span> 且 <span class="math inline">\(c = \text{Cov}(X_i, X_j), i \neq j\)</span> ，上述推导给出：</p>
+<p><span class="math display">\[ E[X_i] = \bar{x} \]</span> <span id="eq-15_4_8"><span class="math display">\[ v = \text{Var}(X_i) = \frac{1}{N} \sum_{i=1}^N x_i^2 - \bar{x}^2  \tag{15.8}\]</span></span> <span id="eq-15_4_9"><span class="math display">\[ c = \text{Cov}(X_i, X_j) = \frac{1}{N(N - 1)} (N^2 \bar{x}^2 - \sum_{k=1}^N x_k^2) - \bar{x}^2  \tag{15.9}\]</span></span> <span id="eq-15_4_10"><span class="math display">\[ v - c = \frac{\sum_{i=1}^N x_i^2 - N \bar{x}^2}{N - 1}  \tag{15.10}\]</span></span></p>
+<p>因此，当 <span class="math inline">\(H_0\)</span> 为真时，检验统计量 <span class="math inline">\(T = \sum_{j=1}^N j X_j\)</span> 的均值为： <span id="eq-15_4_11"><span class="math display">\[ E[T] = \frac{N(N + 1)}{2} \bar{x}  \tag{15.11}\]</span></span> 方差为： <span id="eq-15_4_12"><span class="math display">\[
+\begin{align*}
+\text{Var}(T) &amp;= \text{Var}\left(\sum_{j=1}^N j X_j\right) \\
+&amp;= \sum_{j=1}^N \text{Var}(j X_j) + \sum_i \sum_{j \neq i} \text{Cov}(i X_i, j X_j) \\
+&amp;= v \sum_{j=1}^N j^2 + c \sum_i \sum_{j \neq i} i j \\
+&amp;= v \sum_{j=1}^N j^2 + c \left( \sum_i \sum_j i j - \sum_i \sum_{j=i} i j \right) \\
+&amp;= v \sum_{j=1}^N j^2 + c \left( \sum_{i=1}^N i \sum_{j=1}^N j - \sum_{i=1}^N i^2 \right) \\
+&amp;= (v - c) \sum_{j=1}^N j^2 + \frac{c N^2(N + 1)^2}{4} \\
+&amp;= (v - c) \frac{N(N + 1)(2N + 1)}{6} + \frac{c N^2(N + 1)^2}{4}
+\end{align*}
+\tag{15.12}\]</span></span></p>
+<p>利用上述结果，我们可以通过假设 <span class="math inline">\(T\)</span> 在 <span class="math inline">\(H_0\)</span> 为真时近似服从正态分布，来估算置换检验的 <span class="math inline">\(p\)</span> 值。</p>
+<div id="exm-15_4_b" class="theorem example">
+<p><span class="theorem-title"><strong>例子 15.7</strong></span> 再次考虑 <a href="#exm-15_4_a" class="quarto-xref">例子&nbsp;<span>15.6</span></a> 。计算得出，在 <span class="math inline">\(H_0\)</span> 下： <span class="math display">\[ E[T] = 1300 \quad \text{Var}(T) = 1958.81 \]</span> 因此，正态近似得出： <span class="math display">\[
+\begin{align*}
+p\text{-value} &amp;= P_{H_0}(T \leq 1178) \\
+&amp;= P_{H_0}\left( \frac{T - 1300}{\sqrt{1958.81}} \leq \frac{1178 - 1300}{\sqrt{1958.81}} \right) \\
+&amp;\approx \Phi(-2.757) = .0029
+\end{align*}
+\]</span> 这与模拟给出的值非常接近。</p>
+<p>现在假设 12 个数据值虽然与之前相同，但它们现在的出现顺序为： <span class="math display">\[22, 14, 14, 16, 24, 20, 18, 15, 17, 15, 12, 13\]</span> 对于这些数据，检验统计量的值为 <span class="math inline">\(\sum_{j=1}^{12} j X_j = 1233\)</span> ，正态近似得出： <span class="math display">\[
+\begin{align*}
+p\text{-value} &amp;= P_{H_0}(T \leq 1233) \\
+&amp;= P_{H_0}\left( \frac{T - 1300}{\sqrt{1958.81}} \leq \frac{1233 - 1300}{\sqrt{1958.81}} \right) \\
+&amp;\approx \Phi(-1.514) = .065
+\end{align*}
+\]</span></p>
+<p>最后，再次假设这 12 个数据值与之前相同，但假设它们现在的出现顺序为： <span class="math display">\[22, 14, 14, 16, 24, 13, 18, 15, 17, 15, 12, 20\]</span> 在这种情况下，检验统计量的值为 <span class="math inline">\(\sum_{j=1}^{12} j X_j = 1275\)</span> 。因此，正态近似得出： <span class="math display">\[
+\begin{align*}
+p\text{-value} &amp;= P_{H_0}(T \leq 1275) \\
+&amp;= P_{H_0}\left( \frac{T - 1300}{\sqrt{1958.81}} \leq \frac{1275 - 1300}{\sqrt{1958.81}} \right) \\
+&amp;\approx \Phi(-.565) \approx .286
+\end{align*}
+\]</span> <span class="math inline">\(10^5\)</span> 次运行的模拟得出了与上述非常相似的值。模拟给出： <span class="math display">\[ P_{H_0}(T \leq 1233) \approx .068 \]</span> 且 <span class="math display">\[ P_{H_0}(T \leq 1275) \approx .299 \]</span> 这些值与正态近似给出的值相当接近。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exm-15_4_c" class="theorem example">
+<p><span class="theorem-title"><strong>例子 15.8</strong></span> 为了进一步说明正态近似的有效性，假设 <span class="math inline">\(N = 4\)</span> ，且数据按以下顺序出现： <span class="math display">\[13, 7, 5, 3\]</span> 假设我们想使用这些数据来检验原假设：数据是来自某个分布的样本，对抗备择假设：数据趋于递减。检验统计量的值为 <span class="math inline">\(T = \sum_{j=1}^4 j X_j = 54\)</span> 。简单的计算得出： <span class="math display">\[ c = -4.667, \quad v = 14 \]</span> 表明在 <span class="math inline">\(H_0\)</span> 下： <span class="math display">\[ E[T] = 70, \quad \text{Var}(T) = 93.33 \]</span> 因此，令 <span class="math inline">\(Z\)</span> 为标准正态随机变量，正态近似得出： <span class="math display">\[
+\begin{align*}
+p\text{-value} &amp;= P_{H_0}(T \leq 54) \\
+&amp;= P_{H_0}\left( \frac{T - 70}{\sqrt{93.33}} \leq \frac{54 - 70}{\sqrt{93.33}} \right) \\
+&amp;\approx P(Z \leq -1.656) = .049
+\end{align*}
+\]</span> 而精确值为： <span class="math display">\[ p\text{-value} = P_{H_0}(T \leq 54) = 1/4! \approx .042 \]</span> <span class="math inline">\(\blacksquare\)</span></p>
+</div>
 </section>
-<section id="generating-discrete-random-variables" class="level2" data-number="15.5">
-<h2 data-number="15.5" class="anchored" data-anchor-id="generating-discrete-random-variables"><span class="header-section-number">15.5</span> Generating discrete random variables</h2>
+<section id="sec-15_4_2" class="level3" data-number="15.4.2">
+<h3 data-number="15.4.2" class="anchored" data-anchor-id="sec-15_4_2"><span class="header-section-number">15.4.2</span> 两样本置换检验</h3>
+<p>置换检验在两样本问题中也很有用，即检验来自两个总体的样本是否具有相同的潜在分布。具体而言，令 <span class="math inline">\(X_1, \ldots, X_n\)</span> 是来自未知总体分布 <span class="math inline">\(F\)</span> 的样本，并令 <span class="math inline">\(X_{n+1}, \ldots, X_{n+m}\)</span> 是来自未知总体分布 <span class="math inline">\(G\)</span> 的独立样本。假设我们要利用这些数据来检验原假设：两个总体分布是相同的，对抗备择假设：来自第二个分布的数据往往比来自第一个分布的数据更大。也就是说，我们要检验原假设：</p>
+<p><span class="math inline">\(H_0: F = G\)</span></p>
+<p>对抗备择假设：</p>
+<p><span class="math inline">\(H_1\)</span> ：来自 <span class="math inline">\(G\)</span> 的数据倾向于比来自 <span class="math inline">\(F\)</span> 的数据更大</p>
+<p>如果数据值为 <span class="math inline">\(X_i = x_i, i = 1, \ldots, n + m\)</span> ，那么上述原假设的置换检验是在已知 <span class="math inline">\(S = \{x_1, \ldots, x_{n+m}\}\)</span> （这 <span class="math inline">\(n+m\)</span> 个数且无特定顺序）的前提下进行的。如果 <span class="math inline">\(H_0\)</span> 为真，那么 <span class="math inline">\(n+m\)</span> 个随机变量 <span class="math inline">\(X_1, \ldots, X_{n+m}\)</span> 都是独立同分布的，那么给定值集合 <span class="math inline">\(S\)</span> ，该集合中大小为 <span class="math inline">\(n\)</span> 的每个子集作为 <span class="math inline">\(X_1, \ldots, X_n\)</span> 的数据值集合的可能性是相等的。由于备择假设是总体分布 <span class="math inline">\(F\)</span> 的数据趋向于小于总体分布 <span class="math inline">\(G\)</span> 的数据，一个合理的检验是：如果从数据集 <span class="math inline">\(S\)</span> 中随机选择 <span class="math inline">\(n\)</span> 个值时，来自总体分布 <span class="math inline">\(F\)</span> 的数据值之和小于可能由机会预期的值，则拒绝原假设。更具体地说，我们可以通过计算 <span class="math inline">\(\sum_{i=1}^n x_i\)</span> 来检验 <span class="math inline">\(H_0\)</span> ；设其值为 <span class="math inline">\(t\)</span> 。那么 <span class="math inline">\(H_0\)</span> 对抗 <span class="math inline">\(H_1\)</span> 的置换检验的 <span class="math inline">\(p\)</span> 值将等于从值 <span class="math inline">\(x_1, \ldots, x_{n+m}\)</span> 中随机选择 <span class="math inline">\(n\)</span> 个值的和小于或等于 <span class="math inline">\(t\)</span> 的概率。即：</p>
+<p><span id="eq-15_4_13"><span class="math display">\[ p\text{-value} = P\left( \sum_{i \in R} x_i \leq t \right)  \tag{15.13}\]</span></span></p>
+<p>其中 <span class="math inline">\(R\)</span> 等可能地为从集合 <span class="math inline">\(\{1, 2, \ldots, n + m\}\)</span> 中选出的 <span class="math inline">\(\binom{n+m}{n}\)</span> 个大小为 <span class="math inline">\(n\)</span> 的子集中的任何一个。虽然仅当 <span class="math inline">\(\binom{n+m}{n}\)</span> 较小时才可能进行精确计算，但通过模拟很容易获得精确的近似值。在每次模拟运行中，我们使用 <a href="#exm-15_2_a" class="quarto-xref">例子&nbsp;<span>15.1</span></a> 的方法随机生成值 <span class="math inline">\(1, \ldots, n + m\)</span> 的一个大小为 <span class="math inline">\(n\)</span> 的子集。如果得到的子集是 <span class="math inline">\(R\)</span> ，那么我们检查 <span class="math inline">\(\sum_{i \in R} x_i\)</span> 是否小于或等于 <span class="math inline">\(t\)</span> 。模拟运行中满足该条件的比例即为我们对前述 <span class="math inline">\(p\)</span> 值的估计。</p>
+<p><strong>注</strong> ：我们再次可以使用正态近似，而不是模拟，来估计 <span class="math inline">\(p\)</span> 值。从随机子集 <span class="math inline">\(R\)</span> 开始（等可能地为集合 <span class="math inline">\(\{1, 2, \ldots, n + m\}\)</span> 的 <span class="math inline">\(\binom{n+m}{n}\)</span> 个大小为 <span class="math inline">\(n\)</span> 的子集中的任何一个），令对于 <span class="math inline">\(i = 1, \ldots, n + m\)</span> ：</p>
+<p><span class="math display">\[ I_i = \begin{cases} 1, &amp; \text{如果 } i \in R \\ 0, &amp; \text{如果 } i \notin R \end{cases} \]</span></p>
+<p>那么， <span id="eq-15_4_14"><span class="math display">\[ \sum_{i \in R} x_i = \sum_{i=1}^{n+m} x_i I_i  \tag{15.14}\]</span></span></p>
+<p>通过与 <a href="#sec-15_4_1" class="quarto-xref"><span>章节 15.4.1</span></a> 中类似的分析，我们现在可以得出：</p>
+<p><span id="eq-15_4_15"><span class="math display">\[ E_{H_0}\left[ \sum_{i \in R} x_i \right] = E_{H_0}\left[ \sum_{i=1}^{n+m} x_i I_i \right] = n \bar{x}  \tag{15.15}\]</span></span></p>
+<p>且</p>
+<p><span id="eq-15_4_16"><span class="math display">\[ \text{Var}_{H_0}\left( \sum_{i \in R} x_i \right) = \text{Var}_{H_0}\left( \sum_{i=1}^{n+m} x_i I_i \right) = \frac{nm}{n + m - 1} \left( \frac{\sum_{i=1}^{n+m} x_i^2}{n + m} - \bar{x}^2 \right)  \tag{15.16}\]</span></span></p>
+<p>其中 <span class="math inline">\(\bar{x} = \sum_{i=1}^{n+m} x_i / (n + m)\)</span> 。</p>
 </section>
-<section id="generating-continuous-random-variables" class="level2" data-number="15.6">
-<h2 data-number="15.6" class="anchored" data-anchor-id="generating-continuous-random-variables"><span class="header-section-number">15.6</span> Generating continuous random variables</h2>
 </section>
-<section id="determining-the-number-of-simulation-runs-in-a-monte-carlo-study" class="level2" data-number="15.7">
-<h2 data-number="15.7" class="anchored" data-anchor-id="determining-the-number-of-simulation-runs-in-a-monte-carlo-study"><span class="header-section-number">15.7</span> Determining the number of simulation runs in a Monte Carlo study</h2>
+<section id="sec-15_5" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="sec-15_5"><span class="header-section-number">15.5</span> 离散随机变量的生成</h2>
+<p>假设我们想要生成一个具有如下概率质量函数的随机变量 <span class="math inline">\(X\)</span> 的值： <span id="eq-15_5_1"><span class="math display">\[ P(X = x_i) = p_i, \quad i = 1, \ldots, \quad \sum_i p_i = 1  \tag{15.17}\]</span></span></p>
+<p>为了生成 <span class="math inline">\(X\)</span> 的值，我们先生成一个随机数 <span class="math inline">\(U\)</span> ，并设定： <span id="eq-15_5_2"><span class="math display">\[ X = x_i \quad \text{如果 } p_1 + \ldots + p_{i-1} &lt; U \leq p_1 + \ldots + p_{i-1} + p_i  \tag{15.18}\]</span></span></p>
+<p>也就是说， <span id="eq-15_5_3"><span class="math display">\[
+X = \begin{cases}
+x_1, &amp; \text{如果 } U \leq p_1 \\
+x_2, &amp; \text{如果 } p_1 &lt; U \leq p_1 + p_2 \\
+x_3, &amp; \text{如果 } p_1 + p_2 &lt; U \leq p_1 + p_2 + p_3 \\
+\vdots \\
+x_i, &amp; \text{如果 } p_1 + \ldots + p_{i-1} &lt; U \leq p_1 + \ldots + p_i \\
+\vdots
+\end{cases}
+\tag{15.19}\]</span></span></p>
+<p>由于 <span class="math inline">\(U\)</span> 在 <span class="math inline">\((0, 1)\)</span> 上均匀分布，因此对于 <span class="math inline">\(0 &lt; a &lt; b &lt; 1\)</span> ，有 <span id="eq-15_5_4"><span class="math display">\[ P(a &lt; U \leq b) = b - a  \tag{15.20}\]</span></span> 从而有， <span id="eq-15_5_5"><span class="math display">\[ P\left( \sum_{j=1}^{i-1} p_j &lt; U \leq \sum_{j=1}^i p_j \right) = p_i  \tag{15.21}\]</span></span> 这表明 <span class="math inline">\(X\)</span> 具有所需的概率质量函数。这种生成 <span class="math inline">\(X\)</span> 的方法被称为<strong>离散逆变换方法</strong> (<em>discrete inverse transform method</em>)。</p>
+<div id="exm-15_5_a" class="theorem example">
+<p><span class="theorem-title"><strong>例子 15.9</strong></span> 要生成一个伯努利随机变量 <span class="math inline">\(X\)</span> ，使得 <span class="math display">\[ P(X = 1) = p = 1 - P(X = 0) \]</span> 生成一个随机数 <span class="math inline">\(U\)</span> ，并设定 <span class="math display">\[ X = \begin{cases} 1, &amp; \text{如果 } U \leq p \\ 0, &amp; \text{如果 } U &gt; p \end{cases} \]</span> <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<div id="exm-15_5_b" class="theorem example">
+<p><span class="theorem-title"><strong>例子 15.10</strong></span> 假设现在我们想要生成一个参数为 <span class="math inline">\(n\)</span> 和 <span class="math inline">\(p\)</span> 的二项随机变量 <span class="math inline">\(X\)</span> 。回想一下，<span class="math inline">\(X\)</span> 表示 <span class="math inline">\(n\)</span> 次独立试验中成功的次数，每次试验成功的概率为 <span class="math inline">\(p\)</span> 。我们可以通过生成这 <span class="math inline">\(n\)</span> 次试验的结果来生成 <span class="math inline">\(X\)</span> 。也就是说，我们可以生成 <span class="math inline">\(n\)</span> 个随机数 <span class="math inline">\(U_1, \ldots, U_n\)</span> ，如果 <span class="math inline">\(U_i \leq p\)</span> ，则称试验 <span class="math inline">\(i\)</span> 成功，然后设定 <span class="math display">\[ X = \text{满足 } U_i \leq p \text{ 的 } i \text{ 的个数} \]</span> 另一种可能性是使用逆变换方法。</p>
+<p>为了有效地使用逆变换方法，我们需要一种有效的方法来递归地计算以下值： <span id="eq-15_5_6"><span class="math display">\[ p_i = P(X = i) = \binom{n}{i} p^i (1 - p)^{n-i}, \quad i = 0, \ldots, n  \tag{15.22}\]</span></span> 这可以通过首先注意到以下等式来实现： <span id="eq-15_5_7"><span class="math display">\[ \frac{\binom{n}{i+1}}{\binom{n}{i}} = \frac{n! / [(n - i - 1)! (i + 1)!]}{n! / [(n - i)! i!]} = \frac{n - i}{i + 1}  \tag{15.23}\]</span></span> 从而得出： <span id="eq-15_5_8"><span class="math display">\[ \frac{p_{i+1}}{p_i} = \frac{n - i}{i + 1} \frac{p^{i+1} (1 - p)^{n-i-1}}{p^i (1 - p)^{n-i}} = \frac{n - i}{i + 1} \frac{p}{1 - p}  \tag{15.24}\]</span></span> 因此， <span id="eq-15_5_9"><span class="math display">\[ p_{i+1} = \frac{n - i}{i + 1} \frac{p}{1 - p} p_i  \tag{15.25}\]</span></span></p>
+<p>利用上述结果，我们现在可以给出生成二项 <span class="math inline">\((n, p)\)</span> 随机变量 <span class="math inline">\(X\)</span> 的逆变换方法。在下文中，<span class="math inline">\(i\)</span> 表示 <span class="math inline">\(X\)</span> 的可能值，变量 <span class="math inline">\(P\)</span> 是 <span class="math inline">\(X = i\)</span> 的概率，而变量 <span class="math inline">\(F\)</span> 是 <span class="math inline">\(X \leq i\)</span> 的概率。（也就是说，对于给定的 <span class="math inline">\(i\)</span>，<span class="math inline">\(P = p_i\)</span> 且 <span class="math inline">\(F = \sum_{j=0}^i p_j\)</span> 。）此外，令 <span class="math inline">\(\alpha = p_0 = (1 - p)^n\)</span> ，并令 <span class="math inline">\(b = p / (1 - p)\)</span> 。</p>
+<ol type="1">
+<li>设定 <span class="math inline">\(i = 0, P = \alpha, F = \alpha\)</span></li>
+<li>生成一个随机数 <span class="math inline">\(U\)</span></li>
+<li>如果 <span class="math inline">\(U \leq F\)</span> ，设定 <span class="math inline">\(X = i\)</span> 并停止</li>
+<li><span class="math inline">\(P = \frac{n - i}{i + 1} b P\)</span></li>
+<li><span class="math inline">\(F = F + P\)</span></li>
+<li><span class="math inline">\(i = i + 1\)</span></li>
+<li>转到第 3 步</li>
+</ol>
+<p>（在前述过程中，当我们要执行 <span class="math inline">\(P = \frac{n - i}{i + 1} b P\)</span> 时，并不是从字面上理解为一个代数等式；而是指将 <span class="math inline">\(P\)</span> 的值更新。它的新值是其旧值乘以 <span class="math inline">\(\frac{n - i}{i + 1} b\)</span> 。类似地，当我们写 <span class="math inline">\(F = F + P\)</span> 时，是指通过将 <span class="math inline">\(P\)</span> 加到 <span class="math inline">\(F\)</span> 的旧值上来更新 <span class="math inline">\(F\)</span> 的值。）</p>
+<p>由于该算法首先检查是否 <span class="math inline">\(X = 0\)</span> ，然后检查是否 <span class="math inline">\(X = 1\)</span> ，依此类推，因此所需的迭代次数（即进入第 3 步的次数）比 <span class="math inline">\(X\)</span> 的最终值多一次。因此，平均而言，该算法需要 <span class="math inline">\(E[X + 1] = np + 1\)</span> 次迭代来生成 <span class="math inline">\(X\)</span> 的值。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+</section>
+<section id="sec-15_6" class="level2" data-number="15.6">
+<h2 data-number="15.6" class="anchored" data-anchor-id="sec-15_6"><span class="header-section-number">15.6</span> 连续随机变量的生成</h2>
+<p>令 <span class="math inline">\(F\)</span> 为连续随机变量的分布函数。对于介于 <span class="math inline">\(0\)</span> 和 <span class="math inline">\(1\)</span> 之间的任何 <span class="math inline">\(u\)</span> ，量 <span class="math inline">\(F^{-1}(u)\)</span> 被定义为满足 <span class="math inline">\(F(x) = u\)</span> 的 <span class="math inline">\(x\)</span> 值。也就是说，<span class="math inline">\(F(F^{-1}(u)) = u\)</span> 。由于连续随机变量的分布函数是严格递增的，因此 <span class="math inline">\(F^{-1}(u)\)</span> 的值是唯一的。我们称 <span class="math inline">\(F^{-1}\)</span> 为 <span class="math inline">\(F\)</span> 的反函数。</p>
+<p>一种生成具有分布函数 <span class="math inline">\(F\)</span> 的连续随机变量的通用方法被称为<strong>逆变换方法</strong> (<em>inverse transformation method</em>)，它基于以下命题。</p>
+<div id="thm-15_6_1" class="theorem">
+<p><span class="theorem-title"><strong>定理 15.1</strong></span> 令 <span class="math inline">\(U\)</span> 为均匀 <span class="math inline">\((0, 1)\)</span> 随机变量。对于任何连续分布函数 <span class="math inline">\(F\)</span> ，如果我们定义 <span id="eq-15_6_1"><span class="math display">\[ X = F^{-1}(U)  \tag{15.26}\]</span></span> 那么 <span class="math inline">\(X\)</span> 具有分布函数 <span class="math inline">\(F\)</span> 。</p>
+</div>
+<p><strong>证明</strong> ：因为分布函数 <span class="math inline">\(F\)</span> 是非减的，所以对于任何数字 <span class="math inline">\(a\)</span> 和 <span class="math inline">\(b\)</span> ，不等式 <span class="math inline">\(a \leq b\)</span> 等价于不等式 <span class="math inline">\(F(a) \leq F(b)\)</span> 。因此， <span id="eq-15_6_2"><span class="math display">\[ P(F^{-1}(U) \leq x) = P(F(F^{-1}(U)) \leq F(x)) = P(U \leq F(x)) = F(x)  \tag{15.27}\]</span></span> 从而表明 <span class="math inline">\(F^{-1}(U)\)</span> 具有分布 <span class="math inline">\(F\)</span> 。 <span class="math inline">\(\blacksquare\)</span></p>
+<div id="exm-15_6_a" class="theorem example">
+<p><span class="theorem-title"><strong>例子 15.11</strong></span> （<strong>生成指数随机变量</strong>）令 <span id="eq-15_6_3"><span class="math display">\[ F(x) = 1 - e^{-\lambda x}, \quad x \geq 0  \tag{15.28}\]</span></span> 为具有参数 <span class="math inline">\(\lambda\)</span> 的指数随机变量的分布函数。那么 <span class="math inline">\(F^{-1}(u)\)</span> 是满足下式的 <span class="math inline">\(x\)</span> 值： <span class="math display">\[ u = F(x) = 1 - e^{-\lambda x} \]</span> 或等价地， <span class="math display">\[ e^{-\lambda x} = 1 - u \]</span> 或 <span class="math display">\[ -\lambda x = \log(1 - u) \]</span> 或 <span class="math display">\[ x = -\frac{1}{\lambda} \log(1 - u) \]</span> 因此，根据 <a href="#thm-15_6_1" class="quarto-xref">定理&nbsp;<span>15.1</span></a>，我们可以通过生成一个均匀 <span class="math inline">\((0, 1)\)</span> 随机变量 <span class="math inline">\(U\)</span> 并设定如下方式来生成具有参数 <span class="math inline">\(\lambda\)</span> 的指数随机变量 <span class="math inline">\(X\)</span> ： <span id="eq-15_6_4"><span class="math display">\[ X = -\frac{1}{\lambda} \log(1 - U)  \tag{15.29}\]</span></span> 由于 <span class="math inline">\(1 - U\)</span> 也是一个均匀 <span class="math inline">\((0, 1)\)</span> 随机变量，因此得出 <span class="math inline">\(-\frac{1}{\lambda} \log(1 - U)\)</span> 和 <span class="math inline">\(-\frac{1}{\lambda} \log(U)\)</span> 具有相同的分布，从而表明 <span id="eq-15_6_5"><span class="math display">\[ X = -\frac{1}{\lambda} \log(U)  \tag{15.30}\]</span></span> 也是参数为 <span class="math inline">\(\lambda\)</span> 的指数分布。 <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+<section id="sec-15_6_1" class="level3" data-number="15.6.1">
+<h3 data-number="15.6.1" class="anchored" data-anchor-id="sec-15_6_1"><span class="header-section-number">15.6.1</span> 正态随机变量的生成</h3>
+<p>由于反转正态随机变量的分布函数在计算上比较复杂，因此使用了特殊的方法来生成正态随机变量。以下方法被称为 <strong>Box-Muller 方法</strong> (<em>Box-Muller method</em>)。</p>
+<p>首先，假设 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 是独立的标准正态随机变量，因此它们的联合密度函数为 <span id="eq-15_6_6"><span class="math display">\[ f(x, y) = \frac{1}{\sqrt{2\pi}} e^{-x^2 / 2} \frac{1}{\sqrt{2\pi}} e^{-y^2 / 2} = \frac{1}{2\pi} e^{-(x^2 + y^2) / 2}, \quad -\infty &lt; x, y &lt; \infty  \tag{15.31}\]</span></span> 令 <span class="math inline">\(R, \Theta\)</span> 为点 <span class="math inline">\((X, Y)\)</span> 的<strong>极坐标</strong> (<em>polar coordinates</em>)。现在根据定义，<span class="math inline">\(R^2 = X^2 + Y^2\)</span> 是具有 2 个自由度的<strong>卡方随机变量</strong> (<em>chi-square random variable</em>)，如 <a href="../chapter_5/5.html#sec-5_8_1" class="quarto-xref"><span>章节 5.8.1</span></a> 所示，该分布与参数为 <span class="math inline">\(1/2\)</span> 的<strong>指数分布</strong> (<em>exponential distribution</em>) 相同（即均值为 2）。因此，<span class="math inline">\(R^2\)</span> 的密度函数为 <span id="eq-15_6_7"><span class="math display">\[ f_{R^2}(r) = \frac{1}{2} e^{-r / 2}, \quad 0 &lt; r &lt; \infty  \tag{15.32}\]</span></span> 现在考虑给定 <span class="math inline">\(R^2 = r\)</span> 时 <span class="math inline">\(X, Y\)</span> 的条件联合密度函数。因为 <span class="math display">\[ f(x, y) = \frac{1}{2\pi} e^{-r / 2} \quad \text{当 } x^2 + y^2 = r \]</span> 是一个常数（当 <span class="math inline">\(x^2 + y^2 = r\)</span> 时），因此直观上可以证明（并且可以证明）：在给定 <span class="math inline">\(R^2 = r\)</span> 的条件下，向量 <span class="math inline">\((X, Y)\)</span> 均匀分布在半径为 <span class="math inline">\(\sqrt{r}\)</span> 的圆周上。但这暗示了：在给定 <span class="math inline">\(R^2 = r\)</span> 的条件下，点 <span class="math inline">\((X, Y)\)</span> 的极坐标 <span class="math inline">\(\Theta\)</span> 在 <span class="math inline">\((0, 2\pi)\)</span> 上均匀分布。因为这对所有的 <span class="math inline">\(r\)</span> 都成立，所以极坐标 <span class="math inline">\(R\)</span> 和 <span class="math inline">\(\Theta\)</span> 是独立的，其中 <span class="math inline">\(R\)</span> 服从均值为 2 的指数随机变量的平方根分布，而 <span class="math inline">\(\Theta\)</span> 是 <span class="math inline">\((0, 2\pi)\)</span> 上的均匀随机变量。</p>
+<p>利用前述内容，我们可以通过首先生成它们的极坐标 <span class="math inline">\(R\)</span> 和 <span class="math inline">\(\Theta\)</span> 来生成独立的标准正态随机变量 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 。由于 <span class="math inline">\(-\log(U)\)</span> 是均值为 1 的指数分布，我们可以通过生成独立的均匀 <span class="math inline">\((0, 1)\)</span> 随机变量 <span class="math inline">\(U_1\)</span> 和 <span class="math inline">\(U_2\)</span> ，然后设定如下方式来生成 <span class="math inline">\((X, Y)\)</span> 的极坐标： <span class="math display">\[ R^2 = -2 \log(U_1) \]</span> 且 <span class="math display">\[ \Theta = 2\pi U_2 \]</span> 利用极坐标 <span class="math inline">\(R, \Theta\)</span> 回到直角坐标的公式 <span class="math display">\[ X = R \cos(\Theta), \quad Y = R \sin(\Theta) \]</span> 表明 <span id="eq-15_6_8"><span class="math display">\[ X = \sqrt{-2 \log(U_1)} \cos(2\pi U_2)  \tag{15.33}\]</span></span> <span id="eq-15_6_9"><span class="math display">\[ Y = \sqrt{-2 \log(U_1)} \sin(2\pi U_2)  \tag{15.34}\]</span></span> 是独立的标准正态随机变量。</p>
+<p>要生成均值为 <span class="math inline">\(\mu\)</span> 、方差为 <span class="math inline">\(\sigma^2\)</span> 的正态随机变量，只需生成独立的标准正态变量 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> ，然后取变量 <span class="math inline">\(\mu + \sigma X\)</span> 和 <span class="math inline">\(\mu + \sigma Y\)</span> 。</p>
+</section>
+</section>
+<section id="sec-15_7" class="level2" data-number="15.7">
+<h2 data-number="15.7" class="anchored" data-anchor-id="sec-15_7"><span class="header-section-number">15.7</span> 确定蒙特卡罗研究中的模拟运行次数</h2>
+<p>假设我们要生成 <span class="math inline">\(r\)</span> 个独立同分布的随机变量 <span class="math inline">\(Y_1, \ldots, Y_r\)</span> ，它们的均值为 <span class="math inline">\(\mu\)</span> ，以便使用 <span id="eq-15_7_1"><span class="math display">\[ \bar{Y}_r = \sum_{i=1}^r Y_i / r  \tag{15.35}\]</span></span> 作为 <span class="math inline">\(\mu\)</span> 的估计量。现在，设 <span class="math inline">\(\sigma^2\)</span> 为 <span class="math inline">\(Y_i\)</span> 的方差，由中心极限定理可知，<span class="math inline">\(\bar{Y}_r\)</span> 将近似服从均值为 <span class="math inline">\(\mu\)</span> 、方差为 <span class="math inline">\(\sigma^2/r\)</span> 的正态分布。因此，我们可以 95% 肯定 <span class="math inline">\(\mu\)</span> 落在区间 <span id="eq-15_7_2"><span class="math display">\[ (\bar{Y}_r - 1.96 \sigma / \sqrt{r}, \quad \bar{Y}_r + 1.96 \sigma / \sqrt{r})  \tag{15.36}\]</span></span> 内。（更一般地，我们可以 <span class="math inline">\(100(1 - \alpha)\%\)</span> 肯定 <span class="math inline">\(\mu\)</span> 将在 <span class="math inline">\(\bar{Y}_r \pm z_{\alpha/2} \sigma / \sqrt{r}\)</span> 之间。）</p>
+<p>因此，如果 <span class="math inline">\(\sigma^2\)</span> 已知，我们可以选择 <span class="math inline">\(r\)</span> 来达到我们所需的准确度水平。然而，几乎总是会出现这样的情况：<span class="math inline">\(\sigma^2\)</span> 和 <span class="math inline">\(\mu\)</span> 一样，都是未知的。为了克服这一困难，我们可以进行两阶段模拟实验。在第一阶段，我们生成 <span class="math inline">\(k\)</span> 次运行，其中 <span class="math inline">\(k\)</span> 通常远小于研究中预期使用的次数。进行这些运行会产生随机变量 <span class="math inline">\(Y_1, \ldots, Y_k\)</span> 的值。然后我们使用这些值的样本方差 <span id="eq-15_7_3"><span class="math display">\[ S_k^2 = \frac{1}{k - 1} \sum_{i=1}^k (Y_i - \bar{Y}_k)^2  \tag{15.37}\]</span></span> 来估计 <span class="math inline">\(\sigma^2\)</span> 。然后，假设这就是 <span class="math inline">\(\sigma^2\)</span> 的真实值，我们确定 <span class="math inline">\(r\)</span> 的合适值。接着，在模拟的第二阶段，我们再生成额外的 <span class="math inline">\(r - k\)</span> 次运行。</p>
 </section>
 <section id="problems" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
@@ -1072,8 +1232,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapter_16/16.html" class="pagination-link" aria-label="Machine learning and big data">
-        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Machine learning and big data</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapter_16/16.html" class="pagination-link" aria-label="机器学习与大数据">
+        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">机器学习与大数据</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
