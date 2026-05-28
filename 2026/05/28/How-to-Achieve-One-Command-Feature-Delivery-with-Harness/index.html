@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+      <meta name="description" content="为了更快的发布 大模型评测平台，我们借鉴 OpenAI 的思路搭建了一套 Harness 模式，之前需要 1 天开发完的功能，现在基本上 2 个小时左右就可以完成。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何利用 Harness “一句话交付产品功能”？">
+<meta property="og:url" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="为了更快的发布 大模型评测平台，我们借鉴 OpenAI 的思路搭建了一套 Harness 模式，之前需要 1 天开发完的功能，现在基本上 2 个小时左右就可以完成。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-08.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-23.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-27.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-22.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-11.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-07.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-24.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-06.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-10.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-26.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-16.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-14.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-21.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-15.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-01.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-03.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-02.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-05.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-13.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-17.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-25.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-09.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-20.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-19.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-04.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-12.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-18.png">
+<meta property="article:published_time" content="2026-05-28T16:43:01.000Z">
+<meta property="article:modified_time" content="2026-05-28T12:14:36.467Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="Harness Engineering">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-08.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="@wangwei1237">
+      
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>如何利用 Harness “一句话交付产品功能”？ |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js"></script>
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-How-to-Achieve-One-Command-Feature-Delivery-with-Harness"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  如何利用 Harness “一句话交付产品功能”？
+</h1>
+ 
+
+      
+    <div class="article-author"  style="text-align: center" >
+        作者：
+            王伟 ,
+         付笑
+    </div>
+
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/" class="article-date">
+  <time datetime="2026-05-28T16:43:01.000Z" itemprop="datePublished">2026-05-28</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">7.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">31 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>为了更快的发布 <a target="_blank" rel="noopener" href="https://lj.baidu.com/sbs/">大模型评测平台</a>，我们借鉴 <code>OpenAI</code> 的思路搭建了一套 <code>Harness</code> 模式，之前需要 1 天开发完的功能，现在基本上 2 个小时左右就可以完成。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-08.png" alt></p>
+<span id="more"></span>
+<h2 id="1-背景">1. 背景</h2>
+<p>在 <a href="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/">我让 OpenClaw 🦞 管理大模型评测任务</a> 中提到，我们通过自建的 <code>Side-by-Side</code> 平台来实现多模态大模型的偏好打分以及对抗榜单结果。在 2026 年 2 月平台刚上线的时候，还只支持最基本的 <code>Side-by-Side</code> 的功能，比如只支持生图大模型的评测，并且对于图生图大模型而言，仅支持参考图片为单图的评估场景……因此，我们的评测平台属于是一个功能不断丰富、扩展的状态。平台功能的升级一方面来自参与到实际评估中的用户的真实反馈，另一方面来自我们对平台功能点的规划。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-23.png" alt="Side-by-Side 效果"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-27.png" alt="用户反馈"></p>
+<p>在实现上，平台由 <code>React</code> 的前端服务 <code>versus-fe</code> 和 <code>Go</code> 的后端服务 <code>versus-server</code> 构成，并且对于前后端的这 2 个服务，我们分别安排了一个同学来负责。整体看，这个系统也属于：麻雀虽小、五脏俱全。</p>
+<h2 id="2-vibe-coding">2. Vibe Coding</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p><code>Vibe Coding</code> 是“AI 代写代码，人来统筹状态”；而 <code>Harness</code> 是“代码库即唯一事实，<code>Agent</code> 自治流转状态”。</p>
+</div>
+<p>最开始的时候，我们的前后端开发人员各自使用 <code>DUCC</code> 通过 <code>Vibe Coding</code> 的方式来编码前后端服务，然后再进行联调测试，最后再利用我们内部的上线平台发布新功能。</p>
+<pre class="mermaid">flowchart LR
+  A[新功能] --> B[FE 模块]
+  A --> C[Server 模块]
+  B --> D[Vibe Coding]
+  C --> E[Vibe Coding]
+  D --> F[联调]
+  E --> F
+  F --> G[功能发布]</pre>
+<p>可以看到，<code>Vibe Coding</code> 模式下，开发过程中的唯一的变化就是代码的实现由人变成了 AI。而新功能的拆解，模块之间的联调，代码的迭代调整还都是人来驱动的，不同的是，人的产物不再是代码，而是自然语言。我们最开始并不太懂 <code>React</code>，但是整个平台在 AI 的帮助下，也就这么构建起来了。无疑，<code>Vibe Coding</code> 极大地降低了产品开发的门槛。</p>
+<pre class="mermaid">graph
+    %% 新模式 下半区
+    subgraph 新AI开发模式
+        N1[人] --自然语言--> N2[DUCC]
+        N2 -- 代码 --> N3[产品]
+    end
+        
+    %% 旧模式 上半区
+    subgraph 旧开发模式
+        A[人] -- 代码 --> B[产品]
+    end</pre>
+<p>慢慢地，我们发现，虽然我们在 <code>CLAUDE.md</code> 中补充了很多的知识，虽然 <code>Vibe Coding</code> 确实提升了我们的开发效率，但是有时候我们总是会为了调整页面的某个元素而浪费几十分钟的时间，而人去改动这些代码可能只需要几分钟。更让人接受不了的是，整个的改动过程会出现越改越糟的问题，这实在是令人抓狂。</p>
+<p>当提示词比较长的时候，我们希望增加一个展开全部的功能，避免过长的提示词占据屏幕的整个区域，从而提升打分过程的交互体验。就是这么一个小小的改动，我们来来回回和 <code>DUCC</code> 沟通了 2 个多小时，中途多少次我都萌生了亲自去写这块代码的冲动……后来，<code>/clear</code> 了上下文，还原了所有的代码改动，重新给新的提示词，才完成了最后的效果。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-22.png" alt></p>
+<p>麻了，我再也不想和 AI 废话了，我不想写代码，同时我也不想和 AI 来来回回的聊天了。在我用 <code>Harness Engineering</code> 来进行书籍翻译工作之后，我想，是时候让 <code>Harness</code> 发挥更大的价值了。</p>
+<h2 id="3-对-harness-的思考">3. 对 Harness 的思考</h2>
+<p>最开始有这个想法的时候，我的心里也犯嘀咕：</p>
+<ul>
+<li>
+<p>项目架构并不复杂，有必要搞 <code>Harness</code> 吗？</p>
+</li>
+<li>
+<p><code>Harness</code> 还并没有跑出一套可复制的成功路线，有必要探索吗？</p>
+</li>
+<li>
+<p><code>Harness</code> 真的靠谱吗？</p>
+</li>
+<li>
+<p>……</p>
+</li>
+</ul>
+<p>但是，在再次精读了 <code>OpenAI</code> 的 <a target="_blank" rel="noopener" href="https://openai.com/index/harness-engineering/">Harness engineering: leveraging Codex in an agent-first world</a> 与 <code>Anthropic</code> 的 <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness design for long-running application development</a> 后，我认为这个事情有搞头。</p>
+<ul>
+<li>
+<p>在 <code>OpenAI</code> 的 Case 中，他们也是基于内部的一个工具来实验的，这个和我们的平台的发展阶段类似。</p>
+</li>
+<li>
+<p>从 <code>UI</code> 交互复杂性而言，我们的平台不涉及特别复杂的交互，因此在 <code>Harness</code> 的校验闭环中，更具备可操作性。</p>
+</li>
+<li>
+<p>对于如此轻量级架构的工程，如果 <code>Harness</code> 都无法胜任，那么 <code>Harness</code> 也不可能胜任更复杂的系统。</p>
+</li>
+</ul>
+<h2 id="4-harness-初探">4. Harness 初探</h2>
+<h3 id="4-1-构建单仓代码库">4.1 构建单仓代码库</h3>
+<p>有了基本的判断之后，我们小组 4 个同学凑到了一起开始讨论具体的技术路线。我们采用了 <code>OpenAI</code> 的：“代码库作为 <code>Agent</code> 的唯一知识来源” 的思路来构建我们的 <code>Harness</code>，当我们发现 <code>Agent</code> 行为出现偏差的时候，我们就在对应的地方补充适当的约束来对 <code>Agent</code> 进行限制。</p>
+<blockquote>
+<p>From the agent’s point of view, anything it can’t access in-context while running effectively doesn’t exist. Knowledge that lives in Google Docs, chat threads, or people’s heads are not accessible to the system. Repository-local, versioned artifacts (e.g., code, markdown, schemas, executable plans) are all it can see.</p>
+</blockquote>
+<p>但是，与 <code>OpenAI</code> 从一个空代码库开始构建不同，我们的系统已经拆分为 <code>versus-fe</code> 和 <code>versus-server</code> 两个代码仓库了，并且我们已经把代码库的相关知识写入了各自的 <code>CLAUDE.md</code> 文件中。而对于两个仓库之间的知识，则存储在了人的经验中，而这恰好是 <code>Agent</code> 无法访问到的知识。而暴力地把两个已经存在的代码库强制合并到一个仓库中，又涉及到比较大的改动：</p>
+<ul>
+<li>
+<p>目录结构的调整</p>
+</li>
+<li>
+<p>CI 任务的调整</p>
+</li>
+<li>
+<p>上线方式的调整</p>
+</li>
+</ul>
+<p>正如 Peter Pang 在文章 <a target="_blank" rel="noopener" href="https://x.com/intuitiveml/status/2043545596699750791">Why Your “AI-First” Strategy Is Probably Wrong</a> 中所述：</p>
+<blockquote>
+<p>I had to unify all the code into a single monorepo. One reason: so AI could see everything.</p>
+</blockquote>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p><code>AI-first</code> 意味着我们必须以 AI 为核心重塑我们的流程、架构、组织模式，而不是让 AI 来适配当下的架构。根据“康威法则”，团队怎么分工、如何沟通，代码仓库就会变成对应的结构。因此，要实现 <code>OpenAI</code> 的博客中的 <code>Harness</code> 模式，必须首先重构代码仓库的组织方式。</p>
+</div>
+<p>理念是个好理念，但是具体实施起来，看起来有点麻烦。我们想改，但是又不想花费太大的力气。</p>
+<p>最终，我们采用 <code>Git Submodule</code> 的方式实现了代码仓库的 <code>AI-First</code> 重构。我们首先建了一个主仓库 <code>versus</code>，<code>versus-fe</code> 和 <code>versus-server</code> 仓库则以子模块的形式整合到主仓库中。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">versus/                    <span class="comment"># 父仓库</span></span><br><span class="line">├── versus-server/         <span class="comment"># 服务端子模块 (Go + Gin)</span></span><br><span class="line">|   └── CLAUDE.md              <span class="comment"># 服务端 Claude Code 项目指令</span></span><br><span class="line">├── versus-fe/             <span class="comment"># 前端子模块 (React + Vite)</span></span><br><span class="line">|   └── CLAUDE.md              <span class="comment"># 前端 Claude Code 项目指令</span></span><br><span class="line">├── scripts/               <span class="comment"># 管理脚本</span></span><br><span class="line">│   ├── setup.sh               <span class="comment"># 初始化开发环境</span></span><br><span class="line">│   ├── pull-all.sh            <span class="comment"># 拉取所有子模块</span></span><br><span class="line">│   ├── status.sh              <span class="comment"># 查看仓库状态</span></span><br><span class="line">│   └── sync-user-config.sh    <span class="comment"># 同步用户配置</span></span><br><span class="line">├── .claude/               <span class="comment"># Claude Code 配置与 Agent 定义</span></span><br><span class="line">│   ├── settings.json          <span class="comment"># Agent 与 MCP 插件全局配置</span></span><br><span class="line">│   ├── settings.local.json    <span class="comment"># 本地工具权限授权（不入库）</span></span><br><span class="line">│   ├── agents/                <span class="comment"># 6 个协作 Agent 定义文件</span></span><br><span class="line">│   │   ├── requirement-designer.md</span><br><span class="line">│   │   ├── go-api-implementer.md</span><br><span class="line">│   │   ├── frontend-engineer.md</span><br><span class="line">│   │   ├── test-case-designer.md</span><br><span class="line">│   │   ├── integration-test-runner.md</span><br><span class="line">│   │   └── e2e-test-executor.md</span><br><span class="line">│   └── agent-memory/          <span class="comment"># Agent 跨会话记忆</span></span><br><span class="line">│       ├── requirement-designer/MEMORY.md</span><br><span class="line">│       ├── go-api-implementer/MEMORY.md</span><br><span class="line">│       ├── frontend-engineer/MEMORY.md</span><br><span class="line">│       ├── test-case-designer/MEMORY.md</span><br><span class="line">│       ├── integration-test-runner/MEMORY.md</span><br><span class="line">│       └── e2e-test-executor/MEMORY.md</span><br><span class="line">├── docs/                  <span class="comment"># 项目文档与需求产物</span></span><br><span class="line">│   ├── system-architecture.md           <span class="comment"># 系统架构说明</span></span><br><span class="line">│   ├── 6-agent-collaboration-summary.md <span class="comment"># 6-Agent 协作流水线总结</span></span><br><span class="line">│   └── requirements/                    <span class="comment"># 各需求流水线产物（按 REQ-ID 组织）</span></span><br><span class="line">│       ├── REQ-001/      </span><br><span class="line">│       ├── REQ-CASE-RESOURCE/ </span><br><span class="line">│       ├── REQ-VIDEO-TYPES/   </span><br><span class="line">│       ├── REQ-020/      </span><br><span class="line">│       └── REQ-ERROR-CODE/</span><br><span class="line">├── .gitmodules            <span class="comment"># 子模块配置（已被 .gitignore 忽略）</span></span><br><span class="line">├── .gitignore             <span class="comment"># Git 忽略规则</span></span><br><span class="line">├── CLAUDE.md              <span class="comment"># 项目整体知识</span></span><br><span class="line">├── dev.sh                 <span class="comment"># 一键启动前后端服务</span></span><br><span class="line">├── README.md              <span class="comment"># 项目说明</span></span><br><span class="line">└── FEATURES.md            <span class="comment"># 功能清单</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p><code>versus</code> 目录下的 <code>CLAUDE.md</code> 主要存放跨前后端、跨 <code>Agent</code>、跨需求都需要知道的全局知识，相当于整个项目的作战地图 + 协作规则 + 产品背景 + 全局约束。</p>
+</li>
+<li>
+<p><code>AI Coding</code> 和 <code>AI Testing</code> 过程中需要的相关 <code>Agent</code>、产生的需求文档、测试用例列表、测试执行结果均存储于 <code>versus</code> 的主仓库目录下，从而真正实现了“一切皆在代码库，代码库之外，别无他物”的目标。</p>
+</li>
+<li>
+<p><code>versus-fe</code> 和 <code>versus-server</code> 目录下的 <code>CLAUDE.md</code> 则存放前端和服务端相关的知识，包括架构、约束、编码规范等知识。</p>
+</li>
+<li>
+<p><code>Git Submodule</code> 增加了仓库操作的复杂性，比如拉取主仓库代码时，需要递归拉取各子仓库的代码；而当子仓库的代码有修改需要提交时，也需要同时提交主仓库以更新主仓库对子仓库的版本索引。因此，为了降低仓库的操作复杂度，我们同时让 <code>DUCC</code> 帮我们实现了一系列的仓库管理脚本，从而实现通过自然语言交互就能稳定实现相关功能的目的。</p>
+</li>
+</ul>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-11.png" alt="一句话更新主仓库、子仓库的代码"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-07.png" alt="一句话部署前后端代码，并用浏览器打开首页"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-24.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-06.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-10.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-26.png" alt></p>
+<h3 id="4-2-harness-闭环设计">4.2 Harness 闭环设计</h3>
+<p><code>Anthropic</code> 的 <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness design for long-running application development</a> 博客中提到当前的模型具备如下的问题：</p>
+<ul>
+<li>
+<p>上下文焦虑：当模型感知到即将达到自身上下文上限时，就会出现模型提前结束任务的现象。</p>
+</li>
+<li>
+<p>自视甚高：当智能体评价自己完成的工作时，即便这些产出在人类看来平平无奇时，他们也会自信地大加夸赞。</p>
+</li>
+</ul>
+<p>为了解决如上的问题，我们按照软件开发的端到端流程拆分了 6 个基本的 <code>Sub-Agent</code>。</p>
+<table>
+<thead>
+<tr>
+<th><code>Sub-Agent</code> 名称</th>
+<th>职责</th>
+<th>输入</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requirement-designer</code></td>
+<td>将简要需求描述转化为企业级 <code>PRD</code> 文档</td>
+<td>用户原始的一句话需求描述</td>
+<td><code>PRD.md</code> + 需求 ID</td>
+</tr>
+<tr>
+<td><code>go-api-implementer</code></td>
+<td>根据 <code>PRD.md</code> 实现 <code>Go</code> 后端 <code>API</code></td>
+<td><code>PRD.md</code></td>
+<td><code>Go</code> 代码 + <code>api-summary.md</code></td>
+</tr>
+<tr>
+<td><code>frontend-engineer</code></td>
+<td>根据 <code>PRD.md</code> + <code>api-summary.md</code> 实现 <code>React</code> 前端页面</td>
+<td><code>PRD.md</code> + <code>api-summary.md</code></td>
+<td><code>FE</code> <code>React</code> 代码</td>
+</tr>
+<tr>
+<td><code>test-case-designer</code></td>
+<td>设计 <code>API</code> 接口测试用例和 <code>E2E</code> 测试用例</td>
+<td><code>PRD</code> + 后端代码 + 前端代码</td>
+<td><code>api-test-cases.json</code> + <code>e2e-test-cases.json</code></td>
+</tr>
+<tr>
+<td><code>integration-test-runner</code></td>
+<td>启动服务、执行 <code>API</code> 集成测试、产出报告</td>
+<td><code>api-test-cases.json</code></td>
+<td><code>integration-test-report.md</code></td>
+</tr>
+<tr>
+<td><code>e2e-test-executor</code></td>
+<td>通过 <code>Chrome DevTools MCP</code> 执行浏览器 <code>E2E</code> 测试</td>
+<td><code>e2e-test-cases.json</code></td>
+<td>截图 + <code>result.md</code> + <code>summary.md</code></td>
+</tr>
+</tbody>
+</table>
+<p>通过如上 6 个 <code>Sub-Agent</code> 的全流程自动流转和验证，形成完整的、自我完善的 <code>Harness</code> 开发闭环。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-16.png" alt></p>
+<p>整个的闭环流程，除了 <code>PRD</code> 阶段需要人工审核以外，其他阶段均不需要人工介入。尤其是在前、后端开发过程中，<code>Harness</code> 避免了前后端 <code>RD</code> 之间的沟通与协作成本，极大地提升了开发的效率。</p>
+<pre class="mermaid">flowchart TD
+  A[用户触发: 启动 6 个 Agent 协作实现需求] --> B[1. requirement-designer\n产出 PRD.md, 分配 REQ-ID]
+  B --> C[人工审核 PRD\n唯一的用户确认节点]
+  C -->|用户确认通过| D[2. go-api-implementer\n产出 Go 后端代码 + api-summary.md]
+  D -->|status=completed 自动流转| E[3. frontend-engineer\n产出 React 前端代码]
+  E -->|status=completed 自动流转| F[4. test-case-designer\n产出 api-test-cases.json + e2e-test-cases.json]
+  F --> G[5. integration-test-runner\n端口: 8899/3000\nAPI 接口测试]
+  F --> H[6. e2e-test-executor\n端口: 8901/3001\n浏览器 E2E 测试]
+  G -->|has_bugs| I[后端 Bug]
+  H -->|has_bugs| J[前端 Bug]
+  I --> D
+  J --> E
+  G -->|all_passed| K[编码任务完成]
+  H -->|all_passed| K</pre>
+<p>以我们的一个实际的需求——为视频大模型增加评估任务类型——为例，具体的操作如下所示：</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-14.png" alt="启动任务"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-21.png" alt="requirement-designer Agent 启动，生成需求文档"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-15.png" alt="等待人工确认需求文档"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-01.png" alt="需求确认，修改必要的需求约束"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-03.png" alt="确认修改后的 PRD 之后，自动启动后端 AI Coding Agent"></p>
+<h3 id="4-3-agent-handoff-协议">4.3 Agent Handoff 协议</h3>
+<p>采用 <code>Sub-Agent</code> 的方式可以解决单 <code>Agent</code> 中存在的“上下文焦虑”和“自视甚高”的问题，但也带来了新的问题：如何在不同的 <code>Sub-Agent</code> 之间安全、结构化地转移“控制权”与“上下文状态”？如果无法有效地解决 <code>Sub-Agent</code> 之间的交接，那么 <code>Agent</code> 之间就成了 “哑巴交流”——任务断连、状态错乱、故障恢复、链路追溯——都将导致异常灾难，最终完全失去了 <code>Sub-Agent</code> 分布式协作的价值。</p>
+<p>为此，我们实现了一个简洁的 <code>Agent Handoff</code> 协议：当上一个 <code>Agent</code> 完成任务后，它会通过 <code>Handoff</code> 协议将任务状态、已收集的信息以及下一步的执行意图，规范地传递给下一个 <code>Agent</code>。</p>
+<p>每个 <code>Agent</code> 在结束之前，必须附加如下所示的 <code>Handoff</code> 块，以完成任务的交接：</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---AGENT-HANDOFF---</span><br><span class="line">requirement-id: REQ-001</span><br><span class="line">status: completed | awaiting<span class="emphasis">_review | has_</span>bugs | all<span class="emphasis">_passed</span></span><br><span class="line"><span class="emphasis">output: 产出的文件路径</span></span><br><span class="line"><span class="emphasis">next-step: 下一步动作描述</span></span><br><span class="line"><span class="emphasis">next-step-prompt: 启动下一个 Agent 时使用的 prompt</span></span><br><span class="line"><span class="emphasis">after-approval-next-step: 审核通过后的动作（仅 awaiting_</span>review）</span><br><span class="line">after-approval-prompt: 审核通过后的 prompt（仅 awaiting<span class="emphasis">_review）</span></span><br><span class="line"><span class="emphasis">bugs: Bug 列表（仅 has_</span>bugs）</span><br><span class="line">review-message: 审核提示（仅 awaiting<span class="emphasis">_review）</span></span><br><span class="line"><span class="emphasis">---END-HANDOFF---</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---AGENT-HANDOFF---</span><br><span class="line">requirement-id: REQ-021</span><br><span class="line">status: awaiting<span class="emphasis">_review</span></span><br><span class="line"><span class="emphasis">output: docs/requirements/REQ-021/PRD.md</span></span><br><span class="line"><span class="emphasis">next-step: wait_</span>for<span class="emphasis">_human_</span>approval</span><br><span class="line">after-approval-next-step: launch go-api-implementer</span><br><span class="line">after-approval-prompt: \&quot;根据需求 REQ-021 的 PRD 实现后端接口。PRD路径: docs/requirements/REQ-021/PRD.md\&quot;</span><br><span class="line">review-message: \&quot;PRD 已生成，请审核 docs/requirements/REQ-021/PRD.md，确认无误后回复&#x27;继续&#x27;启动后端实现\&quot;</span><br><span class="line">---END-HANDOFF---</span><br></pre></td></tr></table></figure>
+<p><code>Handoff</code> 协议中各状态的含义如下：</p>
+<table>
+<thead>
+<tr>
+<th><code>status</code></th>
+<th>含义</th>
+<th>主会话动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>awaiting_review</code></td>
+<td>需要人工审核</td>
+<td>暂停流水线，展示 <code>review-message</code>，等待用户确认</td>
+</tr>
+<tr>
+<td><code>completed</code></td>
+<td>当前阶段完成</td>
+<td>自动按 <code>next-step</code> 启动下一个 <code>Agent</code></td>
+</tr>
+<tr>
+<td><code>has_bugs</code></td>
+<td>测试发现缺陷</td>
+<td>根据 <code>bugs</code> 列表路由给对应 <code>Agent</code> 修复</td>
+</tr>
+<tr>
+<td><code>all_passed</code></td>
+<td>所有测试通过</td>
+<td>流水线结束，向用户报告完成</td>
+</tr>
+</tbody>
+</table>
+<p>当测试报告结果为 <code>has_bugs</code> 状态时：</p>
+<ol>
+<li>
+<p>主会话解析 <code>bugs</code> 列表，确定 <code>Bug</code> 类型（后端/前端）；</p>
+</li>
+<li>
+<p>根据 <code>Bug</code> 类型分发给对应的 <code>Agent</code> 进行缺陷修复：</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>后端 <code>Bug</code> → <code>go-api-implementer</code></p>
+</li>
+<li>
+<p>前端 <code>Bug</code> → <code>frontend-engineer</code></p>
+</li>
+</ul>
+<ol start="3">
+<li>
+<p>修复完成后，重新启动对应的测试 <code>Agent</code> 来验证修复结果</p>
+</li>
+<li>
+<p>循环如上过程，直到所有测试用例全部通过，测试报告达到 <code>all_passed</code> 状态为止。</p>
+</li>
+</ol>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p>在我们的实现中，<code>Handoff</code> 块的内容会直接写入到主 <code>session</code>，而不会写入本地文件。没有必要引入过多的存储结构来增加交接过程的复杂度。</p>
+</div>
+<p>主 <code>Agent</code> 通过 <code>Handoff</code> 协议来调度各 <code>Sub-Agent</code> 的自动化执行。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-02.png" alt="编码 Agent 与 测试 Agent"></p>
+<h3 id="4-4-测试用例生成">4.4 测试用例生成</h3>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p>没有必要手写 <code>Agent</code> 的具体内容，可以直接使用 <code>DUCC</code> 的 <code>/agents</code> 让 <code>DUCC</code> 自动为我们实现相关的 <code>Agent</code>。</p>
+</div>
+<p>如前所述，在我们的工程中，我们把工程用到的所有的 <code>Agent</code> 描述都放在了 <code>versus/.claude/agents</code> 目录下，作为团队资产公用。<code>test-case-designer</code> <code>Agent</code> 的描述如下所示：</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: test-case-designer</span><br><span class="line">description: |</span><br><span class="line">  Use this agent when you need to generate comprehensive test cases for a feature based on requirement documents, technical specifications, API implementations, and frontend implementations. This agent designs both API interface test cases and end-to-end (E2E) web test cases in JSON format. It does NOT execute tests - it only creates test case specifications.</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">You are an elite Software Quality Assurance Engineer and Test Architect with deep expertise in software testing methodologies, test case design, and quality engineering. You specialize in creating comprehensive, well-structured test cases that ensure software reliability and quality.</span><br><span class="line"></span><br><span class="line"><span class="section">## Your Core Mission</span></span><br><span class="line"></span><br><span class="line">You design test cases for features based on:</span><br><span class="line"><span class="bullet">-</span> Requirement documents (需求文档)</span><br><span class="line"><span class="bullet">-</span> Technical specifications (技术方案)</span><br><span class="line"><span class="bullet">-</span> API implementations (接口实现)</span><br><span class="line"><span class="bullet">-</span> Frontend implementations (前端实现)</span><br><span class="line"></span><br><span class="line">You produce two types of test cases:</span><br><span class="line"><span class="bullet">1.</span> <span class="strong">**API Interface Test Cases**</span> (接口测试用例)</span><br><span class="line"><span class="bullet">2.</span> <span class="strong">**End-to-End Web Test Cases**</span> (端到端测试用例)</span><br><span class="line"></span><br><span class="line"><span class="strong">**IMPORTANT**</span>: You ONLY design test cases - you do NOT execute them. Your output is JSON-formatted test case specifications.</span><br><span class="line"></span><br><span class="line"><span class="section">## 产物规范</span></span><br><span class="line"></span><br><span class="line"><span class="section">### 输入</span></span><br><span class="line"><span class="bullet">-</span> PRD 文档：<span class="code">`docs/requirements/&#123;REQ-ID&#125;/PRD.md`</span>（由 requirement-designer 产出）</span><br><span class="line"><span class="bullet">-</span> API 摘要：<span class="code">`docs/requirements/&#123;REQ-ID&#125;/api-summary.md`</span>（由 go-api-implementer 产出）</span><br><span class="line"><span class="bullet">-</span> 后端代码：<span class="code">`versus-server/`</span> 目录（由 go-api-implementer 产出）</span><br><span class="line"><span class="bullet">-</span> 前端代码：<span class="code">`versus-fe/`</span> 目录（由 frontend-engineer 产出）</span><br><span class="line"></span><br><span class="line"><span class="section">### 输出</span></span><br><span class="line"><span class="bullet">-</span> API 测试用例：<span class="strong">**必须**</span>保存到 <span class="code">`docs/requirements/&#123;REQ-ID&#125;/api-test-cases.json`</span></span><br><span class="line"><span class="bullet">-</span> E2E 测试用例：<span class="strong">**必须**</span>保存到 <span class="code">`docs/requirements/&#123;REQ-ID&#125;/e2e-test-cases.json`</span></span><br><span class="line"></span><br><span class="line"><span class="section">### 下游触发</span></span><br><span class="line">测试用例设计完成后，提示主会话<span class="strong">**并行启动**</span> integration-test-runner 和 e2e-test-executor，传入需求 ID。</span><br><span class="line"></span><br><span class="line"><span class="section">## Handoff 输出（MUST）</span></span><br><span class="line"></span><br><span class="line">测试用例设计完成后，你 MUST 在输出末尾输出以下格式的 Handoff 块：</span><br><span class="line"></span><br><span class="line"><span class="code">```</span></span><br><span class="line"><span class="code">---AGENT-HANDOFF---</span></span><br><span class="line"><span class="code">requirement-id: &#123;当前REQ-ID&#125;</span></span><br><span class="line"><span class="code">status: completed</span></span><br><span class="line"><span class="code">output: docs/requirements/&#123;REQ-ID&#125;/api-test-cases.json, docs/requirements/&#123;REQ-ID&#125;/e2e-test-cases.json</span></span><br><span class="line"><span class="code">next-step: launch integration-test-runner AND e2e-test-executor in parallel</span></span><br><span class="line"><span class="code">next-step-prompt-integration: &quot;启动服务(后端8899/前端3000)并执行需求 &#123;REQ-ID&#125; 的 API 集成测试。测试用例路径: docs/requirements/&#123;REQ-ID&#125;/api-test-cases.json&quot;</span></span><br><span class="line"><span class="code">next-step-prompt-e2e: &quot;启动服务(后端8901/前端3001)并执行需求 &#123;REQ-ID&#125; 的浏览器 E2E 测试。测试用例路径: docs/requirements/&#123;REQ-ID&#125;/e2e-test-cases.json&quot;</span></span><br><span class="line"><span class="code">---END-HANDOFF---</span></span><br><span class="line"><span class="code">```</span></span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>最终生成的接口测试用例如下所示：</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-05.png" alt="接口测试用例"></p>
+<h3 id="4-5-e2e-浏览器测试">4.5 E2E 浏览器测试</h3>
+<p>我们使用 <code>Chrome DevTools MCP</code> 来实现端到端的浏览器自动化测试。直接在 <code>DUCC</code> 的对话框输入：</p>
+<blockquote>
+<p>安装 <a target="_blank" rel="noopener" href="https://github.com/ChromeDevTools/chrome-devtools-mcp">https://github.com/ChromeDevTools/chrome-devtools-mcp</a> 插件</p>
+</blockquote>
+<p>就可以完成 <code>Chrome DevTools MCP</code> 的安装。关于 <code>Chrome DevTools MCP</code> 更详细的介绍可以参见：通过 <code>Chrome DevTools MCP</code> 增强 <code>Agent</code> 的浏览器操控能力。</p>
+<p><code>E2E</code> 测试中使用的 <code>Chrome DevTools MCP</code> 工具分为三类：</p>
+<ul>
+<li>
+<p>导航与页面管理</p>
+<ul>
+<li>
+<p><code>navigate_page</code>：导航到指定 URL</p>
+</li>
+<li>
+<p><code>new_page</code>：打开新标签页</p>
+</li>
+<li>
+<p><code>list_pages</code>：列出所有打开的页面</p>
+</li>
+<li>
+<p><code>select_page</code>：选择当前操作的页面</p>
+</li>
+<li>
+<p><code>close_page</code>：关闭页面</p>
+</li>
+</ul>
+</li>
+<li>
+<p>页面内容获取</p>
+<ul>
+<li>
+<p><code>take_snapshot</code>：获取页面 <code>a11y</code> 树文本快照（含元素 uid）</p>
+</li>
+<li>
+<p><code>take_screenshot</code>：截取页面或元素截图</p>
+</li>
+<li>
+<p><code>list_console_messages</code>：列出控制台消息</p>
+</li>
+<li>
+<p><code>list_network_requests</code>：列出网络请求</p>
+</li>
+<li>
+<p><code>get_network_request</code>：获取网络请求详情</p>
+</li>
+<li>
+<p><code>evaluate_script</code>：在页面中执行 JavaScript</p>
+</li>
+</ul>
+</li>
+<li>
+<p>页面交互</p>
+<ul>
+<li>
+<p><code>click</code>：点击页面元素</p>
+</li>
+<li>
+<p><code>fill</code>：在输入框中填写内容</p>
+</li>
+<li>
+<p><code>hover</code>：悬停在页面元素上</p>
+</li>
+<li>
+<p><code>press_key</code>：按键或组合键操作</p>
+</li>
+<li>
+<p><code>type_text</code>：在当前焦点输入框中输入文本</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><code>e2e-test-executor</code> <code>Agent</code> 的执行过程分为三个阶段：</p>
+<ul>
+<li>
+<p>环境准备：<code>Agent</code> 首先在独立端口（后端 8901、前端 3001）上构建并启动前后端服务，确保与集成测试环境互不干扰。服务就绪后，通过 <code>Chrome DevTools MCP</code> 建立与浏览器的连接。</p>
+</li>
+<li>
+<p>逐用例执行：对每个测试用例，<code>Agent</code> 按以下步骤操作——先 <code>navigate_page</code> 导航到目标页面，再 <code>take_snapshot</code> 获取页面 <code>a11y</code> 树快照以定位元素，然后按用例定义的步骤逐步执行交互操作（<code>click</code>、<code>fill</code>、<code>type</code> 等）。每执行完一步，会调用 <code>take_screenshot</code> 截图留存，最后对比实际页面状态与预期结果，并分析用例执行结果。</p>
+</li>
+<li>
+<p>结果判定与反馈：所有用例执行完毕后，若无用例执行失败则生成 <code>summary.md</code> 并对截图进行归档，流水线以 <code>all_passed</code> 结束。若存在执行失败的用例，则根据 <code>Bug</code> 类型分发给对应的 <code>Coding Agent</code> 修复（后端 <code>Bug</code> → <code>go-api-implementer</code>，前端 <code>Bug</code> → <code>frontend-engineer</code>），修复后重新启动服务并重跑失败用例，循环直到全部通过。</p>
+</li>
+</ul>
+<p>整体过程如下所示：</p>
+<pre class="mermaid">flowchart TD
+    A["e2e-test-executor 启动"] --> C["启动前、后端服务"]
+    C --> D["通过 Chrome DevTools MCP 控制浏览器"]
+    D --> E
+
+    subgraph E ["对每个测试用例"]
+        direction LR
+        E1["1. 进入指定页面"] --> E2["2. take_snapshot 获取页面"]
+        E2 --> E3["3. 按步骤执行"]
+        E3 --> E4["4. 截图"]
+        E4 --> E5["5. 验证并记录结果"]
+    end
+
+    E --> G{"是否有失败用例?"}
+    G -->|全部通过| F["生成 summary.md + 截图归档<br>status=all_passed"]
+    G -->|存在失败| H{"Bug 类型?"}
+    H -->|后端 Bug| I["go-api-implementer 修复"]
+    H -->|前端 Bug| J["frontend-engineer 修复"]
+    I --> K["重新启动服务 & 重跑失败用例"]
+    J --> K
+    K --> E</pre>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-13.png" alt="API 测试&amp;修复的自闭环流程"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-17.png" alt="API 测试&amp;修复的自闭环流程"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-25.png" alt="E2E 执行过程截图结果"></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-09.png" alt="主 Agent 任务完成并输出总结内容"></p>
+<h2 id="5-文档更新">5. 文档更新</h2>
+<p>随着项目不停的迭代，新增加的功能越来越多，对旧需求的修改也越来越多。慢慢地，项目代码库中的文档知识就开始出现“熵增”的问题了。例如：我们已经把平台的登录系统由 <code>UUAP</code> 升级到了 <code>Passport</code>，但是 <code>versus/CLAUDE.md</code> 中的描述却没有及时更新，这将严重影响 <code>Agent</code> 后续的执行性能。</p>
+<p>这是一个比较合适的 <code>/goal</code> 应用场景，于是，我打开了 <code>Codex CLI</code>，并输入了如下的检查要求：</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">/goal 执行一次“文档与代码一致性同步”任务，直到满足完成条件。</span><br><span class="line"></span><br><span class="line">  目标：</span><br><span class="line">  检查并更新 CLAUDE.md、README.md、docs/<span class="strong">**/<span class="emphasis">*.md 以及其他 Markdown 文档，使其与当前代码、测试、配置、脚本、类型定义、API 路由、CLI 命令、环境变量和实际目录结构保持一致。</span></span></span><br><span class="line"><span class="strong"><span class="emphasis"></span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  事实源优先级：</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  1. 当前代码实现</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  2. 测试用例</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  3. package.json / Makefile / CI 配置 / 脚本</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  4. 类型定义、API schema、路由定义、配置 schema</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  5. .env.example 或配置示例</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  6. 实际目录结构</span></span></span><br><span class="line"><span class="strong"><span class="emphasis"></span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  硬性约束：</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  - 只允许修改 Markdown 文档文件，包括 CLAUDE.md、README.md、docs/<span class="strong">**/<span class="emphasis">*.md、*</span>.md、<span class="emphasis">*.markdown。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 不允许修改业务代码、测试、配置文件、lock 文件、生成文件或二进制文件。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 不要为了匹配文档而修改代码；代码是事实源，文档是派生物。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 不要重写整篇文档，只做最小必要修改。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 不确定的内容不要编造，列入最终报告的“需要人工确认”。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 禁止修改 .claude 目录下的任何内容。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis"></span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  执行步骤：</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  1. 建立项目事实清单：包管理器、启动命令、构建命令、测试命令、lint/typecheck 命令、目录结构、主要模块、API/路由/CLI、环境变量。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  2. 扫描所有 Markdown 文档，排除 .claude 目录，识别与代码事实不一致的地方。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  3. 对有明确事实依据的不一致，只更新 Markdown 文档。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  4. 修改后运行：</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">     - git diff --name-only</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">     - 如存在子模块，也运行 git -C <span class="xml"><span class="tag">&lt;<span class="name">submodule</span>&gt;</span></span> diff --name-only</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  5. 如发现非 Markdown 文件被修改，立即回滚这些非文档变更。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  6. 输出最终报告。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis"></span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  完成条件：</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 所有有明确代码事实依据的文档不一致都已修复。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 父仓库和所有子模块的实际文件级 diff 只包含 Markdown 文件。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 最终报告必须列出：</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    1. 修改了哪些文档</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    2. 每个文档修正了什么</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    3. 每项修正依据的代码/配置/脚本事实</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    4. 哪些内容仍需要人工确认</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    5. 确认没有修改非文档文件</span></span></span></span></span><br></pre></td></tr></table></figure>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-20.png" alt></p>
+<p>最终，经过了 8 分钟多的检查，消耗了大约 435W 的 <code>token</code>，<code>Codex</code> 完成了文档与代码的一致性升级。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-19.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-04.png" alt></p>
+<p>文档与代码的一致性校验目前尚未整合到当前的 <code>Harness</code> 自闭环流程中，后续我们也会像 <code>OpenAI</code> 的操作一样：起一个后台服务来周期性地进行清理，并自动合并到代码仓库中。</p>
+<h2 id="6-真的是完美的吗？">6. 真的是完美的吗？</h2>
+<p>如上的 <code>Harness</code> 过程确实帮我们实现了 “一句话实现产品功能” 的目标，也确实避免了不同角色之间的沟通，提升了开发的效率，但是我们也在实践中发现我们的 <code>Harness</code> 模式并不是 100% 完美的，它也有它的问题存在。</p>
+<h3 id="6-1-e2e-测试的检测能力相对较弱">6.1 E2E 测试的检测能力相对较弱</h3>
+<p>通过如下的一个真实功能在不同阶段的耗时分布，我们发现：用例执行阶段的耗时是最长的，并且 <code>E2E</code> 测试决定着用例执行时间。但是在我们的实践中：<code>E2E</code> 测试很少报告缺陷，大部分 90%+ 的缺陷均是由 <code>API</code> 接口测试发现。</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>分析历史功能</th>
+<th>生成 <code>PRD</code></th>
+<th><code>PRD</code> 人工审核</th>
+<th>代码编写</th>
+<th>测试用例设计</th>
+<th>用例执行</th>
+<th>修复闭环</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>耗时</td>
+<td>4 mins</td>
+<td>5 mins</td>
+<td>5 mins</td>
+<td>20 mins</td>
+<td>12 mins</td>
+<td>30 mins</td>
+<td>5 mins</td>
+</tr>
+</tbody>
+</table>
+<p>是真的没有样式 <code>BUG</code> 吗？修改视频任务分类之后，我们确实也发现了前端样式的 <code>BUG</code>：在任务名比较长的时候，任务类型出现了元素遮挡的问题。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-12.png" alt></p>
+<p>目前，我们的 <code>E2E Testing Agent</code> 对于质量的把控能力相较于人工测试而言还存在差距，一方面测试 <code>Agent</code> 对 <code>Bug</code> 的认定比人类宽松，一方面测试 <code>Agent</code> 缺少对布局、美感等的评判（当然，我们也没有对这方面进行限定）。因此，当前的 <code>Harness</code> 能力只保证功能的可用性，并不保证页面符合人类的审美。不过，对于我们这样的非复杂交互的系统而言，这样已经足以满足要求了。</p>
+<h3 id="6-2-需求改动存在遗漏">6.2 需求改动存在遗漏</h3>
+<p>在视频任务分类拆分的升级中，我们还发现 <code>Agent</code> 在实现任务的过程中遗漏了“模型管理”这个页面的改动。我们重新 <code>Review</code> 了对应的 <code>PRD</code>，发现在 <code>PRD</code> 中就已经存在遗漏了。虽然我们会对 <code>Agent</code> 生成的 <code>PRD</code> 内容进行审核，但是确实在审核的时候也发生了遗漏，毕竟一次审核 600+ 行的文本内容成本确实有点大。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-18.png" alt></p>
+<h2 id="7-总结">7. 总结</h2>
+<p>尽管当前的 <code>Harness</code> 实践在 <code>E2E</code> 测试环节仍有局限，但其带来的 <code>ROI</code> 已极其可观。根据我们在 4 个功能升级上的数据统计，当前的 <code>Harness</code> 已经让我们的功能发布效率提升了 4 倍，虽然与 <code>OpenAI</code> 博客中的 10 倍相比还有不少差距，但是已经让我们成功从“人工调优代码”跨越到“治理 <code>Agent</code> 流水线”，彻底打破了前后端联调的沟通壁垒。</p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Harness-Engineering/" rel="tag">Harness Engineering</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2026/04/19/I-use-harness-engineering-to-help-me-translate-books/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">用 Harness Engineering 来进行书籍翻译工作</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "ppRS6IT7xMHmCl54L7ynIC2Z-gzGzoHsz",
+    app_key: "qEmM49ZlU6LOwXCHjzMUECKu",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "快来评论吧~",
+    recordIP: true,
+    visitor: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2026
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+ 
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
