@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+      <meta name="description" content="Version: 1.0.0  1. 目标 Skill 是一种过程性知识，用于指导模型完成某一类任务。Skill Test 的目标不是验证真实业务最终是否成功，而是验证：  Skill 是否在正确场景下被触发； 模型是否理解 Skill 的执行流程； 输出产物是否符合约定； 信息缺失、失败、边界场景下是否处理合理； Skill 输出是否能被 Agent、Hook 或 Workflow 后续消费。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Skill Test Case Specific">
+<meta property="og:url" content="https://wangwei1237.github.io/skill-test-specific/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="Version: 1.0.0  1. 目标 Skill 是一种过程性知识，用于指导模型完成某一类任务。Skill Test 的目标不是验证真实业务最终是否成功，而是验证：  Skill 是否在正确场景下被触发； 模型是否理解 Skill 的执行流程； 输出产物是否符合约定； 信息缺失、失败、边界场景下是否处理合理； Skill 输出是否能被 Agent、Hook 或 Workflow 后续消费。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-12T15:57:55.000Z">
+<meta property="article:modified_time" content="2026-06-12T08:23:42.656Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="17哥,17g,17G,17">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="@wangwei1237">
+      
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Skill Test Case Specific |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="page-"
+  class="article article-type-page"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Skill Test Case Specific
+</h1>
+ 
+
+      
+    </header>
+       
+    <div class="article-entry" itemprop="articleBody">
+       
+  <blockquote>
+<p>Version: 1.0.0</p>
+</blockquote>
+<h2 id="1-目标">1. 目标</h2>
+<p>Skill 是一种<strong>过程性知识</strong>，用于指导模型完成某一类任务。Skill Test 的目标不是验证真实业务最终是否成功，而是验证：</p>
+<ul>
+<li>Skill 是否在正确场景下被触发；</li>
+<li>模型是否理解 Skill 的执行流程；</li>
+<li>输出产物是否符合约定；</li>
+<li>信息缺失、失败、边界场景下是否处理合理；</li>
+<li>Skill 输出是否能被 Agent、Hook 或 Workflow 后续消费。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Skill Test 是测“方案是否可靠”；而对应的 Agent Test 是测“执行是否正确”。</span><br></pre></td></tr></table></figure>
+<h2 id="2-测试边界">2. 测试边界</h2>
+<h3 id="2-1-skill-test-关注">2.1 Skill Test 关注</h3>
+<ul>
+<li>触发是否准确；</li>
+<li>执行步骤是否完整；</li>
+<li>输出格式是否稳定；</li>
+<li>是否识别缺失信息；</li>
+<li>是否避免幻觉；</li>
+<li>是否输出可回流的失败信息；</li>
+<li>是否遵守职责边界；</li>
+</ul>
+<h3 id="2-2-skill-test-不关注">2.2 Skill Test 不关注</h3>
+<ul>
+<li>真实代码是否最终修复成功；</li>
+<li>真实服务是否可用；</li>
+<li>真实测试环境是否稳定；</li>
+</ul>
+<p>这些应由 Agent Eval、Hook Test 或 Workflow Eval 负责。</p>
+<h2 id="3-测试类型">3. 测试类型</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>trigger</code></td>
+<td>验证 Skill 是否应该触发，以及是否避免误触发</td>
+</tr>
+<tr>
+<td><code>plan</code></td>
+<td>验证 dry-run 模式下是否能给出符合 Skill 的执行计划</td>
+</tr>
+<tr>
+<td><code>contract</code></td>
+<td>验证输出产物、字段和格式是否稳定</td>
+</tr>
+<tr>
+<td><code>edge</code></td>
+<td>验证信息缺失、输入模糊、文档不完整等边界场景</td>
+</tr>
+<tr>
+<td><code>failure</code></td>
+<td>验证失败诊断、失败分类和回流策略</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-测试模式">4. 测试模式</h2>
+<p>Skill 测试默认采用 <strong>dry-run</strong> 模式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">不执行命令、不修改文件、不调用外部服务，只输出计划或结构化说明。</span><br></pre></td></tr></table></figure>
+<p>推荐测试层级：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>是否真实执行</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dry-run</code></td>
+<td>否</td>
+<td>触发、计划、流程理解、职责边界</td>
+</tr>
+<tr>
+<td><code>mock</code></td>
+<td>半真实</td>
+<td>样例文档、样例日志、样例报告分析</td>
+</tr>
+<tr>
+<td><code>execution</code></td>
+<td>是</td>
+<td>通常用于 Agent Evals，不作为 Skill 默认测试模式</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-文件位置">5. 文件位置</h2>
+<p>每个 Skill 至少维护一份测试文件：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;ABS_ROOT&#125;/skills/&lt;skill-name&gt;/tests/skill_cases.yaml</span><br></pre></td></tr></table></figure>
+<p>推荐结构：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;ABS_ROOT&#125;</span>/</span><br><span class="line">└── skills/</span><br><span class="line">    └── &lt;skill-name&gt;/</span><br><span class="line">        ├── SKILL.md</span><br><span class="line">        ├── scripts/</span><br><span class="line">        │   └── script.py</span><br><span class="line">        └── tests/</span><br><span class="line">            └── skill_cases.yaml</span><br></pre></td></tr></table></figure>
+<h2 id="6-yaml-顶层结构">6. YAML 顶层结构</h2>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;1.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">skill:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">  <span class="attr">description:</span> <span class="string">&quot;验证 API 测试类 Skill 的触发、计划和输出契约&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">  <span class="attr">mode:</span> <span class="string">&quot;dry-run&quot;</span></span><br><span class="line">  <span class="attr">execution:</span> <span class="string">&quot;no_tool_call&quot;</span></span><br><span class="line">  <span class="attr">output_format:</span> <span class="string">&quot;json&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cases:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;trigger_001&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;API 测试请求应触发 api-test-flow&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&quot;如果要测试登录接口是否符合预期，你会调用哪个 skill？&quot;</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">&quot;ui-acceptance-test&quot;</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">&quot;release-check&quot;</span></span><br><span class="line">      <span class="attr">must_include:</span> []</span><br><span class="line">      <span class="attr">must_not_include:</span> []</span><br><span class="line">      <span class="attr">artifacts:</span> []</span><br><span class="line">      <span class="attr">routing:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;selected_skill == &#x27;api-test-flow&#x27;&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;positive&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="7-字段说明">7. 字段说明</h2>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>是</td>
+<td>测试规范版本</td>
+</tr>
+<tr>
+<td><code>skill.name</code></td>
+<td>是</td>
+<td>被测 Skill 名称</td>
+</tr>
+<tr>
+<td><code>skill.description</code></td>
+<td>否</td>
+<td>Skill 简要说明</td>
+</tr>
+<tr>
+<td><code>defaults.mode</code></td>
+<td>是</td>
+<td>默认测试模式，推荐 <code>dry-run</code></td>
+</tr>
+<tr>
+<td><code>defaults.execution</code></td>
+<td>是</td>
+<td>是否允许工具调用，Skill 单测推荐 <code>no_tool_call</code></td>
+</tr>
+<tr>
+<td><code>cases[].id</code></td>
+<td>是</td>
+<td>用例唯一 ID</td>
+</tr>
+<tr>
+<td><code>cases[].type</code></td>
+<td>是</td>
+<td><code>trigger</code> / <code>plan</code> / <code>contract</code> / <code>edge</code> / <code>failure</code></td>
+</tr>
+<tr>
+<td><code>cases[].title</code></td>
+<td>是</td>
+<td>用例标题</td>
+</tr>
+<tr>
+<td><code>cases[].query</code></td>
+<td>是</td>
+<td>测试输入</td>
+</tr>
+<tr>
+<td><code>inputs.files</code></td>
+<td>是</td>
+<td>测试依赖文件，无则为空数组</td>
+</tr>
+<tr>
+<td><code>inputs.context</code></td>
+<td>是</td>
+<td>额外上下文，无则为空对象</td>
+</tr>
+<tr>
+<td><code>expected.skill.should_use</code></td>
+<td>是</td>
+<td>期望使用的 Skill</td>
+</tr>
+<tr>
+<td><code>expected.skill.should_not_use</code></td>
+<td>是</td>
+<td>不应使用的 Skill 列表</td>
+</tr>
+<tr>
+<td><code>expected.must_include</code></td>
+<td>是</td>
+<td>输出中必须包含的步骤、字段或语义</td>
+</tr>
+<tr>
+<td><code>expected.must_not_include</code></td>
+<td>是</td>
+<td>输出中不能出现的行为或内容</td>
+</tr>
+<tr>
+<td><code>expected.artifacts</code></td>
+<td>是</td>
+<td>期望产物</td>
+</tr>
+<tr>
+<td><code>expected.routing</code></td>
+<td>是</td>
+<td>成功、失败或阻塞时的路由</td>
+</tr>
+<tr>
+<td><code>assertions</code></td>
+<td>是</td>
+<td>可被脚本或 LLM Judge 执行的断言</td>
+</tr>
+<tr>
+<td><code>tags</code></td>
+<td>否</td>
+<td>用于筛选测试集</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-各类-case-编写要求">8. 各类 Case 编写要求</h2>
+<h3 id="8-1-trigger-case">8.1 Trigger Case</h3>
+<p>用于验证 Skill 是否应该被触发。</p>
+<p>要求至少包含：</p>
+<ul>
+<li>一个正例：应该触发该 Skill；</li>
+<li>一个反例：不应该触发该 Skill；</li>
+<li>如有相似 Skill，应加入误触发测试。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;trigger_001&quot;</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">  <span class="attr">title:</span> <span class="string">&quot;API 测试请求应触发 api-test-flow&quot;</span></span><br><span class="line">  <span class="attr">query:</span> <span class="string">&quot;请根据 PRD 验证登录接口是否符合预期&quot;</span></span><br><span class="line">  <span class="attr">inputs:</span></span><br><span class="line">    <span class="attr">files:</span> []</span><br><span class="line">    <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">  <span class="attr">expected:</span></span><br><span class="line">    <span class="attr">skill:</span></span><br><span class="line">      <span class="attr">should_use:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">      <span class="attr">should_not_use:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;ui-acceptance-test&quot;</span></span><br><span class="line">    <span class="attr">must_include:</span> []</span><br><span class="line">    <span class="attr">must_not_include:</span> []</span><br><span class="line">    <span class="attr">artifacts:</span> []</span><br><span class="line">    <span class="attr">routing:</span> &#123;&#125;</span><br><span class="line">  <span class="attr">assertions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;selected_skill == &#x27;api-test-flow&#x27;&quot;</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;positive&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="8-2-plan-case">8.2 Plan Case</h3>
+<p>用于验证模型是否理解 Skill 的执行流程。</p>
+<p>Plan Case 必须要求：</p>
+<ul>
+<li>不实际执行工具；</li>
+<li>不修改文件；</li>
+<li>只输出计划；</li>
+<li>明确使用哪个 Skill；</li>
+<li>明确步骤、输入、输出、成功/失败标准、失败路由。</li>
+</ul>
+<p>推荐 Query：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果用户 Query 是：“xxxx”，你会怎么做？</span><br><span class="line">不要实际执行工具，不要修改文件，只输出计划。</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;plan_001&quot;</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&quot;plan&quot;</span></span><br><span class="line">  <span class="attr">title:</span> <span class="string">&quot;API 测试 Skill 应给出正确执行计划&quot;</span></span><br><span class="line">  <span class="attr">query:</span> <span class="string">&gt;</span></span><br><span class="line">    <span class="string">如果用户</span> <span class="string">Query</span> <span class="string">是：“请根据</span> <span class="string">PRD</span> <span class="string">验证登录接口是否符合预期”，你会怎么做？</span></span><br><span class="line">    <span class="string">不要实际执行工具，不要修改文件，只输出计划。</span></span><br><span class="line">  <span class="attr">inputs:</span></span><br><span class="line">    <span class="attr">files:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;examples/login_prd.md&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;examples/login_api_doc.md&quot;</span></span><br><span class="line">    <span class="attr">context:</span></span><br><span class="line">      <span class="attr">target_api:</span> <span class="string">&quot;login&quot;</span></span><br><span class="line">  <span class="attr">expected:</span></span><br><span class="line">    <span class="attr">skill:</span></span><br><span class="line">      <span class="attr">should_use:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">      <span class="attr">should_not_use:</span> []</span><br><span class="line">    <span class="attr">must_include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;读取 PRD&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;读取 API 文档&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;生成 API 测试用例&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;解析测试结果&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;输出 api_test_report&quot;</span></span><br><span class="line">    <span class="attr">must_not_include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;直接修改业务代码&quot;</span></span><br><span class="line">    <span class="attr">artifacts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;api_test_report.json&quot;</span></span><br><span class="line">    <span class="attr">routing:</span></span><br><span class="line">      <span class="attr">on_success:</span> <span class="string">&quot;finish&quot;</span></span><br><span class="line">      <span class="attr">on_code_failure:</span> <span class="string">&quot;coding-agent&quot;</span></span><br><span class="line">      <span class="attr">on_case_failure:</span> <span class="string">&quot;testcase-agent&quot;</span></span><br><span class="line">      <span class="attr">on_env_failure:</span> <span class="string">&quot;env-agent&quot;</span></span><br><span class="line">  <span class="attr">assertions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;selected_skill == &#x27;api-test-flow&#x27;&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;&#x27;api_test_report.json&#x27; in artifacts&quot;</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;plan&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;dry-run&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="8-3-contract-case">8.3 Contract Case</h3>
+<p>用于验证输出契约。</p>
+<p>重点检查：</p>
+<ul>
+<li>产物文件名；</li>
+<li>必填字段；</li>
+<li>字段取值范围；</li>
+<li>Markdown 标题结构；</li>
+<li>JSON Schema；</li>
+<li>是否可被下游 Agent 或 Hook 消费。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;contract_001&quot;</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&quot;contract&quot;</span></span><br><span class="line">  <span class="attr">title:</span> <span class="string">&quot;api_test_report.json 输出契约校验&quot;</span></span><br><span class="line">  <span class="attr">query:</span> <span class="string">&quot;请根据样例接口文档生成 API 测试报告，不要实际执行测试&quot;</span></span><br><span class="line">  <span class="attr">inputs:</span></span><br><span class="line">    <span class="attr">files:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;examples/login_prd.md&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;examples/login_api_doc.md&quot;</span></span><br><span class="line">    <span class="attr">context:</span></span><br><span class="line">      <span class="attr">mock_result:</span> <span class="string">&quot;pass&quot;</span></span><br><span class="line">  <span class="attr">expected:</span></span><br><span class="line">    <span class="attr">skill:</span></span><br><span class="line">      <span class="attr">should_use:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">      <span class="attr">should_not_use:</span> []</span><br><span class="line">    <span class="attr">must_include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;status&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;tested_apis&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;test_cases&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;failures&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;next_action&quot;</span></span><br><span class="line">    <span class="attr">must_not_include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;不存在的接口字段&quot;</span></span><br><span class="line">    <span class="attr">artifacts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;api_test_report.json&quot;</span></span><br><span class="line">    <span class="attr">routing:</span></span><br><span class="line">      <span class="attr">on_success:</span> <span class="string">&quot;finish&quot;</span></span><br><span class="line">      <span class="attr">on_failure:</span> <span class="string">&quot;coding-agent&quot;</span></span><br><span class="line">  <span class="attr">assertions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;artifact_exists(&#x27;api_test_report.json&#x27;)&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;json_field_exists(&#x27;api_test_report.json&#x27;, &#x27;status&#x27;)&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;json_field_in(&#x27;api_test_report.json&#x27;, &#x27;status&#x27;, [&#x27;PASS&#x27;, &#x27;FAIL&#x27;, &#x27;BLOCKED&#x27;])&quot;</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;contract&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;schema&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="8-4-edge-case">8.4 Edge Case</h3>
+<p>用于验证信息不足、输入冲突、文档缺失等场景。</p>
+<p>要求模型：</p>
+<ul>
+<li>不编造缺失信息；</li>
+<li>明确标记缺失字段；</li>
+<li>可输出 <code>BLOCKED</code> 或 <code>NEEDS_CONFIRMATION</code>；</li>
+<li>给出下一步确认问题。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;edge_001&quot;</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&quot;edge&quot;</span></span><br><span class="line">  <span class="attr">title:</span> <span class="string">&quot;API 文档缺失时不应编造字段&quot;</span></span><br><span class="line">  <span class="attr">query:</span> <span class="string">&quot;请根据这份不完整 API 文档生成接口测试方案&quot;</span></span><br><span class="line">  <span class="attr">inputs:</span></span><br><span class="line">    <span class="attr">files:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;examples/incomplete_api_doc.md&quot;</span></span><br><span class="line">    <span class="attr">context:</span></span><br><span class="line">      <span class="attr">missing_fields:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;request_schema&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;error_codes&quot;</span></span><br><span class="line">  <span class="attr">expected:</span></span><br><span class="line">    <span class="attr">skill:</span></span><br><span class="line">      <span class="attr">should_use:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">      <span class="attr">should_not_use:</span> []</span><br><span class="line">    <span class="attr">must_include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;NEEDS_CONFIRMATION&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;缺失信息&quot;</span></span><br><span class="line">    <span class="attr">must_not_include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;编造接口字段&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;虚构错误码&quot;</span></span><br><span class="line">    <span class="attr">artifacts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;api_test_report.json&quot;</span></span><br><span class="line">    <span class="attr">routing:</span></span><br><span class="line">      <span class="attr">on_blocked:</span> <span class="string">&quot;human_confirm&quot;</span></span><br><span class="line">  <span class="attr">assertions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;status in [&#x27;BLOCKED&#x27;, &#x27;NEEDS_CONFIRMATION&#x27;]&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;missing_fields.length &gt; 0&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;no_hallucinated_api_fields == true&quot;</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;edge&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;anti-hallucination&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="8-5-failure-case">8.5 Failure Case</h3>
+<p>用于验证失败诊断和回流策略。</p>
+<p>失败场景应要求输出：</p>
+<ul>
+<li>失败用例；</li>
+<li>期望结果；</li>
+<li>实际结果；</li>
+<li>失败证据；</li>
+<li>疑似原因；</li>
+<li>建议回流对象；</li>
+<li>下一步动作。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;failure_001&quot;</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&quot;failure&quot;</span></span><br><span class="line">  <span class="attr">title:</span> <span class="string">&quot;测试失败时应输出可回流给 coding-agent 的信息&quot;</span></span><br><span class="line">  <span class="attr">query:</span> <span class="string">&quot;请分析这份 API 测试失败日志，并给出下一步处理建议&quot;</span></span><br><span class="line">  <span class="attr">inputs:</span></span><br><span class="line">    <span class="attr">files:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;fixtures/api_test_failure.log&quot;</span></span><br><span class="line">    <span class="attr">context:</span></span><br><span class="line">      <span class="attr">current_agent:</span> <span class="string">&quot;api-test-agent&quot;</span></span><br><span class="line">  <span class="attr">expected:</span></span><br><span class="line">    <span class="attr">skill:</span></span><br><span class="line">      <span class="attr">should_use:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">      <span class="attr">should_not_use:</span> []</span><br><span class="line">    <span class="attr">must_include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;失败用例&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;期望结果&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;实际结果&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;失败证据&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;疑似原因&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;建议回流对象&quot;</span></span><br><span class="line">    <span class="attr">must_not_include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;仅输出测试失败，无下一步建议&quot;</span></span><br><span class="line">    <span class="attr">artifacts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;api_test_report.json&quot;</span></span><br><span class="line">    <span class="attr">routing:</span></span><br><span class="line">      <span class="attr">on_failure:</span> <span class="string">&quot;coding-agent&quot;</span></span><br><span class="line">  <span class="attr">assertions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;status == &#x27;FAIL&#x27;&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;failure_count &gt; 0&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;suspected_owner == &#x27;coding-agent&#x27;&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;next_action != &#x27;&#x27;&quot;</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;failure&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;routing&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="9-最小测试集要求">9. 最小测试集要求</h2>
+<p>每个 Skill 至少包含 6 个 测试用例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">trigger_positive: 1</span><br><span class="line">trigger_negative: 1</span><br><span class="line">plan: 1</span><br><span class="line">contract: 1</span><br><span class="line">edge: 1</span><br><span class="line">failure: 1</span><br></pre></td></tr></table></figure>
+<h2 id="10-编写原则">10. 编写原则</h2>
+<ol>
+<li><strong>字段统一</strong>：所有 Case 保持相同字段结构，空值也保留。</li>
+<li><strong>Query 明确</strong>：Plan Case 必须声明“不执行工具、不修改文件、只输出计划”。</li>
+<li><strong>Expected 可判断</strong>：避免“输出完整”“分析清楚”这类模糊描述。</li>
+<li><strong>Assertions 可自动化</strong>：优先使用简单、可解析的断言。</li>
+<li><strong>必须有正反例</strong>：每个 Skill 至少有一个触发正例和一个触发反例。</li>
+<li><strong>禁止 Skill 调用 Skill</strong>：跨阶段流程由 Hooks、Workflow Runtime 或主 Agent 编排。</li>
+<li><strong>Skill 目录放小测试</strong>：完整测试集放 <code>tests/skill-evals/&lt;skill-name&gt;/</code>。</li>
+</ol>
+<h2 id="11-评估方式">11. 评估方式</h2>
+<p>推荐评分 Rubric：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th style="text-align:right">分数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Skill 选择正确</td>
+<td style="text-align:right">15</td>
+</tr>
+<tr>
+<td>流程步骤完整</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td>输出契约符合</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td>边界处理合理</td>
+<td style="text-align:right">15</td>
+</tr>
+<tr>
+<td>失败回流清晰</td>
+<td style="text-align:right">15</td>
+</tr>
+<tr>
+<td>不越权、不幻觉</td>
+<td style="text-align:right">10</td>
+</tr>
+<tr>
+<td>表达清晰</td>
+<td style="text-align:right">5</td>
+</tr>
+</tbody>
+</table>
+<p>通过阈值建议：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;= 85：通过</span><br><span class="line">70 - 84：需人工 Review</span><br><span class="line">&lt; 70：失败</span><br></pre></td></tr></table></figure>
+<h2 id="12-完整模板">12. 完整模板</h2>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;1.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">skill:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;&lt;skill-name&gt;&quot;</span></span><br><span class="line">  <span class="attr">description:</span> <span class="string">&quot;&lt;skill-description&gt;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">  <span class="attr">mode:</span> <span class="string">&quot;dry-run&quot;</span></span><br><span class="line">  <span class="attr">execution:</span> <span class="string">&quot;no_tool_call&quot;</span></span><br><span class="line">  <span class="attr">output_format:</span> <span class="string">&quot;json&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cases:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;trigger_001&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;&lt;正向触发场景&gt;&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&quot;&lt;用户请求&gt;&quot;</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;&lt;skill-name&gt;&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span> []</span><br><span class="line">      <span class="attr">must_not_include:</span> []</span><br><span class="line">      <span class="attr">artifacts:</span> []</span><br><span class="line">      <span class="attr">routing:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;selected_skill == &#x27;&lt;skill-name&gt;&#x27;&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;positive&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;trigger_002&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;&lt;反向触发场景&gt;&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&quot;&lt;不应触发该 Skill 的用户请求&gt;&quot;</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;&lt;better-skill-or-empty&gt;&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">&quot;&lt;skill-name&gt;&quot;</span></span><br><span class="line">      <span class="attr">must_include:</span> []</span><br><span class="line">      <span class="attr">must_not_include:</span> []</span><br><span class="line">      <span class="attr">artifacts:</span> []</span><br><span class="line">      <span class="attr">routing:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;selected_skill != &#x27;&lt;skill-name&gt;&#x27;&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;negative&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;plan_001&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;plan&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;&lt;计划测试场景&gt;&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&gt;</span></span><br><span class="line">      <span class="string">如果用户</span> <span class="string">Query</span> <span class="string">是：“&lt;用户请求&gt;”，你会怎么做？</span></span><br><span class="line">      <span class="string">不要实际执行工具，不要修改文件，只输出计划。</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;&lt;skill-name&gt;&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;&lt;步骤1&gt;&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;&lt;步骤2&gt;&quot;</span></span><br><span class="line">      <span class="attr">must_not_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;&lt;禁止行为&gt;&quot;</span></span><br><span class="line">      <span class="attr">artifacts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;&lt;expected_artifact&gt;&quot;</span></span><br><span class="line">      <span class="attr">routing:</span></span><br><span class="line">        <span class="attr">on_success:</span> <span class="string">&quot;finish&quot;</span></span><br><span class="line">        <span class="attr">on_failure:</span> <span class="string">&quot;&lt;target-agent&gt;&quot;</span></span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;selected_skill == &#x27;&lt;skill-name&gt;&#x27;&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;&#x27;&lt;expected_artifact&gt;&#x27; in artifacts&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;plan&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;dry-run&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;contract_001&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;contract&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;&lt;输出契约测试场景&gt;&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&quot;&lt;要求生成结构化产物的请求&gt;&quot;</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;&lt;skill-name&gt;&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;&lt;required_field&gt;&quot;</span></span><br><span class="line">      <span class="attr">must_not_include:</span> []</span><br><span class="line">      <span class="attr">artifacts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;&lt;expected_artifact&gt;&quot;</span></span><br><span class="line">      <span class="attr">routing:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;artifact_exists(&#x27;&lt;expected_artifact&gt;&#x27;)&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;contract&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;schema&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;edge_001&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;edge&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;&lt;边界场景&gt;&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&quot;&lt;信息缺失或输入冲突的请求&gt;&quot;</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;&lt;skill-name&gt;&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;NEEDS_CONFIRMATION&quot;</span></span><br><span class="line">      <span class="attr">must_not_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;编造信息&quot;</span></span><br><span class="line">      <span class="attr">artifacts:</span> []</span><br><span class="line">      <span class="attr">routing:</span></span><br><span class="line">        <span class="attr">on_blocked:</span> <span class="string">&quot;human_confirm&quot;</span></span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;status in [&#x27;BLOCKED&#x27;, &#x27;NEEDS_CONFIRMATION&#x27;]&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;edge&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;anti-hallucination&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;failure_001&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;failure&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;&lt;失败处理场景&gt;&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&quot;&lt;失败日志或失败报告分析请求&gt;&quot;</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;&lt;skill-name&gt;&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;失败原因&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;下一步动作&quot;</span></span><br><span class="line">      <span class="attr">must_not_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;仅输出失败，无处理建议&quot;</span></span><br><span class="line">      <span class="attr">artifacts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;&lt;failure_report&gt;&quot;</span></span><br><span class="line">      <span class="attr">routing:</span></span><br><span class="line">        <span class="attr">on_failure:</span> <span class="string">&quot;&lt;target-agent&gt;&quot;</span></span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;status == &#x27;FAIL&#x27;&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;next_action != &#x27;&#x27;&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;failure&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;routing&quot;</span></span><br></pre></td></tr></table></figure>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/skill-test-specific/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "ppRS6IT7xMHmCl54L7ynIC2Z-gzGzoHsz",
+    app_key: "qEmM49ZlU6LOwXCHjzMUECKu",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "快来评论吧~",
+    recordIP: true,
+    visitor: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2026
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/skill-test-specific">Skill测试</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+ 
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
