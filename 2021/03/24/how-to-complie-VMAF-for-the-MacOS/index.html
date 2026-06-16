@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="VMAF是Netflix开发的、用于评估视频感知质量的算法。VMAF包括一个独立的C语言库libvmaf及其对该库的Python包装。在Python库中，还提供了一组工具，以方便用户可以训练和测试自定义的VMAF模型。目前为止，在工业实践中，VMAF是视频质量评估领域中最优秀的全参考评估算法。 但是，在MacOS上编译并使用VMAF的过程中，发现会有一些问题导致无法编译成功，并且和模型训练相关的p">
 <meta property="og:type" content="article">
@@ -15,7 +106,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wangwei1237.github.io/2021/03/24/how-to-complie-VMAF-for-the-MacOS/1.jpeg">
 <meta property="article:published_time" content="2021-03-24T14:51:28.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.730Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.168Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="VMAF">
 <meta name="twitter:card" content="summary_large_image">
@@ -105,7 +196,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">1.4k</span>
         </span>
     </span>
 
@@ -114,7 +205,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6 分钟</span>
+            <span class="post-count">5 分钟</span>
         </span>
     </span>
 </div>
@@ -129,57 +220,57 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf">VMAF</a>是Netflix开发的、用于评估视频感知质量的算法。VMAF包括一个独立的C语言库libvmaf及其对该库的Python包装。在Python库中，还提供了一组工具，以方便用户可以训练和测试自定义的VMAF模型。目前为止，在工业实践中，VMAF是视频质量评估领域中最优秀的全参考评估算法。</p>
+  <html><head></head><body><p><a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf">VMAF</a>是Netflix开发的、用于评估视频感知质量的算法。VMAF包括一个独立的C语言库libvmaf及其对该库的Python包装。在Python库中，还提供了一组工具，以方便用户可以训练和测试自定义的VMAF模型。目前为止，在工业实践中，VMAF是视频质量评估领域中最优秀的全参考评估算法。</p>
 <p>但是，在MacOS上编译并使用VMAF的过程中，发现会有一些问题导致无法编译成功，并且和模型训练相关的python代码也存在某些小的冲突，导致在整个模型训练的过程会出现某些异常。</p>
 <p>本文就是对自己在调试过程中遇到的问题的总结。</p>
-<p><img src="/2021/03/24/how-to-complie-VMAF-for-the-MacOS/1.jpeg" alt></p>
+<p><img src="/2021/03/24/how-to-complie-VMAF-for-the-MacOS/1.jpeg" alt=""></p>
 <span id="more"></span>
 <p>我所使用的VMAF的版本为commit id为<a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf/commit/6f1f0c98845e4e9c34ae0bdfa00aee5c91fa6e0c">6f1f0c98</a>的这次提交。遇到的所有问题也都是基于这次提交，这一点要额外注意。主要解决的问题和具体的解决方法可以参考文章接下来的部分。</p>
 <h2 id="libvmaf-test-tools链接问题">libvmaf test/tools链接问题</h2>
 <p>在编译libvmaf的<code>C</code>库的时候，发现当编译<code>test</code>和<code>tools</code>目录下的文件时，会出现异常。</p>
 <p>经过排查以后，发现是对应的编译产出的链接库出现了异常。在编译时，如果配置<code>default_library</code>为<code>both</code>，则会产出libvmaf的静态链接库和动态链接库，并且在产出<code>test</code>和<code>tools</code>相关对象时，会优先选择采用静态链接库进行链编。具体如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vmaf &#x3D; executable(</span><br><span class="line">    &#39;vmaf&#39;,</span><br><span class="line">    ...</span><br><span class="line">    link_with : get_option(&#39;default_library&#39;) &#x3D;&#x3D; &#39;both&#39; ? libvmaf.get_static_lib() : libvmaf,</span><br><span class="line">    ...</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vmaf = executable(</span><br><span class="line">    'vmaf',</span><br><span class="line">    ...</span><br><span class="line">    link_with : get_option('default_library') == 'both' ? libvmaf.get_static_lib() : libvmaf,</span><br><span class="line">    ...</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
 <p>不确定为什么这里采用静态链接库时会出现异常，但是把静态链接库改成动态链接库之后，整个工程就可以成功编译了。至于原因，等有时间再仔细定位一下。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vmaf &#x3D; executable(</span><br><span class="line">    &#39;vmaf&#39;,</span><br><span class="line">    ...</span><br><span class="line">    link_with : libvmaf,</span><br><span class="line">    ...</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vmaf = executable(</span><br><span class="line">    'vmaf',</span><br><span class="line">    ...</span><br><span class="line">    link_with : libvmaf,</span><br><span class="line">    ...</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="libsvm库的路径设置问题">libsvm库的路径设置问题</h2>
 <p>在使用python目录下提供的相关工具进行模型训练的时候，最终会使用<code>python/vmaf/svmutil.py</code>来实现对<code>libsvm</code>库的调用，进而根据训练数据产出<code>SVM</code>的模型文件。</p>
 <p>但是，在<code>svmutil.py</code>中会配置<code>libsvm</code>库的路径，默认情况下，这个路径的配置如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libsvm_path &#x3D; VmafConfig.root_path(&#39;third_party&#39;, &#39;libsvm&#39;, &#39;python&#39;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libsvm_path = VmafConfig.root_path('third_party', 'libsvm', 'python')</span><br></pre></td></tr></tbody></table></figure>
 <p>而实际上，在我所编译的机器上，使用<code>pip3 install libsvm</code>之后，<code>libsvm</code>的路径并非是如上指定的路径，因此会导致在调用<code>libsvm</code>时出现异常，根据自己编译机器的具体情况，修改<code>libsvm_path</code>的路径即可解决问题，具体如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libsvm_path &#x3D; VmafConfig.root_path(&#39;site-packages&#39;, &#39;libsvm&#39;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libsvm_path = VmafConfig.root_path('site-packages', 'libsvm')</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="matplotlib中设置backend为agg带来的问题">Matplotlib中设置backend为agg带来的问题</h2>
 <p>关于Matplotlib中的backend相关的问题，此处不再详细展开，具体可以参见<a href="/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/">matplotlib的backends以及非交互式绘图</a>。</p>
 <p>默认情况下，在vmaf中，Matplotlib的backend会设置为agg模式。例如，在<a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf/blob/master/python/vmaf/script/run_vmaf_training.py">python/vmaf/script/run_vmaf_training.py</a>中，就进行了相关的配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python3</span><br><span class="line"></span><br><span class="line">import matplotlib</span><br><span class="line">matplotlib.use(&#39;Agg&#39;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"></span><br><span class="line">import matplotlib</span><br><span class="line">matplotlib.use('Agg')</span><br></pre></td></tr></tbody></table></figure>
 <p>在使用<code>libsvm</code>训练完模型之后，会对VMAF的<code>SRCC</code>，<code>PCC</code>等指标进行计算，并利用<code>python/vmaf/config.py</code>中的<code>DisplayConfig.show()</code>最终调用<code>matplotlib</code>来进行结果的可视化展现。但是，在<code>DisplayConfig.show()</code>中，却是使用是否存在参数<code>write_to_dir</code>来判断调用什么<code>backends</code>，这就会和之前的<code>Agg</code>配置出现冲突，因此这里需要做一个简单的升级，如下所示：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> matplotlib.rcParams[<span class="string">&#x27;backend&#x27;</span>] == <span class="string">&#x27;agg&#x27;</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;write_to_dir&#x27;</span> <span class="keyword">in</span> kwargs:</span><br><span class="line">        <span class="built_in">format</span> = kwargs[<span class="string">&#x27;format&#x27;</span>] <span class="keyword">if</span> <span class="string">&#x27;format&#x27;</span> <span class="keyword">in</span> kwargs <span class="keyword">else</span> <span class="string">&#x27;png&#x27;</span></span><br><span class="line">        filedir = kwargs[<span class="string">&#x27;write_to_dir&#x27;</span>] <span class="keyword">if</span> kwargs[<span class="string">&#x27;write_to_dir&#x27;</span>] <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">else</span> VmafConfig.workspace_path(<span class="string">&#x27;output&#x27;</span>)</span><br><span class="line">        os.makedirs(filedir, exist_ok=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">for</span> fignum <span class="keyword">in</span> plt.get_fignums():</span><br><span class="line">            fig = plt.figure(fignum)</span><br><span class="line">            fig.savefig(os.path.join(filedir, <span class="built_in">str</span>(fignum) + <span class="string">&#x27;.&#x27;</span> + <span class="built_in">format</span>), <span class="built_in">format</span>=<span class="built_in">format</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">format</span> = <span class="string">&#x27;png&#x27;</span></span><br><span class="line">        filedir = VmafConfig.workspace_path(<span class="string">&#x27;output&#x27;</span>)</span><br><span class="line">        os.makedirs(filedir, exist_ok=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">for</span> fignum <span class="keyword">in</span> plt.get_fignums():</span><br><span class="line">            fig = plt.figure(fignum)</span><br><span class="line">            fig.savefig(os.path.join(filedir, <span class="built_in">str</span>(fignum) + <span class="string">&#x27;.&#x27;</span> + <span class="built_in">format</span>), <span class="built_in">format</span>=<span class="built_in">format</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> matplotlib.rcParams[<span class="string">'backend'</span>] == <span class="string">'agg'</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'write_to_dir'</span> <span class="keyword">in</span> kwargs:</span><br><span class="line">        <span class="built_in">format</span> = kwargs[<span class="string">'format'</span>] <span class="keyword">if</span> <span class="string">'format'</span> <span class="keyword">in</span> kwargs <span class="keyword">else</span> <span class="string">'png'</span></span><br><span class="line">        filedir = kwargs[<span class="string">'write_to_dir'</span>] <span class="keyword">if</span> kwargs[<span class="string">'write_to_dir'</span>] <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">else</span> VmafConfig.workspace_path(<span class="string">'output'</span>)</span><br><span class="line">        os.makedirs(filedir, exist_ok=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">for</span> fignum <span class="keyword">in</span> plt.get_fignums():</span><br><span class="line">            fig = plt.figure(fignum)</span><br><span class="line">            fig.savefig(os.path.join(filedir, <span class="built_in">str</span>(fignum) + <span class="string">'.'</span> + <span class="built_in">format</span>), <span class="built_in">format</span>=<span class="built_in">format</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">format</span> = <span class="string">'png'</span></span><br><span class="line">        filedir = VmafConfig.workspace_path(<span class="string">'output'</span>)</span><br><span class="line">        os.makedirs(filedir, exist_ok=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">for</span> fignum <span class="keyword">in</span> plt.get_fignums():</span><br><span class="line">            fig = plt.figure(fignum)</span><br><span class="line">            fig.savefig(os.path.join(filedir, <span class="built_in">str</span>(fignum) + <span class="string">'.'</span> + <span class="built_in">format</span>), <span class="built_in">format</span>=<span class="built_in">format</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    plt.show()</span><br></pre></td></tr></tbody></table></figure>
 <p>实际上，只有在MacOS上才会出现该问题，因此更合理的方式是根据系统来设置Matplotlib的backends，而不是直接修改Config类。具体可以参考<a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf/pull/852">这里的讨论</a>。</p>
 <h2 id="libvmaf的特征和python中使用的特征的差异">libvmaf的特征和python中使用的特征的差异</h2>
 <h4 id="libvmaf种各特征的类型">libvmaf种各特征的类型</h4>
 <p>默认情况下，编译出来的libvmaf库使用的是integer类型的特征，具体如<code>meson_option.txt</code>所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">option(&#39;enable_float&#39;,</span><br><span class="line">    type: &#39;boolean&#39;,</span><br><span class="line">    value: false,</span><br><span class="line">    description: &#39;Compile floating-point feature extractors into the library&#39;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">option('enable_float',</span><br><span class="line">    type: 'boolean',</span><br><span class="line">    value: false,</span><br><span class="line">    description: 'Compile floating-point feature extractors into the library')</span><br></pre></td></tr></tbody></table></figure>
 <h4 id="python训练模型时各特征的类型">python训练模型时各特征的类型</h4>
 <p>在使用python来训练模型时，会根据<code>run_vmaf_training.py</code>指定的特征文件来确定是抽取<code>float</code>类型的特征还是<code>integer</code>类型的特征。</p>
 <p>当<code>feature_dict</code>的key为<code>VMAF_integer_feature</code>时，则抽取的是<code>integer</code>类型的特征，当key为<code>VMAF_feature</code>时，抽取的为<code>float</code>类型的特征。具体的判断逻辑位于<a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf/blob/master/python/vmaf/core/feature_assembler.py">feature_assembler.py</a>中的<code>FeatureAssembler.run()</code>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27; 抽取各特征的integer类型特征</span></span><br><span class="line"><span class="string">feature_dict = &#123;</span></span><br><span class="line"><span class="string">    &#x27;VMAF_integer_feature&#x27;: [&#x27;vif_scale0&#x27;, </span></span><br><span class="line"><span class="string">                             &#x27;vif_scale1&#x27;, </span></span><br><span class="line"><span class="string">                             &#x27;vif_scale2&#x27;, </span></span><br><span class="line"><span class="string">                             &#x27;vif_scale3&#x27;, </span></span><br><span class="line"><span class="string">                             &#x27;adm2&#x27;, </span></span><br><span class="line"><span class="string">                             &#x27;motion&#x27;]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span> 抽取各特征的<span class="built_in">float</span>类型特征</span><br><span class="line">feature_dict = &#123;</span><br><span class="line">    <span class="string">&#x27;VMAF_feature&#x27;</span>: [<span class="string">&#x27;vif_scale0&#x27;</span>, </span><br><span class="line">                             <span class="string">&#x27;vif_scale1&#x27;</span>, </span><br><span class="line">                             <span class="string">&#x27;vif_scale2&#x27;</span>, </span><br><span class="line">                             <span class="string">&#x27;vif_scale3&#x27;</span>, </span><br><span class="line">                             <span class="string">&#x27;adm2&#x27;</span>, </span><br><span class="line">                             <span class="string">&#x27;motion&#x27;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">''' 抽取各特征的integer类型特征</span></span><br><span class="line"><span class="string">feature_dict = {</span></span><br><span class="line"><span class="string">    'VMAF_integer_feature': ['vif_scale0', </span></span><br><span class="line"><span class="string">                             'vif_scale1', </span></span><br><span class="line"><span class="string">                             'vif_scale2', </span></span><br><span class="line"><span class="string">                             'vif_scale3', </span></span><br><span class="line"><span class="string">                             'adm2', </span></span><br><span class="line"><span class="string">                             'motion']</span></span><br><span class="line"><span class="string">}</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'''</span> 抽取各特征的<span class="built_in">float</span>类型特征</span><br><span class="line">feature_dict = {</span><br><span class="line">    <span class="string">'VMAF_feature'</span>: [<span class="string">'vif_scale0'</span>, </span><br><span class="line">                             <span class="string">'vif_scale1'</span>, </span><br><span class="line">                             <span class="string">'vif_scale2'</span>, </span><br><span class="line">                             <span class="string">'vif_scale3'</span>, </span><br><span class="line">                             <span class="string">'adm2'</span>, </span><br><span class="line">                             <span class="string">'motion'</span>]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <h4 id="保持libvmaf和python的对应">保持libvmaf和python的对应</h4>
 <p>因此，在自己训练模型的时候要特别注意：务必保证libvmaf和python两处的特征类型必须对应起来。</p>
 <ol>
 <li>
 <p>可以修改<code>meson_option.txt</code>的配置，让<code>libvmaf</code>的float类型的特征生效，此时需要使用<code>feature_dict['VMAF_feature']</code>来训练模型。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">option(&#39;enable_float&#39;,</span><br><span class="line">    type: &#39;boolean&#39;,</span><br><span class="line">    value: true,</span><br><span class="line">    description: &#39;Compile floating-point feature extractors into the library&#39;)</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">option('enable_float',</span><br><span class="line">    type: 'boolean',</span><br><span class="line">    value: true,</span><br><span class="line">    description: 'Compile floating-point feature extractors into the library')</span><br></pre></td></tr></tbody></table></figure>
 <p>如上的所有改动，可以参考<a href="update.diff">update.diff</a>。</p>
 </li>
 <li>
 <p>当然，也可以在编译的时候使用<code>-Denable_float=true</code>来开启float类型的特征支持。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meson setup build -Denable_float&#x3D;true</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meson setup build -Denable_float=true</span><br></pre></td></tr></tbody></table></figure>
 </li>
 <li>
 <p>使用<code>feature_dict['VMAF_integer_feature']</code>来训练模型，此时不需要修改libvmaf的编译脚本。但是需要修改<a target="_blank" rel="noopener" href="https://github.com/Netflix/vmaf/blob/master/python/vmaf/core/feature_extractor.py">feature_extractor.py</a>，将<code>VmafIntegerFeatureExtractor</code>类中的<code>float_ansnr</code>特征去掉。具体如下所示：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ExternalProgramCaller.call_vmafexec_multi_features(</span><br><span class="line">    [&#39;adm&#39;, &#39;vif&#39;, &#39;motion&#39;],</span><br><span class="line">    yuv_type, ref_path, dis_path, w, h, log_file_path, logger, options&#x3D;&#123;</span><br><span class="line">        &#39;adm&#39;: &#123;&#39;debug&#39;: True&#125;,</span><br><span class="line">        &#39;vif&#39;: &#123;&#39;debug&#39;: True&#125;,</span><br><span class="line">        &#39;motion&#39;: &#123;&#39;debug&#39;: True&#125;,</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ExternalProgramCaller.call_vmafexec_multi_features(</span><br><span class="line">    ['adm', 'vif', 'motion'],</span><br><span class="line">    yuv_type, ref_path, dis_path, w, h, log_file_path, logger, options={</span><br><span class="line">        'adm': {'debug': True},</span><br><span class="line">        'vif': {'debug': True},</span><br><span class="line">        'motion': {'debug': True},</span><br><span class="line">    }</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
 </li>
 </ol>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

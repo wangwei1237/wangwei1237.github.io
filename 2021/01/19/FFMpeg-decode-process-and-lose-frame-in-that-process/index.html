@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="背景 在优化视频客观全参考算法（主要是PSNR, SSIM, MS-SSIM）时，我们首先利用FFmpeg提供的API（avcodec_send_packet()，avcodec_receive_frame()）对输入的两个MP4文件转成对应的YUV格式的数据文件，然后再基于这两份YUV数据文件进行计算，得到对应的结果。 但是，我们发现，MP4文件转成YUV数据后，总是会发生丢失视频最后几帧的现">
 <meta property="og:type" content="article">
@@ -17,7 +108,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/2.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/3.png">
 <meta property="article:published_time" content="2021-01-19T14:10:38.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.115Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.608Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="FFmpeg">
 <meta property="article:tag" content="视频解码">
@@ -135,7 +226,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/1.png" alt></p>
+  <html><head></head><body><p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/1.png" alt=""></p>
 <h2 id="背景">背景</h2>
 <p>在优化视频客观全参考算法（主要是<em>PSNR</em>, <em>SSIM</em>, <em>MS-SSIM</em>）时，我们首先利用FFmpeg提供的API（<em><code>avcodec_send_packet()</code></em>，<em><code>avcodec_receive_frame()</code></em>）对输入的两个MP4文件转成对应的YUV格式的数据文件，然后再基于这两份YUV数据文件进行计算，得到对应的结果。</p>
 <p>但是，我们发现，MP4文件转成YUV数据后，总是会发生<strong>丢失视频最后几帧</strong>的现象。</p>
@@ -157,7 +248,7 @@
 </ul>
 </li>
 </ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @ingroup libavc</span></span><br><span class="line"><span class="comment"> * @defgroup lavc_encdec send/receive encoding and decoding API overview</span></span><br><span class="line"><span class="comment"> * @&#123;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The avcodec_send_packet()/avcodec_receive_frame()/avcodec_send_frame()/</span></span><br><span class="line"><span class="comment"> * avcodec_receive_packet() functions provide an encode/decode API, which</span></span><br><span class="line"><span class="comment"> * decouples input and output.</span></span><br><span class="line"><span class="comment"> * ...</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @ingroup libavc</span></span><br><span class="line"><span class="comment"> * @defgroup lavc_encdec send/receive encoding and decoding API overview</span></span><br><span class="line"><span class="comment"> * @{</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The avcodec_send_packet()/avcodec_receive_frame()/avcodec_send_frame()/</span></span><br><span class="line"><span class="comment"> * avcodec_receive_packet() functions provide an encode/decode API, which</span></span><br><span class="line"><span class="comment"> * decouples input and output.</span></span><br><span class="line"><span class="comment"> * ...</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></tbody></table></figure>
 <p>同时，也正是从3.1版本开始，之前的编解码API也被标注为<code>deprecated</code>：</p>
 <ul>
 <li>解码API
@@ -173,19 +264,19 @@
 </ul>
 </li>
 </ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">attribute_deprecated</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">avcodec_decode_audio4</span><span class="params">(AVCodecContext *avctx, AVFrame *frame,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> *got_frame_ptr, <span class="keyword">const</span> AVPacket *avpkt)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">attribute_deprecated</span><br><span class="line"><span class="type">int</span> <span class="title function_">avcodec_decode_audio4</span><span class="params">(AVCodecContext *avctx, AVFrame *frame,</span></span><br><span class="line"><span class="params">                          <span class="type">int</span> *got_frame_ptr, <span class="type">const</span> AVPacket *avpkt)</span>;</span><br></pre></td></tr></tbody></table></figure>
 <p>在我们的工具中，我们采用了新的解码API：<code>avcodec_send_packet()</code>和<code>avcodec_receive_frame()</code>，实现视频帧的解码，并将解码后的数据转成YUV数据。具体的代码片段如下，<a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_1.cpp">点击可查看完整测试代码</a>。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">process_frame</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//decode operation.</span></span><br><span class="line"><span class="keyword">while</span> (!<span class="built_in">av_read_frame</span>(fmt_ctx, pkt)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (pkt-&gt;stream_index != video_stream_idx) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                         frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        i++;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">av_packet_unref</span>(pkt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">process_frame</span><span class="params">()</span> </span>{</span><br><span class="line">    ......</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//decode operation.</span></span><br><span class="line"><span class="keyword">while</span> (!<span class="built_in">av_read_frame</span>(fmt_ctx, pkt)) {</span><br><span class="line">    <span class="keyword">if</span> (pkt-&gt;stream_index != video_stream_idx) {</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                         frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) {</span><br><span class="line">        i++;</span><br><span class="line">    };</span><br><span class="line">    <span class="built_in">av_packet_unref</span>(pkt);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>从代码可以看出，<code>i</code>是解码帧的总数，但是我们运行之后发现，一个252帧的视频，最终只得到了248帧。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> frame count: 248</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">frame count: 248</span></span><br></pre></td></tr></tbody></table></figure>
 <h2 id="send-packet-receive-frame">send_packet &amp; receive_frame</h2>
 <p>为了加深对解码API的了解，以便能查出问题原因，我们查阅了<a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/avcodec.h">FFmpeg的代码</a>，从代码的注释中，我们发现了问题：<strong>我们没有遵循API的使用规范，同时FFmpeg在注释中也说明了为什么会出现我们遇到的问题</strong>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * ... </span></span><br><span class="line"><span class="comment">  * At the beginning of decoding or encoding, the codec might accept multiple</span></span><br><span class="line"><span class="comment">  * input frames/packets without returning a frame, until its internal buffers</span></span><br><span class="line"><span class="comment">  * are filled. This situation is handled transparently if you follow the steps</span></span><br><span class="line"><span class="comment">  * outlined above.</span></span><br><span class="line"><span class="comment">  * </span></span><br><span class="line"><span class="comment">  * End of stream situations. These require &quot;flushing&quot; (aka draining) the codec,</span></span><br><span class="line"><span class="comment">  * as the codec might buffer multiple frames or packets internally for</span></span><br><span class="line"><span class="comment">  * performance or out of necessity (consider B-frames).</span></span><br><span class="line"><span class="comment">  * ...</span></span><br><span class="line"><span class="comment">  */</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * ... </span></span><br><span class="line"><span class="comment">  * At the beginning of decoding or encoding, the codec might accept multiple</span></span><br><span class="line"><span class="comment">  * input frames/packets without returning a frame, until its internal buffers</span></span><br><span class="line"><span class="comment">  * are filled. This situation is handled transparently if you follow the steps</span></span><br><span class="line"><span class="comment">  * outlined above.</span></span><br><span class="line"><span class="comment">  * </span></span><br><span class="line"><span class="comment">  * End of stream situations. These require "flushing" (aka draining) the codec,</span></span><br><span class="line"><span class="comment">  * as the codec might buffer multiple frames or packets internally for</span></span><br><span class="line"><span class="comment">  * performance or out of necessity (consider B-frames).</span></span><br><span class="line"><span class="comment">  * ...</span></span><br><span class="line"><span class="comment">  */</span></span><br></pre></td></tr></tbody></table></figure>
 <p>也就是说，为了提升性能或出于其他的考虑，解码器会在内部缓存多个<code>frames</code>/<code>packets</code>。因此，当流结束的时候，需要对解码器执行<code>flushing</code>操作，以便获取解码器缓存的<code>frames</code>/<code>packets</code>。</p>
 <p>我们的工具中，在流结束之后，并没有执行<code>flushing</code>操作，因此就出现了解码过程丢帧的现象。按照FFmpeg的指导，我们补充了如下的逻辑，以便获取解码器中缓存的帧，<a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_2.cpp">点击可查看完整测试代码</a>。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Flush remaining frames that are cached in the decoder</span></span><br><span class="line"><span class="keyword">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">av_init_packet</span>(pkt);</span><br><span class="line">pkt-&gt;data = <span class="literal">NULL</span>;</span><br><span class="line">pkt-&gt;size = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                     frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    i++;</span><br><span class="line">    packet_new = <span class="number">1</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Flush remaining frames that are cached in the decoder</span></span><br><span class="line"><span class="type">int</span> packet_new = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">av_init_packet</span>(pkt);</span><br><span class="line">pkt-&gt;data = <span class="literal">NULL</span>;</span><br><span class="line">pkt-&gt;size = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (<span class="built_in">process_frame</span>(fmt_ctx, dec_ctx, video_stream-&gt;codecpar, </span><br><span class="line">                     frame, pkt, &amp;packet_new) &gt; <span class="number">0</span>) {</span><br><span class="line">    i++;</span><br><span class="line">    packet_new = <span class="number">1</span>;</span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure>
 <p>再次运行，我们发现，丢帧问题消失了。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> frame count: 252</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">g++ --std=c++11 test_video_parser_1.cpp $(pkg-config --cflags --libs libavcodec libavdevice libavformat libavutil)</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">frame count: 252</span></span><br></pre></td></tr></tbody></table></figure>
 <h2 id="ffmpeg解码api状态机">FFMPeg解码API状态机</h2>
 <h3 id="avcodec-send-packet返回值">avcodec_send_packet返回值</h3>
 <p>从FFmpeg的源码中，我们会发现，正常情况下，<code>avcodec_send_packet()</code>函数的返回值主要有以下三种：</p>
@@ -205,18 +296,18 @@
 <p><code>avcodec_send_packet()</code>和<code>avcodec_receive_frame()</code>不同的返回值代表了解码器的不同的状态。</p>
 <p>对API的调用实际上是一种动作，而API的返回值则用来标志当前解码器的状态。因此，解码API的整个过程实际上就是一个状态机。</p>
 <p>根据<a href="#avcodec_send_packet%E8%BF%94%E5%9B%9E%E5%80%BC">avcodec_send_packet返回值</a>和<a href="#avcodec_receive_frame%E8%BF%94%E5%9B%9E%E5%80%BC">avcodec_receive_frame返回值</a>中的介绍，可以得到正常情况下，解码过程的状态机，如下图所示。</p>
-<p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/2.png" alt></p>
+<p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/2.png" alt=""></p>
 <p>在图中，<code>节点</code>代表状态（API的返回值），<code>箭头</code>代表API的调用。蓝色表示和<code>avcodec_send_packet()</code>相关，红色表示和<code>avcodec_receive_frame()</code>相关。</p>
 <p><a target="_blank" rel="noopener" href="https://wangwei1237.gitee.io/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/test_video_parser_2.cpp">我们修复版本的解码实现</a>实际上就是对如上图所示的状态机的实现。</p>
 <p>而如果在实现的时候，没有处理如下图所示的状态，则会导致无法获取视频最后几帧的问题。</p>
-<p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/3.png" alt></p>
+<p><img src="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/3.png" alt=""></p>
 <h2 id="思考">思考</h2>
 <ul>
 <li>源码面前，了无秘密。侯捷老师说过“源码面前，了无秘密”。工作中发现，源码确实是我们获取知识和经验的一个非常有效的途径，尤其是那些好的开源项目的源码，更是如此。</li>
 <li>源码还是我们解决问题的强有力的手段之一。对于这些优秀的开源项目的源码而言，代码只是一个部分，源码中的注释、文档等会为我们提供足够的资源。这次问题的解决就是依赖源码，之前在Android摄像头Mock技术的研究中，也是在查阅Android相关源码后才有了思路。因此，当我们在工作中遇到问题的时候，第一手的资料还是源码（当然，要有源码才行），其次才是官方文档，最后才是网络上的其他资源。</li>
 <li>看了那么多的源码才发现：优秀的项目是那么的一致，而糟糕的项目，各有各的糟糕之处。</li>
 </ul>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

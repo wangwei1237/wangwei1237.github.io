@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="在 我让 OpenClaw 🦞 为我当 OP 这篇文章中，我介绍了我是如何让 OpenClaw 帮我管理服务器集群的。 过了几天，我就开始想搞一点更复杂的事情。既然 OpenClaw 都可以帮我管理服务器集群了，那为什么不能让它帮我部署模型呢？反正我每次部署模型不也是先登录 GPU 服务器，然后在上面执行各种 CLI 操作（下载模型、配置虚拟环境、下载依赖……）？并且每次遇到部署问题时，我也是">
 <meta property="og:type" content="article">
@@ -23,7 +114,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/10_11.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/12.jpg">
 <meta property="article:published_time" content="2026-03-13T17:53:42.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.282Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.762Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="模型部署">
@@ -138,7 +229,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/1.png" alt></p>
+  <html><head></head><body><p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/1.png" alt=""></p>
 <p>在 <a href="/2026/03/08/I-let-OpenClaw-do-OP-for-me/">我让 OpenClaw 🦞 为我当 OP</a> 这篇文章中，我介绍了我是如何让 OpenClaw 帮我管理服务器集群的。</p>
 <p>过了几天，我就开始想搞一点更复杂的事情。既然 OpenClaw 都可以帮我管理服务器集群了，那为什么不能让它帮我部署模型呢？反正我每次部署模型不也是先登录 GPU 服务器，然后在上面执行各种 CLI 操作（下载模型、配置虚拟环境、下载依赖……）？并且每次遇到部署问题时，我也是截个图直接丢给大模型……</p>
 <span id="more"></span>
@@ -152,16 +243,16 @@
 </ul>
 <p>但是，在告诉它这些信息的时候，我没有把这些信息一股脑直接丢给 OpenClaw，我讨厌“填鸭式”教学，我也不想我的 🦞 接受这种方式的知识灌输。</p>
 <p><strong>1. 我先从一个问题开始了我的调教之旅：</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">给你一台 8 卡的 A100 机器，你会部署一个 qwen3.5 的模型吗？</span><br></pre></td></tr></table></figure>
-<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/3.png" alt></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">给你一台 8 卡的 A100 机器，你会部署一个 qwen3.5 的模型吗？</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/3.png" alt=""></p>
 <p>你看，虽然我给他的输入还有错别字，但是它已经可以理解我的意思了，并且开始尝试回答了。然后它根据自己的知识，给了我一个部署流程。</p>
-<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/4.png" alt></p>
+<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/4.png" alt=""></p>
 <p><strong>2. 输入服务器知识，让 🦞 优化部署步骤：</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 机器上是多人共用的，所以为了避免影响其他人，我们用conda工具为每个带部署的模型提供一个conda 虚拟环境。</span><br><span class="line">2. 我们采用vllm的方式来部署模型。</span><br><span class="line">3. 模型文件，我们采用modelscope下载到本地的方式，下载根路径统一放在 /home/work/models/ 中。</span><br><span class="line"></span><br><span class="line">请根据这些信息重新整理一下模型部署的步骤。</span><br></pre></td></tr></table></figure>
-<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/5.png" alt></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 机器上是多人共用的，所以为了避免影响其他人，我们用conda工具为每个带部署的模型提供一个conda 虚拟环境。</span><br><span class="line">2. 我们采用vllm的方式来部署模型。</span><br><span class="line">3. 模型文件，我们采用modelscope下载到本地的方式，下载根路径统一放在 /home/work/models/ 中。</span><br><span class="line"></span><br><span class="line">请根据这些信息重新整理一下模型部署的步骤。</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/5.png" alt=""></p>
 <p><strong>3. 在执行中提供更多信息：</strong><br>
 部署流程对不对，得执行一下才知道，然后我让 OpenClaw 去目标服务器执行它写的部署流程，然后我再根据执行的结果不听的告诉它其他的额外信息。</p>
-<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/6_7.jpg" alt></p>
+<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/6_7.jpg" alt=""></p>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -242,9 +333,9 @@
 </p><p>只有当执行过程出现网络异常的时候，我才会告诉它：服务器上要如何配置网络代理。否则，我是绝对不会提供这种冗余的信息的。</p>
 </div>
 <p>就像下面要讲到的端口占用的问题一样，OpenClaw 自己就可以解决掉，根本不需要我多嘴。</p>
-<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/8.png" alt></p>
+<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/8.png" alt=""></p>
 <p>就这样，经过几次尝试，大概 30 分钟之后，OpenClaw 就在和我的聊天中，帮我把 QWen3.5-0.8B 部署到了我的服务器。而我在整个过程中，除了和 OpenClaw 聊天外，我什么也没做。我没有登录我的服务器，我也没有手写任何的命令，连部署之后的服务可用性测试都是 OpenClaw 帮我做的。</p>
-<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/2.png" alt></p>
+<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/2.png" alt=""></p>
 <h2 id="沉淀成-skill">沉淀成 Skill</h2>
 <p>虽然我的 🦞 又获得了一项新技能，但是对于没有经过类似调教的 OpenClaw 来说，再经过一次类似的过程还是比较麻烦的。如果能把模型部署的 SOP 沉淀为 <a href="/2025/12/24/Reflections-on-Agent-Skills/">Skill</a>，别的 🦞 挂载上这个 Skill，就会即刻拥有模型部署的能力。</p>
 <p>在 <a target="_blank" rel="noopener" href="https://ejholmes.github.io/2026/02/28/mcp-is-dead-long-live-the-cli.html">MCP is dead. Long live the CLI</a> 这篇文章中，作者提到：</p>
@@ -253,7 +344,7 @@
 <p>MCP tried to build a better abstraction. Turns out we already had a pretty good one.</p>
 </blockquote>
 <blockquote>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2028715565985255635"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2028715565985255635"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </blockquote>
 <p>我们已经看到，越来越多的框架或者产品都开始弃用 MCP 转而支持 CLI：</p>
 <ul>
@@ -267,15 +358,15 @@
 <p>所以，在我和 OpenClaw 的聊天过程中，我就让他把部署的流程写成了一个 shell 脚本，实际执行部署时执行的就是那个部署脚本。于是，当我让 OpenClaw 根据聊天内容生成模型部署 Skill 时，生成的 Skill 本就是一个 <code>业务流说明</code> + <code>CLI</code> 的组合。</p>
 <p>我也不想给他一系列的接口文档和命令说明，让他在运行时实时写代码并执行，而是直接给他一个它自己写的 CLI 脚本，让它直接执行。这样，可控性和稳定性会更高。</p>
 <p>于是，我让 OpenClaw 帮我生成了一个模型部署的 Skill：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">你能把刚才咱们的过程整理成一个模型部署的skill吗？</span><br><span class="line">把shell作为改shell的一个脚本文件。</span><br><span class="line">把整理好的skill放在/home/work/wangwei17/model-deploy目录</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">你能把刚才咱们的过程整理成一个模型部署的skill吗？</span><br><span class="line">把shell作为改shell的一个脚本文件。</span><br><span class="line">把整理好的skill放在/home/work/wangwei17/model-deploy目录</span><br></pre></td></tr></tbody></table></figure>
 <p>并且，很快，OpenClaw 就生成了一个模型部署的 Skill：</p>
-<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/10_11.jpg" alt></p>
+<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/10_11.jpg" alt=""></p>
 <p>我稍加修改，就得到了一个可以直接使用的模型部署的 Skill——<a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io_src/tree/master/source/_posts/I-asked-OpenClaw-to-help-deploy-the-LLMs/model-deploy">model-deploy</a>。</p>
 <blockquote>
 <p>备注：该 Skill 在 MiniMax-M2.5 上测试通过，可以点击 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io_src/tree/master/source/_posts/I-asked-OpenClaw-to-help-deploy-the-LLMs/model-deploy">链接</a> 获取该 Skill 的代码。或者使用 <code>clawhub search model-deploy</code>、<code>clawhub install model-deploy</code> 来安装该 Skill。</p>
 </blockquote>
 <p>我把该 Skill 挂载到我的 OpenClaw 实例上，然后让它帮我部署模型。为了避免大模型使用 Session 会话中的对话历史获取知识，而没有从 <code>model-deploy</code> 技能获取知识，我首先用 <code>/new</code> 指令创建了一个新的对话 Session。</p>
-<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/12.jpg" alt></p>
+<p><img src="/2026/03/13/I-asked-OpenClaw-to-help-deploy-the-LLMs/12.jpg" alt=""></p>
 <p>🦞 能够知道它可以用 <code>model-deploy</code> 技能来部署模型，并且当部署过程中遇到 GPU 内存不足时，他还会问我怎么处理……<br>
 整个过程，除了给 🦞 发布部署任务外，我就只和它通信了一次：告诉他在卡 2 上部署，仅此而已。</p>
 <h2 id="思考与总结">思考与总结</h2>
@@ -293,8 +384,8 @@
 (1) <strong>curated Skills</strong> provide substantial but variable benefit (+16.2 percentage points average, with high variance across domains and configurations);<br>
 (2) <strong>self-generated Skills</strong> provide negligible or negative benefit (–1.3pp average), demonstrating that effective Skills require human-curated domain expertise;</p>
 </blockquote>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2030430467829444670"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
- 
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2030430467829444670"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

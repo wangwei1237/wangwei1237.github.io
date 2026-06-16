@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="正如我在 为 OpneClaw 增加 Browser 工具 中提到的那样：  在整个的部署过程中，遇到了太多的坑，每遇到一个坑，我就让 Gemini 帮我解决。  突然，我意识到：目前 LLMs 对于 Linux 系统的理解应该比人类要强得多，对 Linux 系统的各种命令操作也应该比人类要强得多。 既然如此，为什么不让 OpenClaw 帮我解决 Linux 系统的运维呢？恰好，我有一个 3">
 <meta property="og:type" content="article">
@@ -19,7 +110,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/08/I-let-OpenClaw-do-OP-for-me/openclaw_cmd.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/08/I-let-OpenClaw-do-OP-for-me/future.png">
 <meta property="article:published_time" content="2026-03-08T21:31:35.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.297Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.774Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="工具">
@@ -134,7 +225,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/1.png" alt><br>
+  <html><head></head><body><p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/1.png" alt=""><br>
 正如我在 <a href="/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/">为 OpneClaw 增加 Browser 工具</a> 中提到的那样：</p>
 <blockquote>
 <p>在整个的部署过程中，遇到了太多的坑，每遇到一个坑，我就让 Gemini 帮我解决。</p>
@@ -146,13 +237,13 @@
 <p>说干就干，LFG，🦞。</p>
 <p>于是，我又找了一台机器作为 Manager Node，并且在 Manager Node 安装了 OpenClaw。然后，我为我的 IM 配置了 OpenClaw 的 Webhook，这样，我就可以通过 IM 发送指令给 OpenClaw。最后，通过 <code>ssh-copy-id</code> 命令，在 Manager Node 上配置了 Worker Node 的免密登录。</p>
 <p>于是，我的 🦞 看起来是如下的样子：</p>
-<p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/arch_machine.png" alt></p>
+<p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/arch_machine.png" alt=""></p>
 <p>现在，我们可以让 🦞 帮我管理集群了，比如我要查看 <code>Node-1</code> 机器的 CPU 负载信息，🦞 就会在 <code>Manager Node</code> 上执行如下的命令，并返回结果。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh user@Node-1 <span class="string">&quot;uptime&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh user@Node-1 <span class="string">"uptime"</span></span><br></pre></td></tr></tbody></table></figure>
 <h2 id="2-告诉-🦞-如何管理集群">2. 告诉 🦞 如何管理集群</h2>
 <p>我希望 🦞 可以知道它现在可以管理的机器列表，并且当有新的机器节点加入集群时，🦞 也能够知道如何处理新增加的机器。于是，我通过 IM 把这些知识以聊天的方式告诉了它：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">悟空，你现在可以在受信任的机器上通过给定账号执行命令，从而实现集群管理的目的。</span><br><span class="line">但是现在有个问题：别人不知道究竟有那些收信任的机器可以管理，</span><br><span class="line">所以你需要通过配置的方式把受信任的机器和账号以username:host的格式存储起来。</span><br><span class="line">当别人问你类似：你可以管理哪些机器的时候，你就从这个配置里告诉他就可以。</span><br><span class="line">当别人让你在某个 host 上执行命令时，如果不提供 username，那么就默认用配置中的配置的用户执行。</span><br><span class="line">把这些内容存入你的记忆中，永远记下来。</span><br></pre></td></tr></table></figure>
-<p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/machine_rules.png" alt></p>
+<figure class="highlight markdown"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">悟空，你现在可以在受信任的机器上通过给定账号执行命令，从而实现集群管理的目的。</span><br><span class="line">但是现在有个问题：别人不知道究竟有那些收信任的机器可以管理，</span><br><span class="line">所以你需要通过配置的方式把受信任的机器和账号以username:host的格式存储起来。</span><br><span class="line">当别人问你类似：你可以管理哪些机器的时候，你就从这个配置里告诉他就可以。</span><br><span class="line">当别人让你在某个 host 上执行命令时，如果不提供 username，那么就默认用配置中的配置的用户执行。</span><br><span class="line">把这些内容存入你的记忆中，永远记下来。</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/machine_rules.png" alt=""></p>
 <p>看起来，一起都非常的完美。现在，🦞 已经知道如何管理集群了，同时它也确实具备了管理集群所需要的所有的能力了。</p>
 <style>.admonition {
     margin: 1.5625em 0;
@@ -242,14 +333,14 @@
 <p>查看下这三台机器的cpu负载，并进行对比分析。务必简要，可以用表格来呈现。</p>
 </blockquote>
 <p>就可以了，剩下的所有的事情，🦞 都会自动完成。</p>
-<p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/openclaw_cmd.png" alt></p>
+<p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/openclaw_cmd.png" alt=""></p>
 <h2 id="4-安全风险的思考">4. 安全风险的思考</h2>
 <p>赋予 AI <code>root</code> 权限，是一件便利但是却极其危险的事情。就像 Elon Musk 的 <a target="_blank" rel="noopener" href="https://x.com/elonmusk/status/2030814137811341589">推文</a> 中描述的那样：</p>
 <blockquote>
 <p>Giving people agentic AI be like …</p>
 </blockquote>
 <blockquote>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/elonmusk/status/2030814137811341589"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/elonmusk/status/2030814137811341589"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </blockquote>
 <p>在实践中，当 OpenClaw 为我们提供便利的同时，我们必须严格控制安全风险，务必采用最小权限原则：<br>
 绝对不要直接让 OpenClaw 使用 <code>root</code> 权限，更高级别的权限，必须掌控在我们自己手中。创建一个专用的 <code>openclaw_ops</code> 用户，只赋予其执行特定运维命令的 <code>sudo</code> 权限。尤其是对于像 <code>rm -rf /</code> 这样的毁灭性命令，必须物理禁止。</p>
@@ -348,8 +439,8 @@
 服务器硬件和模型肉体都是暂时的，唯有在一次次碰撞和纠错中沉淀下来的版本化知识，才是个人、团队、组织的灵魂。当新成员加入团队时，他们不再需要翻阅过时的文档，只需要坐在 OpenClaw 旁边，OpenClaw 会带着团队所有的历史经验，辅助他完成新的任务。</p>
 </li>
 </ul>
-<p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/future.png" alt></p>
- 
+<p><img src="/2026/03/08/I-let-OpenClaw-do-OP-for-me/future.png" alt=""></p>
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

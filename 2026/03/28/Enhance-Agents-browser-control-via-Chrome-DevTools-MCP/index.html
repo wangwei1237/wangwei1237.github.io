@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="当我们用类似 Claude Code、Codex、Gemini CLI 等 AICoding Agent 写完代码，然后让它自动生成测试计划、自动调起浏览器来测试刚刚生成的代码，并根据反馈结果重新优化代码。在这个循环中，不需要人手动干预，完全依赖 AICoding Agent 自主操控，这不是一件非常美妙的事情吗？ 这不就是当下爆火的 Harness Engineering 吗？正如 Harnes">
 <meta property="og:type" content="article">
@@ -17,7 +108,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/4.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/5.jpg">
 <meta property="article:published_time" content="2026-03-28T08:38:18.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.113Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.607Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="Chrome DevTools MCP">
 <meta property="article:tag" content="Browser use">
@@ -135,7 +226,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>当我们用类似 Claude Code、Codex、Gemini CLI 等 AICoding Agent 写完代码，然后让它自动生成测试计划、自动调起浏览器来测试刚刚生成的代码，并根据反馈结果重新优化代码。在这个循环中，不需要人手动干预，完全依赖 AICoding Agent 自主操控，这不是一件非常美妙的事情吗？</p>
+  <html><head></head><body><p>当我们用类似 Claude Code、Codex、Gemini CLI 等 AICoding Agent 写完代码，然后让它自动生成测试计划、自动调起浏览器来测试刚刚生成的代码，并根据反馈结果重新优化代码。在这个循环中，不需要人手动干预，完全依赖 AICoding Agent 自主操控，这不是一件非常美妙的事情吗？</p>
 <p>这不就是当下爆火的 Harness Engineering 吗？正如 <a target="_blank" rel="noopener" href="https://x.com/heynavtoor/status/2037200578842157462">Harness Engineering: Why the Best AI Engineers in 2026 Stopped Writing Code</a> 中说的那样<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>：</p>
 <blockquote>
 <p>A researcher tested the same AI model on the same coding benchmark twice. The first time, it scored 42%. The second time, it scored 78%. Same model. Same test. Same everything.</p>
@@ -145,24 +236,24 @@
 <h2 id="一个简单的例子">一个简单的例子</h2>
 <p>我们可以把如上提到的 Harness Engineering 的过程简化成如下的流程图：</p>
 <pre class="mermaid">graph TD
-    Start([需求输入]) --> A
+    Start([需求输入]) --&gt; A
     
     subgraph 规划与编码
-        A[Codex 编写/修改目标代码] --> B[解析代码 & 生成测试计划]
-        B --> C[构建可执行测试脚本]
+        A[Codex 编写/修改目标代码] --&gt; B[解析代码 &amp; 生成测试计划]
+        B --&gt; C[构建可执行测试脚本]
     end
     
     subgraph 自动化执行与环境交互阶段
-        C --> D[环境调度与协议打通]
-        D -->|通过 CDP/MCP 控制本地 Mac 或远程集群浏览器| E[自动执行测试 / UI 交互]
+        C --&gt; D[环境调度与协议打通]
+        D --&gt;|通过 CDP/MCP 控制本地 Mac 或远程集群浏览器| E[自动执行测试 / UI 交互]
     end
     
     subgraph 反馈与自我进化循环
-        E --> F[捕获运行时反馈]
-        F -->|提取控制台日志、DOM 状态、截图、网络抓包等| G{大模型结果评估}
-        G -->|测试通过指标达标| H([任务完成 / 代码合入])
-        G -->|测试失败 / 发现缺陷| I[AI 深度剖析错误根因]
-        I -->|生成代码优化与修复策略| A
+        E --&gt; F[捕获运行时反馈]
+        F --&gt;|提取控制台日志、DOM 状态、截图、网络抓包等| G{大模型结果评估}
+        G --&gt;|测试通过指标达标| H([任务完成 / 代码合入])
+        G --&gt;|测试失败 / 发现缺陷| I[AI 深度剖析错误根因]
+        I --&gt;|生成代码优化与修复策略| A
     end
     
     %% 定义节点样式
@@ -210,12 +301,12 @@
 <h2 id="gemini-cli-控制-chrome">Gemini CLI 控制 Chrome</h2>
 <p>1.<strong>开启远程调试</strong></p>
 <p>在 Chrome 中访问 <code>chrome://inspect#remote-debugging</code> 并启用远程调试功能。</p>
-<p><img src="/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/2.png" alt></p>
+<p><img src="/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/2.png" alt=""></p>
 <p>2.<strong>安装 <a target="_blank" rel="noopener" href="https://github.com/ChromeDevTools/chrome-devtools-mcp">Chrome DevTools MCP</a></strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gemini mcp add -s user chrome-devtools npx chrome-devtools-mcp@latest</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gemini mcp add -s user chrome-devtools npx chrome-devtools-mcp@latest</span><br></pre></td></tr></tbody></table></figure>
 <p>3.<strong>修改配置文件</strong><br>
 打开 <code>~/.gemini/settings.json</code> 文件，修改 <code>chrome-devtools</code> 配置，在 <code>args</code> 中增加 <code>--autoConnect</code> 参数，这样 Gemini 就可以打开你当前正在使用的 Chrome 浏览器。如果不增加 <code>--autoConnect</code> 参数，Gemini 会打开一个新的 Chrome 浏览器实例。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&quot;mcpServers&quot;: &#123;</span><br><span class="line">  &quot;chrome-devtools&quot;: &#123;</span><br><span class="line">    &quot;command&quot;: &quot;npx&quot;,</span><br><span class="line">    &quot;args&quot;: [</span><br><span class="line">      &quot;chrome-devtools-mcp@latest&quot;,</span><br><span class="line">      <span class="string">&quot;--autoConnect&quot;</span></span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">"mcpServers"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"chrome-devtools"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">    <span class="attr">"command"</span><span class="punctuation">:</span> <span class="string">"npx"</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">"args"</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">"chrome-devtools-mcp@latest"</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">"--autoConnect"</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">}</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
 <blockquote>
 <p>如果指定 <code>--autoConnect</code> 参数，Chrome DevTools MCP 将自动连接到由 channel 参数标识的、本地运行的 Chrome 浏览器（channel 默认为 stable）。</p>
 </blockquote>
@@ -224,8 +315,8 @@
 <blockquote>
 <p>打开 github 网站，并进入到我的个人页面。</p>
 </blockquote>
-<p><img src="/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/4.jpg" alt></p>
-<p><img src="/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/5.jpg" alt></p>
+<p><img src="/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/4.jpg" alt=""></p>
+<p><img src="/2026/03/28/Enhance-Agents-browser-control-via-Chrome-DevTools-MCP/5.jpg" alt=""></p>
 <p>Gemini Code Assist 利用 Chrome DevTools MCP 操控 Chrome 浏览器的整体的流程如下所示：</p>
 <pre class="mermaid">sequenceDiagram
     participant User as 用户
@@ -233,20 +324,20 @@
     participant MCPServer as Chrome DevTools MCP Server
     participant Chrome as Chrome 浏览器
 
-    User->>Chrome: 启用远程调试 (chrome://inspect)
-    User->>Agent: "打开 github 网站，并进入到我的个人页面，并分析加载性能"
-    Agent->>MCPServer: 启动并传入 --autoConnect
-    MCPServer->>Chrome: 请求连接到活跃会话
-    Chrome-->>User: 弹出授权对话框
-    User->>Chrome: 同意授权
-    Chrome-->>MCPServer: 建立调试会话
-    MCPServer-->>Agent: "连接已建立，可以开始调试"
-    Agent->>MCPServer: 调用工具 (例如：network.getRequests)
-    MCPServer->>Chrome: 通过 CDP 执行指令
-    Chrome-->>MCPServer: 返回网络请求数据
-    MCPServer-->>Agent: 返回网络请求数据
-    Agent->>Agent: 分析数据并定位问题</pre>
-<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116311841640072&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+    User-&gt;&gt;Chrome: 启用远程调试 (chrome://inspect)
+    User-&gt;&gt;Agent: "打开 github 网站，并进入到我的个人页面，并分析加载性能"
+    Agent-&gt;&gt;MCPServer: 启动并传入 --autoConnect
+    MCPServer-&gt;&gt;Chrome: 请求连接到活跃会话
+    Chrome--&gt;&gt;User: 弹出授权对话框
+    User-&gt;&gt;Chrome: 同意授权
+    Chrome--&gt;&gt;MCPServer: 建立调试会话
+    MCPServer--&gt;&gt;Agent: "连接已建立，可以开始调试"
+    Agent-&gt;&gt;MCPServer: 调用工具 (例如：network.getRequests)
+    MCPServer-&gt;&gt;Chrome: 通过 CDP 执行指令
+    Chrome--&gt;&gt;MCPServer: 返回网络请求数据
+    MCPServer--&gt;&gt;Agent: 返回网络请求数据
+    Agent-&gt;&gt;Agent: 分析数据并定位问题</pre>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116311841640072&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
 <p><strong>Chrome DevTools MCP 的优势：</strong></p>
 <ul>
 <li>
@@ -315,7 +406,7 @@
 <blockquote>
 <p>The Chrome extension has been removed since Google added native access in 144+, which is simpler, but yes, it does require a one-time setting change.</p>
 </blockquote>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/steipete/status/2037988925818519763"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/steipete/status/2037988925818519763"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -326,7 +417,7 @@
 </li>
 </ol>
 </section>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

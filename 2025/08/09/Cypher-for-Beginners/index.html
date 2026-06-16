@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="Knowledge Grahp（KG） 可用于表示现实世界中的不同实体网络并对其关系进行建模，例如：基于人和人的关系构建的社交网络图，基因与蛋白质之间的关系图…… KG 代表了一种理解数据的思维范式的转变，这有助于我们理解数据之间的关系，以便我们能够轻松识别数据中隐藏的重要模式并做出更好的决策。尤其是在生成式 LLM 快速发展的今天，KG 可以作为一种结构化的知识表示方式，为 LLM 提供更准确">
 <meta property="og:type" content="article">
@@ -24,7 +115,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2025/08/09/Cypher-for-Beginners/11.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2025/08/09/Cypher-for-Beginners/12.png">
 <meta property="article:published_time" content="2025-08-09T16:47:32.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.044Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.544Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="Knowledge Graph">
 <meta property="article:tag" content="Cypher">
@@ -139,7 +230,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2025/08/09/Cypher-for-Beginners/neo4j.jpg" alt></p>
+  <html><head></head><body><p><img src="/2025/08/09/Cypher-for-Beginners/neo4j.jpg" alt=""></p>
 <p><strong>Knowledge Grahp</strong>（<strong>KG</strong>） 可用于表示现实世界中的不同实体网络并对其关系进行建模，例如：基于人和人的关系构建的社交网络图，基因与蛋白质之间的关系图…… <strong>KG</strong> 代表了一种理解数据的思维范式的转变，这有助于我们理解数据之间的关系，以便我们能够轻松识别数据中隐藏的重要模式并做出更好的决策。尤其是在生成式 LLM 快速发展的今天，<strong>KG</strong> 可以作为一种结构化的知识表示方式，为 LLM 提供更准确、更丰富、更精简的上下文信息，从而提升 LLM 的性能。</p>
 <span id="more"></span>
 <h2 id="图数据库与-neo4j-简介">图数据库与 Neo4j 简介</h2>
@@ -148,11 +239,11 @@
 <ul>
 <li><strong>节点 (Node)</strong>: 图中的实体，用 <code>()</code> 表示</li>
 <li><strong>标签 (Labels)</strong>: 节点的分类，如 <code>:Person</code>, <code>:Movie</code></li>
-<li><strong>属性 (Properties)</strong>: 节点和关系的键值对数据，（如 <code>&#123;name: &quot;Alice&quot;, age: 30&#125;</code>）</li>
+<li><strong>属性 (Properties)</strong>: 节点和关系的键值对数据，（如 <code>{name: "Alice", age: 30}</code>）</li>
 <li><strong>关系 (Relationship)</strong>: 连接节点的边，可以有方向和类型（如 <code>ACTED_IN</code>、<code>FRIEND_OF</code>），用 <code>--&gt;</code> 或 <code>-[]-&gt;</code>表示</li>
 </ul>
 <p>Alice 是 Bob 的朋友，在 Neo4j 中可以表示为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(Alice:Person)-[:FRIEND_OF]-&gt;(Bob:Person)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(Alice:Person)-[:FRIEND_OF]-&gt;(Bob:Person)</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="neo4j-desktop-安装与使用">Neo4j Desktop 安装与使用</h3>
 <p>对于初学者，建议直接安装 <a target="_blank" rel="noopener" href="https://neo4j.com/deployment-center/?desktop-gdb">Neo4j Desktop</a> 版本，Neo4j Desktop 是 Neo4j 官方推出的桌面应用程序（支持 Windows、Mac、Linux 等多个平台），专为简化图形数据库的管理、开发和学习而设计，尤其适合开发者、数据分析师和初学者。其核心优点如下：</p>
 <ul>
@@ -189,7 +280,7 @@
 </li>
 </ul>
 <p>安装 Neo4j Desktop 后，我们可以创建一个新的数据库实例，并通过内置的 Neo4j Browser 编写和运行 Cypher 语句。</p>
-<p><img src="/2025/08/09/Cypher-for-Beginners/2.png" alt></p>
+<p><img src="/2025/08/09/Cypher-for-Beginners/2.png" alt=""></p>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -284,20 +375,20 @@
 <li>标签用冒号 : 表示</li>
 </ul>
 <h3 id="创建节点和关系">创建节点和关系</h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE (p1:Person &#123;name: &quot;Alice&quot;, age: 30&#125;), </span><br><span class="line">       (p2:Person &#123;name: &quot;Bob&quot;, age: 17&#125;)</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:Person &#123;name: &quot;Alice&quot;&#125;), (b:Person &#123;name: &quot;Bob&quot;&#125;)</span><br><span class="line">CREATE (a)-[:FRIEND_OF]-&gt;(b)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE (p1:Person {name: "Alice", age: 30}), </span><br><span class="line">       (p2:Person {name: "Bob", age: 17})</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:Person {name: "Alice"}), (b:Person {name: "Bob"})</span><br><span class="line">CREATE (a)-[:FRIEND_OF]-&gt;(b)</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="查询节点和关系">查询节点和关系</h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH path&#x3D;(:Person)-[:FRIEND_OF]-&gt;(:Person) </span><br><span class="line">RETURN path</span><br></pre></td></tr></table></figure>
-<p><img src="/2025/08/09/Cypher-for-Beginners/3.png" alt></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH path=(:Person)-[:FRIEND_OF]-&gt;(:Person) </span><br><span class="line">RETURN path</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/3.png" alt=""></p>
 <h3 id="条件查询">条件查询</h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p:Person) </span><br><span class="line">WHERE p.age &gt; 18</span><br><span class="line">RETURN p</span><br></pre></td></tr></table></figure>
-<p><img src="/2025/08/09/Cypher-for-Beginners/4.png" alt></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p:Person) </span><br><span class="line">WHERE p.age &gt; 18</span><br><span class="line">RETURN p</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/4.png" alt=""></p>
 <h3 id="属性设置与更新">属性设置与更新</h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p1:Person &#123;name: &quot;Alice&quot;&#125;)</span><br><span class="line">SET p1.gender &#x3D; &quot;female&quot;</span><br><span class="line"></span><br><span class="line">MATCH (p2:Person &#123;name: &quot;Bob&quot;&#125;)</span><br><span class="line">SET p2.gender &#x3D; &quot;male&quot;</span><br><span class="line"></span><br><span class="line">RETURN p1, p2</span><br></pre></td></tr></table></figure>
-<p><img src="/2025/08/09/Cypher-for-Beginners/5.png" alt></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p1:Person {name: "Alice"})</span><br><span class="line">SET p1.gender = "female"</span><br><span class="line"></span><br><span class="line">MATCH (p2:Person {name: "Bob"})</span><br><span class="line">SET p2.gender = "male"</span><br><span class="line"></span><br><span class="line">RETURN p1, p2</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/5.png" alt=""></p>
 <h3 id="删除节点和关系">删除节点和关系</h3>
 <p><code>DETACH DELETE</code> 会同时删除节点及其所有关系。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p:Person &#123;name: &quot;Alice&quot;&#125;)</span><br><span class="line">DETACH DELETE p</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p:Person {name: "Alice"})</span><br><span class="line">DETACH DELETE p</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="cypher-语法速查表">Cypher 语法速查表</h2>
 <style>.admonition {
     margin: 1.5625em 0;
@@ -386,9 +477,9 @@
 <p>该代码使用了 Neo4j 的 <code>APOC</code> 插件和 <code>neosemantics</code> 插件，因此，在运行代码之前，我们需要确保 Neo4j Desktop 中安装了这两个插件。</p>
 <p>Neo4j Desktop 中的插件中心提供了 <code>APOC</code> 插件，我们直接安装即可，但是 <code>neosemantics</code> 插件需要手动安装。我们可以从 <a target="_blank" rel="noopener" href="https://github.com/neo4j-contrib/neosemantics">neosemantics GitHub 仓库</a> 下载插件的 <code>.jar</code> 文件，并将其放置在 Neo4j Desktop 的 <code>plugins</code> 目录下。</p>
 <p>插件安装完毕后，我们需要修改 Neo4j 的配置文件，以允许 <code>APOC</code> 和 <code>neosemantics</code> 插件访问数据库。通过 Neo4j Desktop 插件中心安装的插件会自动增加这些配置项，但是如果是手动安装的插件（例如 <code>neosemantics</code>），我们需要手动添加以下配置到 Neo4j 的 <code>neo4j.conf</code> 文件中：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A comma separated list of procedures and user defined functions that are allowed</span></span><br><span class="line"><span class="comment"># full access to the database through unsupported/insecure internal APIs.</span></span><br><span class="line">dbms.security.procedures.unrestricted=gds.*,n10s.*</span><br><span class="line"></span><br><span class="line"><span class="comment"># A comma separated list of procedures to be loaded by default.</span></span><br><span class="line"><span class="comment"># Leaving this unconfigured will load all procedures found.</span></span><br><span class="line">dbms.security.procedures.allowlist=gds.*,n10s.*,apoc.*</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A comma separated list of procedures and user defined functions that are allowed</span></span><br><span class="line"><span class="comment"># full access to the database through unsupported/insecure internal APIs.</span></span><br><span class="line">dbms.security.procedures.unrestricted=gds.*,n10s.*</span><br><span class="line"></span><br><span class="line"><span class="comment"># A comma separated list of procedures to be loaded by default.</span></span><br><span class="line"><span class="comment"># Leaving this unconfigured will load all procedures found.</span></span><br><span class="line">dbms.security.procedures.allowlist=gds.*,n10s.*,apoc.*</span><br></pre></td></tr></tbody></table></figure>
 <p>然后重启 Neo4j 数据库实例，使配置和插件生效。</p>
-<p><img src="/2025/08/09/Cypher-for-Beginners/8.jpg" alt></p>
+<p><img src="/2025/08/09/Cypher-for-Beginners/8.jpg" alt=""></p>
 <h3 id="构建-hpo-kg">构建 HPO KG</h3>
 <p>按照 <a target="_blank" rel="noopener" href="https://github.com/alenegro81/knowledge-graphs-and-llms-in-action/tree/main/chapters/ch03">chapter_03_code</a> 中的说明，我们可以构建 HPO KG。</p>
 <style>.admonition {
@@ -469,23 +560,23 @@
   </style>
 <div class="admonition warning"><p class="admonition-title">python 版本问题
 </p><p>务必注意，执行代码需要使用 3.10 以下的 python 版本。否则，会报如下的错误：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AttributeError: module <span class="string">'pkgutil'</span> has no attribute <span class="string">'ImpImporter'</span>. Did you mean: <span class="string">'zipimporter'</span>?</span><br></pre></td></tr></table></figure></p>
+<p></p><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AttributeError: module <span class="string">'pkgutil'</span> has no attribute <span class="string">'ImpImporter'</span>. Did you mean: <span class="string">'zipimporter'</span>?</span><br></pre></td></tr></tbody></table></figure><p></p>
 </div>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ /usr/bin/python3 chapters/ch03/importer/import_hpo.py</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ /usr/bin/python3 chapters/ch03/importer/import_hpo.py</span><br></pre></td></tr></tbody></table></figure>
 <p>执行上述命令后，我们就把 HPO 数据导入到 Neo4j 数据库中，并形成了一个简单的 KG。</p>
-<p><img src="/2025/08/09/Cypher-for-Beginners/9.png" alt></p>
+<p><img src="/2025/08/09/Cypher-for-Beginners/9.png" alt=""></p>
 <h3 id="查询-hpo-kg">查询 HPO KG</h3>
 <p>我们现在想要查询一下，与 <code>1 型糖尿病</code>（<code>Diabetes Mellitus Type 1</code>）关联的表型特征（<code>Phnotypic Feature</code>）。我们可以使用以下 Cypher 查询语句：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH path&#x3D;(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(pho:HpoPhenotype)</span><br><span class="line">WHERE dis.id &#x3D; &quot;OMIM:222100&quot;</span><br><span class="line">RETURN path</span><br></pre></td></tr></table></figure>
-<p><img src="/2025/08/09/Cypher-for-Beginners/10.png" alt></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH path=(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(pho:HpoPhenotype)</span><br><span class="line">WHERE dis.id = "OMIM:222100"</span><br><span class="line">RETURN path</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/10.png" alt=""></p>
 <p>在如上的查询中，我们得到了与 <code>1 型糖尿病</code> 相关的表型特征。那么，作为一个临床医生而言，他们还想要知道，有哪些疾病还会与这些表型特征相关联。我们可以使用以下 Cypher 查询语句：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MATCH path&#x3D;(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(phe:HpoPhenotype)</span><br><span class="line">WHERE dis.id &#x3D; &quot;OMIM:222100&quot;</span><br><span class="line">WITH phe AS Type_1_Diabetes_Phe, path AS Type_1_Diabetes_Path</span><br><span class="line">MATCH path &#x3D; (dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(Type_1_Diabetes_Phe)</span><br><span class="line">RETURN Type_1_Diabetes_Path, path</span><br></pre></td></tr></table></figure>
-<p><img src="/2025/08/09/Cypher-for-Beginners/11.png" alt></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MATCH path=(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(phe:HpoPhenotype)</span><br><span class="line">WHERE dis.id = "OMIM:222100"</span><br><span class="line">WITH phe AS Type_1_Diabetes_Phe, path AS Type_1_Diabetes_Path</span><br><span class="line">MATCH path = (dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(Type_1_Diabetes_Phe)</span><br><span class="line">RETURN Type_1_Diabetes_Path, path</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/11.png" alt=""></p>
 <p>我们还可以继续查询，在和 <code>1 型糖尿病</code> 相关的表型特征中有关联的疾病中，这些疾病有这些表型特征的特征个数，并按照所包含的特征个数的多少进行降序排列。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MATCH path&#x3D;(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(phe:HpoPhenotype)</span><br><span class="line">WHERE dis.id &#x3D; &quot;OMIM:222100&quot;</span><br><span class="line">WITH phe AS Type_1_Diabetes_Phe, path AS Type_1_Diabetes_Path</span><br><span class="line">MATCH path &#x3D; (dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(Type_1_Diabetes_Phe)</span><br><span class="line">UNWIND dis AS nodes</span><br><span class="line">RETURN dis.id AS disease_id, </span><br><span class="line">dis.label AS disease_name,</span><br><span class="line">collect(Type_1_Diabetes_Phe.label) AS features,</span><br><span class="line">COUNT(nodes) AS num_of_features</span><br><span class="line">ORDER BY num_of_features DESC, disease_name</span><br><span class="line">LIMIT 5</span><br></pre></td></tr></table></figure>
-<p><img src="/2025/08/09/Cypher-for-Beginners/12.png" alt></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MATCH path=(dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(phe:HpoPhenotype)</span><br><span class="line">WHERE dis.id = "OMIM:222100"</span><br><span class="line">WITH phe AS Type_1_Diabetes_Phe, path AS Type_1_Diabetes_Path</span><br><span class="line">MATCH path = (dis:HpoDisease)-[:HAS_PHENOTYPIC_FEATURE]-&gt;(Type_1_Diabetes_Phe)</span><br><span class="line">UNWIND dis AS nodes</span><br><span class="line">RETURN dis.id AS disease_id, </span><br><span class="line">dis.label AS disease_name,</span><br><span class="line">collect(Type_1_Diabetes_Phe.label) AS features,</span><br><span class="line">COUNT(nodes) AS num_of_features</span><br><span class="line">ORDER BY num_of_features DESC, disease_name</span><br><span class="line">LIMIT 5</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2025/08/09/Cypher-for-Beginners/12.png" alt=""></p>
 <p>从如上的结果中，我们能看出，在与 <code>1 型糖尿病</code> 相关的 8 个表型特征中，<code>Bardet-Biedl syndrome 2</code> 疾病包含了其中的 3 个表型特征。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

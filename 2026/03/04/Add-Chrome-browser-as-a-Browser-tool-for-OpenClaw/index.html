@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="在 OpenClaw 初体验 中，我在阿里云的 ECS 主机上部署了 OpenClaw，并用它做了些初步的尝试。有时候，可能想浏览某些网页，但是这些网页在手机上的浏览体验又不好，所以此时就可以通过 IM 软件让 OpenClaw 调用 Chrome 浏览器来帮我们打开页面并截图。 我想每天上班的时候扫一眼 Github Trending 的内容（我在手机上没法直接访问这个页面，当然也有方法，但是">
 <meta property="og:type" content="article">
@@ -16,7 +107,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/1.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/github_trends.png">
 <meta property="article:published_time" content="2026-03-04T20:40:37.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:30.954Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.464Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="Chrome">
@@ -115,7 +206,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.1k</span>
+            <span class="post-count">2k</span>
         </span>
     </span>
 
@@ -139,11 +230,11 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/1.png" alt></p>
+  <html><head></head><body><p><img src="/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/1.png" alt=""></p>
 <p>在 <a href="/2026/02/22/First-Experience-with-OpenClaw/">OpenClaw 初体验</a> 中，我在阿里云的 ECS 主机上部署了 OpenClaw，并用它做了些初步的尝试。有时候，可能想浏览某些网页，但是这些网页在手机上的浏览体验又不好，所以此时就可以通过 IM 软件让 OpenClaw 调用 Chrome 浏览器来帮我们打开页面并截图。</p>
 <p>我想每天上班的时候扫一眼 Github Trending 的内容（我在手机上没法直接访问这个页面，当然也有方法，但是我嫌麻烦），这个时候就可以通过 OpenClaw 调用 Chrome 浏览器来打开这个页面并截图发给我了。</p>
 <span id="more"></span>
-<p><img src="/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/github_trends.png" alt></p>
+<p><img src="/2026/03/04/Add-Chrome-browser-as-a-Browser-tool-for-OpenClaw/github_trends.png" alt=""></p>
 <p>在纯净的 Ubuntu 22.04 云主机上以 <code>root</code> 用户安装 Chrome 浏览器并配置 OpenClaw 时，我遇到了不少的坑。本文将详细记录在云主机上从零配置 OpenClaw + Chrome 环境的全过程，避免大家遇到那些让人抓狂的“权限坑”。</p>
 <h2 id="1-chrome-安装避坑">1. Chrome 安装避坑</h2>
 <p>我在 Ubuntu 22.04 上安装 Chrome 时最开始的方式是执行：<code>apt install chromium-browser</code>。<strong>务必立刻停止这个操作！</strong></p>
@@ -243,15 +334,15 @@
 </p><ol>
 <li>
 <p>彻底卸载可能存在的 Snap 版 Chromium
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt remove --purge chromium-browser -y</span><br><span class="line">sudo snap remove chromium</span><br></pre></td></tr></table></figure></p>
+</p><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt remove --purge chromium-browser -y</span><br><span class="line"><span class="built_in">sudo</span> snap remove chromium</span><br></pre></td></tr></tbody></table></figure><p></p>
 </li>
 <li>
 <p>下载并安装官方原生 Chrome
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载 Google Chrome 官方最新稳定版</span></span><br><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过 apt 安装（自动解析并安装底层的图形/字体依赖）</span></span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb -y</span><br></pre></td></tr></table></figure></p>
+</p><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载 Google Chrome 官方最新稳定版</span></span><br><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过 apt 安装（自动解析并安装底层的图形/字体依赖）</span></span><br><span class="line"><span class="built_in">sudo</span> apt install ./google-chrome-stable_current_amd64.deb -y</span><br></pre></td></tr></tbody></table></figure><p></p>
 </li>
 <li>
 <p>安装中文字体（防止截图变“豆腐块”）
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install -y fonts-noto-cjk</span><br></pre></td></tr></table></figure></p>
+</p><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install -y fonts-noto-cjk</span><br></pre></td></tr></tbody></table></figure><p></p>
 </li>
 </ol>
 </div>
@@ -259,7 +350,7 @@
 <p>安装完 Chrome 浏览器后，必须在 OpenClaw 的网关配置中为 Browser 工具开放权限，并解决云主机 <code>root</code> 运行的核心安全冲突。</p>
 <h3 id="2-1-开启-browser-工具权限">2.1 开启 browser 工具权限</h3>
 <p>OpenClaw 从 3.2 版本开始对工具调用实施了更严格的权限控制，从而希望有效解决饱受诟病的安全问题。针对工具调用的安全控制能力，OpenClaw 3.2 版本增加了：精细化的工具访问控制、执行环境隔离、运行时行为约束等安全策略<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>。</p>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2028981937843650602"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2028981937843650602"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <p>另外，根据 OpenClaw 官方文档的描述<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>：</p>
 <blockquote>
 <p>OpenClaw can run a dedicated Chrome/Brave/Edge/Chromium profile that the agent controls.<br>
@@ -267,7 +358,7 @@ It is isolated from your personal browser and is managed through a small local c
 </blockquote>
 <p>OpenClaw 支持在 <code>openclaw.json</code> 中通过 <code>tools.allow</code>、<code>tools.deny</code> 全局配置工具的黑白名单，并且黑名单优先级高于白名单，从而阻止没有权限的工具发送给模型，进而避免无权限的工具的执行。</p>
 <p>因此，需要首先在全局配置文件 <code>~/.openclaw/openclaw.json</code> 中把 <code>browser</code> 工具加入白名单：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;agents&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;defaults&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;tools&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;allow&quot;</span>: [<span class="string">&quot;exec&quot;</span>, <span class="string">&quot;shell&quot;</span>, <span class="string">&quot;browser&quot;</span>, <span class="string">&quot;web_fetch&quot;</span>] </span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"agents"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">    <span class="attr">"defaults"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">      <span class="attr">"tools"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">        <span class="attr">"allow"</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">"exec"</span><span class="punctuation">,</span> <span class="string">"shell"</span><span class="punctuation">,</span> <span class="string">"browser"</span><span class="punctuation">,</span> <span class="string">"web_fetch"</span><span class="punctuation">]</span> </span><br><span class="line">      <span class="punctuation">}</span></span><br><span class="line">    <span class="punctuation">}</span></span><br><span class="line">  <span class="punctuation">}</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
 <h3 id="2-2-关闭沙箱-no-sandbox-限制">2.2 关闭沙箱（No-Sandbox）限制</h3>
 <p>沙箱是 Chrome 的核心安全机制。当 Chrome 打开一个网页时，它会把网页里的 HTML 渲染、JavaScript 执行等操作，全都关进一个“隔离的 Sandbox” 里运行。<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup></p>
 <p>而在 Linux 的世界中，<code>root</code> 是拥有绝对权限的超级用户，如果以 <code>root</code> 身份运行 Chrome，这就产生了一个巨大的安全悖论：</p>
@@ -280,21 +371,21 @@ It is isolated from your personal browser and is managed through a small local c
 </blockquote>
 <p>但是对于 docker 容器来说，容器已经对安全性做了控制与隔离，因此在容器内以 <code>root</code> 用户运行 Chrome 是没有问题的。此时可以使用 <code>--no-sandbox</code> 参数来关闭沙箱，从而以 <code>root</code> 用户身份运行 Chrome。</p>
 <p>同样的，当在 <code>root</code> 账号下用 OpenClaw 控制浏览器时，也必须在 OpenClaw 配置中显式关闭沙箱限制：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw config <span class="built_in">set</span> browser.noSandbox <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw config <span class="built_in">set</span> browser.noSandbox <span class="literal">true</span></span><br></pre></td></tr></tbody></table></figure>
 <h3 id="2-3-重启网关">2.3 重启网关</h3>
 <p>配置完成后，重启 OpenClaw 网关服务：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw gateway restart</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw gateway restart</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="3-snapshot-与-screenshot">3. snapshot 与 screenshot</h2>
 <p>可以用如下的命令来验证浏览器工具是否可用：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw status</span><br><span class="line">openclaw browser --browser-profile openclaw start</span><br><span class="line">openclaw browser --browser-profile openclaw open https:&#x2F;&#x2F;www.baidu.com</span><br><span class="line">openclaw browser --browser-profile openclaw snapshot</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw status</span><br><span class="line">openclaw browser --browser-profile openclaw start</span><br><span class="line">openclaw browser --browser-profile openclaw open https://www.baidu.com</span><br><span class="line">openclaw browser --browser-profile openclaw snapshot</span><br></pre></td></tr></tbody></table></figure>
 <ul>
 <li>
 <p><strong>Snapshot 提取结构化文本</strong>：如果需要提取页面的可读内容，我们可以执行 <code>snapshot</code> 动作。这个操作会返回当前网页完整的 HTML 字符串、JSON 格式的 DOM 树结构，非常适合让 LLM 对其进行总结与分析。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw snapshot</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw snapshot</span><br></pre></td></tr></tbody></table></figure>
 </li>
 <li>
-<p><strong>Screenshot 截取视觉画面</strong>：如果需要真实的网页截图，需要执行 <code>screenshot</code> 动作。该动作会在底层执行截屏，并返回一个包含媒体路径的图像块（image block + MEDIA:<path></path>）。执行命令后，控制台会返回图片在服务器上的绝对路径，我们可以通过 <code>cp</code> 命令将其拷贝并下载查看。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw screenshot</span><br></pre></td></tr></table></figure>
+<p><strong>Screenshot 截取视觉画面</strong>：如果需要真实的网页截图，需要执行 <code>screenshot</code> 动作。该动作会在底层执行截屏，并返回一个包含媒体路径的图像块（image block + MEDIA:<path>）。执行命令后，控制台会返回图片在服务器上的绝对路径，我们可以通过 <code>cp</code> 命令将其拷贝并下载查看。</path></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw browser --browser-profile openclaw screenshot</span><br></pre></td></tr></tbody></table></figure>
 </li>
 </ul>
 <style>.admonition {
@@ -396,7 +487,7 @@ It is isolated from your personal browser and is managed through a small local c
 </li>
 </ol>
 </section>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

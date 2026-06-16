@@ -4,18 +4,109 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
-      <meta name="description" content="数字视频在处理、存储和传输上需要大量数据，典型的 30FPS 的高清视频（1920x1080），如果每个像素需要 8bit 来表示的话，那么每秒需要大约 15亿 bit。而视频编码技术的目标就是获取码率和视觉质量之间的权衡。 11920 x 1080 x 8 x 3 x 30 &#x3D; 1,492,992,000 在视频编码技术中，码率控制（Rate Control）是一件非常重要的事情。在">
+      <meta name="description" content="数字视频在处理、存储和传输上需要大量数据，典型的 30FPS 的高清视频（1920x1080），如果每个像素需要 8bit 来表示的话，那么每秒需要大约 15亿 bit。而视频编码技术的目标就是获取码率和视觉质量之间的权衡。 11920 x 1080 x 8 x 3 x 30 &#x3D; 1,492,992,000 在视频编码技术中，码率控制（Rate Control）是一件非常重要的事情。在编码视频帧">
 <meta property="og:type" content="article">
 <meta property="og:title" content="视频编码中的码率控制模式">
 <meta property="og:url" content="https://wangwei1237.github.io/2022/03/11/Understanding-Rate-Control-Modes/index.html">
 <meta property="og:site_name" content="17哥">
-<meta property="og:description" content="数字视频在处理、存储和传输上需要大量数据，典型的 30FPS 的高清视频（1920x1080），如果每个像素需要 8bit 来表示的话，那么每秒需要大约 15亿 bit。而视频编码技术的目标就是获取码率和视觉质量之间的权衡。 11920 x 1080 x 8 x 3 x 30 &#x3D; 1,492,992,000 在视频编码技术中，码率控制（Rate Control）是一件非常重要的事情。在">
+<meta property="og:description" content="数字视频在处理、存储和传输上需要大量数据，典型的 30FPS 的高清视频（1920x1080），如果每个像素需要 8bit 来表示的话，那么每秒需要大约 15亿 bit。而视频编码技术的目标就是获取码率和视觉质量之间的权衡。 11920 x 1080 x 8 x 3 x 30 &#x3D; 1,492,992,000 在视频编码技术中，码率控制（Rate Control）是一件非常重要的事情。在编码视频帧">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wangwei1237.github.io/2022/03/11/Understanding-Rate-Control-Modes/1.png">
 <meta property="article:published_time" content="2022-03-11T16:05:28.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.575Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.027Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="CQP">
 <meta property="article:tag" content="CBR">
@@ -132,16 +223,16 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2022/03/11/Understanding-Rate-Control-Modes/1.png" alt></p>
+  <html><head></head><body><p><img src="/2022/03/11/Understanding-Rate-Control-Modes/1.png" alt=""></p>
 <p>数字视频在处理、存储和传输上需要大量数据，典型的 30FPS 的高清视频（1920x1080），如果每个像素需要 8bit 来表示的话，那么每秒需要大约 15亿 bit。而视频编码技术的目标就是获取码率和视觉质量之间的权衡。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1920 x 1080 x 8 x 3 x 30 &#x3D; 1,492,992,000</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1920 x 1080 x 8 x 3 x 30 = 1,492,992,000</span><br></pre></td></tr></tbody></table></figure>
 <p>在视频编码技术中，码率控制（Rate Control）是一件非常重要的事情。在编码视频帧时，码率控制决定了编码器为该视频帧分配的 bit 数。</p>
 <p>本文将基于 FFmpeg 中的 X264、X265 编码器来介绍常用的码率控制模式。</p>
 <span id="more"></span>
 <h2 id="cqp-constant-quantization-parameter">CQP(Constant Quantization Parameter)</h2>
 <p><a target="_blank" rel="noopener" href="https://www.vcodex.com/h264avc-4x4-transform-and-quantization/"><strong>QP(Quantization Parameter)</strong></a> 用于控制每帧视频中每一个宏块的压缩量。实际上，QP 反映了空间细节压缩情况。QP 越小，就会保留越多的细节信息，视频质量也会越高，同时码率越大。QP 越大，细节信息丢失的越多，码率也会随之降低，但图像失真也会越严重。也就是说，QP 和码率成反比，QP 越大，码率越低；QP 越小，码率越高。</p>
-<p>在 H.264/H.265 中，QP 的取值范围为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>51</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0, 51]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">5</span><span class="mord">1</span><span class="mclose">]</span></span></span></span>。利用 FFmpeg，我们可以非常方便的为整个编码（转码）过程设置一个固定的 QP。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -qp 23 &lt;output&gt;</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -x265-params qp=23 &lt;output&gt;</span><br></pre></td></tr></table></figure>
+<p>在 H.264/H.265 中，QP 的取值范围为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>51</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0, 51]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">51</span><span class="mclose">]</span></span></span></span>。利用 FFmpeg，我们可以非常方便的为整个编码（转码）过程设置一个固定的 QP。</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -qp 23 &lt;output&gt;</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -x265-params qp=23 &lt;output&gt;</span><br></pre></td></tr></tbody></table></figure>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -223,11 +314,11 @@
 <p>CQP 比较适合用于视频编码器的研究，比如在 RD 曲线中，我们会采用不同的 QP 来产生对应的编码视频，进而对编码器进行对比。</p>
 </div>
 <h4 id="qp-与-率失真曲线">QP 与 率失真曲线</h4>
-<p>在评估不同编码器时，我们会用到率失真（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>D</mi></mrow><annotation encoding="application/x-tex">RD</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span></span></span></span>）曲线。一般而言，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>D</mi></mrow><annotation encoding="application/x-tex">RD</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span></span></span></span> 曲线都是以码率(<em>Kbps</em>)做为横坐标，以 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>S</mi><mi>N</mi><mi>R</mi><mo stretchy="false">(</mo><mi>d</mi><mi>B</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">PSNR(dB)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathdefault">d</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mclose">)</span></span></span></span> 作为纵坐标做出来一条曲线。对于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>D</mi></mrow><annotation encoding="application/x-tex">RD</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span></span></span></span> 曲线上的点，我们一般采用的是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mi>P</mi><mo>=</mo><mn>28</mn><mo separator="true">,</mo><mn>32</mn><mo separator="true">,</mo><mn>36</mn><mo separator="true">,</mo><mn>40</mn></mrow><annotation encoding="application/x-tex">QP=28, 32, 36, 40</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">Q</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="mord">2</span><span class="mord">8</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">3</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">3</span><span class="mord">6</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">4</span><span class="mord">0</span></span></span></span> 这四个 QP 下的编码码率和编码质量。</p>
+<p>在评估不同编码器时，我们会用到率失真（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>D</mi></mrow><annotation encoding="application/x-tex">RD</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span></span></span></span>）曲线。一般而言，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>D</mi></mrow><annotation encoding="application/x-tex">RD</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span></span></span></span> 曲线都是以码率(<em>Kbps</em>)做为横坐标，以 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>S</mi><mi>N</mi><mi>R</mi><mo stretchy="false">(</mo><mi>d</mi><mi>B</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">PSNR(dB)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal" style="margin-right:0.0576em;">S</span><span class="mord mathnormal" style="margin-right:0.109em;">N</span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mopen">(</span><span class="mord mathnormal">d</span><span class="mord mathnormal" style="margin-right:0.0502em;">B</span><span class="mclose">)</span></span></span></span> 作为纵坐标做出来一条曲线。对于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>D</mi></mrow><annotation encoding="application/x-tex">RD</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span></span></span></span> 曲线上的点，我们一般采用的是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mi>P</mi><mo>=</mo><mn>28</mn><mo separator="true">,</mo><mn>32</mn><mo separator="true">,</mo><mn>36</mn><mo separator="true">,</mo><mn>40</mn></mrow><annotation encoding="application/x-tex">QP=28, 32, 36, 40</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.1389em;">QP</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">28</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">32</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">36</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">40</span></span></span></span> 这四个 QP 下的编码码率和编码质量。</p>
 <h2 id="abr-average-bitrate">ABR(Average Bitrate)</h2>
 <p>ABR 又称为目标码率（target bitrate）。ABR 会为编码器设置一个目标码率，然后让编码器来计算如何才能达到我们设定的目标码率。</p>
 <p>我们可以利用如下的命令将目标码率设定为 1Mbs。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -b:v 1M &lt;output&gt;</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -b:v 1M &lt;output&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -b:v 1M &lt;output&gt;</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -b:v 1M &lt;output&gt;</span><br></pre></td></tr></tbody></table></figure>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -310,7 +401,7 @@
 <p>ABR 并不是一种固定码率控制模式。尽管 ABR 也是一种 VBR 模式，但是 因为 ABR 并无法可靠的提供良好的编码质量，因此，ABR 也并不比 CBR 好多少。</p>
 <h2 id="cbr-constant-bitrate">CBR(Constant Bitrate)</h2>
 <p>如果我们需要强制编码器总是使用某个固定的码率来编码视频，我们可以使用 CBR。对于 x264，可以通过 nal-hrd 来设置 CBR 和 VBR 模式。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -x264-params &quot;nal-hrd=cbr:force-cfr=1&quot; \</span><br><span class="line">-b:v 1M -minrate 1M -maxrate 1M -bufsize 2M &lt;output&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -x264-params "nal-hrd=cbr:force-cfr=1" \</span><br><span class="line">-b:v 1M -minrate 1M -maxrate 1M -bufsize 2M &lt;output&gt;</span><br></pre></td></tr></tbody></table></figure>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -399,14 +490,14 @@
 <p>Recommendation: none, unless you need to signal this information.</p>
 </div>
 <h2 id="crf-constant-rate-factor">CRF(Constant Rate Factor)</h2>
-<p>CRF 是 x264 和 x265 编码器的默认质量/码率控制设置。CRF 的取值范围为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>51</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,51]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">5</span><span class="mord">1</span><span class="mclose">]</span></span></span></span>，数值越低，质量越好，文件越大。对于不同的编码器，CRF的默认值如下：</p>
+<p>CRF 是 x264 和 x265 编码器的默认质量/码率控制设置。CRF 的取值范围为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>51</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,51]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">51</span><span class="mclose">]</span></span></span></span>，数值越低，质量越好，文件越大。对于不同的编码器，CRF的默认值如下：</p>
 <ul>
 <li>x264：23</li>
 <li>x265：28</li>
 </ul>
 <p>当CRF 取值为 18(x264)、24(x265) 时，其编码质量在视觉上被认为是无感知的，更小的取值往往意味着码率的浪费。</p>
-<p>CRF 的值每 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">\pm 6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">±</span><span class="mord">6</span></span></span></span>，对应的编码文件的大小就会增加1倍或减半。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -crf 23 &lt;output&gt;</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -crf 28 &lt;output&gt;</span><br></pre></td></tr></table></figure>
+<p>CRF 的值每 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">\pm 6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">±</span><span class="mord">6</span></span></span></span>，对应的编码文件的大小就会增加1倍或减半。</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -crf 23 &lt;output&gt;</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -crf 28 &lt;output&gt;</span><br></pre></td></tr></tbody></table></figure>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -483,7 +574,7 @@
     margin-bottom: 0 !important;
   }
   </style>
-<div class="admonition note"><p class="admonition-title">CRF & 2-Pass
+<div class="admonition note"><p class="admonition-title">CRF &amp; 2-Pass
 </p><p>具有相同码率的 2-Pass 和 CRF 编码在质量上应该相同。二者的主要区别在于：</p>
 <ul>
 <li>使用 2-Pass 编码时，可以控制文件大小</li>
@@ -494,9 +585,9 @@
 <p>当采用 2-Pass 编码的时候，对于视频流中的所有数据，编码器会对其处理两次。在第一遍处理的时候，编码器会收集视频的相关信息，在第二次处理时，编码器利用第一次处理收集到的信息来优化编码过程。</p>
 <p>在 CBR 模式下，2-Pass 编码比 1-Pass 编码的效率更高。2-Pass 编码比 1-Pass 编码的质量要高，但是编码时间也会随之增加。使用 2-Pass 编码时，对于场景变化不大的画面（如静态画面），分配的码率会低一些；而场景变化大的画面（如赛车、运动等），分配的码率会高一些。因此， 2-Pass 编码可以让整部影片的清晰度比较均匀。</p>
 <p>x264 编码器的 2-Pass 编码命令如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -b:v 1M -pass 1 -f null /dev/null</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -b:v 1M -pass 2 &lt;output&gt;.mp4</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -b:v 1M -pass 1 -f null /dev/null</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx264 -b:v 1M -pass 2 &lt;output&gt;.mp4</span><br></pre></td></tr></tbody></table></figure>
 <p>x265 编码器的 2-Pass 编码命令如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -b:v 1M -x265-params pass=1 -f null /dev/null</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -b:v 1M -x265-params pass=2 &lt;output&gt;.mp4</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -b:v 1M -x265-params pass=1 -f null /dev/null</span><br><span class="line">ffmpeg -i &lt;input&gt; -c:v libx265 -b:v 1M -x265-params pass=2 &lt;output&gt;.mp4</span><br></pre></td></tr></tbody></table></figure>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -581,7 +672,7 @@
 <li><a target="_blank" rel="noopener" href="https://slhck.info/video/2017/03/01/rate-control.html">Understanding Rate Control Modes (x264, x265, vpx)</a></li>
 <li><a target="_blank" rel="noopener" href="https://slhck.info/video/2017/02/24/crf-guide.html">CRF Guide (Constant Rate Factor in x264, x265 and libvpx)</a></li>
 </ul>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="在分析视频的psnr时，需要用到matplotlib来绘制视频每一帧的psnr。在Mac调试的时候可以正常生成如下所示的psnr趋势图：  但是将应用部署到linux机器的时候，却提示**ModuleNotFoundError: No module named ‘_tkinter’**的错误。">
 <meta property="og:type" content="article">
@@ -17,7 +108,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/2.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/3.jpg">
 <meta property="article:published_time" content="2020-04-28T18:40:01.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.389Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.859Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="python">
 <meta property="article:tag" content="matplotlib">
@@ -140,15 +231,15 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>在分析视频的psnr时，需要用到<code>matplotlib</code>来绘制视频每一帧的psnr。在Mac调试的时候可以正常生成如下所示的psnr趋势图：</p>
-<p><img src="/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/1.png" alt></p>
+  <html><head></head><body><p>在分析视频的psnr时，需要用到<code>matplotlib</code>来绘制视频每一帧的psnr。在Mac调试的时候可以正常生成如下所示的psnr趋势图：</p>
+<p><img src="/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/1.png" alt=""></p>
 <p>但是将应用部署到linux机器的时候，却提示**ModuleNotFoundError: No module named ‘_tkinter’**的错误。</p>
 <span id="more"></span>
 <p>具体如下图所示：</p>
-<p><img src="/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/2.jpg" alt></p>
+<p><img src="/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/2.jpg" alt=""></p>
 <p>请教了同事后采用如下的方式解决了问题：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import matplotlib </span><br><span class="line">matplotlib.use(&#39;Agg&#39;)</span><br><span class="line">import matplotlib.pyplot as plt</span><br></pre></td></tr></table></figure>
-<p><img src="/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/3.jpg" alt></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import matplotlib </span><br><span class="line">matplotlib.use('Agg')</span><br><span class="line">import matplotlib.pyplot as plt</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2020/04/28/Matplotlib-s-backends-and-non-interactive-backends-for-rendering/3.jpg" alt=""></p>
 <p>虽然解决了问题，但是当时没有明白：</p>
 <ul>
 <li>问题究竟是如何解决的？</li>
@@ -161,8 +252,8 @@
 <p><strong>To support all of these use cases, matplotlib can target different outputs, and each of these capabilities is called a backend; the “frontend” is the user facing code, i.e., the plotting code, whereas the “backend” does all the hard work behind-the-scenes to make the figure.</strong></p>
 <p>There are two types of backends:</p>
 <ul>
-<li>user interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx; also referred to as <code>&quot;interactive backends&quot;</code>). The interactive backends: GTK3Agg, GTK3Cairo, MacOSX, nbAgg, Qt4Agg, Qt4Cairo, Qt5Agg, Qt5Cairo, TkAgg, TkCairo, WebAgg, WX, WXAgg, WXCairo.</li>
-<li>hardcopy backends to make image files (PNG, SVG, PDF, PS; also referred to as <code>&quot;non-interactive backends&quot;</code>). The non-interactive backends: agg, cairo, pdf, pgf, ps, svg, template.</li>
+<li>user interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx; also referred to as <code>"interactive backends"</code>). The interactive backends: GTK3Agg, GTK3Cairo, MacOSX, nbAgg, Qt4Agg, Qt4Cairo, Qt5Agg, Qt5Cairo, TkAgg, TkCairo, WebAgg, WX, WXAgg, WXCairo.</li>
+<li>hardcopy backends to make image files (PNG, SVG, PDF, PS; also referred to as <code>"non-interactive backends"</code>). The non-interactive backends: agg, cairo, pdf, pgf, ps, svg, template.</li>
 </ul>
 <h2 id="matplotlib中backend的默认配置">matplotlib中backend的默认配置</h2>
 <p>By default, <strong>Matplotlib should automatically select a default backend which allows both interactive work and plotting from scripts</strong>, with output to the screen and/or to a file, so at least initially you will not need to worry about the backend. <strong>The most common exception is if your Python distribution comes without tkinter and you have no other GUI toolkit installed; this happens on certain Linux distributions</strong>, where you need to install a Linux package named python-tk (or similar).</p>
@@ -175,7 +266,7 @@
 <h2 id="如何选择backend">如何选择backend</h2>
 <p>There are three ways to configure your backend:</p>
 <ul>
-<li>The <code>rcParams[&quot;backend&quot;]</code> (default: ‘agg’) parameter in your matplotlibrc file</li>
+<li>The <code>rcParams["backend"]</code> (default: ‘agg’) parameter in your matplotlibrc file</li>
 <li>The <code>MPLBACKEND</code> environment variable</li>
 <li>The function <code>matplotlib.use()</code></li>
 </ul>
@@ -184,30 +275,30 @@
 <p>If no backend is explicitly set, Matplotlib automatically detects a usable backend based on what is available on your system and on whether a GUI event loop is already running. On Linux, if the environment variable <code>DISPLAY</code> is unset, the “event loop” is identified as “headless”, which causes a fallback to a noninteractive backend (agg).</p>
 <p>Here is a detailed description of the configuration methods:</p>
 <ol>
-<li>Setting <code>rcParams[&quot;backend&quot;]</code> (default: ‘agg’) in your matplotlibrc file:</li>
+<li>Setting <code>rcParams["backend"]</code> (default: ‘agg’) in your matplotlibrc file:</li>
 </ol>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">backend : qt5agg   # use pyqt5 with antigrain (agg) rendering</span><br></pre></td></tr></table></figure>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">backend : qt5agg   # use pyqt5 with antigrain (agg) rendering</span><br></pre></td></tr></tbody></table></figure>
 <p>See also Customizing Matplotlib with style sheets and rcParams.</p>
 <ol start="2">
 <li>Setting the <code>MPLBACKEND</code> environment variable:</li>
 </ol>
 <p>You can set the environment variable either for your current shell or for a single script.</p>
 <p>On Unix:</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; export MPLBACKEND&#x3D;qt5agg</span><br><span class="line">&gt; python simple_plot.py</span><br><span class="line"></span><br><span class="line">&gt; MPLBACKEND&#x3D;qt5agg python simple_plot.py</span><br></pre></td></tr></table></figure>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; export MPLBACKEND=qt5agg</span><br><span class="line">&gt; python simple_plot.py</span><br><span class="line"></span><br><span class="line">&gt; MPLBACKEND=qt5agg python simple_plot.py</span><br></pre></td></tr></tbody></table></figure>
 <p>On Windows, only the former is possible:</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; set MPLBACKEND&#x3D;qt5agg</span><br><span class="line">&gt; python simple_plot.py</span><br></pre></td></tr></table></figure>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; set MPLBACKEND=qt5agg</span><br><span class="line">&gt; python simple_plot.py</span><br></pre></td></tr></tbody></table></figure>
 <p>Setting this environment variable will override the backend parameter in any matplotlibrc, even if there is a matplotlibrc in your current working directory. Therefore, setting MPLBACKEND globally, e.g. in your .bashrc or .profile, is discouraged as it might lead to counter-intuitive behavior.</p>
 <ol start="3">
 <li>If your script depends on a specific backend you can use the function <code>matplotlib.use()</code>:</li>
 </ol>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import matplotlib</span><br><span class="line">matplotlib.use(&#39;qt5agg&#39;)</span><br></pre></td></tr></table></figure>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import matplotlib</span><br><span class="line">matplotlib.use('qt5agg')</span><br></pre></td></tr></tbody></table></figure>
 <p>This should be done before any figure is created; otherwise Matplotlib may fail to switch the backend and raise an ImportError.</p>
 <p>Using use will require changes in your code if users want to use a different backend. Therefore, you should avoid explicitly calling use unless absolutely necessary.</p>
 <h2 id="matplotlib-use-agg-的作用">matplotlib.use(‘Agg’)的作用</h2>
 <p>在介绍完整整体的matplotlib中的backends以及matplotlib中的绘图模式之后，就能明白为什么文章开始出现的迁移过程中会出现类似的错误。</p>
 <p>首先根据<a href="#matplotlib%E4%B8%ADbackend%E7%9A%84%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE">matplotlib中backend的默认配置</a>中的介绍可以知道，matplotlib会有一个默认的backend配置，并且该默认的backend会同时支持交互式绘图模式以及利用脚本绘图的模式。并且，交互式绘图还需要利用GUI工具来生成一个屏幕绘图的窗口。而迁移的Linux机器上缺乏tkinter这样的GUI工具，因此在<code>import matplotlib.pyplot as plt</code>的时候会产生错误。</p>
 <p>而利用<code>matplotlib.use('Agg')</code>可以切换matplotlib的backend，将其backend从默认的交互式模式切换为非交互式模式，此时，生成的图形会以图片的形式保存起来，而无需tkinter这样的GUI工具的支持，因此可以解决本文最开始出现的问题。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

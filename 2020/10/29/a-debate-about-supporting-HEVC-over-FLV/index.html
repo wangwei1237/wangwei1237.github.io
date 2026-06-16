@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="前几天，在浏览FFmpeg的Trac时，发现了一个希望FFmpeg增加让FLV支持HEVC编码的需求。 这个需求是2017年提交到FFmpeg社区的，从整个交流过程可以看出，需求提出者和FFmpeg的社区维护者对这个需求的分歧较大，从中也能看出一些工作思路和工作文化上的差异。看完整个讨论过程，感触还是比较深的，所以想写一篇文章来记录一下自己的感触。">
 <meta property="og:type" content="article">
@@ -16,7 +107,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/1.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/2.jpg">
 <meta property="article:published_time" content="2020-10-29T19:54:11.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.644Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.090Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="直播">
 <meta property="article:tag" content="hevc">
@@ -132,11 +223,11 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <blockquote>
+  <html><head></head><body><blockquote>
 <p>前几天，在浏览FFmpeg的Trac时，发现了一个希望<a target="_blank" rel="noopener" href="https://trac.ffmpeg.org/ticket/6389"><strong>FFmpeg增加<em>让FLV支持HEVC编码</em></strong></a>的需求。</p>
 <p>这个需求是2017年提交到FFmpeg社区的，从整个交流过程可以看出，需求提出者和FFmpeg的社区维护者对这个需求的分歧较大，从中也能看出一些工作思路和工作文化上的差异。看完整个讨论过程，感触还是比较深的，所以想写一篇文章来记录一下自己的感触。</p>
 </blockquote>
-<p><img src="/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/1.png" alt></p>
+<p><img src="/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/1.png" alt=""></p>
 <span id="more"></span>
 <h2 id="整个需求讨论的大概过程">整个需求讨论的大概过程</h2>
 <ul>
@@ -170,7 +261,7 @@
 <h2 id="组织文化优先还是用户需求优先？">组织文化优先还是用户需求优先？</h2>
 <p>不同的社区有不同的文化。组织的文化会使得当出现问题的时候，组织内所有成员对该问题的应激反应都是一致的，这种应激反应是无需请求上级就可以作出的。从<a target="_blank" rel="noopener" href="https://trac.ffmpeg.org/ticket/6389">提议</a>中可以看出，FFmpeg社区的文化之一是：编解码器要针对标准和规范来实施。</p>
 <p>如果阅读FFmpeg的源码，其实也能发现很多如下的代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> &#123;</span></span><br><span class="line">    <span class="comment">// 7.4.3.1: vps_max_layers_minus1 is in [0, 62].</span></span><br><span class="line">    HEVC_MAX_LAYERS     = <span class="number">63</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.1: vps_max_sub_layers_minus1 is in [0, 6].</span></span><br><span class="line">    HEVC_MAX_SUB_LAYERS = <span class="number">7</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.1: vps_num_layer_sets_minus1 is in [0, 1023].</span></span><br><span class="line">    HEVC_MAX_LAYER_SETS = <span class="number">1024</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 7.4.2.1: vps_video_parameter_set_id is u(4).</span></span><br><span class="line">    HEVC_MAX_VPS_COUNT = <span class="number">16</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.2.1: sps_seq_parameter_set_id is in [0, 15].</span></span><br><span class="line">    HEVC_MAX_SPS_COUNT = <span class="number">16</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.3.1: pps_pic_parameter_set_id is in [0, 63].</span></span><br><span class="line">    HEVC_MAX_PPS_COUNT = <span class="number">64</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// A.4.2: MaxDpbSize is bounded above by 16.</span></span><br><span class="line">    HEVC_MAX_DPB_SIZE = <span class="number">16</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.1: vps_max_dec_pic_buffering_minus1[i] is in [0, MaxDpbSize - 1].</span></span><br><span class="line">    HEVC_MAX_REFS     = HEVC_MAX_DPB_SIZE,</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> {</span><br><span class="line">    <span class="comment">// 7.4.3.1: vps_max_layers_minus1 is in [0, 62].</span></span><br><span class="line">    HEVC_MAX_LAYERS     = <span class="number">63</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.1: vps_max_sub_layers_minus1 is in [0, 6].</span></span><br><span class="line">    HEVC_MAX_SUB_LAYERS = <span class="number">7</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.1: vps_num_layer_sets_minus1 is in [0, 1023].</span></span><br><span class="line">    HEVC_MAX_LAYER_SETS = <span class="number">1024</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 7.4.2.1: vps_video_parameter_set_id is u(4).</span></span><br><span class="line">    HEVC_MAX_VPS_COUNT = <span class="number">16</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.2.1: sps_seq_parameter_set_id is in [0, 15].</span></span><br><span class="line">    HEVC_MAX_SPS_COUNT = <span class="number">16</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.3.1: pps_pic_parameter_set_id is in [0, 63].</span></span><br><span class="line">    HEVC_MAX_PPS_COUNT = <span class="number">64</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// A.4.2: MaxDpbSize is bounded above by 16.</span></span><br><span class="line">    HEVC_MAX_DPB_SIZE = <span class="number">16</span>,</span><br><span class="line">    <span class="comment">// 7.4.3.1: vps_max_dec_pic_buffering_minus1[i] is in [0, MaxDpbSize - 1].</span></span><br><span class="line">    HEVC_MAX_REFS     = HEVC_MAX_DPB_SIZE,</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure>
 <p>因此，社区不同的人对该提议的意见都是一致的。即便这个用户需求再合理，即便这个需求有多少用户支持，只要是标准不更新，FFmpeg永远都不会支持。</p>
 <p>另外，用户只是需要一种能够支持H265编码的、CDN又支持良好的、延迟又非常低的视频流媒体格式而已，不是吗？如果真的有这种格式，让FLV支持HEVC是否就不是一个问题了呢？既然，Adobe已经停止了对RTMP的维护了，那么为什么还要花时间在这个协议上呢？为什么不选择更新的技术呢？虽然选择新的技术意味着需要冒更大的风险和花费更多的成本。</p>
 <p>尤其是当不同的用户需求之间存在冲突，如何处理？To be or not to be,that’s a question!</p>
@@ -191,10 +282,10 @@
 <p>HTTP/2 introduced a binary framing and multiplexing layer to improve latency without modifying the transport layer. However, because the parallel nature of HTTP/2’s multiplexing is not visible to TCP’s loss recovery mechanisms, a lost or reordered packet causes all active transactions to experience a stall regardless of whether that transaction was impacted by the lost packet.</p>
 <p>The QUIC transport protocol incorporates stream multiplexing and per-stream flow control, similar to that provided by the HTTP/2 framing layer. By providing reliability at the stream level and congestion control across the entire connection, it has the capability to improve the performance of HTTP compared to a TCP mapping.</p>
 </blockquote>
-<p><img src="/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/2.jpg" alt></p>
+<p><img src="/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/2.jpg" alt=""></p>
 <p>就像上图的“乌鸦喝水”一样，是采用吸管呢？还是对原有的石头进行各种改进呢？</p>
 <p>后来，在网上找到了又拍云的一篇<a target="_blank" rel="noopener" href="https://www.cnblogs.com/upyun/p/7053150.html">《如何将HLS延时缩短至4秒，HLS+技术详解》</a>的一篇文章。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

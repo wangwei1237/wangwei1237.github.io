@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="2026 年初，除了基础大模型争相斗艳之外，在技术圈，一个名叫 OpenClaw 的 个人 AI 助手火出了天际，引爆了新一轮的 Agent 热潮。OpenClaw 的核心理念是让 AI 直接接管系统的读写与执行权限，并通过 Telegram、Discord 或 WhatsApp 等 IM 软件接收自然语言指令，然后再服务器上自动执行代码编写、文件管理、收发邮件等任务。通过 IM 软件下达任务，">
 <meta property="og:type" content="article">
@@ -29,7 +120,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/02/22/First-Experience-with-OpenClaw/book_2.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/02/22/First-Experience-with-OpenClaw/openclaw_tokens.png">
 <meta property="article:published_time" content="2026-02-22T10:06:08.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.118Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.611Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="Clawdbot">
@@ -120,7 +211,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.5k</span>
+            <span class="post-count">3.4k</span>
         </span>
     </span>
 
@@ -129,7 +220,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14 分钟</span>
+            <span class="post-count">13 分钟</span>
         </span>
     </span>
 </div>
@@ -144,14 +235,14 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2026/02/22/First-Experience-with-OpenClaw/1.jpg" alt></p>
+  <html><head></head><body><p><img src="/2026/02/22/First-Experience-with-OpenClaw/1.jpg" alt=""></p>
 <p>2026 年初，除了基础大模型争相斗艳之外，在技术圈，一个名叫 OpenClaw 的 个人 AI 助手火出了天际，引爆了新一轮的 Agent 热潮。OpenClaw 的核心理念是让 AI 直接接管系统的读写与执行权限，并通过 Telegram、Discord 或 WhatsApp 等 IM 软件接收自然语言指令，然后再服务器上自动执行代码编写、文件管理、收发邮件等任务。通过 IM 软件下达任务，OpenClaw 会自己分析任务，然后自动执行任务，并返回执行结果。这才是我们一直在苦苦追求的 AI 个人助理。</p>
 <span id="more"></span>
 <h2 id="1-什么是-openclaw">1. 什么是 OpenClaw</h2>
 <p>OpenClaw 是奥地利程序员 <a target="_blank" rel="noopener" href="https://steipete.me/">Peter Steinberger</a> 在 2025 年 11 月发布的开源项目。项目的最初命名为 Clawdbot，是一个能连通各种 API 和本地 Shell 的轻量级对话机器人原型。2026 年 1 月，Clawbot 在 GitHub 上突然爆火出圈，同时也顺便带火了 Mac mini，甚至有用户一口气买了 40 台 Mac mini，全部用来运行 Clawdbot。</p>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/mikecantmiss/status/2015450752378908835"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/mikecantmiss/status/2015450752378908835"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <p>就在 Clawdbot 爆发式增长的时候，Peter 收到了 Anthropic 的律师函：因为 Clawdbot 与 Anthropic 的大语言模型 Claude 太像，因此涉嫌商标侵权。2026 年 1 月 27 日，Peter 在 Discord 频道里召集社区成员进行头脑风暴，并最终为项目改名为 Moltbot。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/clawdbot.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/clawdbot.png" alt=""></p>
 <p>3 天后，Peter 觉得 Moltbot 读音感觉像是嘴里含了块石头，同时为了彻底规避未来的版权争议并彰显开源和自由的属性，再次为项目更名为 OpenClaw 并沿用至今。改名后的 OpenClaw 像火箭一样起飞：</p>
 <ul>
 <li>1 月底：2K GitHub stars</li>
@@ -159,15 +250,15 @@
 <li>2 月中旬：突破 180K  stars</li>
 <li>2 月底：突破 200K stars</li>
 </ul>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/star-history-2026222.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/star-history-2026222.png" alt=""></p>
 <p>2 月 4 日，Founder Park 搞了一场闭门活动，聚集了 130 多位 AI 创业者，来自 AI 游戏、AI Coding、Agent Memory、AI 硬件、AI 语音等不同赛道，分享了他们在上手用 Clawdbot 的感受和思考。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <blockquote>
 <p>Clawdbot 带来了一些和聊天不一样的「增量」。它的本质，是为你配了一台「云电脑」。第一次可以真正地指挥一个 AI 去增、删、改、查文件。这让 AI 从一个信息工具，变成了一个执行工具。</p>
 </blockquote>
 <p>2 月 14 日，Peter 宣布加入 OpenAI，领导“下一代个人代理”的开发，OpenClaw 则转由开源基金会维护，确保项目永远自由和独立。<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/steipete/status/2023154018714100102"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/steipete/status/2023154018714100102"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <p>直到今天，OpenClaw 的热度依然不减：在 Google Trends 上，搜索趋势热度依然在 60 以上；微信公众号上关于 OpenClaw 的文章也多如牛毛。<br>
-<img src="/2026/02/22/First-Experience-with-OpenClaw/google_trends.png" alt></p>
+<img src="/2026/02/22/First-Experience-with-OpenClaw/google_trends.png" alt=""></p>
 <p>即便如此，我想，依然有非常多的人和我一样，对 OpenClaw 的了解和认知还主要在别人的讨论中，依然没有亲自上手、真正体验。纸上得来终觉浅，绝知此事要躬行。</p>
 <p>于是，在春节前的几天，我花了一些时间，亲自上手部署了 OpenClaw，并记录下了整个体验过程。</p>
 <h2 id="2-为什么选择-ecs">2. 为什么选择 ECS</h2>
@@ -181,9 +272,9 @@
 <h2 id="3-在-ecs-上部署-openclaw">3. 在 ECS 上部署 OpenClaw</h2>
 <h3 id="3-1-申请-ecs-主机">3.1 申请 ECS 主机</h3>
 <p>根据自己的需求选择合适的 ECS 实例配置，我选择了 2 核 4G 的 Ubuntu 22.04 作为 ECS 实例，在创建 ECS 实例时，阿里云会提供对应的公网 IP，这极大方便了后续的部署和访问。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/ECS.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/ECS.png" alt=""></p>
 <p>点击 <code>远程链接</code> 按钮，可以配置登录方式，我选择使用 SSH 密钥对登录并设置了登录的 <code>root</code> 密码。通过提供的公网 IP 和设置的密码，就可以通过 SSH 登录到 ECS 实例了。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/ECS_login.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/ECS_login.png" alt=""></p>
 <h3 id="3-2-配置-ecs-的安全组">3.2 配置 ECS 的安全组</h3>
 <p>OpenClaw 运行依赖两个核心端口——18789 和 80：</p>
 <ul>
@@ -191,18 +282,18 @@
 <li>80 端口用于部分 IM 平台的回调通信</li>
 </ul>
 <p>因此，为了保障 OpenClaw 的可用性，ECS 主机启动后，需要在 <code>网络与安全组</code> 中对这两个端口进行配置，避免因端口拦截导致服务不可用。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/ecs_port.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/ecs_port.png" alt=""></p>
 <h3 id="3-3-安装-node-环境">3.3 安装 Node 环境</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">snap install node --classic</span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">snap install node --classic</span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="3-4-安装-openclaw">3.4 安装 OpenClaw</h3>
 <p>根据 <a target="_blank" rel="noopener" href="https://github.com/openclaw/openclaw">OpenClaw 官方文档</a> 安装 OpenClaw：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g openclaw@latest</span><br><span class="line">openclaw onboard --install-daemon</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g openclaw@latest</span><br><span class="line">openclaw onboard --install-daemon</span><br></pre></td></tr></tbody></table></figure>
 <p><code>向导程序</code> 会安装 OpenClaw 的网关守护进程（launchd/systemd 用户服务），并使其保持运行状态。在安装过程中，<code>向导程序</code> 会让我们配置各种参数：例如 IM 平台、所用的大模型、安装的插件……根据自己的需求进行配置即可。</p>
 <p>安装完成之后，可以通过 <code>openclaw status</code> 查看 OpenClaw 的运行状态。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/status.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/status.png" alt=""></p>
 <h3 id="3-5-配置-ssh-本地端口转发">3.5 配置 SSH 本地端口转发</h3>
 <p>为了方便本地访问 OpenClaw 的控制界面，可以通过 SSH 的本地端口转发功能，将 ECS 实例的 18789 端口转发到本地。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 18789:localhost127.0.0.1:18789 root@&lt;ECS公网IP&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 18789:localhost127.0.0.1:18789 root@&lt;ECS公网IP&gt;</span><br></pre></td></tr></tbody></table></figure>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -282,50 +373,50 @@
 <div class="admonition note"><p class="admonition-title">为什么要配置端口转发
 </p><p>由于 OpenClaw 的控制界面是以 18789 端口作为访问端口，而该端口并非标准的 HTTP 协议端口，而是一个普通的 TCP 端口。因此，如果直接在本地浏览器访问：http://&lt;ECS公网IP&gt;:18789，无法访问 ECS 主机中的 OpenClaw 的控制界面。</p>
 </div>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/openclaw_ui.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/openclaw_ui.png" alt=""></p>
 <h3 id="3-6-配置大模型">3.6 配置大模型</h3>
 <p>在阿里云的百炼平台申请对应模型的 <code>API-KEY</code>，在 openclaw.json 中增加大模型配置。</p>
 <p>1.在 <code>models</code> 字段中增加大模型配置：</p>
-  <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">&quot;models&quot;: &#123;</span><br><span class="line">  &quot;providers&quot;: &#123;</span><br><span class="line">    &quot;alibaba-cloud&quot;: &#123;</span><br><span class="line">      &quot;baseUrl&quot;: &quot;https://dashscope.aliyuncs.com/compatible-mode/v1&quot;,</span><br><span class="line">      &quot;apiKey&quot;: &quot;&lt;your-api-key&gt;&quot;,</span><br><span class="line">      &quot;api&quot;: &quot;openai-completions&quot;,</span><br><span class="line">      &quot;models&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">&quot;id&quot;</span>: <span class="string">&quot;qwen3-coder-plus&quot;</span>,</span><br><span class="line">          <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Qwen Coder&quot;</span>,</span><br><span class="line">          <span class="attr">&quot;reasoning&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">          <span class="attr">&quot;input&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;text&quot;</span></span><br><span class="line">          ],</span><br><span class="line">          <span class="attr">&quot;cost&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;input&quot;</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">&quot;output&quot;</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">&quot;cacheRead&quot;</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">&quot;cacheWrite&quot;</span>: <span class="number">0</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">&quot;contextWindow&quot;</span>: <span class="number">128000</span>,</span><br><span class="line">          <span class="attr">&quot;maxTokens&quot;</span>: <span class="number">8192</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">&quot;id&quot;</span>: <span class="string">&quot;qwen3-vl-plus&quot;</span>,</span><br><span class="line">          <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Qwen Vision&quot;</span>,</span><br><span class="line">          <span class="attr">&quot;reasoning&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">          <span class="attr">&quot;input&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;text&quot;</span>,</span><br><span class="line">            <span class="string">&quot;image&quot;</span></span><br><span class="line">          ],</span><br><span class="line">          <span class="attr">&quot;cost&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;input&quot;</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">&quot;output&quot;</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">&quot;cacheRead&quot;</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">&quot;cacheWrite&quot;</span>: <span class="number">0</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">&quot;contextWindow&quot;</span>: <span class="number">128000</span>,</span><br><span class="line">          <span class="attr">&quot;maxTokens&quot;</span>: <span class="number">8192</span></span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  <figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">"models"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"providers"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">    <span class="attr">"alibaba-cloud"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">      <span class="attr">"baseUrl"</span><span class="punctuation">:</span> <span class="string">"https://dashscope.aliyuncs.com/compatible-mode/v1"</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">"apiKey"</span><span class="punctuation">:</span> <span class="string">"&lt;your-api-key&gt;"</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">"api"</span><span class="punctuation">:</span> <span class="string">"openai-completions"</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">"models"</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">{</span></span><br><span class="line">          <span class="attr">"id"</span><span class="punctuation">:</span> <span class="string">"qwen3-coder-plus"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"Qwen Coder"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"reasoning"</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"input"</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">"text"</span></span><br><span class="line">          <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"cost"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">            <span class="attr">"input"</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">"output"</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">"cacheRead"</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">"cacheWrite"</span><span class="punctuation">:</span> <span class="number">0</span></span><br><span class="line">          <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"contextWindow"</span><span class="punctuation">:</span> <span class="number">128000</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"maxTokens"</span><span class="punctuation">:</span> <span class="number">8192</span></span><br><span class="line">        <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">{</span></span><br><span class="line">          <span class="attr">"id"</span><span class="punctuation">:</span> <span class="string">"qwen3-vl-plus"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"Qwen Vision"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"reasoning"</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"input"</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">"text"</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">"image"</span></span><br><span class="line">          <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"cost"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">            <span class="attr">"input"</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">"output"</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">"cacheRead"</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">"cacheWrite"</span><span class="punctuation">:</span> <span class="number">0</span></span><br><span class="line">          <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"contextWindow"</span><span class="punctuation">:</span> <span class="number">128000</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"maxTokens"</span><span class="punctuation">:</span> <span class="number">8192</span></span><br><span class="line">        <span class="punctuation">}</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">}</span></span><br><span class="line">  <span class="punctuation">}</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
 <p>2.在 <code>agents</code> 字段中增加大模型配置：</p>
-  <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&quot;agents&quot;: &#123;</span><br><span class="line">  &quot;defaults&quot;: &#123;</span><br><span class="line">    &quot;model&quot;: &#123;</span><br><span class="line">      &quot;primary&quot;: &quot;alibaba-cloud/qwen3-coder-plus&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;models&quot;: &#123;</span><br><span class="line">      &quot;alibaba-cloud/qwen3-coder-plus&quot;: &#123;</span><br><span class="line">        &quot;alias&quot;: &quot;qwen&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;alibaba-cloud/qwen3-vl-plus&quot;: &#123;&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  <figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">"agents"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"defaults"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">    <span class="attr">"model"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">      <span class="attr">"primary"</span><span class="punctuation">:</span> <span class="string">"alibaba-cloud/qwen3-coder-plus"</span></span><br><span class="line">    <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">"models"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">      <span class="attr">"alibaba-cloud/qwen3-coder-plus"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">        <span class="attr">"alias"</span><span class="punctuation">:</span> <span class="string">"qwen"</span></span><br><span class="line">      <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">"alibaba-cloud/qwen3-vl-plus"</span><span class="punctuation">:</span> <span class="punctuation">{</span><span class="punctuation">}</span></span><br><span class="line">    <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">}</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
 <h3 id="3-7-配置钉钉机器人">3.7 配置钉钉机器人</h3>
 <p>根据 <a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/1710314">阿里云 ECS 云服务器部署OpenClaw（Clawdbot）详细步骤流程</a> 中的 <code>钉钉对接流程</code> 部分创建钉钉机器人并进行配置。</p>
 <p>根据 <a target="_blank" rel="noopener" href="https://github.com/soimy/openclaw-channel-dingtalk">openclaw-channel-dingtalk</a> 中的说明安装 DingTalk Channel 插件，并重启 OpenClaw 服务。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw gateway restart</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw gateway restart</span><br></pre></td></tr></tbody></table></figure>
 <p>重启 OpenClaw 服务后，在 OpenClaw 控制界面中的 <code>Control</code>→<code>Channels</code>，用创建的钉钉机器人信息对 <code>DingTalk</code> 进行配置。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/dingtalk.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/dingtalk.png" alt=""></p>
 <h3 id="3-8-测试">3.8 测试</h3>
 <p>把钉钉机器人添加到钉钉群中，并在钉钉群中发送指令，测试 OpenClaw 的功能。如果一切正常，我们现在就可以利用钉钉机器人通过 OpenClaw 来控制这台 ECS 主机啦。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/dingtalk_test1.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/dingtalk_test1.png" alt=""></p>
 <h2 id="4-更多的应用场景">4. 更多的应用场景</h2>
 <p>除了像如上的获取系统负载信息的简单场景外，我尝试了一些更复杂的应用场景，比如：读写文件、修复代码 BUG、编译复杂软件等。</p>
 <h3 id="4-1-读写文件">4.1 读写文件</h3>
 <p>Linux 的设计哲学就是“一切皆文件”，因此，如果 OpenClaw 可以完全接管系统的文件管理，这将是一件非常有趣的事情。我通过钉钉的机器人助手，用自然语言描述文件操作，OpenClaw 可以非常丝滑的完成对应的文件操作。整体的体验真是棒极了。</p>
-<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116066793619828&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116066793619828&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
 <h3 id="4-2-修复代码-bug">4.2 修复代码 BUG</h3>
 <p>既然 OpenClaw 已经接管了文件管理，那么，如果配合上适当的 LLMs，是否意味着 OpenClaw 自动修复代码 BUG 也不在话下？还要什么 IDE？理解代码、分析代码、修复代码、编译运行…… OpenClaw 都可以轻松完成。</p>
 <p>先编写一个简单的 C 程序，故意写几个 BUG，然后通过钉钉机器人助手，让 OpenClaw 修复这些 BUG。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a[<span class="number">5</span>] = &#123;<span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">        a[i] = i;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d \n&quot;</span>, a[<span class="number">10</span>]);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Finish~\n&quot;</span>);</span><br><span class="line">    *(<span class="keyword">int</span> *<span class="number">0</span>) = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116066793621178&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> {</span><br><span class="line">    <span class="type">int</span> a[<span class="number">5</span>] = {<span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>};</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) {</span><br><span class="line">        a[i] = i;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d \n"</span>, a[<span class="number">10</span>]);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Finish~\n"</span>);</span><br><span class="line">    *(<span class="type">int</span> *<span class="number">0</span>) = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116066793621178&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
 <p>从文件系统的文件变化也能看出，OpenClaw 不断修复了代码中的 BUG，还自动编译并运行了程序。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/bugfix_1.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/bugfix_1.png" alt=""></p>
 <h3 id="4-3-编译复杂项目">4.3 编译复杂项目</h3>
 <p>工作中，我们经常需要编译依赖较为复杂的项目，而这种项目足以令一名新手程序员望而却步和头疼。恰好，我在 GitHub 上维护了一个开源统计学外文书籍的翻译项目（<a target="_blank" rel="noopener" href="https://github.com/wangwei1237/introduction_to_probability_and_statistics">Introduction to Probability and Statistics for Engineers and Scientists</a>），该项目通过 <a target="_blank" rel="noopener" href="https://quarto.org/">Quarto</a> 工具来构建书籍（👉🏻👉🏻👉🏻<a href="http://wangwei1237.github.io/introduction_to_probability_and_statistics/">点击查看效果📚</a>）。整个书籍的编译过程涉及到 Quarto 工具的安装、R 语言环境与各种开发包的安装、各种 Quarto 扩展的安装等一系列的编译依赖。</p>
 <p>我用自然语言给钉钉机器人发送了任务：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@TestOpenClaw 请拉取https://github.com/wangwei1237/introduction_to_probability_and_statistics </span><br><span class="line">代码库到/root/17/book 目录，并根据check.yml文件的内容安装quarto环境并编译成html书籍。</span><br></pre></td></tr></table></figure>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/book_task.png" alt></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@TestOpenClaw 请拉取https://github.com/wangwei1237/introduction_to_probability_and_statistics </span><br><span class="line">代码库到/root/17/book 目录，并根据check.yml文件的内容安装quarto环境并编译成html书籍。</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/book_task.png" alt=""></p>
 <p>编译的相关步骤和依赖知识都位于 <code>check.yml</code> 中，并且这还是一个多轮的长程任务，整个过程，我除了发送：继续、好的等信息确认指令以外，基本上没有在机器上做任何手工操作。在经过 1 个多小时的反复确认与多轮沟通之后，OpenClaw 完成了编译任务。</p>
-<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116066793818350&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116066793818350&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
 <p>最后，OpenClaw 还对整个编译过程中的操作进行了记录与总结，整体体验下来发现，OpenClaw 的记忆系统也相当不错。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/book_2.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/book_2.png" alt=""></p>
 <h3 id="4-4-从源码编译-ffmpeg">4.4 从源码编译 FFmpeg</h3>
 <p>在音视频领域，FFmpeg 是神一样存在的复杂系统。在一台干净的机器上从零编译 FFmpeg 是一个高度考验 Linux 系统管理、依赖关系梳理以及构建工具链（Make/CMake/Meson）功底的过程。整个的编译过程虽然繁琐，但是只要按照正确的顺序去解决编译依赖，就能顺利通关。我时常想起当年在手动编译 FFmpeg 时那种“柳暗花明又一村”的烦恼与喜悦。</p>
 <p>这次，我尝试让 OpenClaw 从零编译 FFmpeg，整个过程依然非常丝滑。除了信息确认指令之外，我几乎没有做任何手工操作。令人惊喜的是，OpenClaw 还自己解决了动态链接库路径的问题，并成功运行了 FFmpeg。</p>
-<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116067783412862&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=116067783412862&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
 <h2 id="5-总结">5. 总结</h2>
 <p>我的 OpenClaw 并没有采用能力强大的模型，而是选择了 <code>qwen3-coder-plus</code>。即便如此，OpenClaw 的表现依然令我惊叹。对于 Token 消耗量来说，由于我尝试的这些场景均涉及到非常多的本地文件和命令操作，因此输入 Token 量比较大，而输出 Token 量这相对较少。</p>
-<p><img src="/2026/02/22/First-Experience-with-OpenClaw/openclaw_tokens.png" alt></p>
+<p><img src="/2026/02/22/First-Experience-with-OpenClaw/openclaw_tokens.png" alt=""></p>
 <p>OpenClaw 的强大能力确实将 AI 推向了新的范式与场景，它的出现，让我们看到了 AI 助手在复杂场景下的无限潜力与可能性。这也难怪有用户在社区中发帖称：</p>
 <blockquote>
 <p>this week on twitter, i’ve read:<br>
@@ -334,11 +425,11 @@ UI is dead<br>
 programming is dead<br>
 what else is dead?</p>
 </blockquote>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/siddharthkp/status/2024844345564684601"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/siddharthkp/status/2024844345564684601"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <p>恰好，刚看完春节贺岁档《飞驰人生3》，比赛最后的冲刺阶段，张弛在四驱分配系统失效、发动机电脑损坏、混合动力系统损坏的情况下，利用传统的手动机械四驱动力分配装置，依靠赛车手的感觉与经验，完美的控制了赛车，赢得了最后的胜利。这一点，我感触很大。</p>
 <p>叶经理说：“<em><strong>我们现在完全没有数据，现在所有的一切，都要靠你自己去感觉</strong></em>”。</p>
 <p>这让我对最近持续爆火的 LLM 有了新的思考：确实，AI 很强大，强大到在大多数时候可以完美的替代人类。<strong>但是，人类那 1% 的想象才是整个创造力的星星之火与动力之源。当没有数据的时候，当 AI 失效的时候，人是否还能够突破极限、力挽狂澜？</strong></p>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2025818908402626757"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2025818908402626757"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <h2 id="参考文献">参考文献</h2>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -349,7 +440,7 @@ what else is dead?</p>
 </li>
 </ol>
 </section>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

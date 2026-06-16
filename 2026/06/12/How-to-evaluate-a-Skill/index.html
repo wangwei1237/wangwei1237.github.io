@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="对 Agent Skills 的认知与思考 这篇文章对 Agent Skills 做了详细介绍。自 Anthropic 发布 Agent Skills 以来，Skills 已经逐渐成为 Agentic 系统构建中的一种共识范式。无论是公开的 Skills Marketplace、OpenClaw 的 ClawHub，还是团队内部沉淀的专用能力库，Skills 的数量都在快速增长。 Skills">
 <meta property="og:type" content="article">
@@ -22,7 +113,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/06/12/How-to-evaluate-a-Skill/codex_1.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/06/12/How-to-evaluate-a-Skill/codex_2.png">
 <meta property="article:published_time" content="2026-06-12T13:33:23.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.266Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.747Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="Skill">
 <meta property="article:tag" content="评估">
@@ -113,7 +204,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">4.6k</span>
+            <span class="post-count">4.5k</span>
         </span>
     </span>
 
@@ -122,7 +213,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">22 分钟</span>
+            <span class="post-count">21 分钟</span>
         </span>
     </span>
 </div>
@@ -137,7 +228,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2026/06/12/How-to-evaluate-a-Skill/1.jpg" alt></p>
+  <html><head></head><body><p><img src="/2026/06/12/How-to-evaluate-a-Skill/1.jpg" alt=""></p>
 <p><a href="/2025/12/24/Reflections-on-Agent-Skills/">对 Agent Skills 的认知与思考</a> 这篇文章对 Agent Skills 做了详细介绍。自 Anthropic 发布 Agent Skills 以来，Skills 已经逐渐成为 Agentic 系统构建中的一种共识范式。无论是公开的 Skills Marketplace、OpenClaw 的 <a target="_blank" rel="noopener" href="https://clawhub.ai/skills">ClawHub</a>，还是团队内部沉淀的专用能力库，Skills 的数量都在快速增长。</p>
 <p><a target="_blank" rel="noopener" href="https://skillsmp.com/">Skills Marketplace</a> 平台已经托管了 172W+ 的 Agent Skills；而在年初红极一时的 OpenClaw 的 <a target="_blank" rel="noopener" href="https://clawhub.ai/skills">ClawHub</a> 平台也已经托管了 7W+ 的 Agent Skills；在我们内部，也已经积累了成千上百的 Skills。</p>
 <span id="more"></span>
@@ -238,11 +329,11 @@
 <p>“invocable workflows” 是一个很容易被误读的描述：它可能让人误以为 Skills 是可以独立运行的操作单元。</p>
 <p>但更准确地说，“invocable workflows” 是一套可被按需调用的结构化操作步骤，是被封装好的行动方案。它赋予 Agent “怎么做”的能力，而具体执行仍然由 Agent 按照工作流中描述的路线与外部世界交互完成。</p>
 <p>此处的 “invocable” 更合理的理解是“可以被 Agent 调用”，而不是“可以独立运行”。即便某个 Skill 包含可执行的 <code>scripts</code> 脚本，真正的运行顺序也是：Agent 读取 Skill 中的说明，再按需调用指定脚本。Skill 本身不能自主执行，必须由 Agent 在真实环境中按照其定义的流程完成任务。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">my-skill/</span><br><span class="line">├── SKILL.md          <span class="comment"># Required: metadata + instructions</span></span><br><span class="line">├── scripts/          <span class="comment"># Optional: executable code</span></span><br><span class="line">├── references/       <span class="comment"># Optional: documentation</span></span><br><span class="line">├── assets/           <span class="comment"># Optional: templates, resources</span></span><br><span class="line">└── ...               <span class="comment"># Any additional files or directories</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">my-skill/</span><br><span class="line">├── SKILL.md          <span class="comment"># Required: metadata + instructions</span></span><br><span class="line">├── scripts/          <span class="comment"># Optional: executable code</span></span><br><span class="line">├── references/       <span class="comment"># Optional: documentation</span></span><br><span class="line">├── assets/           <span class="comment"># Optional: templates, resources</span></span><br><span class="line">└── ...               <span class="comment"># Any additional files or directories</span></span><br></pre></td></tr></tbody></table></figure>
 <p>如果从这个角度理解 “invocable workflows”，它本质上就是一种特殊形式的知识。</p>
 <h2 id="agent-vs-skills">Agent VS. Skills</h2>
 <p>因此，我们不但需要重新认识 Skills，也需要重新认识 Agent 与 Skills 之间的关系。</p>
-<p><img src="/2026/06/12/How-to-evaluate-a-Skill/2.jpg" alt></p>
+<p><img src="/2026/06/12/How-to-evaluate-a-Skill/2.jpg" alt=""></p>
 <p>正如 <a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/features-overview#extend-claude-code"><em>Extend Claude Code</em></a><sup class="footnote-ref"><a href="#fn1" id="fnref1:1">[1:1]</a></sup> 中所述：</p>
 <style>.admonition {
     margin: 1.5625em 0;
@@ -408,10 +499,10 @@
 </p><p>Beyond their basic structure, memories can be classified by <strong>the fundamental type of knowledge</strong> they represent. This distinction, crucial for understanding how an agent uses memories, separates memory into two primary functional categories derived from cognitive science: <strong>declarative memories</strong> (“knowing what”) and <strong>procedural memories</strong> (“knowing how”).</p>
 <ul>
 <li>
-<p><strong>Declarative memory</strong> is the agent's knowledge of facts, figures, and events. It's all the information that the agent can explicitly state or &quot;declare.&quot; If the memory is an answer to a &quot;what&quot; question, it's declarative. This category encompasses both general world knowledge (Semantic) and specific user facts (Entity/Episodic).</p>
+<p><strong>Declarative memory</strong> is the agent's knowledge of facts, figures, and events. It's all the information that the agent can explicitly state or "declare." If the memory is an answer to a "what" question, it's declarative. This category encompasses both general world knowledge (Semantic) and specific user facts (Entity/Episodic).</p>
 </li>
 <li>
-<p><strong>Procedural memory</strong> is the agent's knowledge of skills and workflows. It guides the agent's actions by demonstrating implicitly how to perform a task correctly. If the memory helps answer a &quot;how&quot; question—like the correct sequence of tool calls to book a trip—it's procedural.</p>
+<p><strong>Procedural memory</strong> is the agent's knowledge of skills and workflows. It guides the agent's actions by demonstrating implicitly how to perform a task correctly. If the memory helps answer a "how" question—like the correct sequence of tool calls to book a trip—it's procedural.</p>
 </li>
 </ul>
 </div>
@@ -496,9 +587,9 @@
 </p><p>普通知识回答的是“是什么”，而 Skill 回答的是“怎么做”。</p>
 </div>
 <p>一个 API 文档会以普通知识的形式告诉模型接口相关信息：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">登录接口是 POST /api/login</span><br><span class="line">请求字段包含 username、password</span><br><span class="line">返回字段包含 token、expireTime</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">登录接口是 POST /api/login</span><br><span class="line">请求字段包含 username、password</span><br><span class="line">返回字段包含 token、expireTime</span><br></pre></td></tr></tbody></table></figure>
 <p>而一个 API 测试 Skill 则会告诉模型：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">当用户要求验证 API 是否符合 PRD 时，必须按照以下流程执行：</span><br><span class="line">1. 读取 PRD；</span><br><span class="line">2. 读取 API 文档；</span><br><span class="line">3. 生成主路径、异常路径、边界路径测试用例；</span><br><span class="line">4. 执行或规划 API 测试；</span><br><span class="line">5. 解析测试结果；</span><br><span class="line">6. 输出 api_test_report.json；</span><br><span class="line">7. 失败时标记 suspected_owner，并给出 next_action。</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">当用户要求验证 API 是否符合 PRD 时，必须按照以下流程执行：</span><br><span class="line">1. 读取 PRD；</span><br><span class="line">2. 读取 API 文档；</span><br><span class="line">3. 生成主路径、异常路径、边界路径测试用例；</span><br><span class="line">4. 执行或规划 API 测试；</span><br><span class="line">5. 解析测试结果；</span><br><span class="line">6. 输出 api_test_report.json；</span><br><span class="line">7. 失败时标记 suspected_owner，并给出 next_action。</span><br></pre></td></tr></tbody></table></figure>
 <p>Skill 本身虽然不会自主执行，但作为 <strong>Procedural Knowledge</strong>，它会直接影响 AI 的执行路径和输出质量。</p>
 <ul>
 <li>如果 Skill 写得不清楚，后续 Agent 执行就会不稳定；</li>
@@ -507,7 +598,7 @@
 </ul>
 <h2 id="agent-vs-skills-vs-knowledge">Agent VS. Skills VS. Knowledge</h2>
 <p>Agent、Skills、Knowledge 三者之间的关系如下所示：</p>
-<p><img src="/2026/06/12/How-to-evaluate-a-Skill/ask.jpg" alt></p>
+<p><img src="/2026/06/12/How-to-evaluate-a-Skill/ask.jpg" alt=""></p>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -599,12 +690,12 @@
 <li>……</li>
 </ul>
 <p>根据上面的描述，我们可以得到 Skills 测试的边界：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. 触发是否准确；</span><br><span class="line">2. 流程是否完整；</span><br><span class="line">3. 输出契约是否稳定；</span><br><span class="line">4. 边界处理是否合理；</span><br><span class="line">5. 失败信息是否可回流；</span><br><span class="line">6. 是否避免幻觉和越权行为；</span><br><span class="line">7. ……</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. 触发是否准确；</span><br><span class="line">2. 流程是否完整；</span><br><span class="line">3. 输出契约是否稳定；</span><br><span class="line">4. 边界处理是否合理；</span><br><span class="line">5. 失败信息是否可回流；</span><br><span class="line">6. 是否避免幻觉和越权行为；</span><br><span class="line">7. ……</span><br></pre></td></tr></tbody></table></figure>
 <p>例如，测试 <code>api-test-flow</code> Skill，不是要真的启动服务跑接口测试，而是验证模型：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1. 是否会在相关 Query 下加载该 Skill</span><br><span class="line">2. 是否会按照该 Skill 的要求：</span><br><span class="line">    1. 读取 PRD；</span><br><span class="line">    2. 读取 API 文档；</span><br><span class="line">    3. 生成 API 测试用例；</span><br><span class="line">    4. 规划或执行 API 测试；</span><br><span class="line">    5. 解析测试结果；</span><br><span class="line">    6. 输出 api_test_report.json；</span><br><span class="line">    7. 失败时给出 suspected_owner 和 next_action；</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1. 是否会在相关 Query 下加载该 Skill</span><br><span class="line">2. 是否会按照该 Skill 的要求：</span><br><span class="line">    1. 读取 PRD；</span><br><span class="line">    2. 读取 API 文档；</span><br><span class="line">    3. 生成 API 测试用例；</span><br><span class="line">    4. 规划或执行 API 测试；</span><br><span class="line">    5. 解析测试结果；</span><br><span class="line">    6. 输出 api_test_report.json；</span><br><span class="line">    7. 失败时给出 suspected_owner 和 next_action；</span><br></pre></td></tr></tbody></table></figure>
 <p>Skills 测试更像单元测试：它可以不依赖真实业务环境，而是验证 Skill 是否能稳定提供正确的方法、步骤和约束。这与 Agent 测试不同。Agent 测试的目标是验证 Agent 是否能在真实环境中正确完成任务。</p>
 <p>例如，测试 <code>coding-agent</code> 时，就必须准备一个代码仓库，让 <code>coding-agent</code> 修复一个明确的编译错误，并期望结果是：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">正确修改错误代码；</span><br><span class="line">编译通过；</span><br><span class="line">测试用例通过；</span><br><span class="line">没有修改无关文件；</span><br><span class="line">……</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">正确修改错误代码；</span><br><span class="line">编译通过；</span><br><span class="line">测试用例通过；</span><br><span class="line">没有修改无关文件；</span><br><span class="line">……</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="skills-测试规范">Skills 测试规范</h2>
 <p>根据上面的描述，在 Skills 测试中，一般需要覆盖如下场景<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>：</p>
 <table>
@@ -638,7 +729,7 @@
 </tbody>
 </table>
 <p>我们可以用 YAML 文件组织一个 Skill 的测试用例：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;1.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">skill:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">  <span class="attr">description:</span> <span class="string">&quot;验证 API 测试类 Skill 的触发、计划和输出契约&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cases:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;plan_001&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;plan&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;API 测试 Skill 应给出正确执行计划&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&gt;</span></span><br><span class="line">      <span class="string">请根据</span> <span class="string">PRD</span> <span class="string">验证登录接口是否符合预期。</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;examples/login_prd.md&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;examples/login_api_doc.md&quot;</span></span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;api-test-flow&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;读取 PRD&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;读取 API 文档&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;生成 API 测试用例&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;执行或规划 API 测试&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;解析测试结果&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;输出 api_test_report&quot;</span></span><br><span class="line">      <span class="attr">must_not_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;直接修改业务代码&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;调用 UI 验收流程&quot;</span></span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;selected_skill == &#x27;api-test-flow&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">"1.0"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">skill:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">"api-test-flow"</span></span><br><span class="line">  <span class="attr">description:</span> <span class="string">"验证 API 测试类 Skill 的触发、计划和输出契约"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cases:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">"plan_001"</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">"plan"</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">"API 测试 Skill 应给出正确执行计划"</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&gt;</span></span><br><span class="line"><span class="string">      请根据 PRD 验证登录接口是否符合预期。</span></span><br><span class="line"><span class="string"></span>    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"examples/login_prd.md"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"examples/login_api_doc.md"</span></span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">"api-test-flow"</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"读取 PRD"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"读取 API 文档"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"生成 API 测试用例"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"执行或规划 API 测试"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"解析测试结果"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"输出 api_test_report"</span></span><br><span class="line">      <span class="attr">must_not_include:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"直接修改业务代码"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"调用 UI 验收流程"</span></span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"selected_skill == 'api-test-flow'"</span></span><br></pre></td></tr></tbody></table></figure>
 <p>更详细的 Skills 测试规范可以参考 <a href="/Skills-Test-Specification/">Skill Test Case Specific</a>。</p>
 <h2 id="skill-测试实践">Skill 测试实践</h2>
 <style>.admonition {
@@ -724,15 +815,15 @@
 <p>我们把上面描述的 Skill 测试规范封装到了 <code>skill-testing</code> Skill 中。你可以直接将 <code>skill-testing</code> 安装到 Codex 或 Claude Code 中，用它来测试其他 Skills。</p>
 <p>下面继续以 <a href="/2025/12/24/Reflections-on-Agent-Skills/">对 Agent Skills 的认知与思考</a><sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup> 这篇文章中的 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/agent-skills/tree/main/pdf-lowercase-skill">pdf-case-converter</a> 为例，展示如何使用 <code>skill-testing</code> 测试 <code>pdf-case-converter</code>。</p>
 <p><code>pdf-case-converter/tests/skill_cases.yaml</code> 的内容如下所示：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;1.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">skill:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;pdf-case-converter&quot;</span></span><br><span class="line">  <span class="attr">description:</span> <span class="string">&quot;pdf-case-converter 的测试用例&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">  <span class="attr">mode:</span> <span class="string">&quot;dry-run&quot;</span></span><br><span class="line">  <span class="attr">execution:</span> <span class="string">&quot;no_tool_call&quot;</span></span><br><span class="line">  <span class="attr">output_format:</span> <span class="string">&quot;markdown&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cases:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;trigger_001&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;PDF 大小写转换场景应触发 Skill&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&quot;请把 example/test.pdf 文档中的大写英文字母转换成小写&quot;</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;pdf-case-converter&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span> []</span><br><span class="line">      <span class="attr">must_not_include:</span> []</span><br><span class="line">      <span class="attr">artifacts:</span> []</span><br><span class="line">      <span class="attr">routing:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;selected_skill == &#x27;pdf-case-converter&#x27;&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;positive&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">&quot;trigger_002&quot;</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">&quot;图片生成场景不应触发 Skill&quot;</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">&quot;请生成一张夏季的海边风景的图片，并转换为 pdf 格式&quot;</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="attr">should_not_use:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">&quot;pdf-case-converter&quot;</span></span><br><span class="line">      <span class="attr">must_include:</span> []</span><br><span class="line">      <span class="attr">must_not_include:</span> []</span><br><span class="line">      <span class="attr">artifacts:</span> []</span><br><span class="line">      <span class="attr">routing:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;selected_skill != &#x27;pdf-case-converter&#x27;&quot;</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;trigger&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;negative&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">"1.0"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">skill:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">"pdf-case-converter"</span></span><br><span class="line">  <span class="attr">description:</span> <span class="string">"pdf-case-converter 的测试用例"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">  <span class="attr">mode:</span> <span class="string">"dry-run"</span></span><br><span class="line">  <span class="attr">execution:</span> <span class="string">"no_tool_call"</span></span><br><span class="line">  <span class="attr">output_format:</span> <span class="string">"markdown"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cases:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">"trigger_001"</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">"trigger"</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">"PDF 大小写转换场景应触发 Skill"</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">"请把 example/test.pdf 文档中的大写英文字母转换成小写"</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> {}</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">"pdf-case-converter"</span></span><br><span class="line">        <span class="attr">should_not_use:</span> []</span><br><span class="line">      <span class="attr">must_include:</span> []</span><br><span class="line">      <span class="attr">must_not_include:</span> []</span><br><span class="line">      <span class="attr">artifacts:</span> []</span><br><span class="line">      <span class="attr">routing:</span> {}</span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"selected_skill == 'pdf-case-converter'"</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"trigger"</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"positive"</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">"trigger_002"</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">"trigger"</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">"图片生成场景不应触发 Skill"</span></span><br><span class="line">    <span class="attr">query:</span> <span class="string">"请生成一张夏季的海边风景的图片，并转换为 pdf 格式"</span></span><br><span class="line">    <span class="attr">inputs:</span></span><br><span class="line">      <span class="attr">files:</span> []</span><br><span class="line">      <span class="attr">context:</span> {}</span><br><span class="line">    <span class="attr">expected:</span></span><br><span class="line">      <span class="attr">skill:</span></span><br><span class="line">        <span class="attr">should_use:</span> <span class="string">""</span></span><br><span class="line">        <span class="attr">should_not_use:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">"pdf-case-converter"</span></span><br><span class="line">      <span class="attr">must_include:</span> []</span><br><span class="line">      <span class="attr">must_not_include:</span> []</span><br><span class="line">      <span class="attr">artifacts:</span> []</span><br><span class="line">      <span class="attr">routing:</span> {}</span><br><span class="line">    <span class="attr">assertions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"selected_skill != 'pdf-case-converter'"</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"trigger"</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"negative"</span></span><br></pre></td></tr></tbody></table></figure>
 <ol>
 <li>在当前 Codex 中安装 <code>skill-testing</code> 和 <code>pdf-case-converter</code> 两个 Skill。</li>
 <li>在 Codex 中输入测试提示词：请测试 skill: pdf-case-converter。<br>
-<img src="/2026/06/12/How-to-evaluate-a-Skill/pdf_testing_1.png" alt></li>
+<img src="/2026/06/12/How-to-evaluate-a-Skill/pdf_testing_1.png" alt=""></li>
 <li>Codex 会根据 <code>skill-testing</code> 中的说明，加载 <code>pdf-case-converter/tests/skill_cases.yaml</code> 中的测试用例，生成 dry-run 测试响应，并对响应进行评分。<br>
-<img src="/2026/06/12/How-to-evaluate-a-Skill/pdf_testing_2.png" alt></li>
+<img src="/2026/06/12/How-to-evaluate-a-Skill/pdf_testing_2.png" alt=""></li>
 <li>最后生成测试报告。<br>
-<img src="/2026/06/12/How-to-evaluate-a-Skill/pdf_testing_3.png" alt></li>
+<img src="/2026/06/12/How-to-evaluate-a-Skill/pdf_testing_3.png" alt=""></li>
 </ol>
 <style>.admonition {
     margin: 1.5625em 0;
@@ -812,12 +903,12 @@
   </style>
 <div class="admonition warning"><p class="admonition-title">注意
 </p><p>默认情况下，我们会发现 Codex 会提示：<strong>多 agent 工具存在，但当前规则只允许在用户明确要求 sub-agent 时使用</strong>；所以这次我会按 skill-testing 的 fallback 路径，用当前 agent 生成干跑响应，并在 Downloads 下保存可复现的响应文件。
-<img src="/2026/06/12/How-to-evaluate-a-Skill/codex_1.png" alt></p>
+<img src="/2026/06/12/How-to-evaluate-a-Skill/codex_1.png" alt=""></p>
 <p>因此，为了强制让 Codex 生成 Sub-Agent 并在 Sub-Agent 中测试 Skills 的用例，我们需要改 SKill 测试的提示词：</p>
 <blockquote>
 <p>请使用 sub-agent 测试 skill: pdf-case-converter</p>
 </blockquote>
-<p><img src="/2026/06/12/How-to-evaluate-a-Skill/codex_2.png" alt></p>
+<p><img src="/2026/06/12/How-to-evaluate-a-Skill/codex_2.png" alt=""></p>
 </div>
 <h2 id="总结">总结</h2>
 <p>Skill 是一种 <strong>Procedural Knowledge</strong>。它不是普通文档知识，也不是可独立执行的 Agent，而是模型完成某类任务时需要遵循的方法、流程和契约。只有明确 Skills 与 Agents 之间的区别，认识到 Skills 的本质，才能将 Skills 从一份提示词文档升级为可测试、可维护、可复用的 AI 工程资产。</p>
@@ -836,7 +927,7 @@
 </li>
 </ol>
 </section>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

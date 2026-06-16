@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="在视频处理中，我们经常会用到不同的色彩空间：非线性RGB，线性 RGB，YUV，XYZ……为什么需要这么多的色彩空间呢？为什么在 FFmpeg 中会有 color_space，color_transfer，color_primaries 等一系列的颜色属性呢？这些术语之间究竟隐藏着什么秘密？">
 <meta property="og:type" content="article">
@@ -29,7 +120,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2022/08/14/Why-so-much-color-space-in-video/14.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2022/08/14/Why-so-much-color-space-in-video/16.webp">
 <meta property="article:published_time" content="2022-08-14T15:50:03.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.628Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.076Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="RGB">
 <meta property="article:tag" content="XYZ">
@@ -132,7 +223,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">16 分钟</span>
+            <span class="post-count">15 分钟</span>
         </span>
     </span>
 </div>
@@ -147,11 +238,11 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2022/08/14/Why-so-much-color-space-in-video/1.jpeg" alt></p>
+  <html><head></head><body><p><img src="/2022/08/14/Why-so-much-color-space-in-video/1.jpeg" alt=""></p>
 <p>在视频处理中，我们经常会用到不同的色彩空间：<code>非线性RGB</code>，<code>线性 RGB</code>，<code>YUV</code>，<code>XYZ</code>……为什么需要这么多的色彩空间呢？为什么在 FFmpeg 中会有 <code>color_space</code>，<code>color_transfer</code>，<code>color_primaries</code> 等一系列的颜色属性呢？这些术语之间究竟隐藏着什么秘密？</p>
 <span id="more"></span>
 <h2 id="视频采集">视频采集</h2>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/2.png" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/2.png" alt=""></p>
 <p>如上图所示，在相机系统中，外部世界的光信息（光子，photons）通过透镜或其他光学器件聚焦之后达到相机的图像传感器（<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Charge-coupled_device">CCD</a> 或者 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Active-pixel_sensor">CMOS</a>）。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <ul>
 <li>图像传感器可以将一个入射光子（photon）转换为对应的一个电子（electron）。</li>
@@ -238,17 +329,17 @@
 <div class="admonition note"><p class="admonition-title">ADC 数字信号的取值范围
 </p><p>ADC 转换之后的数字信号的取值范围受限于 ADC 设备。对于 8-bits 的 ADC 而言，数字信号的取值范围为 [0, 2^8-1]，因此，对于每一个像素而言，会用 [0, 255] 之间的整数来进行编码。</p>
 </div>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/3.jpeg" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/3.jpeg" alt=""></p>
 <p>ADC 转换的数字信号的数值是一个线性编码的过程，这意味着如果将图像传感器上的光量增加 1 倍，则 ADC 转换之后对应的数值也会增加 1 倍。这是一个非常有用的特性：无论是增加物理世界的光量，还是增加 ADC 转换之后的数值，对图片而言，都会带来相同的效果。线性编码意味着我们所处理的数据和光发射的强度成正比关系。<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
 <p>由数码相机中的 CMOS 传感器产生并写入原始文件（Raw File）的数据是线性的。与普通照片相比，线性数据通常看起来非常暗且对比度较低。<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/4.jpg" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/4.jpg" alt=""></p>
 <p>在 iPhone 手机中，可以通过设置相机来拍摄 <a target="_blank" rel="noopener" href="https://support.apple.com/zh-cn/HT211965">Apple ProRAW</a> 格式的照片。</p>
 <h2 id="视频伽马校正">视频伽马校正</h2>
 <p>实际上，研究表明，人类视觉系统是以对数函数的方式来感知光亮度。这意味着，人眼会提高暗部的敏感度，降低高光部分的敏感度。<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup></p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/5.png" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/5.png" alt=""></p>
 <p>从数学角度看，感知光强度和测量光强度之间存在一个近似的平方关系，具体如下式所示。</p>
-<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>近似感知亮度</mtext><mo>=</mo><msqrt><mtext>测量亮度</mtext></msqrt></mrow><annotation encoding="application/x-tex">\text{近似感知亮度} = \sqrt{\text{测量亮度}}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord text"><span class="mord cjk_fallback">近似感知亮度</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.06445999999999996em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9755400000000001em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord text"><span class="mord cjk_fallback">测量亮度</span></span></span></span><span style="top:-2.93554em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" viewbox="0 0 400000 1080" preserveaspectratio="xMinYMin slice"><path d="M95,702
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>近似感知亮度</mtext><mo>=</mo><msqrt><mtext>测量亮度</mtext></msqrt></mrow><annotation encoding="application/x-tex">\text{近似感知亮度} = \sqrt{\text{测量亮度}}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">近似感知亮度</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.0645em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9755em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord text"><span class="mord cjk_fallback">测量亮度</span></span></span></span><span style="top:-2.9355em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
 c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
 c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
 c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
@@ -259,12 +350,12 @@ c5.3,-9.3,12,-14,20,-14
 H400000v40H845.2724
 s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
 c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
-M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.06445999999999996em;"><span></span></span></span></span></span></span></span></span></span></p>
+M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.0645em;"><span></span></span></span></span></span></span></span></span></span></p>
 <p>由于人类视觉感知系统不是以线性方式工作的，因此必须使用非线性曲线来对 ADC 生成的的线性数据进行变换，从而使得拍摄的图像色调与我们的视觉系统的工作方式相匹配。这个过程也就是我们所说的 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Gamma_correction">伽马校正</a>。</p>
-<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo>=</mo><msubsup><mi>V</mi><mrow><mi>i</mi><mi>n</mi></mrow><mi>γ</mi></msubsup></mrow><annotation encoding="application/x-tex">V_{out}=V_{in}^{\gamma}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.22222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.059164em;vertical-align:-0.276864em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7822999999999999em;"><span style="top:-2.4231360000000004em;margin-left:-0.22222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">n</span></span></span></span><span style="top:-3.180908em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05556em;">γ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.276864em;"><span></span></span></span></span></span></span></span></span></span></span></p>
-<p>因此，在从线性 RGB 空间转换到非线性 RGB 空间时，需要 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05556em;">γ</span></span></span></span> 作为转换参数。相机中的 ISP 模块负责对图像传感器的线性 RGB 进行伽马校正进而产生对应的符合人眼感知的非线性 RGB 数据。</p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/6.png" alt></p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>V</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo>=</mo><msubsup><mi>V</mi><mrow><mi>i</mi><mi>n</mi></mrow><mi>γ</mi></msubsup></mrow><annotation encoding="application/x-tex">V_{out}=V_{in}^{\gamma}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0592em;vertical-align:-0.2769em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7823em;"><span style="top:-2.4231em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">in</span></span></span></span><span style="top:-3.1809em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0556em;">γ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>因此，在从线性 RGB 空间转换到非线性 RGB 空间时，需要 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.0556em;">γ</span></span></span></span> 作为转换参数。相机中的 ISP 模块负责对图像传感器的线性 RGB 进行伽马校正进而产生对应的符合人眼感知的非线性 RGB 数据。</p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/6.png" alt=""></p>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -433,7 +524,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </p><p>标准中，不但会规定 RGB-&gt;YUV 的转换系数，同时还会规定从线性 RGB 到非线性 RGB 转换的 gamma 系数。</p>
 </div>
 <p>将 RGB颜色模型，转换成 YUV 模型后，接下来会采用某种视频编解码算法（例如，H265, VP9）对获取的数据进行视频编码，最终得到视频文件（此处忽略了音频的采集编码以及合流的操作）。</p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/7.png" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/7.png" alt=""></p>
 <h2 id="视频转码">视频转码</h2>
 <p>出于各种原因，例如：</p>
 <ul>
@@ -447,7 +538,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p>色彩转换需要在某个线性空间下进行操作，并且操作过程需要保持设备的独立性。因此，不同的 RGB 色域空间是不能直接进行转换的，需要一个设备无关、线性的颜色模型作为中转才能实现其转换。</p>
 <p>而 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/CIE_1931_color_space">XYZ(CIE 1931 XYZ color space)</a> 具备设备无关、线性操作的特性。</p>
 <p>在 FFmpeg 中，主要使用 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/vf_colorspace.c">colorspace 滤镜</a> 来完成不同色域空间的转换。<sup class="footnote-ref"><a href="#fn6" id="fnref6:1">[6:1]</a></sup>根据 colorspace 的实现可知，在 FFmpeg 中，BT. 601-&gt;BT. 709 的转换过程如下所示：</p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/15.png" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/15.png" alt=""></p>
 <p>在如上的变换中，涉及到 3 个颜色空间的转换，分别是：</p>
 <ol>
 <li>YUV 和 RGB 之间的转换</li>
@@ -466,7 +557,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <li>color_transfer 字段对应线性 RGB 和非线性 RGB 之间的转换函数</li>
 <li>color_primaries 字段对应 RGB/XYZ 的转换矩阵</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ffprobe -select_streams v:0 -show_entries stream&#x3D;color_space,color_transfer,color_primaries test.mp4</span><br><span class="line"></span><br><span class="line">[STREAM]</span><br><span class="line">color_space&#x3D;bt2020nc</span><br><span class="line">color_transfer&#x3D;arib-std-b67</span><br><span class="line">color_primaries&#x3D;bt2020</span><br><span class="line">[&#x2F;STREAM]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ffprobe -select_streams v:0 -show_entries stream=color_space,color_transfer,color_primaries test.mp4</span><br><span class="line"></span><br><span class="line">[STREAM]</span><br><span class="line">color_space=bt2020nc</span><br><span class="line">color_transfer=arib-std-b67</span><br><span class="line">color_primaries=bt2020</span><br><span class="line">[/STREAM]</span><br></pre></td></tr></tbody></table></figure>
 <p>在如上的例子中，<a target="_blank" rel="noopener" href="https://ffmpeg.org/doxygen/trunk/pixfmt_8h.html#ad4791ea14975f098b649db7fcd731ce6">arib-std-b67</a> 也就是我们所熟悉的 HLG。</p>
 <p>在 <code>MediaInfo</code> 中，</p>
 <ul>
@@ -475,34 +566,34 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <li>Color primaries 字段对应 RGB/XYZ 的转换矩阵</li>
 </ul>
 <p>除了如上的参数外，AVFrame-&gt;<a target="_blank" rel="noopener" href="https://ffmpeg.org/doxygen/trunk/pixfmt_8h.html#a3da0bf691418bc22c4bcbe6583ad589a">range</a> 还用来存储视频中对应像素的每个分量的取值范围。在 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/a78f136f3fa039fd7ad664fd6e6e976f1448c68b/libavfilter/vf_setparams.c">vf_setparams.c</a> 中也作了相关的定义说明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;limited&quot;, NULL, 0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_MPEG&#125;,  0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;tv&quot;,      NULL, 0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_MPEG&#125;,  0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;mpeg&quot;,    NULL, 0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_MPEG&#125;,  0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;full&quot;,    NULL, 0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_JPEG&#125;,  0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;pc&quot;,      NULL, 0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_JPEG&#125;,  0, 0, FLAGS, &quot;range&quot;&#125;,</span><br><span class="line">&#123;&quot;jpeg&quot;,    NULL, 0, AV_OPT_TYPE_CONST, &#123;.i64&#x3D;AVCOL_RANGE_JPEG&#125;,  0, 0, FLAGS, &quot;range&quot;&#125;,</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">{"limited", NULL, 0, AV_OPT_TYPE_CONST, {.i64=AVCOL_RANGE_MPEG},  0, 0, FLAGS, "range"},</span><br><span class="line">{"tv",      NULL, 0, AV_OPT_TYPE_CONST, {.i64=AVCOL_RANGE_MPEG},  0, 0, FLAGS, "range"},</span><br><span class="line">{"mpeg",    NULL, 0, AV_OPT_TYPE_CONST, {.i64=AVCOL_RANGE_MPEG},  0, 0, FLAGS, "range"},</span><br><span class="line">{"full",    NULL, 0, AV_OPT_TYPE_CONST, {.i64=AVCOL_RANGE_JPEG},  0, 0, FLAGS, "range"},</span><br><span class="line">{"pc",      NULL, 0, AV_OPT_TYPE_CONST, {.i64=AVCOL_RANGE_JPEG},  0, 0, FLAGS, "range"},</span><br><span class="line">{"jpeg",    NULL, 0, AV_OPT_TYPE_CONST, {.i64=AVCOL_RANGE_JPEG},  0, 0, FLAGS, "range"},</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="视频解码-播放">视频解码&amp;播放</h2>
 <p>转码之后的视频，可以通过各种渠道分发到终端用户进行消费。对于大部分显示设备，例如CRT显示器、LCD、OLED，屏幕上的每个像素都是通过驱动三个非常靠近但仍然分开的小型 RGB 光源而构建的。<sup class="footnote-ref"><a href="#fn9" id="fnref9">[9]</a></sup> 因此，显示屏（监视器，电视机，屏幕等等）仅使用 RGB 模型，并以不同的方式来组织，并显示最终的图像。<sup class="footnote-ref"><a href="#fn10" id="fnref10">[10]</a></sup></p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/8.jpeg" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/8.jpeg" alt=""></p>
 <p>如前所述，不同的显示设备采用的 RGB 的色域并不一定相同，因此，RGB 是一种设备依赖型的颜色模型。<sup class="footnote-ref"><a href="#fn11" id="fnref11">[11]</a></sup>在 Mac 电脑上，可以通过显示器配置来选择显示器支持不同的 RGB 色域。</p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/10.jpg" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/10.jpg" alt=""></p>
 <h4 id="显示设备和相机的色域一致">显示设备和相机的色域一致</h4>
 <p>如果编码视频和播放视频的显示器采用的 RGB 色域是一致的，比如都是 sRGB，此时的播放过程相对比较简单。视频解码之后，得到 YUV 数据，然后根据标准将 YUV 数据转换成非线性的 sRGB 数据，然后显示器根据 sRGB 数据显示图像即可。</p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/11.png" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/11.png" alt=""></p>
 <h4 id="显示设备和相机的色域不一致">显示设备和相机的色域不一致</h4>
 <p>当显示设备支持的色域从 sRGB 变为 Rec. 2020 时，如果直接显示 sRGB 色域下的数据，则会导致比较严重的颜色失真。</p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/12.png" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/12.png" alt=""></p>
 <p>和转码阶段的色域转换类似，此时，也需要在不同的色域空间进行 RGB 数据的转换（<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Color_management">色彩管理</a>）以保证相同的视频在不同输入、输出、显示设备上都呈现出最好的颜色。</p>
 <p>对于显示设备而言，sRGB-&gt;RGB(Rec. 2020)的转换过程如下所示：</p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/13.png" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/13.png" alt=""></p>
 <p>因此，对于拍摄设备和显示设备的色域不同时，视频的播放增加了颜色管理的过程。<br>
-<img src="/2022/08/14/Why-so-much-color-space-in-video/14.png" alt></p>
+<img src="/2022/08/14/Why-so-much-color-space-in-video/14.png" alt=""></p>
 <h2 id="视频观看">视频观看</h2>
 <p>虽然视频信息的采集和最终终端播放采用的都是 RGB 的颜色模型，但是对人眼而言，RGB 其实并不直观，比如我们很难马上反应出<code>天青色</code>的 RGB 色值？</p>
 <p>为了能够更直观的表示颜色，又引入了 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/HSL_and_HSV">HSL</a> 色彩模型。HSL 比 RGB 更加直观，比如：想从黄色过度到红色，只需要调整色相即可，饱和度和亮度保持不变。因此，HSL 一般更适合人的色彩感知，而 RGB 更适合显示领域。</p>
 <p>为了让作品可以呈现出期望的效果，提升用户的视觉体验，在摄影后期，使用 HSL 对作品进行调整是最方便的一种方式。利用 HSL 对作品进行调整，简单几步就可以让灰暗的「马路随拍」秒变「街头大片」。<sup class="footnote-ref"><a href="#fn12" id="fnref12">[12]</a></sup></p>
-<p><img src="/2022/08/14/Why-so-much-color-space-in-video/16.webp" alt></p>
+<p><img src="/2022/08/14/Why-so-much-color-space-in-video/16.webp" alt=""></p>
 <p>FFmpeg 的 <code>signalstats</code> 滤镜可以分析获取视频的色调、饱和度、亮度信息。但是该滤镜获取的色调、饱和度和 <a target="_blank" rel="noopener" href="https://www.rapidtables.com/convert/color/rgb-to-hsl.html">HSL 中的计算</a> 是不一致的。</p>
 <p><code>signalstats</code> 计算色调、饱和度的算法如下所示：</p>
-<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mi>u</mi><mi>e</mi><mo>=</mo><mfrac><mn>180</mn><mi>π</mi></mfrac><mo>∗</mo><mi>a</mi><mi>r</mi><mi>c</mi><mi>t</mi><mi>a</mi><mi>n</mi><mfrac><mrow><mi>U</mi><mo>−</mo><mn>128</mn></mrow><mrow><mi>V</mi><mo>−</mo><mn>128</mn></mrow></mfrac><mo>+</mo><mn>180</mn><mo separator="true">,</mo><mi>a</mi><mi>r</mi><mi>c</mi><mi>t</mi><mi>a</mi><mi>n</mi><mfrac><mi>y</mi><mi>x</mi></mfrac><mo>∈</mo><mo stretchy="false">[</mo><mo>−</mo><mi>π</mi><mo separator="true">,</mo><mi>π</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Hue=\frac{180}{\pi} * arctan{\frac{U-128}{V-128}} + 180, arctan{\frac{y}{x}} \in [-\pi, \pi]
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mord mathdefault">u</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.00744em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.32144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">π</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mord">8</span><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.1296600000000003em;vertical-align:-0.7693300000000001em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">c</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.36033em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">8</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">8</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7693300000000001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.7935599999999998em;vertical-align:-0.686em;"></span><span class="mord">1</span><span class="mord">8</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">c</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1075599999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">x</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="mclose">]</span></span></span></span></span></p>
-<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>a</mi><mi>t</mi><mi>u</mi><mi>r</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo>=</mo><msqrt><mrow><mo stretchy="false">(</mo><mi>U</mi><mo>−</mo><mn>128</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>+</mo><mo stretchy="false">(</mo><mi>V</mi><mo>−</mo><mn>128</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">Saturation=\sqrt{(U-128)^2 + (V-128)^2}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">u</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.24em;vertical-align:-0.25612499999999994em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.983875em;"><span class="svg-align" style="top:-3.2em;"><span class="pstrut" style="height:3.2em;"></span><span class="mord" style="padding-left:1em;"><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">8</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.740108em;"><span style="top:-2.9890000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord">8</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.740108em;"><span style="top:-2.9890000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-2.9438750000000002em;"><span class="pstrut" style="height:3.2em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.28em;"><svg width="400em" height="1.28em" viewbox="0 0 400000 1296" preserveaspectratio="xMinYMin slice"><path d="M263,681c0.7,0,18,39.7,52,119
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>H</mi><mi>u</mi><mi>e</mi><mo>=</mo><mfrac><mn>180</mn><mi>π</mi></mfrac><mo>∗</mo><mi>a</mi><mi>r</mi><mi>c</mi><mi>t</mi><mi>a</mi><mi>n</mi><mfrac><mrow><mi>U</mi><mo>−</mo><mn>128</mn></mrow><mrow><mi>V</mi><mo>−</mo><mn>128</mn></mrow></mfrac><mo>+</mo><mn>180</mn><mo separator="true">,</mo><mi>a</mi><mi>r</mi><mi>c</mi><mi>t</mi><mi>a</mi><mi>n</mi><mfrac><mi>y</mi><mi>x</mi></mfrac><mo>∈</mo><mo stretchy="false">[</mo><mo>−</mo><mi>π</mi><mo separator="true">,</mo><mi>π</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Hue=\frac{180}{\pi} * arctan{\frac{U-128}{V-128}} + 180, arctan{\frac{y}{x}} \in [-\pi, \pi]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0813em;">H</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0074em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0359em;">π</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">180</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.1297em;vertical-align:-0.7693em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.0278em;">r</span><span class="mord mathnormal">c</span><span class="mord mathnormal">t</span><span class="mord mathnormal">an</span><span class="mord"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">128</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">U</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">128</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7693em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.7936em;vertical-align:-0.686em;"></span><span class="mord">180</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.0278em;">r</span><span class="mord mathnormal">c</span><span class="mord mathnormal">t</span><span class="mord mathnormal">an</span><span class="mord"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1076em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">x</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0359em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord mathnormal" style="margin-right:0.0359em;">π</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0359em;">π</span><span class="mclose">]</span></span></span></span></span></p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>S</mi><mi>a</mi><mi>t</mi><mi>u</mi><mi>r</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo>=</mo><msqrt><mrow><mo stretchy="false">(</mo><mi>U</mi><mo>−</mo><mn>128</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>+</mo><mo stretchy="false">(</mo><mi>V</mi><mo>−</mo><mn>128</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">Saturation=\sqrt{(U-128)^2 + (V-128)^2}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0576em;">S</span><span class="mord mathnormal">a</span><span class="mord mathnormal">t</span><span class="mord mathnormal">u</span><span class="mord mathnormal" style="margin-right:0.0278em;">r</span><span class="mord mathnormal">a</span><span class="mord mathnormal">t</span><span class="mord mathnormal">i</span><span class="mord mathnormal">o</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.24em;vertical-align:-0.2561em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9839em;"><span class="svg-align" style="top:-3.2em;"><span class="pstrut" style="height:3.2em;"></span><span class="mord" style="padding-left:1em;"><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.109em;">U</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">128</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.2222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">128</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-2.9439em;"><span class="pstrut" style="height:3.2em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.28em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.28em" viewBox="0 0 400000 1296" preserveAspectRatio="xMinYMin slice"><path d="M263,681c0.7,0,18,39.7,52,119
 c34,79.3,68.167,158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120
 c340,-704.7,510.7,-1060.3,512,-1067
 l0 -0
@@ -512,7 +603,7 @@ s-271.3,567,-271.3,567c-38.7,80.7,-84,175,-136,283c-52,108,-89.167,185.3,-111.5,
 c-22.3,46.7,-33.8,70.3,-34.5,71c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1
 s-109,-253,-109,-253c-72.7,-168,-109.3,-252,-110,-252c-10.7,8,-22,16.7,-34,26
 c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26s76,-59,76,-59s76,-60,76,-60z
-M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.25612499999999994em;"><span></span></span></span></span></span></span></span></span></span></p>
+M1001 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2561em;"><span></span></span></span></span></span></span></span></span></span></p>
 <p>如果需要得到视频的标准 HSL 信息，可以使用作者开发的 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2022/08/14/Why-so-much-color-space-in-video/vf_hsl.c">vf_hsl 滤镜</a>。</p>
 <h2 id="总结">总结</h2>
 <p>虽然颜色还是那个颜色，但是不同的颜色空间的适用范围并不相同：</p>
@@ -553,7 +644,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </li>
 </ol>
 </section>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

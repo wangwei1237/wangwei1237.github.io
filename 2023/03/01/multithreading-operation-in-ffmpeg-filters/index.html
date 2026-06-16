@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="在图像处理中，可以通过滤镜来实现多种多样的图像特殊效果。同样的，在视频处理中，滤镜的概念也基本相似——滤镜指的是在编码之前针对解码器解码出来的原始数据（即音视频帧）进行处理的动作。">
 <meta property="og:type" content="article">
@@ -17,7 +108,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2023/03/01/multithreading-operation-in-ffmpeg-filters/2.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2023/03/01/multithreading-operation-in-ffmpeg-filters/3.jpeg">
 <meta property="article:published_time" content="2023-03-01T14:55:32.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.771Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.205Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="FFmpeg">
 <meta property="article:tag" content="多线程">
@@ -132,18 +223,18 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/1.png" alt></p>
+  <html><head></head><body><p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/1.png" alt=""></p>
 <p>在图像处理中，可以通过滤镜来实现多种多样的图像特殊效果。同样的，在视频处理中，滤镜的概念也基本相似——滤镜指的是在编码之前针对解码器解码出来的原始数据（即音视频帧）进行处理的动作。</p>
 <span id="more"></span>
 <h2 id="1-ffmpeg-滤镜的基本概念">1. FFmpeg 滤镜的基本概念</h2>
 <p>FFmpeg 通过 libavfilter 库来实现滤镜的功能，并且在 FFmpeg 中，可以通过滤镜来对输入视频进行各种各样的处理。</p>
 <p>FFmpeg中，滤镜的处理位置如下图所示：</p>
-<p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/2.png" alt></p>
+<p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/2.png" alt=""></p>
 <p>例如，如果我们要对一个视频从中间部分进行“镜像”操作，则可以用如下的“滤镜链”来实现：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">                [main]</span><br><span class="line">input --&gt; split ---------------------&gt; overlay --&gt; output</span><br><span class="line">            |                             ^</span><br><span class="line">            |[tmp]                  [flip]|</span><br><span class="line">            |                             |</span><br><span class="line">            +-----&gt; crop --&gt; vflip -------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">                [main]</span><br><span class="line">input --&gt; split ---------------------&gt; overlay --&gt; output</span><br><span class="line">            |                             ^</span><br><span class="line">            |[tmp]                  [flip]|</span><br><span class="line">            |                             |</span><br><span class="line">            +-----&gt; crop --&gt; vflip -------+</span><br></pre></td></tr></tbody></table></figure>
 <p>在这个“滤镜链”图中，利用 <code>split</code> 滤镜把输入流分离成了两路流，其中一路通过 <code>crop</code> 滤镜和 <code>vfilp</code> 滤镜的同一路级联应用，再同另外一路一起通过 <code>overlay</code> 滤镜处理的流合成并输出最终处理之后的视频。</p>
 <p>如上操作对应的 FFmpeg 命令如下所示：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i INPUT -vf &quot;split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2&quot; OUTPUT</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i INPUT -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2" OUTPUT</span><br></pre></td></tr></tbody></table></figure>
 <p>更详细的 FFmpeg 滤镜的相关内容可以参考 <a target="_blank" rel="noopener" href="http://ffmpeg.org/ffmpeg-filters.html">FFmpeg Filters Documentation</a>。</p>
 <h2 id="2-ffmpeg-滤镜开发简介">2. FFmpeg 滤镜开发简介</h2>
 <p>根据 <a target="_blank" rel="noopener" href="https://trac.ffmpeg.org/wiki/FilteringGuide">FFmpeg Filtering Guide</a>，可以在 <a target="_blank" rel="noopener" href="https://wiki.multimedia.cx/index.php/FFmpeg_filter_HOWTO">FFmpeg filter HOWTO</a> 的帮助下来编写 FFmpeg 滤镜，为 FFmpeg 增加新的能力。</p>
@@ -228,38 +319,38 @@
   }
   </style>
 <div class="admonition note"><p class="admonition-title">slice 基本概念
-</p><p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/3.jpeg" alt>
+</p><p><img src="/2023/03/01/multithreading-operation-in-ffmpeg-filters/3.jpeg" alt="">
 <br> 如上图所示，在滤镜计算过程中，视频帧被分割成若干单独的 <code>slice(切片)</code>，不同的 <code>slice</code> 可以同时并行执行滤镜操作。</p>
 <p>实际上，在计算过程中，可以简单的把 <code>slice</code> 理解为由多行构成的帧数据。因此，<code>slice-级别</code> 的多线程实际上就是按行将图像拆分为多个 <code>slice</code>，然后多个 <code>slice</code> 之间并行执行滤镜计算。</p>
 </div>
 <h3 id="3-1-slice-分割">3.1 slice 分割</h3>
 <p>对于单线程的滤镜操作，整体代码实现如下所示：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ......</span></span><br><span class="line"><span class="keyword">for</span> (y = <span class="number">0</span>; y &lt; inlink-&gt;h; y++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (x = <span class="number">0</span>; x &lt; inlink-&gt;w; x++) &#123;</span><br><span class="line">        dst[x] = foobar(src[x]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ......</span></span><br><span class="line"><span class="keyword">for</span> (y = <span class="number">0</span>; y &lt; inlink-&gt;h; y++) {</span><br><span class="line">    <span class="keyword">for</span> (x = <span class="number">0</span>; x &lt; inlink-&gt;w; x++) {</span><br><span class="line">        dst[x] = foobar(src[x]);</span><br><span class="line">    }</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>为了使如上的代码可以进行 <code>slice-级别</code> 的并行计算，需要做如下的修改：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ......</span></span><br><span class="line"><span class="keyword">for</span> (y = slice_start; y &lt; slice_end; y++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (x = <span class="number">0</span>; x &lt; inlink-&gt;w; x++) &#123;</span><br><span class="line">        dst[x] = foobar(src[x]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ......</span></span><br><span class="line"><span class="keyword">for</span> (y = slice_start; y &lt; slice_end; y++) {</span><br><span class="line">    <span class="keyword">for</span> (x = <span class="number">0</span>; x &lt; inlink-&gt;w; x++) {</span><br><span class="line">        dst[x] = foobar(src[x]);</span><br><span class="line">    }</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>其中，<code>slice_start</code>，<code>slice_end</code> 在回调函数 <code>avfilter_action_func</code> 中根据线程的数量来定义，一般而言，其定义的代码如下所示：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> slice_start = (in-&gt;height *  jobnr     ) / nb_jobs;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> slice_end   = (in-&gt;height * (jobnr + <span class="number">1</span>)) / nb_jobs;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> slice_start = (in-&gt;height *  jobnr     ) / nb_jobs;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> slice_end   = (in-&gt;height * (jobnr + <span class="number">1</span>)) / nb_jobs;</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="3-2-定义-threaddata">3.2 定义 ThreadData</h3>
 <p><code>avfilter_action_func</code> 的定义位于 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/avfilter.h">libavfilter/avfilter.h</a> 中：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A function pointer passed to the @ref AVFilterGraph.execute callback to be</span></span><br><span class="line"><span class="comment"> * executed multiple times, possibly in parallel.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param ctx the filter context the job belongs to</span></span><br><span class="line"><span class="comment"> * @param arg an opaque parameter passed through from @ref</span></span><br><span class="line"><span class="comment"> *            AVFilterGraph.execute</span></span><br><span class="line"><span class="comment"> * @param jobnr the index of the job being executed</span></span><br><span class="line"><span class="comment"> * @param nb_jobs the total number of jobs</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return 0 on success, a negative AVERROR on error</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(avfilter_action_func)</span><span class="params">(AVFilterContext *ctx, <span class="keyword">void</span> *arg, <span class="keyword">int</span> jobnr, <span class="keyword">int</span> nb_jobs)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A function pointer passed to the @ref AVFilterGraph.execute callback to be</span></span><br><span class="line"><span class="comment"> * executed multiple times, possibly in parallel.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param ctx the filter context the job belongs to</span></span><br><span class="line"><span class="comment"> * @param arg an opaque parameter passed through from @ref</span></span><br><span class="line"><span class="comment"> *            AVFilterGraph.execute</span></span><br><span class="line"><span class="comment"> * @param jobnr the index of the job being executed</span></span><br><span class="line"><span class="comment"> * @param nb_jobs the total number of jobs</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return 0 on success, a negative AVERROR on error</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="title function_">int</span> <span class="params">(avfilter_action_func)</span><span class="params">(AVFilterContext *ctx, <span class="type">void</span> *arg, <span class="type">int</span> jobnr, <span class="type">int</span> nb_jobs)</span>;</span><br></pre></td></tr></tbody></table></figure>
 <p>根据如上的文档可知，为了使得 <code>avfilter_action_func</code> 可以并行执行，需要通过 <code>arg</code> 参数将滤镜执行需要的数据传递到回调函数中。一般而言，可以通过定义一个 <code>ThreadData</code> 的结构来打包滤镜计算所需要的信息：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">ThreadData</span> &#123;</span></span><br><span class="line">    AVFrame *in, *out;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125; ThreadData;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">ThreadData</span> {</span></span><br><span class="line">    AVFrame *in, *out;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">} ThreadData;</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="3-3-修改-filter-frame">3.3 修改 filter_frame</h3>
 <p>最后，在 <code>filter_frame()</code> 中，我们需要调用 <code>threading distributor</code> 以实现滤镜的并行执行。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ThreadData td;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">td.in  = in;</span><br><span class="line">td.out = out;</span><br><span class="line"></span><br><span class="line">ff_filter_execute(ctx, filter_slice, &amp;td, <span class="literal">NULL</span>, FFMIN(outlink-&gt;h, ff_filter_get_nb_threads(ctx)));</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ThreadData td;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">td.in  = in;</span><br><span class="line">td.out = out;</span><br><span class="line"></span><br><span class="line">ff_filter_execute(ctx, filter_slice, &amp;td, <span class="literal">NULL</span>, FFMIN(outlink-&gt;h, ff_filter_get_nb_threads(ctx)));</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></tbody></table></figure>
 <h3 id="3-4-修改-avfilter-flags">3.4 修改 AVFilter.flags</h3>
 <p>到此为止，我们已经让滤镜具备的多线程并行执行的能力，但是为了能够实现并行计算的能力，我们还要修改 <code>AVFilter.flags</code>，并为其增加 <code>AVFILTER_FLAG_SLICE_THREADS</code> 属性。</p>
 <p>在 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/avfilter.h">libavfilter/avfilter.h</a> 中，<code>AVFILTER_FLAG_SLICE_THREADS</code> 的定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The filter supports multithreading by splitting frames </span></span><br><span class="line"><span class="comment"> * into multiple parts and processing them concurrently.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AVFILTER_FLAG_SLICE_THREADS         (1 &lt;&lt; 2)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The filter supports multithreading by splitting frames </span></span><br><span class="line"><span class="comment"> * into multiple parts and processing them concurrently.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> AVFILTER_FLAG_SLICE_THREADS         (1 &lt;&lt; 2)</span></span><br></pre></td></tr></tbody></table></figure>
 <h2 id="4-多线程滤镜-demo">4. 多线程滤镜 Demo</h2>
 <p>在 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io/blob/master/2023/03/01/multithreading-operation-in-ffmpeg-filters/vf_ms.c">vf_ms.c</a> 中，我们实现了一个简单的滤镜，该滤镜仅提供了一个参数（<code>ms</code>）用来控制是否启用多线程。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ffmpeg -<span class="built_in">help</span> filter=ms</span></span><br><span class="line"></span><br><span class="line">Filter ms</span><br><span class="line">  Test for the multithreading filter.</span><br><span class="line">    slice threading supported</span><br><span class="line">    Inputs:</span><br><span class="line">       #0: default (video)</span><br><span class="line">    Outputs:</span><br><span class="line">       #0: default (video)</span><br><span class="line">ms AVOptions:</span><br><span class="line">   ms                &lt;boolean&gt;    ..FV....... Multithreading or not (default false)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ffmpeg -<span class="built_in">help</span> filter=ms</span></span><br><span class="line"></span><br><span class="line">Filter ms</span><br><span class="line">  Test for the multithreading filter.</span><br><span class="line">    slice threading supported</span><br><span class="line">    Inputs:</span><br><span class="line">       #0: default (video)</span><br><span class="line">    Outputs:</span><br><span class="line">       #0: default (video)</span><br><span class="line">ms AVOptions:</span><br><span class="line">   ms                &lt;boolean&gt;    ..FV....... Multithreading or not (default false)</span><br></pre></td></tr></tbody></table></figure>
 <p>在相同的机器上对如上滤镜进行测试，在不开启多线程的情况下，其性能如下所示：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ffmpeg -i ./test.mp4 -vf ms=ms=0 -f null -</span></span><br><span class="line"></span><br><span class="line">frame= 2455 fps= 88 q=-0.0 Lsize=N/A time=00:01:43.12 bitrate=N/A speed=3.71x</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ffmpeg -i ./test.mp4 -vf ms=ms=0 -f null -</span></span><br><span class="line"></span><br><span class="line">frame= 2455 fps= 88 q=-0.0 Lsize=N/A time=00:01:43.12 bitrate=N/A speed=3.71x</span><br></pre></td></tr></tbody></table></figure>
 <p>在开启多线程时，其性能如下所示：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ffmpeg -i ./test.mp4 -vf ms=ms=1 -f null -</span></span><br><span class="line"></span><br><span class="line">frame= 2455 fps= 97 q=-0.0 Lsize=N/A time=00:01:43.12 bitrate=N/A speed=4.07x</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ffmpeg -i ./test.mp4 -vf ms=ms=1 -f null -</span></span><br><span class="line"></span><br><span class="line">frame= 2455 fps= 97 q=-0.0 Lsize=N/A time=00:01:43.12 bitrate=N/A speed=4.07x</span><br></pre></td></tr></tbody></table></figure>
 <p>当然，如上的测试不是一个严格的测试过程，因此并不能用该测试来证明启用多线程就一定能提升滤镜的性能。但是，从如上的对比可知，开启多线程计算时，针对该滤镜算法，其性能大概有 10% 左右的提升。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

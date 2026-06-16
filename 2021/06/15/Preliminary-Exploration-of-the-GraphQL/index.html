@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="早在 2019 年的时候，我在 InfoQ 上读到了一篇携程介绍其关于 GraphQL 探索的文章：全面解析 GraphQL，携程微服务背景下的前后端数据交互方案。这是我第一次接触到 GraphQL 的概念，当时并没有做深入的了解和学习，后来，在工作中，这个概念也在脑海中慢慢的淡化了。 今年 3 月份的时候，我在 InfoQ 上读到了爱奇艺关于 GraphQL 落地的文章：减少重复开发，Grap">
 <meta property="og:type" content="article">
@@ -16,7 +107,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2021/06/15/Preliminary-Exploration-of-the-GraphQL/1.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2021/06/15/Preliminary-Exploration-of-the-GraphQL/2.png">
 <meta property="article:published_time" content="2021-06-15T13:55:38.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.396Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.865Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="GraphQL">
 <meta name="twitter:card" content="summary_large_image">
@@ -106,7 +197,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">4.2k</span>
+            <span class="post-count">4.1k</span>
         </span>
     </span>
 
@@ -130,7 +221,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2021/06/15/Preliminary-Exploration-of-the-GraphQL/1.jpg" alt></p>
+  <html><head></head><body><p><img src="/2021/06/15/Preliminary-Exploration-of-the-GraphQL/1.jpg" alt=""></p>
 <p>早在 2019 年的时候，我在 InfoQ 上读到了一篇携程介绍其关于 GraphQL 探索的文章：<a target="_blank" rel="noopener" href="https://www.infoq.cn/article/xZ0ws6_A5jmrJ6ZTPOz8">全面解析 GraphQL，携程微服务背景下的前后端数据交互方案</a>。这是我第一次接触到 GraphQL 的概念，当时并没有做深入的了解和学习，后来，在工作中，这个概念也在脑海中慢慢的淡化了。</p>
 <p>今年 3 月份的时候，我在 InfoQ 上读到了爱奇艺关于 GraphQL 落地的文章：<a target="_blank" rel="noopener" href="https://www.infoq.cn/article/cWTUJhYMT6DjGQOHIse2">减少重复开发，GraphQL 在低代码平台如何落地？</a>。刚开始觉得这个概念似曾相识，于是就搜索了一下，然后勾起了初次听到 GraphQL 的记忆。接下来，我在 InfoQ 上搜索了和 GraphQL 相关的内容，才发现原来有很多文章已经在介绍 GraphQL。同时，我在 GitHub 的文档中发现 GitHub 也提供了 <a target="_blank" rel="noopener" href="https://docs.github.com/en/graphql">GraphQL API 文档</a>，技术的敏感性促使我下定决心来仔细&amp;深入的了解 GraphQL。</p>
 <p>于是，我在 <a target="_blank" rel="noopener" href="https://www.manning.com/">manning</a> 上找到了 <a target="_blank" rel="noopener" href="https://www.manning.com/books/graphql-in-action">GraphQL in Action</a>（我一般会试图在这个站点找到希望了解的技术领域的最新的书籍）， 然后参照这本书，开启了我的 GraphQL 之旅。</p>
@@ -152,9 +243,9 @@
 <p>在 GraphQL 中，类型系统用于描述 GraphQL Server 的能力并用于判断一个查询是否有效。类型系统还描述了查询参数的输入类型，并在 GraphQL Runtime 中检查参数值的有效性。</p>
 <p>一个 GraphQL 服务是通过定义<code>类型</code>和<code>类型</code>上的<code>字段</code>来创建的，然后给每个<code>类型</code>上的每个<code>字段</code>提供<code>解析函数</code>。</p>
 <p>例如，在 <a target="_blank" rel="noopener" href="https://docs.github.com/en/graphql/overview/explorer">Github GraphQL Server</a> 中，使用 <code>viewer</code> 字段来描述当前登录用户的信息，而 <code>viewer</code> 的<code>类型</code>为 <code>User</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">type Query &#123;</span><br><span class="line">  viewer: User!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type User &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  location: <span class="built_in">String</span></span><br><span class="line">  login: <span class="built_in">String</span>!</span><br><span class="line">  name: <span class="built_in">String</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">type <span class="title class_">Query</span> {</span><br><span class="line">  <span class="attr">viewer</span>: <span class="title class_">User</span>!</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">type <span class="title class_">User</span> {</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="attr">location</span>: <span class="title class_">String</span></span><br><span class="line">  <span class="attr">login</span>: <span class="title class_">String</span>!</span><br><span class="line">  <span class="attr">name</span>: <span class="title class_">String</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>一旦启动某个 GraphQL Server，它就能接收 GraphQL 查询，并验证和执行该查询。GraphQL Server 首先会检查该查询以确保它只引用了已定义的<code>类型</code>和<code>字段</code>，然后运行指定的<code>解析函数</code>来生成结果。例如，我们可以在 <a target="_blank" rel="noopener" href="https://docs.github.com/en/graphql/overview/explorer">Github GraphQL Server</a> 中运行如下的查询：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">query &#123; </span><br><span class="line">  viewer &#123; </span><br><span class="line">    login</span><br><span class="line">    name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">query { </span><br><span class="line">  viewer { </span><br><span class="line">    login</span><br><span class="line">    name</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>从如上的例子可以看出，GraphQL 实际上是一种强类型的 API。与使用普通的 REST API 相比，强类型系统是 GraphQL 最吸引我的地方之一。在我看来，正是 GraphQL 强类型的特性，开创了 API 的新天地。</p>
 <p>在我看来，REST API 缺乏<code>类型系统</code>特性在开发中会引入很多的问题，工作中，我经常会遇到如下的情况：</p>
 <ul>
@@ -173,19 +264,19 @@
 <p>之所以说 GraphQL 是革命性的新技术，我觉得就在于此。GraphQL 改变了服务之间交互的方式，让通信双方在交互的过程中更加平等，改变了之前响应数据完全由 Server 端说了算的局面。如今，在 GraphQL 中，客户端（消费端）可以以更加平等的地位，更加积极的参与到整个的数据交互过程。</p>
 <p>借助于 GraphQL 的类型系统，客户端可以更加自由的根据自己的需求来获得自己的所需，而无需收到 Server 端的限制。</p>
 <p>在我的个人博客站点中，我采用 <a target="_blank" rel="noopener" href="https://docs.github.com/en/actions">github action</a> 来编译并发布站点内容。站点中，会有很多基于 <a target="_blank" rel="noopener" href="https://www.gitbook.com/">gitbook</a> 的书籍，并且每一本书都对应一个 github 仓库。为了加快站点的发布速度，对于每一本书籍而言，都会提前编译并且将编译产物置于 latest release 中。在发布主站内容时，我利用 <a target="_blank" rel="noopener" href="https://github.com/wangwei1237/wangwei1237.github.io_src/blob/master/build_books.sh">build_books.sh</a> 脚本来获取书籍的 release 产物。如果采用REST API，则相对比较简单，直接请求如下的 <code>end point</code> 即可：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//api.github.com/repos/wangwei1237/$&#123;BOOKS[i]&#125;/releases/latest</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">https</span>:<span class="comment">//api.github.com/repos/wangwei1237/${BOOKS[i]}/releases/latest</span></span><br></pre></td></tr></tbody></table></figure>
 <p>这种情况下，我只需要对应的 <code>assets.browser_download_url</code>字段，但是使用 REST API 我没办法控制接口的返回数据，即便我只需要某一个字段，接口还是会返给我所有的数据。</p>
 <p>而如果使用 GraphQL，我就可以自己说了算了：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GraphQL Query</span></span><br><span class="line">query <span class="function"><span class="title">getBooksAssetUrl</span>(<span class="params">$repo: <span class="built_in">String</span>!, $owner: <span class="built_in">String</span>!</span>)</span> &#123; </span><br><span class="line">  <span class="function"><span class="title">repository</span>(<span class="params">name: $repo, owner: $owner</span>)</span> &#123;</span><br><span class="line">    latestRelease &#123;</span><br><span class="line">      <span class="function"><span class="title">releaseAssets</span>(<span class="params">first: <span class="number">1</span></span>)</span> &#123;</span><br><span class="line">        nodes &#123;</span><br><span class="line">          downloadUrl</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Variables</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;repo&quot;</span>: <span class="string">&quot;monolith-to-microservices&quot;</span>,</span><br><span class="line">  <span class="string">&quot;owner&quot;</span>: <span class="string">&quot;wangwei1237&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Response</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;repository&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;latestRelease&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;releaseAssets&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;nodes&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">              <span class="string">&quot;downloadUrl&quot;</span>: <span class="string">&quot;https://github.com/wangwei1237/monolith-to-microservices/releases/download/v1.1.1/monolith-to-microservices.tar.gz&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">          ]</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GraphQL Query</span></span><br><span class="line">query <span class="title function_">getBooksAssetUrl</span>(<span class="params">$repo: <span class="built_in">String</span>!, $owner: <span class="built_in">String</span>!</span>) { </span><br><span class="line">  <span class="title function_">repository</span>(<span class="params">name: $repo, owner: $owner</span>) {</span><br><span class="line">    latestRelease {</span><br><span class="line">      <span class="title function_">releaseAssets</span>(<span class="params">first: <span class="number">1</span></span>) {</span><br><span class="line">        nodes {</span><br><span class="line">          downloadUrl</span><br><span class="line">        }</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Variables</span></span><br><span class="line">{</span><br><span class="line">  <span class="string">"repo"</span>: <span class="string">"monolith-to-microservices"</span>,</span><br><span class="line">  <span class="string">"owner"</span>: <span class="string">"wangwei1237"</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Response</span></span><br><span class="line">{</span><br><span class="line">  <span class="string">"data"</span>: {</span><br><span class="line">    <span class="string">"repository"</span>: {</span><br><span class="line">      <span class="string">"latestRelease"</span>: {</span><br><span class="line">        <span class="string">"releaseAssets"</span>: {</span><br><span class="line">          <span class="string">"nodes"</span>: [</span><br><span class="line">            {</span><br><span class="line">              <span class="string">"downloadUrl"</span>: <span class="string">"https://github.com/wangwei1237/monolith-to-microservices/releases/download/v1.1.1/monolith-to-microservices.tar.gz"</span></span><br><span class="line">            }</span><br><span class="line">          ]</span><br><span class="line">        }</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>因此，在这种情况下，GraphQL 完美的避免了不必要的数据传输（overfetching）<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup>,尤其是对于如下的场景：流量较大，网络较差，针对不同的客户端返回不同数据……，这个特性尤为重要。更重要的是，这个特性改变了通信双方的话语权。</p>
 <h4 id="精确预测响应数据">精确预测响应数据</h4>
 <p>GraphQL 不但改变了通信双方的话语权，还使得客户端可以精确的预测服务端的响应。在使用 REST API 时，我们需要借助各种 API 文档才能<strong>大概</strong>预测请求的响应，在开发中，这确实是一件非常讨厌的事情。无法精确的预测请求的响应，这回直接导致代码的容错性大大折扣。谁能确保所有的接口的接口文档都会详细的穷举所有情况下的接口响应呢？据我的经验而言，很难……</p>
 <p>当我请求一个没有 release 产物的的仓库时，根据 GraphQL 的类型系统，我会预测到，此时 GraphQL 会返回 null，如下所示：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// latestRelease type</span></span><br><span class="line">latestRelease: Release</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Variables</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;repo&quot;</span>: <span class="string">&quot;wangwei1237.github.io&quot;</span>,</span><br><span class="line">  <span class="string">&quot;owner&quot;</span>: <span class="string">&quot;wangwei1237&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Response</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;repository&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;latestRelease&quot;</span>: <span class="literal">null</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// latestRelease type</span></span><br><span class="line"><span class="attr">latestRelease</span>: <span class="title class_">Release</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Variables</span></span><br><span class="line">{</span><br><span class="line">  <span class="string">"repo"</span>: <span class="string">"wangwei1237.github.io"</span>,</span><br><span class="line">  <span class="string">"owner"</span>: <span class="string">"wangwei1237"</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// Query Response</span></span><br><span class="line">{</span><br><span class="line">  <span class="string">"data"</span>: {</span><br><span class="line">    <span class="string">"repository"</span>: {</span><br><span class="line">      <span class="string">"latestRelease"</span>: <span class="literal">null</span></span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <h4 id="graphql-api-的版本控制">GraphQL API 的版本控制</h4>
 <p>对于 API 的版本控制而言，GraphQL 借鉴了其他语言中的 <code>@deprecated注解</code>。如果经受过 REST API 的版本控制之痛，经受过那些 v1，v2，……，那么你也会像我一样，喜欢 GraphQL 提供的这一特性。</p>
 <p>摘录Samer Buna在 <a target="_blank" rel="noopener" href="https://wangwei1237.gitee.io/shares/GraphQL_in_Action.pdf">《GraphQL in Action》</a> 中的例子如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">type Query &#123;</span><br><span class="line">  hello: <span class="built_in">String</span></span><br><span class="line">  currentTime: <span class="built_in">String</span></span><br><span class="line">  sumNumbersInRange(begin: Int!, end: Int!): Int! @deprecated(reason: <span class="string">&quot;use new fields numbersInRange&quot;</span>)</span><br><span class="line">  numbersInRange(begin: Int!, end: Int!): NumbersInRange!</span><br><span class="line">  taskMainList: [Task!]</span><br><span class="line">  taskInfo(taskId: ID!): Task!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;</span><span class="string">&quot;Aggregate info on a range numbers&quot;</span><span class="string">&quot;&quot;</span></span><br><span class="line">type NumbersInRange &#123;</span><br><span class="line">  sum: Int!</span><br><span class="line">  count: Int!</span><br><span class="line">  avg: Float!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">type <span class="title class_">Query</span> {</span><br><span class="line">  <span class="attr">hello</span>: <span class="title class_">String</span></span><br><span class="line">  <span class="attr">currentTime</span>: <span class="title class_">String</span></span><br><span class="line">  <span class="title function_">sumNumbersInRange</span>(<span class="attr">begin</span>: <span class="title class_">Int</span>!, <span class="attr">end</span>: <span class="title class_">Int</span>!): <span class="title class_">Int</span>! @<span class="title function_">deprecated</span>(<span class="attr">reason</span>: <span class="string">"use new fields numbersInRange"</span>)</span><br><span class="line">  <span class="title function_">numbersInRange</span>(<span class="attr">begin</span>: <span class="title class_">Int</span>!, <span class="attr">end</span>: <span class="title class_">Int</span>!): <span class="title class_">NumbersInRange</span>!</span><br><span class="line">  <span class="attr">taskMainList</span>: [<span class="title class_">Task</span>!]</span><br><span class="line">  <span class="title function_">taskInfo</span>(<span class="attr">taskId</span>: <span class="variable constant_">ID</span>!): <span class="title class_">Task</span>!</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="string">""</span><span class="string">"Aggregate info on a range numbers"</span><span class="string">""</span></span><br><span class="line">type <span class="title class_">NumbersInRange</span> {</span><br><span class="line">  <span class="attr">sum</span>: <span class="title class_">Int</span>!</span><br><span class="line">  <span class="attr">count</span>: <span class="title class_">Int</span>!</span><br><span class="line">  <span class="attr">avg</span>: <span class="title class_">Float</span>!</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>对于 <code>sumNumbersInRange</code> 字段，使用 <code>@deprecated</code> 标志该字段是废弃字段，并且利用 <code>reason</code> 参数来将该废弃字段和推荐的新字段关联起来。如果配合 IDE 的代码扫描能力，当在接口中请求 <code>sumNumbersInRange</code> 的时候，IDE 给出对应的废弃提示和原因，那么经过一段时间的迭代，标记为 <code>@deprecated</code> 的字段就会慢慢消失在产品代码中。这会使得 API 的版本管理更加容易，也使得客户端更加容易理解 API 的进化和向后兼容。</p>
 <p>而使用 REST API 的时候，在没有这种类似机制的帮助下，我经常会使用了上游服务准备 <code>deprecated</code> 的字段，因此，在这种情况下，准备废弃的字段不得不为了兼容而永久的保留在了服务之中。</p>
 <p>我见过一个 REST API，这个 API 经过好几年的发展，每次请求都会返回 10K+ 的数据，并且里面有很多字段的含义基本一致，只不过是有些字段为了兼容某个特定的需求而增加。这个 API 中的字段谁也不敢动，能做的只能是随着需求的增加而不断的增加该 API 的规模。开发这个 API 是一件非常可怕的事情。</p>
@@ -296,7 +387,7 @@
 <li>……</li>
 </ul>
 </div>
-<p><img src="/2021/06/15/Preliminary-Exploration-of-the-GraphQL/2.png" alt></p>
+<p><img src="/2021/06/15/Preliminary-Exploration-of-the-GraphQL/2.png" alt=""></p>
 <h2 id="graphql-分享">GraphQL 分享</h2>
 <p>下载地址：<a target="_blank" rel="noopener" href="https://github.com/wangwei1237/docs/releases/download/v1.0.0/GraphQL_in_Action.pdf">https://github.com/wangwei1237/docs/releases/download/v1.0.0/GraphQL_in_Action.pdf</a></p>
 <h2 id="后记">后记</h2>
@@ -338,7 +429,7 @@
 </li>
 </ol>
 </section>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

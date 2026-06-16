@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="背景 很多系统都会用json格式进行数据交互。为了保证数据在系统上下游的自动校验，避免数据结构异常带来的系统稳定性问题，可以采用json-schema来定义json接口，并利用json-schema-validator来校验接口响应的结构的合法性。 然而系统中不同子系统的实现（编程语言）并非总是一致，虽然各种语言都提供了json-schema-validator的具体实现，但是不同语言支持的jso">
 <meta property="og:type" content="article">
@@ -16,7 +107,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2020/06/13/write-python-library-using-c-with-boost-python/1.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2020/06/13/write-python-library-using-c-with-boost-python/2.jpg">
 <meta property="article:published_time" content="2020-06-13T15:48:18.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.822Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.252Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="Boost::Python">
 <meta property="article:tag" content="setup.py">
@@ -108,7 +199,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">1.3k</span>
         </span>
     </span>
 
@@ -117,7 +208,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6 分钟</span>
+            <span class="post-count">5 分钟</span>
         </span>
     </span>
 </div>
@@ -132,7 +223,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="背景">背景</h2>
+  <html><head></head><body><h2 id="背景">背景</h2>
 <p>很多系统都会用<code>json</code>格式进行数据交互。为了保证数据在系统上下游的自动校验，避免数据结构异常带来的系统稳定性问题，可以采用<a target="_blank" rel="noopener" href="http://json-schema.org"><code>json-schema</code></a>来定义<code>json接口</code>，并利用<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/draft-handrews-json-schema-validation"><code>json-schema-validator</code></a>来校验接口响应的结构的合法性。</p>
 <p>然而系统中不同子系统的实现（编程语言）并非总是一致，虽然各种语言都提供了<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/draft-handrews-json-schema-validation"><code>json-schema-validator</code></a>的具体实现，但是不同语言支持的<code>json-schema-validator</code>标准的版本并非完全一致，这会对后续的使用带来一些混乱，例如：</p>
 <ul>
@@ -142,7 +233,7 @@
 </ul>
 <span id="more"></span>
 <p>目前大多数语言，例如：Java, Golang, Php, Python, Lua等都支持C/C<ins>的扩展。因此，可以用C/C</ins>来为其他语言提供统一的扩展库支持，本文就是介绍怎么利用<code>Boost::Python</code>库提供<a target="_blank" rel="noopener" href="https://github.com/pboettch/json-schema-validator"><code>json-schema-validator</code></a>的Python支持，并介绍如何利用<code>distutils</code>来编译&amp;分发Python库。</p>
-<p><img src="/2020/06/13/write-python-library-using-c-with-boost-python/1.png" alt></p>
+<p><img src="/2020/06/13/write-python-library-using-c-with-boost-python/1.png" alt=""></p>
 <h2 id="python调用c-c-的方式">Python调用C/C++的方式</h2>
 <p>有两种方式可以实现Python调用C/C++编写的库：</p>
 <ul>
@@ -169,26 +260,26 @@
 <h4 id="编译nlohmann-json-schema-validator库">编译nlohmann json schema validator库</h4>
 <p><code>nlohmann json schema validator</code>支持产出可执行的bin文件以及可供其他项目使用的动态库。为了可以将该扩展包装成Python扩展，我们需要生成该库的动态库。</p>
 <p>首先根据<code>nlohmann json schema validator</code>的<a target="_blank" rel="noopener" href="https://github.com/pboettch/json-schema-validator/blob/master/README.md#building-as-shared-library">编译文档</a>编译出<code>nlohmann json schema validator</code>的动态库。</p>
-<p><img src="/2020/06/13/write-python-library-using-c-with-boost-python/2.jpg" alt></p>
+<p><img src="/2020/06/13/write-python-library-using-c-with-boost-python/2.jpg" alt=""></p>
 <h4 id="boost-python封装c-c-代码">Boost::Python封装C/C++代码</h4>
 <p>在安装Boost的时候，虽然Boost的头文件中存在Boost::Python相关的hpp文件，但是默认却没有该动态库。因此，在使用Boost::Python之前，首先需要安装该库。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install boost-python3</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install boost-python3</span><br></pre></td></tr></tbody></table></figure>
 <p>然后，我们用C++编写<code>class json_validator_python;</code>来封装<code>nlohmann json schema validator</code>库，并利用Boost::Python来导出，具体如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// jsv_python.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;nlohmann/json-schema.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/python.hpp&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> boost::python;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JSON_SCHEMA_VALIDATOR_API</span> <span class="title">json_validator_python</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    nlohmann::json_schema::json_validator validator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">json_validator_python</span>() &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set_root_schema</span><span class="params">(<span class="keyword">const</span> std::string &amp;json_string)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        validator.<span class="built_in">set_root_schema</span>(nlohmann::json::<span class="built_in">parse</span>(json_string.<span class="built_in">begin</span>(), json_string.<span class="built_in">end</span>()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">validate</span><span class="params">(<span class="keyword">const</span> std::string &amp;json_string)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        validator.<span class="built_in">validate</span>(nlohmann::json::<span class="built_in">parse</span>(json_string.<span class="built_in">begin</span>(), json_string.<span class="built_in">end</span>()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// json_schema_validator为module名，必需和生成的so库名一样</span></span><br><span class="line"><span class="built_in">BOOST_PYTHON_MODULE</span>(json_schema_validator)</span><br><span class="line">&#123;</span><br><span class="line">    class_&lt;json_validator_python, boost::noncopyable&gt; (<span class="string">&quot;json_validator_python&quot;</span>)</span><br><span class="line">            .<span class="built_in">def</span>(<span class="string">&quot;set_root_schema&quot;</span>, &amp;json_validator_python::set_root_schema)</span><br><span class="line">            .<span class="built_in">def</span>(<span class="string">&quot;validate&quot;</span>, &amp;json_validator_python::validate)</span><br><span class="line">            ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// jsv_python.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;nlohmann/json-schema.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;boost/python.hpp&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> boost::python;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">JSON_SCHEMA_VALIDATOR_API</span> json_validator_python</span><br><span class="line">{</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    nlohmann::json_schema::json_validator validator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">json_validator_python</span>() {}</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">set_root_schema</span><span class="params">(<span class="type">const</span> std::string &amp;json_string)</span> </span></span><br><span class="line"><span class="function">    </span>{</span><br><span class="line">        validator.<span class="built_in">set_root_schema</span>(nlohmann::json::<span class="built_in">parse</span>(json_string.<span class="built_in">begin</span>(), json_string.<span class="built_in">end</span>()));</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">validate</span><span class="params">(<span class="type">const</span> std::string &amp;json_string)</span> <span class="type">const</span></span></span><br><span class="line"><span class="function">    </span>{</span><br><span class="line">        validator.<span class="built_in">validate</span>(nlohmann::json::<span class="built_in">parse</span>(json_string.<span class="built_in">begin</span>(), json_string.<span class="built_in">end</span>()));</span><br><span class="line">    }</span><br><span class="line">};</span><br><span class="line"></span><br><span class="line"><span class="comment">// json_schema_validator为module名，必需和生成的so库名一样</span></span><br><span class="line"><span class="built_in">BOOST_PYTHON_MODULE</span>(json_schema_validator)</span><br><span class="line">{</span><br><span class="line">    <span class="built_in">class_</span>&lt;json_validator_python, boost::noncopyable&gt; (<span class="string">"json_validator_python"</span>)</span><br><span class="line">            .<span class="built_in">def</span>(<span class="string">"set_root_schema"</span>, &amp;json_validator_python::set_root_schema)</span><br><span class="line">            .<span class="built_in">def</span>(<span class="string">"validate"</span>, &amp;json_validator_python::validate)</span><br><span class="line">            ;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>如上所示的<code>BOOST_PYTHON_MODULE</code>代码，目的是导出类及成员方法，这些导出的类和方法可以在Python中调用。</p>
 <p>关于Boost::Python更详细的使用，可以参考其<a target="_blank" rel="noopener" href="https://www.boost.org/doc/libs/1_66_0/libs/python/doc/html/index.html">官方文档</a>。</p>
 <h4 id="编译并产出python扩展">编译并产出Python扩展</h4>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">g++ --std&#x3D;c++11 -fPIC -c jsv_python.cpp \</span><br><span class="line">-I$&#123;json-schema-validator_PATH&#125;&#x2F;src \</span><br><span class="line">-I$&#123;nlohmann-json_PATH&#125; \</span><br><span class="line">-I$&#123;Boost_PATH&#125;&#x2F;include \</span><br><span class="line">-I$&#123;Python_INCLUDE_PATH&#125;</span><br><span class="line"></span><br><span class="line">g++ --std&#x3D;c++11 -shared \</span><br><span class="line">-L$&#123;json-schema-validator_LIB_PATH&#125; \</span><br><span class="line">-L$&#123;Python_LIB_PATH&#125; \</span><br><span class="line">-L$&#123;Boost_Python_LIB_PATH&#125; \</span><br><span class="line">-lnlohmann_json_schema_validator \</span><br><span class="line">-lboost_python38 -lpython3.8 \</span><br><span class="line">-o json_schema_validator.so jsv_python.o</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">g++ --std=c++11 -fPIC -c jsv_python.cpp \</span><br><span class="line">-I${json-schema-validator_PATH}/src \</span><br><span class="line">-I${nlohmann-json_PATH} \</span><br><span class="line">-I${Boost_PATH}/include \</span><br><span class="line">-I${Python_INCLUDE_PATH}</span><br><span class="line"></span><br><span class="line">g++ --std=c++11 -shared \</span><br><span class="line">-L${json-schema-validator_LIB_PATH} \</span><br><span class="line">-L${Python_LIB_PATH} \</span><br><span class="line">-L${Boost_Python_LIB_PATH} \</span><br><span class="line">-lnlohmann_json_schema_validator \</span><br><span class="line">-lboost_python38 -lpython3.8 \</span><br><span class="line">-o json_schema_validator.so jsv_python.o</span><br></pre></td></tr></tbody></table></figure>
 <p>如上的指令，会生成封装之后的Python扩展：<code>json_schema_validator.so</code>。</p>
 <h4 id="测试python扩展">测试python扩展</h4>
 <p>在当前目录执行如下的Python代码，可以发现，我们封装的扩展已经可以当做Python扩展来导入并使用了。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json_schema_validator <span class="keyword">as</span> jsv</span><br><span class="line"></span><br><span class="line">validator = jsv.json_validator_python()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">isValidator = <span class="literal">True</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    validator.set_root_schema(<span class="string">&#x27;&#123;&quot;type&quot;:&quot;object&quot;, &quot;properties&quot;: &#123;&quot;a&quot;:&#123;&quot;type&quot;: &quot;string&quot;&#125;&#125;&#125;&#x27;</span>)</span><br><span class="line">    validator.validate(<span class="string">&#x27;&#123;&quot;a&quot;:&quot;1&quot;&#125;&#x27;</span>);</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    isValidator = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(isValidator)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json_schema_validator <span class="keyword">as</span> jsv</span><br><span class="line"></span><br><span class="line">validator = jsv.json_validator_python()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">isValidator = <span class="literal">True</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    validator.set_root_schema(<span class="string">'{"type":"object", "properties": {"a":{"type": "string"}}}'</span>)</span><br><span class="line">    validator.validate(<span class="string">'{"a":"1"}'</span>);</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    isValidator = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(isValidator)</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="使用distutils编译并分发扩展">使用distutils编译并分发扩展</h2>
 <p>为了使用方便，使用<a target="_blank" rel="noopener" href="https://docs.python.org/3/extending/building.html"><strong>Building C and C++ Extensions</strong></a>介绍的<code>distutils模块</code>编译Python扩展。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> distutils.core <span class="keyword">import</span> setup, Extension</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">os.environ[<span class="string">&quot;CC&quot;</span>] = <span class="string">&quot;g++&quot;</span></span><br><span class="line">os.environ[<span class="string">&quot;CXX&quot;</span>] = <span class="string">&quot;g++&quot;</span></span><br><span class="line"></span><br><span class="line">module1 = Extension(<span class="string">&#x27;json_schema_validator&#x27;</span>,</span><br><span class="line">                    include_dirs = [<span class="string">&#x27;../../src&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;../../&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;/usr/local/Cellar/boost/1.72.0_3/include&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/include/python3.8&#x27;</span>],</span><br><span class="line">                    libraries = [<span class="string">&#x27;boost_python38&#x27;</span>, <span class="string">&#x27;python3.8&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;nlohmann_json_schema_validator&#x27;</span>],</span><br><span class="line">                    library_dirs = [<span class="string">&#x27;/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/lib&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;/usr/local/Cellar/boost-python3/1.72.0_1/lib&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;.&#x27;</span>],</span><br><span class="line">                    sources = [<span class="string">&#x27;jsv_python.cpp&#x27;</span>],</span><br><span class="line">                    extra_compile_args=[<span class="string">&#x27;--std=c++11&#x27;</span>],</span><br><span class="line">                    extra_link_args=[<span class="string">&#x27;--std=c++11&#x27;</span>])</span><br><span class="line"></span><br><span class="line">setup (name = <span class="string">&#x27;json-schema-validator&#x27;</span>,</span><br><span class="line">       version = <span class="string">&#x27;1.0&#x27;</span>,</span><br><span class="line">       description = <span class="string">&#x27;json schema validator&#x27;</span>,</span><br><span class="line">       ext_modules = [module1])</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python3 setup.py build</span><br><span class="line">$ python3 setup.py install</span><br><span class="line">$ export LD_LIBRARY_PATH&#x3D;$LD_LIBRARY_PATH:&#x2F;usr&#x2F;local&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;json_schema_validator</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> distutils.core <span class="keyword">import</span> setup, Extension</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">os.environ[<span class="string">"CC"</span>] = <span class="string">"g++"</span></span><br><span class="line">os.environ[<span class="string">"CXX"</span>] = <span class="string">"g++"</span></span><br><span class="line"></span><br><span class="line">module1 = Extension(<span class="string">'json_schema_validator'</span>,</span><br><span class="line">                    include_dirs = [<span class="string">'../../src'</span>,</span><br><span class="line">                        <span class="string">'../../'</span>,</span><br><span class="line">                        <span class="string">'/usr/local/Cellar/boost/1.72.0_3/include'</span>,</span><br><span class="line">                        <span class="string">'/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/include/python3.8'</span>],</span><br><span class="line">                    libraries = [<span class="string">'boost_python38'</span>, <span class="string">'python3.8'</span>,</span><br><span class="line">                        <span class="string">'nlohmann_json_schema_validator'</span>],</span><br><span class="line">                    library_dirs = [<span class="string">'/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/lib'</span>,</span><br><span class="line">                        <span class="string">'/usr/local/Cellar/boost-python3/1.72.0_1/lib'</span>,</span><br><span class="line">                        <span class="string">'.'</span>],</span><br><span class="line">                    sources = [<span class="string">'jsv_python.cpp'</span>],</span><br><span class="line">                    extra_compile_args=[<span class="string">'--std=c++11'</span>],</span><br><span class="line">                    extra_link_args=[<span class="string">'--std=c++11'</span>])</span><br><span class="line"></span><br><span class="line">setup (name = <span class="string">'json-schema-validator'</span>,</span><br><span class="line">       version = <span class="string">'1.0'</span>,</span><br><span class="line">       description = <span class="string">'json schema validator'</span>,</span><br><span class="line">       ext_modules = [module1])</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python3 setup.py build</span><br><span class="line">$ python3 setup.py install</span><br><span class="line">$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.7/site-packages/json_schema_validator</span><br></pre></td></tr></tbody></table></figure>
 <p>然后就可以在任意位置，执行<a href="#%E6%B5%8B%E8%AF%95python%E6%89%A9%E5%B1%95">测试python扩展</a>一节的测试代码啦。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

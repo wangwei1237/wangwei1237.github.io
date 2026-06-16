@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="背景 我们有一个任务托管平台，该平台可以托管python语言编写任务，并且可以对任务状态进行管理。由于业务的需要，我们需要在python的任务中调起一个shell脚本来完成一些额外的事情。当我们把编写好的任务部署到任务托管平台之后，我们发现一个奇怪的现象：当在任务的超时时间内手动结束任务的时候，只有python的父进程退出了，而python启动的shell子进程却没有退出。">
 <meta property="og:type" content="article">
@@ -18,7 +109,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/sigterm.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/popen.jpg">
 <meta property="article:published_time" content="2020-08-07T12:06:29.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.658Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.103Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="subprocess">
 <meta property="article:tag" content="kill命令">
@@ -141,16 +232,16 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="背景">背景</h2>
+  <html><head></head><body><h2 id="背景">背景</h2>
 <p>我们有一个任务托管平台，该平台可以托管<code>python</code>语言编写任务，并且可以对任务状态进行管理。由于业务的需要，我们需要在<code>python</code>的任务中调起一个<code>shell</code>脚本来完成一些额外的事情。当我们把编写好的任务部署到任务托管平台之后，我们发现一个奇怪的现象：当在任务的超时时间内手动结束任务的时候，只有<code>python</code>的父进程退出了，而<code>python</code>启动的<code>shell</code>子进程却没有退出。</p>
 <span id="more"></span>
 <h2 id="subprocess模块">subprocess模块</h2>
 <p>我们使用subprocess.run()来创建新的shell进程，具体如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">subprocess.run(</span><br><span class="line">    cmd,</span><br><span class="line">    cwd=cwd,</span><br><span class="line">    shell=<span class="literal">True</span>,</span><br><span class="line">    stdout=subprocess.PIPE,</span><br><span class="line">    stderr=subprocess.PIPE,</span><br><span class="line">    encoding=<span class="string">&quot;utf-8&quot;</span>,</span><br><span class="line">    timeout=<span class="number">600</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">subprocess.run(</span><br><span class="line">    cmd,</span><br><span class="line">    cwd=cwd,</span><br><span class="line">    shell=<span class="literal">True</span>,</span><br><span class="line">    stdout=subprocess.PIPE,</span><br><span class="line">    stderr=subprocess.PIPE,</span><br><span class="line">    encoding=<span class="string">"utf-8"</span>,</span><br><span class="line">    timeout=<span class="number">600</span></span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
 <p>为了方便测试，分别写了一段<a target="_blank" rel="noopener" href="https://gitee.com/wangwei1237/wangwei1237/blob/master/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/timeout.py"><code>python</code>代码</a>和<a target="_blank" rel="noopener" href="https://gitee.com/wangwei1237/wangwei1237/blob/master/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/timeout.sh"><code>shell</code>代码</a>，可以点击链接查看具体代码。其中，<code>shell</code>脚本为一个死循环，具体如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for((i=0;;i++))</span><br><span class="line">do</span><br><span class="line">    echo &quot;$i&quot; &gt;log 2&gt;&amp;1</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for((i=0;;i++))</span><br><span class="line">do</span><br><span class="line">    echo "$i" &gt;log 2&gt;&amp;1</span><br><span class="line">done</span><br></pre></td></tr></tbody></table></figure>
 <p>然后，我们在本地使用<code>kill -2（ctrl+c）</code>结束父进程的时候，子进程也确实结束了。具体如下图所示：</p>
-<p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/sigint.png" alt></p>
+<p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/sigint.png" alt=""></p>
 <p>我们继续查出问题的原因，我们咨询了任务托管平台的负责人：任务托管平台页面上的<code>结束任务</code>是怎么实现的？</p>
 <p>平台的负责人回应说：<code>kill -9</code>命令结束的。</p>
 <p>在这时候，我知道，我可能大概知道问题的原因了。</p>
@@ -158,26 +249,26 @@
 <p>关于<code>kill</code>命令，此处不做详细介绍，具体可以参考<a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/kill.1.html">kill(1)手册</a>。<code>kill</code>的作用是向某个特殊的进程或进程组发送一个特殊的信号，从而达到结束进程的目的。关于<code>信号(signal)</code>，此处也不做详细介绍，具体可以参考<a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man7/signal.7.html">signal(7)手册</a>。</p>
 <p>而<code>kill -9</code>命令实际上是向进程发送了<code>SIGKILL</code>信号，而在<a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man7/signal.7.html">signal(7)手册</a>中可以看到：<strong>The signals SIGKILL and SIGSTOP cannot be caught, blocked, or ignored.</strong> 因此，<code>kill -9</code>是一种不可捕获的、不可忽略的信号，用来在特殊情况下紧急结束进程（如果该信号可以捕获和忽略的话，就达不到这个目的了）。</p>
 <p>而对于一个单进程的程序而言，直接<code>kill -9</code>结束并没有什么问题，但是对于一个多进程的程序，例如本文中的例子，在<code>python</code>进程中又创建了<code>shell</code>子进程，那么直接用<code>kill -9</code>粗暴的结束父进程是非常不安全的，具体如下图所示：</p>
-<p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/sig9.jpg" alt></p>
+<p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/sig9.jpg" alt=""></p>
 <p>可见，在<code>kill -9</code>结束父进程之后，<code>shell</code>编写的子进程成为了<a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/zombie-and-orphan-processes-in-c/">孤儿进程</a>，并继续执行。</p>
 <p>这也就是，我们在任务托管平台上结束任务后，子进程并没有退出的根本原因。父进程结束的信号根本就没有机会通知到子进程，子进程也就不可能结束了。</p>
 <p>那么，我们换另外一个可以被捕获和忽略的信号，例如<code>SIGTERM</code>是否能结束子进程呢？</p>
-<p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/sigterm.jpg" alt></p>
+<p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/sigterm.jpg" alt=""></p>
 <p>从图中可以看出，<code>SIGTERM</code>信号也没有结束子进程。</p>
 <h2 id="subprocess-run-所捕获的异常">subprocess.run()所捕获的异常</h2>
 <p>我们从<a target="_blank" rel="noopener" href="https://github.com/python/cpython/blob/3.8/Lib/subprocess.py">subprocess模块的源码</a>中可以发现，<code>subprocess.run()</code>实际上只捕获自定义的<code>TimeoutExpired</code>异常和<code>KeyboardInterrupt</code>异常，而在<code>python</code>中，<code>KeyboardInterrupt</code>异常对应的就是<strong>用户中断执行</strong>，一般就是输入<code>ctl+c</code>或发送<code>SIGINT</code>信号。具体如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> Popen(*popenargs, **kwargs) <span class="keyword">as</span> process:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        stdout, stderr = process.communicate(<span class="built_in">input</span>, timeout=timeout)</span><br><span class="line">    <span class="keyword">except</span> TimeoutExpired <span class="keyword">as</span> exc:</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        <span class="keyword">raise</span></span><br><span class="line">    <span class="keyword">except</span>:  <span class="comment"># Including KeyboardInterrupt, communicate handled that.</span></span><br><span class="line">        process.kill()</span><br><span class="line">        <span class="comment"># We don&#x27;t call process.wait() as .__exit__ does that for us.</span></span><br><span class="line">        <span class="keyword">raise</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> Popen(*popenargs, **kwargs) <span class="keyword">as</span> process:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        stdout, stderr = process.communicate(<span class="built_in">input</span>, timeout=timeout)</span><br><span class="line">    <span class="keyword">except</span> TimeoutExpired <span class="keyword">as</span> exc:</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        <span class="keyword">raise</span></span><br><span class="line">    <span class="keyword">except</span>:  <span class="comment"># Including KeyboardInterrupt, communicate handled that.</span></span><br><span class="line">        process.kill()</span><br><span class="line">        <span class="comment"># We don't call process.wait() as .__exit__ does that for us.</span></span><br><span class="line">        <span class="keyword">raise</span></span><br></pre></td></tr></tbody></table></figure>
 <p>可见，对于<code>SIGINT</code>信号而言，<code>subprocess.run()</code>函数会调用<code>Popen.kill()</code>来结束子进程。</p>
 <p>因此，对于多进程而言，当父进结束之前，需要通过某种机制来通知其子进程，进而让子进程知晓父进程的退出信息，并作出合理的后续行为。否则，就会出现本文中出现的孤儿进程的现象。</p>
 <p>因此，对于其他的信号，<code>subprocess</code>模块本身就无法处理了。</p>
 <h2 id="捕获sigterm信号">捕获SIGTERM信号</h2>
 <p>如果要捕获<code>SIGTERM</code>信号，使得<code>kill -15</code>结束python任务的时候，同时也能结束子进程，那么就要耍点小聪明了，例如：在<code>python</code>中捕获其他信号，并将其转成<code>SIGINT</code>信号，具体可以参见<a target="_blank" rel="noopener" href="https://gitee.com/wangwei1237/wangwei1237/blob/master/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/timeout_1.py">timeout_1.py</a>。具体执行效果如下所示：</p>
-<p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/popen.jpg" alt></p>
+<p><img src="/2020/08/07/cannot-terminate-the-subprocess-run-child-process-caused-by-kill-9/popen.jpg" alt=""></p>
 <p>此处，我用了一个偷懒的方法，也就是把<code>SIGTERM</code>信号捕获之后转成<code>SIGINT</code>信号，具体的代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">def sigintHandler(signum, frame):</span><br><span class="line">    raise KeyboardInterrupt</span><br><span class="line"></span><br><span class="line">    exit()</span><br><span class="line"></span><br><span class="line">def run_cmd(cmd, cwd):</span><br><span class="line">    signal.signal(signal.SIGTERM, sigintHandler)</span><br><span class="line">    # ...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">def sigintHandler(signum, frame):</span><br><span class="line">    raise KeyboardInterrupt</span><br><span class="line"></span><br><span class="line">    exit()</span><br><span class="line"></span><br><span class="line">def run_cmd(cmd, cwd):</span><br><span class="line">    signal.signal(signal.SIGTERM, sigintHandler)</span><br><span class="line">    # ...</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="结语">结语</h2>
 <p>查完这个问题，也算是对进程相关的内容有了更深入的了解。孤儿进程，僵尸进程，不可屏蔽进程……，好像经过很多时间之后，忽然都不记得自己曾经也钻研过这些概念一样。感谢我的同事<em>一卓</em>(<a target="_blank" rel="noopener" href="https://github.com/GerenLiu">@GerenLiu</a>)，在工作之余抽时间来一起讨论这个问题。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="SRT(Secure Reliable Transport)是一种基于UDT(UDP-based Data Transfer)的、安全的、可靠的、开源的数据传输协议&amp;技术。SRT在UDP基础之上实现了：智能数据重传机制和AES256加密技术，这使得其成为一种安全、可靠、低延迟的传输技术。利用SRT，可以实现在不可预测的网络环境下（例如互联网）高效、安全的传输数据。SRT还做了特殊优化以适合">
 <meta property="og:type" content="article">
@@ -19,7 +110,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/4.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/5.jpg">
 <meta property="article:published_time" content="2020-04-09T12:33:36.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.645Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.091Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="Wireshark">
 <meta property="article:tag" content="SRT">
@@ -111,7 +202,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">739</span>
+            <span class="post-count">735</span>
         </span>
     </span>
 
@@ -135,8 +226,8 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><a target="_blank" rel="noopener" href="https://www.haivision.com/products/srt-secure-reliable-transport/">SRT(Secure Reliable Transport)</a>是一种基于<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/draft-gg-udt-03">UDT(UDP-based Data Transfer)</a>的、安全的、可靠的、开源的数据传输协议&amp;技术。SRT在UDP基础之上实现了：智能数据重传机制和AES256加密技术，这使得其成为一种安全、可靠、低延迟的传输技术。利用SRT，可以实现在不可预测的网络环境下（例如互联网）高效、安全的传输数据。<a target="_blank" rel="noopener" href="https://github.com/Haivision/srt/">SRT</a>还做了特殊优化以适合视频实时流数据的传输。根据<a target="_blank" rel="noopener" href="https://www.srtalliance.org/srt-alliance-announces-the-addition-of-the-srt-low-latency-protocol-to-open-broadcaster-softwares-obs-studio/">SRT Alliance</a>在2019-04-04的介绍，目前如下的应用已经集成并支持SRT：<a target="_blank" rel="noopener" href="https://obsproject.com/">OBS Studio</a>，<a target="_blank" rel="noopener" href="https://www.videolan.org/vlc/">VideoLAN’s VLC</a>，<a target="_blank" rel="noopener" href="http://ffmpeg.org/">FFmpeg</a>，<a target="_blank" rel="noopener" href="https://www.wireshark.org/">Wireshark</a>。</p>
-<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/1.png" alt></p>
+  <html><head></head><body><p><a target="_blank" rel="noopener" href="https://www.haivision.com/products/srt-secure-reliable-transport/">SRT(Secure Reliable Transport)</a>是一种基于<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/draft-gg-udt-03">UDT(UDP-based Data Transfer)</a>的、安全的、可靠的、开源的数据传输协议&amp;技术。SRT在UDP基础之上实现了：智能数据重传机制和AES256加密技术，这使得其成为一种安全、可靠、低延迟的传输技术。利用SRT，可以实现在不可预测的网络环境下（例如互联网）高效、安全的传输数据。<a target="_blank" rel="noopener" href="https://github.com/Haivision/srt/">SRT</a>还做了特殊优化以适合视频实时流数据的传输。根据<a target="_blank" rel="noopener" href="https://www.srtalliance.org/srt-alliance-announces-the-addition-of-the-srt-low-latency-protocol-to-open-broadcaster-softwares-obs-studio/">SRT Alliance</a>在2019-04-04的介绍，目前如下的应用已经集成并支持SRT：<a target="_blank" rel="noopener" href="https://obsproject.com/">OBS Studio</a>，<a target="_blank" rel="noopener" href="https://www.videolan.org/vlc/">VideoLAN’s VLC</a>，<a target="_blank" rel="noopener" href="http://ffmpeg.org/">FFmpeg</a>，<a target="_blank" rel="noopener" href="https://www.wireshark.org/">Wireshark</a>。</p>
+<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/1.png" alt=""></p>
 <span id="more"></span>
 <p>本文只介绍：<strong>如何利用FFmpeg生成SRT数据流并利用Wireshark对该SRT数据进行抓包分析</strong>。关于SRT的详细内容，可以参考<a target="_blank" rel="noopener" href="https://github.com/Haivision/srt/files/2489142/SRT_Protocol_TechnicalOverview_DRAFT_2018-10-17.pdf">SRT Protocol Technical Overview Draft</a>。</p>
 <h2 id="前期准备">前期准备</h2>
@@ -149,7 +240,7 @@
 </li>
 <li>
 <p>升级Wireshark到3.0之后的版本，并且设置Wireshark取消Wireshark对UDT协议的支持，具体做法为：点击菜单栏中的<code>Analyze</code>-&gt;<code>Enabled Protocols</code>，然后从弹出的支持协议中找到UDT，并取消UDT前面的选择标记。</p>
-<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/2.jpg" alt></p>
+<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/2.jpg" alt=""></p>
 </li>
 <li>
 <p>安装VLC播放器，用于播放SRT协议的视频流。</p>
@@ -157,16 +248,16 @@
 </ol>
 <h2 id="生成srt直播流">生成SRT直播流</h2>
 <p>可以利用<code>ffmpeg</code>和<code>srt-live-transmit</code>（该工具在安装srt的时候会默认安装）来生成SRT直播流。主要思路是首先利用<code>ffmpeg</code>生成UDP的直播流，然后利用<code>srt-live-transmit</code>把UDP的直播流转换成SRT的直播流，更详细的方式可以参考<a target="_blank" rel="noopener" href="https://github.com/Haivision/srt/blob/master/docs/srt-live-transmit.md">srt-live-transmit的使用说明</a>。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 生成UDP视频流</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ffmpeg -f lavfi -re -i smptebars=duration=300:size=1280x720:rate=30 \</span></span><br><span class="line"><span class="bash">-f lavfi -re -i sine=frequency=1000:duration=60:sample_rate=44100 \</span></span><br><span class="line"><span class="bash">-pix_fmt yuv420p -c:v libx264 -b:v 1000k -g 30 -keyint_min 120 \</span></span><br><span class="line"><span class="bash">-profile:v baseline -preset veryfast -f mpegts \</span></span><br><span class="line"><span class="bash"><span class="string">&quot;udp://127.0.0.1:5000?pkt_size=1316&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 生成SRT视频流</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> srt-live-transmit -s:10 udp://:5000 srt://:5001</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用ffplay播放SRT视频流</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ffplay <span class="string">&quot;srt://127.0.0.1:5001&quot;</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成UDP视频流</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ffmpeg -f lavfi -re -i smptebars=duration=300:size=1280x720:rate=30 \</span></span><br><span class="line"><span class="language-bash">-f lavfi -re -i sine=frequency=1000:duration=60:sample_rate=44100 \</span></span><br><span class="line"><span class="language-bash">-pix_fmt yuv420p -c:v libx264 -b:v 1000k -g 30 -keyint_min 120 \</span></span><br><span class="line"><span class="language-bash">-profile:v baseline -preset veryfast -f mpegts \</span></span><br><span class="line"><span class="language-bash"><span class="string">"udp://127.0.0.1:5000?pkt_size=1316"</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成SRT视频流</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">srt-live-transmit -s:10 udp://:5000 srt://:5001</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用ffplay播放SRT视频流</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ffplay <span class="string">"srt://127.0.0.1:5001"</span></span></span><br></pre></td></tr></tbody></table></figure>
 <p>具体播放效果如下所示：</p>
-<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/3.jpg" alt></p>
+<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/3.jpg" alt=""></p>
 <h2 id="使用wireshark分析srt">使用Wireshark分析SRT</h2>
 <p>为了可以用Wireshark抓到SRT数据包，需要使用VLC播放器来打开刚才创建的SRT视频流，具体如下所示：</p>
-<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/4.jpg" alt></p>
+<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/4.jpg" alt=""></p>
 <p>打开Wireshark，选择Lookback（因为要捕获的SRT地址为127.0.0.1），然后在捕获的数据窗口选择srt协议过滤，稍等片刻就可以看到捕获的SRT数据包，具体如下图所示：</p>
-<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/5.jpg" alt></p>
+<p><img src="/2020/04/09/analysize-SRT-protocol-live-stream-with-wireshark/5.jpg" alt=""></p>
 <p>接下来就可以利用Wireshark来分析SRT协议的处理流程，例如上图中的Handshake数据包。尤其是在学习的过程中，配合<a target="_blank" rel="noopener" href="https://github.com/Haivision/srt/files/2489142/SRT_Protocol_TechnicalOverview_DRAFT_2018-10-17.pdf">SRT的协议文档</a>以及Wireshark的抓包分析，能够加深对SRT协议的理解，达到事半功倍的效果。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

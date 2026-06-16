@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="我会经常浏览并借鉴很多开源项目的代码来完成自己的工作，有很多时候这种方法让我的工作效率非常高。阅读并借鉴开源项目的成果，让我得以站在巨人的肩膀上，使得我可以更高效的工作。 不知道你也是否和我一样？如果你也和我一样，那么我们是否思考过？我们在引用别人的代码完成自己的项目时，我们的项目是否变成了一个如下图所示的四不像呢？">
 <meta property="og:type" content="article">
@@ -19,7 +110,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/5.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/4.jpeg">
 <meta property="article:published_time" content="2021-09-11T10:08:34.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.244Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.727Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="代码阅读">
 <meta name="twitter:card" content="summary_large_image">
@@ -133,9 +224,9 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>我会经常浏览并借鉴很多开源项目的代码来完成自己的工作，有很多时候这种方法让我的工作效率非常高。阅读并借鉴开源项目的成果，让我得以站在巨人的肩膀上，使得我可以更高效的工作。</p>
+  <html><head></head><body><p>我会经常浏览并借鉴很多开源项目的代码来完成自己的工作，有很多时候这种方法让我的工作效率非常高。阅读并借鉴开源项目的成果，让我得以站在巨人的肩膀上，使得我可以更高效的工作。</p>
 <p>不知道你也是否和我一样？如果你也和我一样，那么我们是否思考过？我们在引用别人的代码完成自己的项目时，我们的项目是否变成了一个如下图所示的四不像呢？</p>
-<p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/1.gif" alt></p>
+<p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/1.gif" alt=""></p>
 <span id="more"></span>
 <h2 id="缘起">缘起</h2>
 <p>很久之前就想写一篇类似的文章，但是一直没有写。前几天，在项目中遇到了类似的问题，我才决定要花时间来写一写。</p>
@@ -151,17 +242,17 @@
 <h2 id="一个-cmake-的案例">一个 CMake 的案例</h2>
 <p>我有一个只有几个人的小组，我们这个小组的主要工作就是探索并开发和视频质量评估、视频检测、视频相关测试等方面的平台和工具。</p>
 <p>对于视频检测而言，我们开发了一个项目，可以暂且称之为 MT。整个项目用 C++ 语言来开发，并且使用 CMake 来作为编译工具。因为需要对视频进行解码处理，因此该项目会依赖 FFmpeg。一开始，我们发现，在 CMake 中，<a target="_blank" rel="noopener" href="https://github.com/Microsoft/vcpkg/issues/1379">FFmpeg 并不支持使用 find_package 来查找 FFMPeg 的依</a>。为了简单期间，我们就用了暴力一点的方式来解决这个问题，我们在 CMakeLists 中写下了如下的代码：</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="string">&quot;$&#123;ffmpeg_include_path&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">link_directories</span>(<span class="string">&quot;$&#123;ffmpeg_lib_path&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.so</span><br><span class="line">        libavcodec.so</span><br><span class="line">        libavformat.so</span><br><span class="line">        ......</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="string">"${ffmpeg_include_path}"</span>)</span><br><span class="line"><span class="keyword">link_directories</span>(<span class="string">"${ffmpeg_lib_path}"</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.so</span><br><span class="line">        libavcodec.so</span><br><span class="line">        libavformat.so</span><br><span class="line">        ......</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
 <p>这段代码确实写的有些糟糕（你也可以试着说一下这段代码究竟有哪些问题），但是他看起来确实可以工作了。后来，我发现了 <a target="_blank" rel="noopener" href="https://github.com/snikulov/cmake-modules/blob/master/FindFFmpeg.cmake">FindFFmpeg.cmake</a> 这个开源的库可以更优雅的实现在 CMake 中查找 FFmpeg 的依赖，于是我让一个同事来升级之前那段有些糟糕的代码。</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include</span>(cmake/FindFFmpeg.cmake)</span><br><span class="line"></span><br><span class="line"><span class="keyword">IF</span> (APPLE)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.dylib </span><br><span class="line">        libavcodec.dylib </span><br><span class="line">        libavformat.dylib </span><br><span class="line">        ......</span><br><span class="line">)</span><br><span class="line"><span class="keyword">ELSEIF</span> (UNIX)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.so</span><br><span class="line">        libavcodec.so</span><br><span class="line">        libavformat.so</span><br><span class="line">        ......</span><br><span class="line">)</span><br><span class="line"><span class="keyword">ENDIF</span> ()</span><br></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include</span>(cmake/FindFFmpeg.cmake)</span><br><span class="line"></span><br><span class="line"><span class="keyword">IF</span> (APPLE)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.dylib </span><br><span class="line">        libavcodec.dylib </span><br><span class="line">        libavformat.dylib </span><br><span class="line">        ......</span><br><span class="line">)</span><br><span class="line"><span class="keyword">ELSEIF</span> (UNIX)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        libavutil.so</span><br><span class="line">        libavcodec.so</span><br><span class="line">        libavformat.so</span><br><span class="line">        ......</span><br><span class="line">)</span><br><span class="line"><span class="keyword">ENDIF</span> ()</span><br></pre></td></tr></tbody></table></figure>
 <p>好吧，看起来问题是解决了。但是，我总觉得这段代码看上去有点别扭，这完全有悖于 CMake 的初衷呀：根据不同的系统链接不同动态库的逻辑为什么要这么显示的写出来？这段代码看起来就下下面这个图一样：</p>
-<p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/2.png" alt></p>
+<p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/2.png" alt=""></p>
 <h4 id="我是怎么做的">我是怎么做的</h4>
 <p>看到提交的代码后，我打回了同事的代码提交。没有仔细的阅读 FindFFmpeg.cmake 的代码（虽然这段代码并不多，我们也可以在短时间内看懂，但是我并没有这么做），我们首先阅读了 FindFFmpeg.cmake 的文档（其实就是代码开始的注释部分），如下所示：</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># - Try to find the required ffmpeg components(default: AVFORMAT, AVUTIL, AVCODEC)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Once done this will define</span></span><br><span class="line"><span class="comment">#  FFMPEG_FOUND         - System has the all required components.</span></span><br><span class="line"><span class="comment">#  FFMPEG_INCLUDE_DIRS  - Include directory necessary for using the required components headers.</span></span><br><span class="line"><span class="comment">#  FFMPEG_LIBRARIES     - Link these to use the required ffmpeg components.</span></span><br><span class="line"><span class="comment">#  FFMPEG_DEFINITIONS   - Compiler switches required for using the required ffmpeg components.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># For each of the components it will additionally set.</span></span><br><span class="line"><span class="comment">#   - AVCODEC</span></span><br><span class="line"><span class="comment">#   - AVDEVICE</span></span><br><span class="line"><span class="comment">#   ......</span></span><br><span class="line"><span class="comment"># the following variables will be defined</span></span><br><span class="line"><span class="comment">#  &lt;component&gt;_FOUND        - System has &lt;component&gt;</span></span><br><span class="line"><span class="comment">#  ......</span></span><br></pre></td></tr></table></figure>
-<p>因此，阅读完文档后，我们知道只需要使用 <code>$&#123;AVCODEC&#125;</code> 等就可以。于是，同事又第二次提交了升级的代码，如下所示：</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include</span>(cmake/FindFFmpeg.cmake)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="string">&quot;$&#123;FFMPEG_INCLUDE_DIRS&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        <span class="variable">$&#123;FFMPEG_LIBRARIES&#125;</span></span><br></pre></td></tr></table></figure>
-<p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/3.png" alt></p>
+<figure class="highlight cmake"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># - Try to find the required ffmpeg components(default: AVFORMAT, AVUTIL, AVCODEC)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Once done this will define</span></span><br><span class="line"><span class="comment">#  FFMPEG_FOUND         - System has the all required components.</span></span><br><span class="line"><span class="comment">#  FFMPEG_INCLUDE_DIRS  - Include directory necessary for using the required components headers.</span></span><br><span class="line"><span class="comment">#  FFMPEG_LIBRARIES     - Link these to use the required ffmpeg components.</span></span><br><span class="line"><span class="comment">#  FFMPEG_DEFINITIONS   - Compiler switches required for using the required ffmpeg components.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># For each of the components it will additionally set.</span></span><br><span class="line"><span class="comment">#   - AVCODEC</span></span><br><span class="line"><span class="comment">#   - AVDEVICE</span></span><br><span class="line"><span class="comment">#   ......</span></span><br><span class="line"><span class="comment"># the following variables will be defined</span></span><br><span class="line"><span class="comment">#  &lt;component&gt;_FOUND        - System has &lt;component&gt;</span></span><br><span class="line"><span class="comment">#  ......</span></span><br></pre></td></tr></tbody></table></figure>
+<p>因此，阅读完文档后，我们知道只需要使用 <code>${AVCODEC}</code> 等就可以。于是，同事又第二次提交了升级的代码，如下所示：</p>
+<figure class="highlight cmake"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">include</span>(cmake/FindFFmpeg.cmake)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="string">"${FFMPEG_INCLUDE_DIRS}"</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>( MT</span><br><span class="line">    PRIVATE</span><br><span class="line">        <span class="variable">${FFMPEG_LIBRARIES}</span></span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/3.png" alt=""></p>
 <p>因此，无论在阅读别人的代码，还是在使用别人的代码之前，首先阅读代码的文档或者注释是一件非常有必要的事情，这是我们了解代码的最快速有效的手段（如果有比较规范的注释的话，一般对于比较好的开源项目，注释是比较规范的）。</p>
 <h2 id="如何使用开源项目">如何使用开源项目</h2>
 <h4 id="1-阅读项目的-readme">1. 阅读项目的 README</h4>
@@ -194,7 +285,7 @@
 <ul>
 <li>Developer Guides：需要首先阅读 Developer Guides 中对应的相关资料，例如 <a target="_blank" rel="noopener" href="https://developer.android.com/guide/index.html">Android Developer Guides</a>，<a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/docs/intellij/getting-started.html">IntelliJ Platform SDK</a>……还有很多非开源项目也会有 Developer Guides，对于这种项目，Developer Guides 无疑是最好的、必须首先阅读的资料，比较典型的就是<a target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/navigation/">Apple Developer Guides</a>，我当时了解 iOS 消息推送相关的技术就是首先阅读的 <a target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/index.html#//apple_ref/doc/uid/TP40008194">Local and Remote Notification Programming Guide</a>，自我认为比查阅互联网上其他人总结的文档要高效很多。</li>
 <li>Document：除了 Developer Guides 之外，项目提供的 documentation 也是需要首先阅读的内容，例如 <a target="_blank" rel="noopener" href="http://nginx.org/en/docs/">nginx document</a>，<a target="_blank" rel="noopener" href="https://ffmpeg.org/documentation.html">FFmpeg document</a>，……我比较喜欢使用 <a target="_blank" rel="noopener" href="https://kapeli.com/dash">Dash</a> 这款 MacOS 上的这款 API document 工具，真的非常方便。每当使用一个新的 API 或者使用一个自己拿不准的 API 的时候，Dash 总是我最好的帮手。<br>
-<img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/5.png" alt></li>
+<img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/5.png" alt=""></li>
 </ul>
 </li>
 <li>
@@ -223,10 +314,10 @@
 <p>并且，我们从搜索引擎获得的方案有时候可能会存在问题，我在 <a href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/">FFmpeg 解码 API 以及在解码过程中存在的丢帧问题</a> 中提到的解码丢帧问题就是通过搜索引擎而得到的方案。尤其是当我们还处于某方面的新手的时候，这种情况出现的可能会更大。</p>
 <h2 id="善用别人的代码">善用别人的代码</h2>
 <p>善用别人的项目让我们可以站在巨人的肩膀上工作，最重要的是我们需要了解、熟悉我们所用的代码。否则，我们不但没有利用这个项目的优势，反而让自己的项目变成了恐龙。</p>
-<p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/4.jpeg" alt></p>
+<p><img src="/2021/09/11/How-to-Read-and-Use-the-Open-Source-Projects/4.jpeg" alt=""></p>
 <h2 id="后记">后记</h2>
 <p>针对文章中提到的 <code>FindFFmpeg.cmake</code> 插件，后来，当我们将该插件应用到自己编译的 <code>FFmpeg</code> 之后，我们发现这个插件无法正常工作。直到这个时候，我和我的同事才开始仔细阅读这个插件的代码，最后发现并且修复了存在的 <a target="_blank" rel="noopener" href="https://github.com/snikulov/cmake-modules/pull/2">BUG</a>。我们发现，其实，和开源软件一起成长真的非常快乐。我们要善用别人的代码，同时，我们也要一起为巨人的成长付出应有的努力。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

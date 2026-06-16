@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content=".admonition {     margin: 1.5625em 0;     padding: .6rem;     overflow: hidden;     font-size: 1.6rem;     page-break-inside: avoid;     border-left: .6rem solid #42b983;     border-radius: .6rem;">
 <meta property="og:type" content="article">
@@ -18,7 +109,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2023/11/26/Drama-talk-about-online-accidents/2.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2023/11/26/Drama-talk-about-online-accidents/3.png">
 <meta property="article:published_time" content="2023-11-26T21:13:51.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.108Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.602Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="运维">
 <meta property="article:tag" content="架构">
@@ -139,7 +230,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2023/11/26/Drama-talk-about-online-accidents/1_1.png" alt></p>
+  <html><head></head><body><p><img src="/2023/11/26/Drama-talk-about-online-accidents/1_1.png" alt=""></p>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -231,7 +322,7 @@
 </ul>
 <h2 id="事故一-西瓜和芝麻一起宕机了">事故一 西瓜和芝麻一起宕机了</h2>
 <p><code>故障描述</code>：不重要的芝麻组件发生配置变更，由于线上程序不兼容，导致其重启后挂掉，重要的西瓜组件由于采用同步阻塞方式调用了芝麻组件，进而无法写入卡死，导致大量用户访问拒绝</p>
-<p><img src="/2023/11/26/Drama-talk-about-online-accidents/1.png" alt></p>
+<p><img src="/2023/11/26/Drama-talk-about-online-accidents/1.png" alt=""></p>
 <p><code>经验教训</code>：</p>
 <ul>
 <li>关键点：西瓜重要，相对来说，芝麻不重要，芝麻丢了不应该西瓜也一起跟着丢掉，需要保住西瓜！！</li>
@@ -321,7 +412,7 @@
 </div>
 <h2 id="事故二-超时还是不超时-这是个问题">事故二 超时还是不超时，这是个问题</h2>
 <p><code>故障描述</code>：网络异常触发了 Redis 主从全量同步，导致 Redis 负载较高，读写成功率降低。处理该问题时，将超时时间配置修改为 0，意图尝试快速超时断开 Redis 连接，而 0 的含义实际为不超时，操作后问题进一步扩大：PHP 进程夯住，大量请求拒绝，问题等级上升为事故。</p>
-<p><img src="/2023/11/26/Drama-talk-about-online-accidents/2.png" alt></p>
+<p><img src="/2023/11/26/Drama-talk-about-online-accidents/2.png" alt=""></p>
 <p><code>经验教训</code>：</p>
 <ul>
 <li>存储层未区分核心、非核心，导致无法对非核心数据进行摘除，止损方案本身不合理</li>
@@ -409,7 +500,7 @@
 </div>
 <h2 id="事故三-删除一条数据-系统崩溃了">事故三 删除一条数据，系统崩溃了</h2>
 <p><code>故障描述</code>：删除 Redis 的一个大 Key，导致地域 X、Y 机房 Redis 阻塞，Redis 不可读写，在横跨多业务线的系统中，逐层触发重试风暴，最终 DB 流量暴增被压垮，同时影响共用 DB 的模块 B、C、D，其中包含某“一级服务（核心）”，另外上游模块也被拖死，请求大量拒绝。</p>
-<p><img src="/2023/11/26/Drama-talk-about-online-accidents/3.png" alt></p>
+<p><img src="/2023/11/26/Drama-talk-about-online-accidents/3.png" alt=""></p>
 <p><code>经验教训</code>：</p>
 <ul>
 <li>不合理的重试次数设置：底层服务挂掉后，逐层触发重试，疯狂重试</li>
@@ -497,7 +588,7 @@
 </p><p>不知道哪个角落的某台计算机发生了故障，导致了我们自己的电脑无法使用，这就是分布系统。</p>
 <p>如果你不了解服务的全貌，那么就不要轻易去动任何你觉得“并不重要”的东西。任何时候，对线上都要保持敬畏，如果不了解，就别动；如果想动，就要去做好全面的了解。</p>
 </div>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

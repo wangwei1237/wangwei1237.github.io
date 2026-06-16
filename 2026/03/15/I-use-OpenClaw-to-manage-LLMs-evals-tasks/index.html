@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="虽然 LLM 的能力现在已经非常强大，但是对于多模态大模型的评测而言，仍然需要进行大量的人工评测工作。所以，我们也会看到，类似 Arena 平台的这种基于人类偏好打分的榜单，依然是我们评估大模型性能的有效参考。 我们参考 LMArena 团队开源的榜单算法 Arena Rank 构建了自己的大模型 Side-by-Side 评测系统，来满足我们对大模型评测的需求。">
 <meta property="og:type" content="article">
@@ -23,7 +114,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/result.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/debug.png">
 <meta property="article:published_time" content="2026-03-15T19:20:25.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.305Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.782Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="OpenClaw">
 <meta property="article:tag" content="任务管理">
@@ -124,7 +215,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">5k</span>
+            <span class="post-count">4.8k</span>
         </span>
     </span>
 
@@ -133,7 +224,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">20 分钟</span>
+            <span class="post-count">19 分钟</span>
         </span>
     </span>
 </div>
@@ -148,7 +239,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/1.png" alt></p>
+  <html><head></head><body><p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/1.png" alt=""></p>
 <p>虽然 LLM 的能力现在已经非常强大，但是对于多模态大模型的评测而言，仍然需要进行大量的人工评测工作。所以，我们也会看到，类似 <a target="_blank" rel="noopener" href="https://arena.ai/leaderboard">Arena</a> 平台的这种基于人类偏好打分的榜单，依然是我们评估大模型性能的有效参考。</p>
 <p>我们参考 LMArena 团队开源的榜单算法 <a target="_blank" rel="noopener" href="https://arena.ai/blog/arena-rank/">Arena Rank</a> 构建了自己的大模型 Side-by-Side 评测系统，来满足我们对大模型评测的需求。</p>
 <span id="more"></span>
@@ -159,12 +250,12 @@
 <p>当用户打分完成之后，我们会利用 <a target="_blank" rel="noopener" href="https://arena.ai/blog/arena-rank/">Arena Rank</a> 算法来更新所有模型的评分与榜单信息。</p>
 <p>所以，在我们的系统中，一个评测任务的基本流程如下：</p>
 <pre class="mermaid">graph LR
-    A[创建评估任务] --> B[发布招募信息]
-    B --> C[用户报名]
-    C --> D[创建群聊]
-    D --> E[群聊中发布任务链接]
-    E --> F[定期跟进进度]
-    F --> G[计算 Elo 排序]
+    A[创建评估任务] --&gt; B[发布招募信息]
+    B --&gt; C[用户报名]
+    C --&gt; D[创建群聊]
+    D --&gt; E[群聊中发布任务链接]
+    E --&gt; F[定期跟进进度]
+    F --&gt; G[计算 Elo 排序]
 
     style A fill:#f9f9f9,stroke:#333,stroke-width:2px
     style B fill:#f9f9f9,stroke:#333,stroke-width:2px
@@ -181,11 +272,11 @@
 <li>更强大的交互能力（多端 IM 触达，随时、随地的触达）</li>
 <li>更强大的 Agent 蜂群能力（多 Agent 协同）</li>
 </ul>
-<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2033849102954598823"></a></blockquote></div><script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/wangwei1237/status/2033849102954598823"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <p>于是，我们心动了，我们决定用技术手段来解决我们评测专员的烦恼，我们决定让 OpenClaw 来管理我们的评测任务。</p>
 <h2 id="openclaw-的基本能力">OpenClaw 的基本能力</h2>
 <p>这是一个典型的 <code>pipeline skill</code> <sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。在开始之前，我们需要梳理 <code>agent</code> 所需的能力以及 OpenClaw 能提供的支持，以便于后续的 <code>skill</code> 开发。</p>
-<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/agent_types.jpeg" alt></p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/agent_types.jpeg" alt=""></p>
 <h3 id="workspace-文件加载时机">Workspace 文件加载时机</h3>
 <p>OpenClaw 的行为主要由 <code>workspace</code> 文件而非隐藏的 <code>prompt</code> 文件定义。正确设置 <em><a target="_blank" rel="noopener" href="http://SOUL.md">SOUL.md</a></em>、<em><a target="_blank" rel="noopener" href="http://AGENTS.md">AGENTS.md</a></em>、<em><a target="_blank" rel="noopener" href="http://USER.md">USER.md</a></em>、<em><a target="_blank" rel="noopener" href="http://MEMORY.md">MEMORY.md</a></em> 以及 <em><a target="_blank" rel="noopener" href="http://TOOLS.md">TOOLS.md</a></em> 等文件以及了解每个文件的作用及其加载时机，对于实现我们的目标至关重要。</p>
 <p>OpenClaw 会在 session 启动的时候去读取 <code>~/.openclaw/workspace/</code> 下的相关文件，具体的区别和作用如下所示<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>：</p>
@@ -250,8 +341,8 @@
 <p>在 OpenClaw 中，默认情况下，所有的 “私聊（DM）” 共用一个“主会话（main session）”，以保证对话的连贯性；而不同的 “群聊（Group）” 或者 “频道” 则会拥有各自的“独立会话（isolated sessions）”。<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
 <p>如果你的 OpenClaw 可以接收来自多个用户的私信消息，此时，所有用户将共享相同的“主会话”上下文，这会导致用户之间的私人信息泄露，进而带来安全风险。比如我的 OpenClaw 授权给了我的很多同事，他们每天都会和我用同一个 🦞 来私聊并处理工作上的事情，而我不想让其他的同事知道我和 🦞 都聊了什么。</p>
 <p>这个时候，就需要使用 <code>session.dmScope</code> 来控制私聊会话的隔离范围，保证不同用户之间的会话隔离。<sup class="footnote-ref"><a href="#fn3" id="fnref3:1">[3:1]</a></sup></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ~/.openclaw/openclaw.json</span></span><br><span class="line">&#123;</span><br><span class="line">  session: &#123;</span><br><span class="line">    <span class="comment">// Secure DM mode: isolate DM context per channel + sender.</span></span><br><span class="line">    dmScope: &quot;per-channel-peer&quot;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* main (default): all DMs share the main session <span class="keyword">for</span> continuity.</span><br><span class="line">* per-peer: isolate by sender id across channels.</span><br><span class="line">* per-channel-peer: isolate by channel + sender (recommended <span class="keyword">for</span> multi-user inboxes).</span><br><span class="line">* per-account-channel-peer: isolate by account + channel + sender (recommended <span class="keyword">for</span> multi-account inboxes). </span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ~/.openclaw/openclaw.json</span></span><br><span class="line"><span class="punctuation">{</span></span><br><span class="line">  session<span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">    <span class="comment">// Secure DM mode: isolate DM context per channel + sender.</span></span><br><span class="line">    dmScope<span class="punctuation">:</span> <span class="string">"per-channel-peer"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* main (default): all DMs share the main session <span class="keyword">for</span> continuity.</span><br><span class="line">* per-peer: isolate by sender <span class="built_in">id</span> across channels.</span><br><span class="line">* per-channel-peer: isolate by channel + sender (recommended <span class="keyword">for</span> multi-user inboxes).</span><br><span class="line">* per-account-channel-peer: isolate by account + channel + sender (recommended <span class="keyword">for</span> multi-account inboxes). </span><br></pre></td></tr></tbody></table></figure>
 <p>当多个私聊和群聊以独立的 session 运行时，如何让这些相互隔离的 session 保持必要的信息互通，就成了一个需要解决的问题。整个评测的过程是在不同的私聊、群聊中不停的切换，没有一定的跨 session 能力，🦞 就会给人一种暂时性失忆的印象。</p>
 <p><strong>是的，有时候就是这么矛盾，既要保证信息隔离，又要保证一定的信息互通。</strong></p>
 <h3 id="文件读写能力">文件读写能力</h3>
@@ -348,7 +439,7 @@
 <p>但是，在 OpenClaw 中，规则变了：<code>workspace</code> 目录才是 <code>agent</code> 的默认 <code>CWD</code>。因此，对于 OpenClaw 来说，<code>SKILL.md</code> 中所有的 <em>相对路径</em> 均基于 <code>workspace</code> 进行解析。</p>
 </div>
 <p>从 3.2 版本开始，为解决安全问题，OpenClaw 加强了对工具调用的权限控制。默认情况下，禁止对主机文件系统进行写或执行操作，如需此类权限，要在配置文件中显式授权。<sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;tools&quot;: &#123;</span><br><span class="line">  &quot;profile&quot;: &quot;full&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">"tools"</span><span class="punctuation">:</span> <span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"profile"</span><span class="punctuation">:</span> <span class="string">"full"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
 <h3 id="多-agent-协同能力">多 Agent 协同能力</h3>
 <p>整个评估过程核心分为三个阶段：发起任务、跟进状态和销毁任务。虽然单个 Agent 可以完成所有阶段，但拆分为多个 Agent 更易于维护。</p>
 <ul>
@@ -362,13 +453,13 @@
 <li>Status Agent 和 Killer Agent 会周期性的醒来并执行相应的任务。</li>
 <li>当 Killer Agent 检测到任务完成时，会终止相应的 Status Agent，以释放资源。</li>
 </ul>
-<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/8.png" alt></p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/8.png" alt=""></p>
 <p>OpenClaw 中的 Cron 即是调度器、更是一个非常强大的 Agent Spawn 工具<sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup>。</p>
 <blockquote>
 <p>Cron is the Gateway’s built-in scheduler. It persists jobs, wakes the agent at the right time, and can optionally deliver output back to a chat.</p>
 </blockquote>
 <p>当我们使用 <code>--session isolated</code> 和 <code>--message</code> 创建定时任务时，OpenClaw 会以 <code>--message</code> 指定的内容作为提示词创建一个新的 Agent，并以 <code>--cron</code> 中指定的调度周期定期唤醒该 Agent。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">openclaw cron add \</span><br><span class="line">--name <span class="string">&quot;<span class="variable">$&#123;job-name&#125;</span>&quot;</span> \</span><br><span class="line">--cron <span class="string">&quot;*/3 * * * *&quot;</span> \</span><br><span class="line">--tz <span class="string">&quot;Asia/Shanghai&quot;</span> \</span><br><span class="line">--session isolated \</span><br><span class="line">--message <span class="string">&quot;<span class="variable">$&#123;MESSAGE&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">openclaw cron add \</span><br><span class="line">--name <span class="string">"<span class="variable">${job-name}</span>"</span> \</span><br><span class="line">--cron <span class="string">"*/3 * * * *"</span> \</span><br><span class="line">--tz <span class="string">"Asia/Shanghai"</span> \</span><br><span class="line">--session isolated \</span><br><span class="line">--message <span class="string">"<span class="variable">${MESSAGE}</span>"</span></span><br></pre></td></tr></tbody></table></figure>
 <p>此时，每次定时任务触发，OpenClaw 都会强制生成一个全新的 Session ID（以 cron:&lt;<a target="_blank" rel="noopener" href="http://job.id">job.id</a>&gt; 作为 Session Key），并且完全不会复用之前的闲置会话，从而避免任务多次执行过程中的上下文污染。</p>
 <h2 id="工程实现">工程实现</h2>
 <h3 id="长短期记忆分离">长短期记忆分离</h3>
@@ -380,24 +471,24 @@
 <p>于是，在我们的设计中：长期记忆以 <a target="_blank" rel="noopener" href="http://SKILL.md">SKILL.md</a> 的形式存在，而需要在多 sessions/Agents 之间通信的短期任务状态信息，我们放在一个共享文件中——类似多进程架构中的共享内存。</p>
 <p><a target="_blank" rel="noopener" href="http://SKILL.md">SKILL.md</a> 中详细描述了评测业务流程，并包含了构建 Status Agent 和 Killer Agent 的策略。</p>
 <p>于是，整体的目录结构就成了如下的样子：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">llm-evals/</span><br><span class="line">├── eval_tasks.json  <span class="comment"># 短期的任务状态文件，在 Skill 首次执行时创建</span></span><br><span class="line">├── SKILL.md <span class="comment"># Main Agent</span></span><br><span class="line">├── status-sub-agent.md  <span class="comment"># Status Agent</span></span><br><span class="line">├── killer-sub-agent.md  <span class="comment"># Killer Agent</span></span><br><span class="line">└── scripts/ <span class="comment"># CLIs</span></span><br><span class="line">    ├── check_eval_progress_tool.py </span><br><span class="line">    ├── create_im_group_tool.py</span><br><span class="line">    └── trigger_report_tool.py</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">llm-evals/</span><br><span class="line">├── eval_tasks.json  <span class="comment"># 短期的任务状态文件，在 Skill 首次执行时创建</span></span><br><span class="line">├── SKILL.md <span class="comment"># Main Agent</span></span><br><span class="line">├── status-sub-agent.md  <span class="comment"># Status Agent</span></span><br><span class="line">├── killer-sub-agent.md  <span class="comment"># Killer Agent</span></span><br><span class="line">└── scripts/ <span class="comment"># CLIs</span></span><br><span class="line">    ├── check_eval_progress_tool.py </span><br><span class="line">    ├── create_im_group_tool.py</span><br><span class="line">    └── trigger_report_tool.py</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="main-agent-skill-md">Main Agent(<a target="_blank" rel="noopener" href="http://SKILL.md">SKILL.md</a>)</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: llm-evals-skill</span><br><span class="line">description: 当用户提供任务参数时，使用此技能初始化一个新的 LLM 评估任务。它会持久化任务状态、发布招募消息，并创建子代理 sub_agent 执行任务。</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"># LLM 评估代理</span><br><span class="line"></span><br><span class="line">## 何时使用</span><br><span class="line">当用户提供新盲测或评估任务的参数时（例如，评估类型、评估链接、目标人数、奖励描述和截止日期），立即触发此技能。**请勿使用此技能来检查进度。**</span><br><span class="line"></span><br><span class="line">有关如何创建 *status-sub-agent* 并为其配置 cron 任务的详细信息，请参阅 `./skills/llm-Arena/status-sub-agent.md`。</span><br><span class="line"></span><br><span class="line">有关如何创建 *killer-sub-agent* 并为其配置 cron 任务的详细信息，请参阅 `./skills/llm-Arena/killer-sub-agent.md`。</span><br><span class="line"></span><br><span class="line">## eval_tasks.json 文件格式</span><br><span class="line">执行此技能时，请确保已从用户提示中提取以下参数：</span><br><span class="line">- `task_id`: 任务的唯一标识符,必填。</span><br><span class="line">- `creator`: 任务的创建人，即用户的用户名，必填。</span><br><span class="line">- `platform_task_id`: 评估平台任务的 ID，例如 `1234567`，可后继更新。</span><br><span class="line">- `status`: 任务状态，`INIT`——任务创建初始化, `RECRUITING`——招募众测用户, `EVALUATING`——评估打分中, `DONE`——任务完成，必填且只能是这 4 项。</span><br><span class="line">……</span><br><span class="line"></span><br><span class="line">## 指令</span><br><span class="line"></span><br><span class="line">严格按顺序执行以下步骤：</span><br><span class="line">1. **创建 Killer Agent**</span><br><span class="line">  请检查是否存在 `./skills/llm-Arena/llm-Arena/eval_tasks.json` 文件，如果文件不存在，则做如下的操作：</span><br><span class="line">  - 创建一个新的文件 `./skills/llm-Arena/llm-Arena/eval_tasks.json`，其内容为 &quot;&#123;&#125;&quot;</span><br><span class="line">  - 使用 cron 命令创建一个新的 Killer Agent，**openclaw cron 命令** 如下：</span><br><span class="line"></span><br><span class="line">   ```bash</span><br><span class="line">      FILE_CONTENT=$(cat &quot;./skills/llm-Arena/killer-sub-agent.md&quot;)</span><br><span class="line">      MESSAGE=&quot;请严格执行如下任务流程： $FILE_CONTENT&quot;</span><br><span class="line">      openclaw cron add \</span><br><span class="line">      --name &quot;任务名称&quot; \</span><br><span class="line">      --cron &quot;*/3 * * * *&quot; \</span><br><span class="line">      --tz &quot;Asia/Shanghai&quot; \</span><br><span class="line">      --session isolated \</span><br><span class="line">      --message &quot;$MESSAGE&quot;</span><br><span class="line">   ```</span><br><span class="line"></span><br><span class="line">2. **持久化任务状态**：</span><br><span class="line">   - 打开本地状态文件 `./skills/llm-Arena/llm-Arena/eval_tasks.json`。</span><br><span class="line">   - 为此 `task_id` 创建一个新的 JSON 对象，不要覆盖之前的对象，要在之前的对象基础上追加一个新的对象。</span><br><span class="line">   - 将初始 `status` 设置为 `&quot;INIT&quot;`。</span><br><span class="line">   - 将必须的输入保存到此对象中。</span><br><span class="line">   - 将更新后的 JSON 安全地写回磁盘。</span><br><span class="line">   - 汇报已经成功持久化此次任务状态文件给任务创建人，即给我发一条创建成功的消息，并给出状态文件内容。</span><br><span class="line"></span><br><span class="line">3. **创建 Status Agent**</span><br><span class="line">   - **定时任务创建**</span><br><span class="line">     1. 执行下面 `openclaw cron命令` 创建定时任务，注意，需要把 `task_id` 替换成本次任务的ID。</span><br><span class="line">     # …… &lt;其他的限制条件&gt;</span><br><span class="line"></span><br><span class="line">   - **openclaw cron命令**</span><br><span class="line"></span><br><span class="line">   ```bash</span><br><span class="line">      FILE_CONTENT=$(cat &quot;./skills/llm-Arena/status-sub-agent.md&quot;)</span><br><span class="line">      MESSAGE=&quot;当前任务ID 为 task_id, 请为这个任务严格执行如下任务流程： $FILE_CONTENT&quot;</span><br><span class="line">      openclaw cron add \</span><br><span class="line">      --name &quot;任务名称&quot; \</span><br><span class="line">      --cron &quot;*/3 * * * *&quot; \</span><br><span class="line">      --tz &quot;Asia/Shanghai&quot; \</span><br><span class="line">      --session isolated \</span><br><span class="line">      --message &quot;$MESSAGE&quot;</span><br><span class="line">   ```</span><br><span class="line">   - **openclaw cron命令行执行之后的返回信息**</span><br><span class="line">    1. `openclaw cron` 命令如果执行成功后会返回显示类似如下格式的 json 信息：</span><br><span class="line">         ```json</span><br><span class="line">               &#123;</span><br><span class="line">                  &quot;id&quot;: &quot;b818d9ca-3cea-48de-805e-2b42c9ae0d60&quot;,</span><br><span class="line">                  &quot;name&quot;: &quot;test-cron-wukong&quot;,</span><br><span class="line">                  &quot;enabled&quot;: true,</span><br><span class="line">                  &quot;createdAtMs&quot;: 1773210163484,</span><br><span class="line">                  &quot;updatedAtMs&quot;: 1773210163484,</span><br><span class="line">                  &quot;schedule&quot;: &#123;</span><br><span class="line">                     &quot;kind&quot;: &quot;cron&quot;,</span><br><span class="line">                     &quot;expr&quot;: &quot;0 10 * * *&quot;,</span><br><span class="line">                     &quot;tz&quot;: &quot;Asia/Shanghai&quot;</span><br><span class="line">                  &#125;,</span><br><span class="line">                  &quot;sessionTarget&quot;: &quot;isolated&quot;,</span><br><span class="line">                  &quot;wakeMode&quot;: &quot;now&quot;,</span><br><span class="line">                  &quot;payload&quot;: &#123;</span><br><span class="line">                     &quot;kind&quot;: &quot;agentTurn&quot;,</span><br><span class="line">                     &quot;message&quot;: &quot;test message&quot;</span><br><span class="line">                  &#125;,</span><br><span class="line">                  &quot;delivery&quot;: &#123;</span><br><span class="line">                     &quot;mode&quot;: &quot;announce&quot;,</span><br><span class="line">                     &quot;channel&quot;: &quot;last&quot;</span><br><span class="line">                  &#125;,</span><br><span class="line">                  &quot;state&quot;: &#123;</span><br><span class="line">                     &quot;nextRunAtMs&quot;: 1773280800000</span><br><span class="line">                  &#125;</span><br><span class="line">               &#125;</span><br><span class="line">         ```</span><br><span class="line">    2. **关键返回字段说明** id任务唯一ID（后续编辑/删除需要用到, name任务名称, enabled是否启用, createdAtMs创建时间（毫秒时间戳）, schedule调度配置（cron 表达式 + 时区）, sessionTarget运行模式（main 或 isolated）, payload任务内容（message 即你要执行的指令）, delivery交付方式, state.nextRunAtMs下次执行时间。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">4. **发布招募消息**：</span><br><span class="line">   - 根据 `theme` 和 `reward_desc` 撰写一条吸引人的招募消息，注意，务必带上本次任务的ID`task_id` 信息。</span><br><span class="line">   - **请勿在消息中包含 `eval_link` 信息**。相反，请指示感兴趣的用户通过回复消息或遵循特定的行动号召来报名。</span><br><span class="line">   - 将此消息发送到 `im_recruit_group_id`。</span><br><span class="line">   - 修改任务状态为 `RECRUITING` 招募中。</span><br><span class="line"></span><br><span class="line">## 约束与边界情况</span><br><span class="line">1. **错误反馈**:</span><br><span class="line">   - 如果出现任何失败, 需要立刻通知用户, 并说明失败原因。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: llm-evals-skill</span><br><span class="line">description: 当用户提供任务参数时，使用此技能初始化一个新的 LLM 评估任务。它会持久化任务状态、发布招募消息，并创建子代理 sub_agent 执行任务。</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"># LLM 评估代理</span><br><span class="line"></span><br><span class="line">## 何时使用</span><br><span class="line">当用户提供新盲测或评估任务的参数时（例如，评估类型、评估链接、目标人数、奖励描述和截止日期），立即触发此技能。**请勿使用此技能来检查进度。**</span><br><span class="line"></span><br><span class="line">有关如何创建 *status-sub-agent* 并为其配置 cron 任务的详细信息，请参阅 `./skills/llm-Arena/status-sub-agent.md`。</span><br><span class="line"></span><br><span class="line">有关如何创建 *killer-sub-agent* 并为其配置 cron 任务的详细信息，请参阅 `./skills/llm-Arena/killer-sub-agent.md`。</span><br><span class="line"></span><br><span class="line">## eval_tasks.json 文件格式</span><br><span class="line">执行此技能时，请确保已从用户提示中提取以下参数：</span><br><span class="line">- `task_id`: 任务的唯一标识符,必填。</span><br><span class="line">- `creator`: 任务的创建人，即用户的用户名，必填。</span><br><span class="line">- `platform_task_id`: 评估平台任务的 ID，例如 `1234567`，可后继更新。</span><br><span class="line">- `status`: 任务状态，`INIT`——任务创建初始化, `RECRUITING`——招募众测用户, `EVALUATING`——评估打分中, `DONE`——任务完成，必填且只能是这 4 项。</span><br><span class="line">……</span><br><span class="line"></span><br><span class="line">## 指令</span><br><span class="line"></span><br><span class="line">严格按顺序执行以下步骤：</span><br><span class="line">1. **创建 Killer Agent**</span><br><span class="line">  请检查是否存在 `./skills/llm-Arena/llm-Arena/eval_tasks.json` 文件，如果文件不存在，则做如下的操作：</span><br><span class="line">  - 创建一个新的文件 `./skills/llm-Arena/llm-Arena/eval_tasks.json`，其内容为 "{}"</span><br><span class="line">  - 使用 cron 命令创建一个新的 Killer Agent，**openclaw cron 命令** 如下：</span><br><span class="line"></span><br><span class="line">   ```bash</span><br><span class="line">      FILE_CONTENT=$(cat "./skills/llm-Arena/killer-sub-agent.md")</span><br><span class="line">      MESSAGE="请严格执行如下任务流程： $FILE_CONTENT"</span><br><span class="line">      openclaw cron add \</span><br><span class="line">      --name "任务名称" \</span><br><span class="line">      --cron "*/3 * * * *" \</span><br><span class="line">      --tz "Asia/Shanghai" \</span><br><span class="line">      --session isolated \</span><br><span class="line">      --message "$MESSAGE"</span><br><span class="line">   ```</span><br><span class="line"></span><br><span class="line">2. **持久化任务状态**：</span><br><span class="line">   - 打开本地状态文件 `./skills/llm-Arena/llm-Arena/eval_tasks.json`。</span><br><span class="line">   - 为此 `task_id` 创建一个新的 JSON 对象，不要覆盖之前的对象，要在之前的对象基础上追加一个新的对象。</span><br><span class="line">   - 将初始 `status` 设置为 `"INIT"`。</span><br><span class="line">   - 将必须的输入保存到此对象中。</span><br><span class="line">   - 将更新后的 JSON 安全地写回磁盘。</span><br><span class="line">   - 汇报已经成功持久化此次任务状态文件给任务创建人，即给我发一条创建成功的消息，并给出状态文件内容。</span><br><span class="line"></span><br><span class="line">3. **创建 Status Agent**</span><br><span class="line">   - **定时任务创建**</span><br><span class="line">     1. 执行下面 `openclaw cron命令` 创建定时任务，注意，需要把 `task_id` 替换成本次任务的ID。</span><br><span class="line">     # …… &lt;其他的限制条件&gt;</span><br><span class="line"></span><br><span class="line">   - **openclaw cron命令**</span><br><span class="line"></span><br><span class="line">   ```bash</span><br><span class="line">      FILE_CONTENT=$(cat "./skills/llm-Arena/status-sub-agent.md")</span><br><span class="line">      MESSAGE="当前任务ID 为 task_id, 请为这个任务严格执行如下任务流程： $FILE_CONTENT"</span><br><span class="line">      openclaw cron add \</span><br><span class="line">      --name "任务名称" \</span><br><span class="line">      --cron "*/3 * * * *" \</span><br><span class="line">      --tz "Asia/Shanghai" \</span><br><span class="line">      --session isolated \</span><br><span class="line">      --message "$MESSAGE"</span><br><span class="line">   ```</span><br><span class="line">   - **openclaw cron命令行执行之后的返回信息**</span><br><span class="line">    1. `openclaw cron` 命令如果执行成功后会返回显示类似如下格式的 json 信息：</span><br><span class="line">         ```json</span><br><span class="line">               {</span><br><span class="line">                  "id": "b818d9ca-3cea-48de-805e-2b42c9ae0d60",</span><br><span class="line">                  "name": "test-cron-wukong",</span><br><span class="line">                  "enabled": true,</span><br><span class="line">                  "createdAtMs": 1773210163484,</span><br><span class="line">                  "updatedAtMs": 1773210163484,</span><br><span class="line">                  "schedule": {</span><br><span class="line">                     "kind": "cron",</span><br><span class="line">                     "expr": "0 10 * * *",</span><br><span class="line">                     "tz": "Asia/Shanghai"</span><br><span class="line">                  },</span><br><span class="line">                  "sessionTarget": "isolated",</span><br><span class="line">                  "wakeMode": "now",</span><br><span class="line">                  "payload": {</span><br><span class="line">                     "kind": "agentTurn",</span><br><span class="line">                     "message": "test message"</span><br><span class="line">                  },</span><br><span class="line">                  "delivery": {</span><br><span class="line">                     "mode": "announce",</span><br><span class="line">                     "channel": "last"</span><br><span class="line">                  },</span><br><span class="line">                  "state": {</span><br><span class="line">                     "nextRunAtMs": 1773280800000</span><br><span class="line">                  }</span><br><span class="line">               }</span><br><span class="line">         ```</span><br><span class="line">    2. **关键返回字段说明** id任务唯一ID（后续编辑/删除需要用到, name任务名称, enabled是否启用, createdAtMs创建时间（毫秒时间戳）, schedule调度配置（cron 表达式 + 时区）, sessionTarget运行模式（main 或 isolated）, payload任务内容（message 即你要执行的指令）, delivery交付方式, state.nextRunAtMs下次执行时间。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">4. **发布招募消息**：</span><br><span class="line">   - 根据 `theme` 和 `reward_desc` 撰写一条吸引人的招募消息，注意，务必带上本次任务的ID`task_id` 信息。</span><br><span class="line">   - **请勿在消息中包含 `eval_link` 信息**。相反，请指示感兴趣的用户通过回复消息或遵循特定的行动号召来报名。</span><br><span class="line">   - 将此消息发送到 `im_recruit_group_id`。</span><br><span class="line">   - 修改任务状态为 `RECRUITING` 招募中。</span><br><span class="line"></span><br><span class="line">## 约束与边界情况</span><br><span class="line">1. **错误反馈**:</span><br><span class="line">   - 如果出现任何失败, 需要立刻通知用户, 并说明失败原因。</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="eval-tasks-文件">eval_tasks 文件</h3>
-<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/task_json.png" alt></p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/task_json.png" alt=""></p>
 <h3 id="status-agent">Status Agent</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"># 评估生命周期心跳</span><br><span class="line"></span><br><span class="line">本文档是评测任务生命周期任务 Status Agent 的指导说明文档。</span><br><span class="line">使用本文档作为系统提示词，来控制评测任务的整体生命周期和状态，包括检查报名情况、创建 IM 群组、向待处理用户发送提醒、生成报告。</span><br><span class="line"></span><br><span class="line">## 何时使用</span><br><span class="line">维护评测任务的生命周期时需要严格按照本文档指导执行任务。它需要一个 `task_id` 来知道需要推进哪个评估任务的状态机。 所有任务相关的信息都在这个文档中：`./skills/llm-Arena/eval_tasks.json`。</span><br><span class="line"></span><br><span class="line">## 指令</span><br><span class="line"></span><br><span class="line">1. **读取任务状态**：</span><br><span class="line">   ……</span><br><span class="line"></span><br><span class="line">2. **处理 `RECRUITING` 状态**：</span><br><span class="line">   ……</span><br><span class="line"></span><br><span class="line">3. **处理 `EVALUATING` 状态**：</span><br><span class="line">   ……</span><br><span class="line"></span><br><span class="line">4. **处理 `DONE` 状态**:</span><br><span class="line">   - 保持静默，不再处理任何操作。</span><br><span class="line"></span><br><span class="line">## 约束与边界情况</span><br><span class="line">- **幂等性**：切勿多次创建 IM 群组。在创建之前始终验证 `im_sub_group_id` 是否为 null。</span><br><span class="line">- **数据隔离**：确保仅查询和发送消息给与传递给此技能的特定 `task_id` 相关的用户。不要在不同任务之间交叉污染数据。</span><br><span class="line">……</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"># 评估生命周期心跳</span><br><span class="line"></span><br><span class="line">本文档是评测任务生命周期任务 Status Agent 的指导说明文档。</span><br><span class="line">使用本文档作为系统提示词，来控制评测任务的整体生命周期和状态，包括检查报名情况、创建 IM 群组、向待处理用户发送提醒、生成报告。</span><br><span class="line"></span><br><span class="line">## 何时使用</span><br><span class="line">维护评测任务的生命周期时需要严格按照本文档指导执行任务。它需要一个 `task_id` 来知道需要推进哪个评估任务的状态机。 所有任务相关的信息都在这个文档中：`./skills/llm-Arena/eval_tasks.json`。</span><br><span class="line"></span><br><span class="line">## 指令</span><br><span class="line"></span><br><span class="line">1. **读取任务状态**：</span><br><span class="line">   ……</span><br><span class="line"></span><br><span class="line">2. **处理 `RECRUITING` 状态**：</span><br><span class="line">   ……</span><br><span class="line"></span><br><span class="line">3. **处理 `EVALUATING` 状态**：</span><br><span class="line">   ……</span><br><span class="line"></span><br><span class="line">4. **处理 `DONE` 状态**:</span><br><span class="line">   - 保持静默，不再处理任何操作。</span><br><span class="line"></span><br><span class="line">## 约束与边界情况</span><br><span class="line">- **幂等性**：切勿多次创建 IM 群组。在创建之前始终验证 `im_sub_group_id` 是否为 null。</span><br><span class="line">- **数据隔离**：确保仅查询和发送消息给与传递给此技能的特定 `task_id` 相关的用户。不要在不同任务之间交叉污染数据。</span><br><span class="line">……</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="killer-agent">Killer Agent</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># Killer Agent</span><br><span class="line"></span><br><span class="line">使用本文档来对 Status Agent 任务完成情况进行检测，当 Status Agent 对应的任务完成时，就需要结束对应的 Status Agent 任务。</span><br><span class="line"></span><br><span class="line">## 指令</span><br><span class="line"></span><br><span class="line">1. **读取任务状态**：</span><br><span class="line">   ……</span><br><span class="line"></span><br><span class="line">2. **处理 `DONE` 状态**：</span><br><span class="line">   从 `./skills/llm-Arena/eval_tasks.json` 中提取 `cron_task_id`，使用如下的命令删除对应的 Status Agent 任务。</span><br><span class="line"></span><br><span class="line">   ```bash</span><br><span class="line">   openclaw cron rm cron_task_id</span><br><span class="line">   ```</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># Killer Agent</span><br><span class="line"></span><br><span class="line">使用本文档来对 Status Agent 任务完成情况进行检测，当 Status Agent 对应的任务完成时，就需要结束对应的 Status Agent 任务。</span><br><span class="line"></span><br><span class="line">## 指令</span><br><span class="line"></span><br><span class="line">1. **读取任务状态**：</span><br><span class="line">   ……</span><br><span class="line"></span><br><span class="line">2. **处理 `DONE` 状态**：</span><br><span class="line">   从 `./skills/llm-Arena/eval_tasks.json` 中提取 `cron_task_id`，使用如下的命令删除对应的 Status Agent 任务。</span><br><span class="line"></span><br><span class="line">   ```bash</span><br><span class="line">   openclaw cron rm cron_task_id</span><br><span class="line">   ```</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="报名消息处理">报名消息处理</h3>
 <p>默认情况下，当用户在群聊中 @OpenClaw 报名时，OpenClaw 会自动回复，这并非理想的交互体验。我们希望它能默默记录报名信息而无需回复。</p>
-<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/baoming.png" alt></p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/baoming.png" alt=""></p>
 <p>由于创建任务和招募打分人员是在不同的会话，所以这两个对话的上下文是割裂的，因此如果仅在 <a target="_blank" rel="noopener" href="http://SKILL.md">SKILL.md</a> 中定义规则（私聊发布任务时加载）无法满足我们的需求。如前所述，我们可以把对应的指令放在 <code>TOOLS.md</code> 文件中：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">## LLM 评估任务创建与用户报名处理规范</span><br><span class="line"></span><br><span class="line">当用户在群聊中回复&quot;报名&quot;、&quot;+1&quot;或其他表示有空参与的消息时：</span><br><span class="line">1. **不需要回复** - 用户的报名消息不需要回复</span><br><span class="line">2. **判断用户参加的任务id** - 根据上下文对话信息，` 中的以及 `./skills/llm-Arena/eval_tasks.json任务记录，判断用户参加的是哪个任务，用于更新对应任务的记录。</span><br><span class="line">3. **默默更新**</span><br><span class="line">   - 将用户ID以 list 形式写入 `./skills/llm-Arena/eval_tasks.json` 的 `participants` 字段</span><br><span class="line">   - 格式：`&quot;participants&quot;: [&quot;user1&quot;, &quot;user2&quot;]`</span><br><span class="line">4. **禁止操作** - 禁止修改 `./skills/llm-Arena/eval_tasks.json` 中任何一个任务的 `status` 字段。</span><br></pre></td></tr></table></figure>
-<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/baoming_1.png" alt></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">## LLM 评估任务创建与用户报名处理规范</span><br><span class="line"></span><br><span class="line">当用户在群聊中回复"报名"、"+1"或其他表示有空参与的消息时：</span><br><span class="line">1. **不需要回复** - 用户的报名消息不需要回复</span><br><span class="line">2. **判断用户参加的任务id** - 根据上下文对话信息，` 中的以及 `./skills/llm-Arena/eval_tasks.json任务记录，判断用户参加的是哪个任务，用于更新对应任务的记录。</span><br><span class="line">3. **默默更新**</span><br><span class="line">   - 将用户ID以 list 形式写入 `./skills/llm-Arena/eval_tasks.json` 的 `participants` 字段</span><br><span class="line">   - 格式：`"participants": ["user1", "user2"]`</span><br><span class="line">4. **禁止操作** - 禁止修改 `./skills/llm-Arena/eval_tasks.json` 中任何一个任务的 `status` 字段。</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/baoming_1.png" alt=""></p>
 <h2 id="最终效果">最终效果</h2>
 <p>一句话驱动评测流程，全程不再需要我们的评测专员人工盯盘了。<br>
-<img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/result.png" alt></p>
+<img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/result.png" alt=""></p>
 <h2 id="写好-skill-真不容易">写好 Skill 真不容易</h2>
 <p>编写 Skill 比写代码更具挑战，入门虽易，精通却难。</p>
 <p>我们在开发如上的 Skill 的时候，其实只花了不到半个小时就写好了最初版本的 Skill，但是调试、优化却花了 3 天多的时间。</p>
@@ -405,7 +496,7 @@
 <p>此外，不同模型对 Skill 的理解和支持粒度各异，导致在某个模型上运行良好的 Skill，在其他模型上可能失效。</p>
 <p>因此，调试 Skill 时，不能只关注最终结果，还需仔细检查和分析所有中间过程（如工具调用、执行结果等），以寻找优化空间。</p>
 <p>在调试过程中，我们可以利用 OpenClaw 的 WEBUI 查看每次对话的详细信息，以观察其在任务执行过程中的具体行为。</p>
-<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/debug.png" alt></p>
+<p><img src="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/debug.png" alt=""></p>
 <h2 id="后记">后记</h2>
 <p>后来，在学习 Anthropic 的 <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness design for long-running application development</a> 时，里面对解决模型所面临的上下文窗口焦虑问题时所提到的方案<sup class="footnote-ref"><a href="#fn9" id="fnref9">[9]</a></sup>：</p>
 <blockquote>
@@ -437,7 +528,7 @@ A reset provides a clean slate, at the cost of the handoff artifact having enoug
 </li>
 </ol>
 </section>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

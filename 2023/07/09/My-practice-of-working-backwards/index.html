@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="2023 年 4 月 1 日，我在 LiveVideoStack 2022 北京站 大会上，以 《百度视频质量评测的实践之路》 为题介绍了团队在视频质量评测方向的思考与认知。回首向来萧瑟处，金戈铁马，苍山如海。 站在后验结果的视角来审视这个过程，发现有很多的地方——尤其是“逆向工作”思路对整个事情的推动，值得进一步思考与总结。同时，最近和同事在讨论其他方向的工作思路时，我发现“逆向工作”这个词频">
 <meta property="og:type" content="article">
@@ -22,7 +113,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2023/07/09/My-practice-of-working-backwards/6.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2023/07/09/My-practice-of-working-backwards/8.png">
 <meta property="article:published_time" content="2023-07-09T21:06:45.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.391Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.861Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="实践">
 <meta property="article:tag" content="逆向倒推">
@@ -139,14 +230,14 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2023/07/09/My-practice-of-working-backwards/1.png" alt></p>
+  <html><head></head><body><p><img src="/2023/07/09/My-practice-of-working-backwards/1.png" alt=""></p>
 <p>2023 年 4 月 1 日，我在 <a target="_blank" rel="noopener" href="https://bj2022.livevideostack.cn/schedule">LiveVideoStack 2022 北京站</a> 大会上，以 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/J2QGTiMOgMnZbAyI81I87Q">《百度视频质量评测的实践之路》</a> 为题介绍了团队在视频质量评测方向的思考与认知。回首向来萧瑟处，金戈铁马，苍山如海。</p>
 <p>站在后验结果的视角来审视这个过程，发现有很多的地方——尤其是“逆向工作”思路对整个事情的推动，值得进一步思考与总结。同时，最近和同事在讨论其他方向的工作思路时，我发现“逆向工作”这个词频繁的出现。再加上，近来又在读贝佐斯的 24 封“致股东信”，在 2008 年的“致股东信”中提到的“逆向倒推”深深启发了我。因此，更想对过去的这一段工作进行一番总结。</p>
 <span id="more"></span>
 <h2 id="虚拟摄像头-逆向初体验">虚拟摄像头——逆向初体验</h2>
 <p>时针回拨到 2019 年的夏天，那个时候，抖音、快手提供的可以使用手机拍摄视频并实时增加各种特效的功能蔚然成风。在鹏寰国际大厦的一个会议室中，有一群人正在诉说着工作中那令人“烦恼”的快乐，这群人是当时“全民小视频”测试团队的同学，他们刚刚完成了拍摄器特效功能大改版的测试。</p>
 <ul>
-<li>为了测试这次增加的“拍天空”特效，我都晒黑了……<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=253011891&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<li>为了测试这次增加的“拍天空”特效，我都晒黑了……<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=253011891&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
 </li>
 <li>为了测试张嘴特效，我的下巴都脱臼了……</li>
 <li>……</li>
@@ -167,9 +258,9 @@
 <p>在虚拟摄像头的项目上我尝到了一丝丝的甜头，我惊奇的发现，原来还可以这样解决问题，我开始重新思考这种工作方式的有趣之处：</p>
 <ul>
 <li>不以现有的技术为出发点去确定问题可以解决的程度<br>
-<img src="/2023/07/09/My-practice-of-working-backwards/2.png" alt></li>
+<img src="/2023/07/09/My-practice-of-working-backwards/2.png" alt=""></li>
 <li>以问题的最终解决为目标重新思考需要做何种准备<br>
-<img src="/2023/07/09/My-practice-of-working-backwards/3.png" alt></li>
+<img src="/2023/07/09/My-practice-of-working-backwards/3.png" alt=""></li>
 </ul>
 <p>直到最近一口气读完了亚马逊 CEO <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ZIEBKte_CNsx_VdHH2TGPg">贝佐斯的24封致股东信</a> 之后，我才意识到，原来这种思维模式就是贝佐斯在 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ejNdFv0g1Bg8_U8A1G6-tQ">2008 年致股东信</a> 中提到的“逆向倒推法”。</p>
 <style>.admonition {
@@ -356,7 +447,7 @@
     margin-bottom: 0 !important;
   }
   </style>
-<div class="admonition note"><p class="admonition-title">康威定律&逆康威定律
+<div class="admonition note"><p class="admonition-title">康威定律&amp;逆康威定律
 </p><ul>
 <li>
 <p>1968 年，梅尔·康威发表了一篇论文：How Do Committees Invent?，在这篇论文中，康威研究了组织结构和最终系统设计之间的关系。这也就是后来的<code>康威定律</code>：<em>设计系统的组织由于受到约束，这些设计往往是组织内部沟通结构的副本</em>。</p>
@@ -399,7 +490,7 @@
 <p>2022 年春天的时候，我们遇到了评测效率的问题。这个时候，参与到“度知了”项目中的角色也越来越多，大家也都卯足了劲儿，在各自的工作范畴内做各种优化来提升评测效率。虽然会有改善，但总也无法满足业务方越来越多的评测需求。</p>
 <p>这个时候，我们基于评测目标的全局视角对评测全流程各环节进行了详细的梳理，对不同的环节进行了归并、删减，对不同环节的时序进行了全局最优调整，最后在每个环节内部操作进行各种优化手段。在全局层面，我们增加了任务自动拆分，任务自动调度执行，结果自动聚合等能力；在算子内部，我们还通过优化算子来提升算子的计算效率……</p>
 <p>在 2022 年的夏始春余之际，“度知了”从整体服务流程上变的面貌全新了，这个时候，整体的评测效率也有了非常大的突破，我们也解决了之前存在的评测效率的问题。</p>
-<p><img src="/2023/07/09/My-practice-of-working-backwards/4.png" alt></p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/4.png" alt=""></p>
 <h4 id="结构优化是核心">结构优化是核心</h4>
 <p>如果你问我，在效率提升的过程中，做的最成功的决策是什么？我想，这个答案会是：基于目标而进行的系统结构的调整。</p>
 <p>我们现在都在讲“端到端”的优化，“端到端”的含义非常广泛：</p>
@@ -415,8 +506,8 @@
 <blockquote>
 <p>系统并不仅仅是一些事物的简单集合，而是一个由一组相互连接的要素构成的、能够实现某个<strong>目标</strong>的整体。</p>
 </blockquote>
-<p>对于实现特定<strong>目标</strong>的系统而言，要素很重要，但是连接更为重要。结构决定性质，性质决定用途，就是这个样子。同样都是由 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span></span></span></span> 原子构成，石墨和钻石的结构不同决定了其性质存在非常大的差异。</p>
-<p><img src="/2023/07/09/My-practice-of-working-backwards/7.png" alt></p>
+<p>对于实现特定<strong>目标</strong>的系统而言，要素很重要，但是连接更为重要。结构决定性质，性质决定用途，就是这个样子。同样都是由 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0715em;">C</span></span></span></span> 原子构成，石墨和钻石的结构不同决定了其性质存在非常大的差异。</p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/7.png" alt=""></p>
 <blockquote>
 <p>图片中的结构模型由 <a target="_blank" rel="noopener" href="https://molview.org/">molview</a> 工具生成。</p>
 </blockquote>
@@ -427,7 +518,7 @@
 <h2 id="基于目标的拆解与整合">基于目标的拆解与整合</h2>
 <p>不知不觉，时针指向了 2022 年的秋天，北京的秋天是一年之中最美丽的季节。而此时，度知了也已经成为规模比较大的视频质量评测服务。</p>
 <p>忽然有一天，我开始以后验视角回顾这整个过程。我发现，整个过程中，始终基于目标的自顶向下的拆解与自底向上将各种优化手段再次整合成为目标的正反双循环的思路，在整个度知了的成长历程上，发挥着举足轻重的作用。</p>
-<p><img src="/2023/07/09/My-practice-of-working-backwards/5.png" alt></p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/5.png" alt=""></p>
 <p>贝佐斯在 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Q-dS6YNUcdRFqYFu4zWoDQ">2007 年致股东信</a> 中介绍 Kindle 时写道：</p>
 <blockquote>
 <p>任何事情，只要降低难度和减少阻力，便会遍地开花。</p>
@@ -435,7 +526,7 @@
 <p>基于目标的自顶向下的拆解，可以使得目标难度最小化，只有这样优化才会成为可能，路径才会得以实现，否则就容易造成望而却步的窘境，尤其是当团队成员正在突破自己的认知负荷的前提下。</p>
 <p>拆解是能力，整合是控制力，当所有事情拆解完毕后，我们需要确保所有的优化最终能够整合到一个具体的产品上，这有这样，使用这个产品的门槛才会降低。当整个过程的正、反双循环打通之后，这个事情自然而然也就成功了。</p>
 <p>在整个拆、合的过程中，目标是其背后的最核心的关节点。早在 2020 年的时候，还没有明确 “视频质量评测产品化” 的目标，虽然那个时候，我们也在优化各种算法，但是最终也就是仅仅优化了而已。因此，我们始终在优化各种问题的层面转圈，最终又很难将所做的所有优化进行整合并阐述其价值。现在想想，那个时候还是很焦虑的：技术上确实有进步，但是说不清楚技术的价值。直到我们明确了目标之后，事情才变得好了起来，所有的优化都可以体现到“度知了”的产品上了。</p>
-<p><img src="/2023/07/09/My-practice-of-working-backwards/6.png" alt></p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/6.png" alt=""></p>
 <p>从问题切入有利于解决眼下的事情，而基于目标的思维，可以避免被眼下的错综纷扰而迷惑。不识庐山真面目，只缘身在此山中，这是如此。有很多的时候，从更高一层的目标出发，当前的问题可能已经不是问题了。</p>
 <blockquote>
 <p>我们已经走得太远，以至于忘记了为什么而出发。——《先知》，纪伯伦</p>
@@ -535,16 +626,16 @@
 <h2 id="先验与后验">先验与后验</h2>
 <p>时间在悄然间流逝，年华在匆匆中而过，不经意间，时针已经悄悄指向了 2023 年，机缘巧合，我的工作范围也在不断扩大，也慢慢学会了以后验的视角来审视自己工作的技巧。</p>
 <p>最近，在刷抖音时，惊喜地收到一条关于介绍“运算放大器”的视频推送：​将“运算放大器”的输出和负输入相连接时，会产生非常美妙的特性曲线，而这个曲线也奠定了“运算放大器”在电子世界中的地位。</p>
-<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=314781365&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
+<div class="bili_video"><div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe src="https://player.bilibili.com/player.html?aid=314781365&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe></div></div>
 <p>忽然在想：如果将后验的认知输入到先验作为一种负反馈闭环，那么打通正向、反向双循环之后，工作的事项岂不是可以像“运算放大器”那样更有价值？</p>
 <p>于是，在最近的团队核心工作上，我和相关同学对这种先验、后验双向闭环的方式进行了实践，最终也发现确实这是一种非常有效的方式。</p>
 <p>后来想想，这种先验、后验和“逆向倒推”也有一定的相似之处，“逆向倒推”让我们开启行程，而后验会让我们在行程中不断调整步伐和方向，以使得我们可以更好的达到终点。</p>
 <p>先验是能力，后验是执行力。站在当下看未来，我们将如何行动，这需要强大的先验能力；而站在当下看过去，我们又有哪些得失，这些得失是否可以作用于未来，为我们前行做出指导，这需要强大的执行力。</p>
-<p><img src="/2023/07/09/My-practice-of-working-backwards/8.png" alt></p>
+<p><img src="/2023/07/09/My-practice-of-working-backwards/8.png" alt=""></p>
 <h2 id="总结">总结</h2>
 <p>道理纵有千千万万，实践总是一件非常难的事情。我们总也无法预知未来，因此更需要我们认准目标，以逆向工作的思路，乘着后验之风，在谨慎而又快速、不断调整的实践中创造未来，创造价值。</p>
 <p>凡是过往，皆为序章。今天，仍然是第一天。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

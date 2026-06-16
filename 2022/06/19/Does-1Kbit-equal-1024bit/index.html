@@ -4,14 +4,105 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
-      <meta name="description" content="引言 我们的平台有一个算子用于计算给定视频的音视频流的码率，该算子底层通过调用 ffprobe 来计算音视频的码率。 12ffprobe -select_streams v:0 -show_entries stream&#x3D;bit_rate \-of default&#x3D;nokey&#x3D;0:noprint_wrappers&#x3D;1 &amp;#x27;video_file&amp;#x27; 此时，得到的 bit_rate 的">
+      <meta name="description" content="引言 我们的平台有一个算子用于计算给定视频的音视频流的码率，该算子底层通过调用 ffprobe 来计算音视频的码率。 12ffprobe -select_streams v:0 -show_entries stream&#x3D;bit_rate \-of default&#x3D;nokey&#x3D;0:noprint_wrappers&#x3D;1 &#39;video_file&#39; 此时，得到的 bit_rate 的单位是 b&#x2F;s，为了">
 <meta property="og:type" content="article">
 <meta property="og:title" content="1k bit &#x3D; 1024 bit？">
 <meta property="og:url" content="https://wangwei1237.github.io/2022/06/19/Does-1Kbit-equal-1024bit/index.html">
 <meta property="og:site_name" content="17哥">
-<meta property="og:description" content="引言 我们的平台有一个算子用于计算给定视频的音视频流的码率，该算子底层通过调用 ffprobe 来计算音视频的码率。 12ffprobe -select_streams v:0 -show_entries stream&#x3D;bit_rate \-of default&#x3D;nokey&#x3D;0:noprint_wrappers&#x3D;1 &amp;#x27;video_file&amp;#x27; 此时，得到的 bit_rate 的">
+<meta property="og:description" content="引言 我们的平台有一个算子用于计算给定视频的音视频流的码率，该算子底层通过调用 ffprobe 来计算音视频的码率。 12ffprobe -select_streams v:0 -show_entries stream&#x3D;bit_rate \-of default&#x3D;nokey&#x3D;0:noprint_wrappers&#x3D;1 &#39;video_file&#39; 此时，得到的 bit_rate 的单位是 b&#x2F;s，为了">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wangwei1237.github.io/2022/06/19/Does-1Kbit-equal-1024bit/1.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2022/06/19/Does-1Kbit-equal-1024bit/6.png">
@@ -20,7 +111,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2022/06/19/Does-1Kbit-equal-1024bit/2.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2022/06/19/Does-1Kbit-equal-1024bit/5.jpg">
 <meta property="article:published_time" content="2022-06-19T11:17:53.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.106Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.600Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="IEC(国际电工委员会)">
 <meta property="article:tag" content="SI(国际单位制)">
@@ -113,7 +204,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.4k</span>
+            <span class="post-count">1.3k</span>
         </span>
     </span>
 
@@ -137,21 +228,21 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2022/06/19/Does-1Kbit-equal-1024bit/1.jpg" alt></p>
+  <html><head></head><body><p><img src="/2022/06/19/Does-1Kbit-equal-1024bit/1.jpg" alt=""></p>
 <h2 id="引言">引言</h2>
 <p>我们的平台有一个算子用于计算给定视频的音视频流的码率，该算子底层通过调用 <code>ffprobe</code> 来计算音视频的码率。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffprobe -select_streams v:0 -show_entries stream=bit_rate \</span><br><span class="line">-of default=nokey=0:noprint_wrappers=1 <span class="string">&#x27;video_file&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffprobe -select_streams v:0 -show_entries stream=bit_rate \</span><br><span class="line">-of default=nokey=0:noprint_wrappers=1 <span class="string">'video_file'</span></span><br></pre></td></tr></tbody></table></figure>
 <p>此时，得到的 bit_rate 的单位是 b/s，为了方便，我们把该码率转换为了 Mb/s：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bit_rate = bit_rate / <span class="number">1024</span> / <span class="number">1024</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bit_rate = bit_rate / <span class="number">1024</span> / <span class="number">1024</span>;</span><br></pre></td></tr></tbody></table></figure>
 <p>忽然有一天，我们的用户反馈，平台返回的码率结果和 <code>ffprobe</code> 的结果不一致。具体表现如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Stream #0:0(und): Video: hevc (Main) (hvc1), 3492 kb&#x2F;s, ...</span><br><span class="line">    ...</span><br><span class="line">bit_rate&#x3D;3492451 &#x3D;&#x3D;&gt; 3.33 Mb&#x2F;s</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Stream #0:0(und): Video: hevc (Main) (hvc1), 3492 kb/s, ...</span><br><span class="line">    ...</span><br><span class="line">bit_rate=3492451 ==&gt; 3.33 Mb/s</span><br></pre></td></tr></tbody></table></figure>
 <p>平台返回 3.33 Mb/s x 1024 = 3410 kb/s，而 <code>ffprobe</code> 返回的则为 3492 kb/s。</p>
 <span id="more"></span>
 <h2 id="问题追查">问题追查</h2>
 <p>都是 <code>ffprobe</code> 返回的数据，为什么单位转换之后结果不一致呢了？带着这个问题，我咨询了音视频处理的同事，同事答复说：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在 FFmpeg 中，kb 就是 1000 bit 的意思，b 转换到 kb 是 &#x2F;1000 而不是 &#x2F;1024。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在 FFmpeg 中，kb 就是 1000 bit 的意思，b 转换到 kb 是 /1000 而不是 /1024。</span><br></pre></td></tr></tbody></table></figure>
 <p>从 <a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/avcodec.c">libavcodec/avcodec.c</a> 中的 avcodec_string() 所定义的码率信息打印操作的代码可以知道，在 FFmpeg 中，1kb 的确为 1000 bit。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bitrate = get_bit_rate(enc);</span><br><span class="line"><span class="keyword">if</span> (bitrate != <span class="number">0</span>) &#123;</span><br><span class="line">    av_bprintf(&amp;bprint, <span class="string">&quot;, %&quot;</span>PRId64<span class="string">&quot; kb/s&quot;</span>, bitrate / <span class="number">1000</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (enc-&gt;rc_max_rate &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    av_bprintf(&amp;bprint, <span class="string">&quot;, max. %&quot;</span>PRId64<span class="string">&quot; kb/s&quot;</span>, enc-&gt;rc_max_rate / <span class="number">1000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bitrate = get_bit_rate(enc);</span><br><span class="line"><span class="keyword">if</span> (bitrate != <span class="number">0</span>) {</span><br><span class="line">    av_bprintf(&amp;bprint, <span class="string">", %"</span>PRId64<span class="string">" kb/s"</span>, bitrate / <span class="number">1000</span>);</span><br><span class="line">} <span class="keyword">else</span> <span class="keyword">if</span> (enc-&gt;rc_max_rate &gt; <span class="number">0</span>) {</span><br><span class="line">    av_bprintf(&amp;bprint, <span class="string">", max. %"</span>PRId64<span class="string">" kb/s"</span>, enc-&gt;rc_max_rate / <span class="number">1000</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>印象中，在学校的时候老师就告诉我们：</p>
 <blockquote>
 <p>1024B = 1KB，1024KB = 1MB，1024MB = 1GB，……</p>
@@ -163,7 +254,7 @@
 </blockquote>
 <p>为什么到了 FFmpeg 这里，1 kb 就等于 1000 b 了呢？</p>
 <p>我发起了一个关于 <strong>1kb = (?)b</strong> 的问卷，在回收的 105 份问卷中，答案的分布如下：</p>
-<p><img src="/2022/06/19/Does-1Kbit-equal-1024bit/6.png" alt></p>
+<p><img src="/2022/06/19/Does-1Kbit-equal-1024bit/6.png" alt=""></p>
 <h2 id="kb-and-kib">kb and Kib</h2>
 <p>维基百科对码率的解释如下：</p>
 <blockquote>
@@ -173,14 +264,14 @@
 </blockquote>
 <p>在 SI 中，基于 10 进制定义了各<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Metric_prefix">缩写字母</a>的含义：</p>
 <ul>
-<li>k：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">10^3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span></span></li>
-<li>M：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>6</mn></msup></mrow><annotation encoding="application/x-tex">10^6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">6</span></span></span></span></span></span></span></span></span></span></span></li>
-<li>G：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span></li>
-<li>T：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>12</mn></msup></mrow><annotation encoding="application/x-tex">10^{12}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></li>
-<li>P：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>15</mn></msup></mrow><annotation encoding="application/x-tex">10^{15}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">5</span></span></span></span></span></span></span></span></span></span></span></span></li>
+<li>k：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">10^3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span></span></li>
+<li>M：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mn>6</mn></msup></mrow><annotation encoding="application/x-tex">10^6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">6</span></span></span></span></span></span></span></span></span></span></span></li>
+<li>G：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span></li>
+<li>T：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mn>12</mn></msup></mrow><annotation encoding="application/x-tex">10^{12}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">12</span></span></span></span></span></span></span></span></span></span></span></span></li>
+<li>P：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mn>15</mn></msup></mrow><annotation encoding="application/x-tex">10^{15}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">15</span></span></span></span></span></span></span></span></span></span></span></span></li>
 </ul>
 <p>在二进制领域中，使用“k”（kilo-）、“M”（mega-）、“G”（giga-）等缩写符号会引起严重的混淆，因此在 1999 年 1 月，国际电工委员会（IEC）在 <a target="_blank" rel="noopener" href="https://webstore.iec.ch/publication/12253">IEC 60027-2:1972/AMD2:1999</a> 的第 3.8.3 节中引入了“kibi-”、“mebi-”、“gibi-”等词头以及缩写符号“Ki”、“Mi”、“Gi”等来明确说明二进制计数。</p>
-<p><img src="/2022/06/19/Does-1Kbit-equal-1024bit/3.jpg" alt></p>
+<p><img src="/2022/06/19/Does-1Kbit-equal-1024bit/3.jpg" alt=""></p>
 <style>.admonition {
     margin: 1.5625em 0;
     padding: .6rem;
@@ -259,29 +350,29 @@
   </style>
 <div class="admonition attention"><p class="admonition-title">IEC 80000-13:2008
 </p><p><a target="_blank" rel="noopener" href="https://webstore.iec.ch/publication/7479">IEC 80000-13:2008</a> 取消并替换了 IEC 60027-2 中的第 3.8 和 3.9 节中的内容。</p>
-<p><img src="/2022/06/19/Does-1Kbit-equal-1024bit/4.png" alt></p>
+<p><img src="/2022/06/19/Does-1Kbit-equal-1024bit/4.png" alt=""></p>
 </div>
 <p>因此：</p>
 <ul>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>G</mi><mi>b</mi><mo>=</mo><mn>1</mn><msup><mn>0</mn><mn>3</mn></msup><mi>M</mi><mi>b</mi><mo>=</mo><mn>1</mn><msup><mn>0</mn><mn>6</mn></msup><mi>k</mi><mi>b</mi><mo>=</mo><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">1Gb = 10^{3}Mb = 10^{6}kb = 10^{9}b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord mathdefault">G</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">6</span></span></span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span><span class="mord mathdefault">b</span></span></span></span></li>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>G</mi><mi>i</mi><mi>b</mi><mo>=</mo><msup><mn>2</mn><mn>10</mn></msup><mi>M</mi><mi>i</mi><mi>b</mi><mo>=</mo><msup><mn>2</mn><mn>20</mn></msup><mi>K</mi><mi>i</mi><mi>b</mi><mo>=</mo><msup><mn>2</mn><mn>30</mn></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">1Gib = 2^{10}Mib = 2^{20}Kib = 2^{30}b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord mathdefault">G</span><span class="mord mathdefault">i</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">0</span></span></span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">i</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mtight">0</span></span></span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mord mathdefault">i</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">3</span><span class="mord mtight">0</span></span></span></span></span></span></span></span></span><span class="mord mathdefault">b</span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>G</mi><mi>b</mi><mo>=</mo><msup><mn>10</mn><mn>3</mn></msup><mi>M</mi><mi>b</mi><mo>=</mo><msup><mn>10</mn><mn>6</mn></msup><mi>k</mi><mi>b</mi><mo>=</mo><msup><mn>10</mn><mn>9</mn></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">1Gb = 10^{3}Mb = 10^{6}kb = 10^{9}b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">1</span><span class="mord mathnormal">G</span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.109em;">M</span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">6</span></span></span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.0315em;">k</span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span><span class="mord mathnormal">b</span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>G</mi><mi>i</mi><mi>b</mi><mo>=</mo><msup><mn>2</mn><mn>10</mn></msup><mi>M</mi><mi>i</mi><mi>b</mi><mo>=</mo><msup><mn>2</mn><mn>20</mn></msup><mi>K</mi><mi>i</mi><mi>b</mi><mo>=</mo><msup><mn>2</mn><mn>30</mn></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">1Gib = 2^{10}Mib = 2^{20}Kib = 2^{30}b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">1</span><span class="mord mathnormal">G</span><span class="mord mathnormal">ib</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">10</span></span></span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.109em;">M</span><span class="mord mathnormal">ib</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">20</span></span></span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.0715em;">K</span><span class="mord mathnormal">ib</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">30</span></span></span></span></span></span></span></span></span><span class="mord mathnormal">b</span></span></span></span></li>
 </ul>
 <p>所以，在 FFmpeg 中，当码率需要转换为 kb/s 单位时，采用了 <strong>(b/s) / 1000</strong> 的操作。</p>
 <h2 id="必须关注kib制带来的差别">必须关注Kib制带来的差别</h2>
 <p>在 Linux 或者 Mac 中，已经采用了 IEC 引入了 KiB、MiB 等单位。例如，我们可以查看下 <code>du</code> 命令的帮助文档：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ man du</span><br><span class="line">  ...</span><br><span class="line">  -h      “Human-readable” output.  Use unit suffixes: Byte, Kilobyte, Megabyte, Gigabyte, Terabyte and Petabyte based on powers of 1024.</span><br><span class="line">  --si    “Human-readable” output.  Use unit suffixes: Byte, Kilobyte, Megabyte, Gigabyte, Terabyte and Petabyte based on powers of 1000.</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ man du</span><br><span class="line">  ...</span><br><span class="line">  -h      “Human-readable” output.  Use unit suffixes: Byte, Kilobyte, Megabyte, Gigabyte, Terabyte and Petabyte based on powers of 1024.</span><br><span class="line">  --si    “Human-readable” output.  Use unit suffixes: Byte, Kilobyte, Megabyte, Gigabyte, Terabyte and Petabyte based on powers of 1000.</span><br><span class="line">  ...</span><br></pre></td></tr></tbody></table></figure>
 <p>如果我们查看 Mac 系统中的文件简介的时候，我们也会发现 Mac 是采用了 SI 来表示单位转换的。<br>
-<img src="/2022/06/19/Does-1Kbit-equal-1024bit/2.jpg" alt></p>
+<img src="/2022/06/19/Does-1Kbit-equal-1024bit/2.jpg" alt=""></p>
 <p>我们用 <code>du</code> 命令的不同选项来查看同一个文件的大小的时候也会发现其中的差异：<br>
-<img src="/2022/06/19/Does-1Kbit-equal-1024bit/5.jpg" alt></p>
+<img src="/2022/06/19/Does-1Kbit-equal-1024bit/5.jpg" alt=""></p>
 <p>因此，后续在使用相关命令的时候，务必需要查看对应的文档，以确认该命令的输出是基于 SI 还是基于 IEC。</p>
 <h2 id="结语">结语</h2>
-<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>k</mi><mi>b</mi><mo mathvariant="normal">≠</mo><mn>1024</mn><mi>b</mi></mrow><annotation encoding="application/x-tex">1kb \ne 1024b
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span class="mrel"><span class="mord"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="rlap"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="inner"><span class="mrel"></span></span><span class="fix"></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span></span><span class="mrel">=</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">2</span><span class="mord">4</span><span class="mord mathdefault">b</span></span></span></span></span></p>
-<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>K</mi><mi>i</mi><mi>b</mi><mo>=</mo><mn>1024</mn><mi>b</mi></mrow><annotation encoding="application/x-tex">1Kib = 1024b
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mord mathdefault">i</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">2</span><span class="mord">4</span><span class="mord mathdefault">b</span></span></span></span></span></p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>1</mn><mi>k</mi><mi>b</mi><mo mathvariant="normal">≠</mo><mn>1024</mn><mi>b</mi></mrow><annotation encoding="application/x-tex">1kb \ne 1024b
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mord mathnormal" style="margin-right:0.0315em;">k</span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mspace nobreak"></span><span class="mrel">=</span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">1024</span><span class="mord mathnormal">b</span></span></span></span></span></p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>1</mn><mi>K</mi><mi>i</mi><mi>b</mi><mo>=</mo><mn>1024</mn><mi>b</mi></mrow><annotation encoding="application/x-tex">1Kib = 1024b
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">1</span><span class="mord mathnormal" style="margin-right:0.0715em;">K</span><span class="mord mathnormal">ib</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">1024</span><span class="mord mathnormal">b</span></span></span></span></span></p>
 <p>是时候更新我们的知识库了~</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

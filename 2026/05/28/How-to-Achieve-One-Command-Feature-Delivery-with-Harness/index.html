@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="为了更快的发布 大模型评测平台，我们借鉴 OpenAI 的思路搭建了一套 Harness 模式，之前需要 1 天开发完的功能，现在基本上 2 个小时左右就可以完成。">
 <meta property="og:type" content="article">
@@ -41,7 +132,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-12.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-18.png">
 <meta property="article:published_time" content="2026-05-28T16:43:01.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.170Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.658Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="Harness Engineering">
 <meta name="twitter:card" content="summary_large_image">
@@ -164,8 +255,8 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>为了更快的发布 <a target="_blank" rel="noopener" href="https://lj.baidu.com/sbs/">大模型评测平台</a>，我们借鉴 <code>OpenAI</code> 的思路搭建了一套 <code>Harness</code> 模式，之前需要 1 天开发完的功能，现在基本上 2 个小时左右就可以完成。</p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-08.png" alt></p>
+  <html><head></head><body><p>为了更快的发布 <a target="_blank" rel="noopener" href="https://lj.baidu.com/sbs/">大模型评测平台</a>，我们借鉴 <code>OpenAI</code> 的思路搭建了一套 <code>Harness</code> 模式，之前需要 1 天开发完的功能，现在基本上 2 个小时左右就可以完成。</p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-08.png" alt=""></p>
 <span id="more"></span>
 <h2 id="1-背景">1. 背景</h2>
 <p>在 <a href="/2026/03/15/I-use-OpenClaw-to-manage-LLMs-evals-tasks/">我让 OpenClaw 🦞 管理大模型评测任务</a> 中提到，我们通过自建的 <code>Side-by-Side</code> 平台来实现多模态大模型的偏好打分以及对抗榜单结果。在 2026 年 2 月平台刚上线的时候，还只支持最基本的 <code>Side-by-Side</code> 的功能，比如只支持生图大模型的评测，并且对于图生图大模型而言，仅支持参考图片为单图的评估场景……因此，我们的评测平台属于是一个功能不断丰富、扩展的状态。平台功能的升级一方面来自参与到实际评估中的用户的真实反馈，另一方面来自我们对平台功能点的规划。</p>
@@ -253,28 +344,28 @@
 </div>
 <p>最开始的时候，我们的前后端开发人员各自使用 <code>DUCC</code> 通过 <code>Vibe Coding</code> 的方式来编码前后端服务，然后再进行联调测试，最后再利用我们内部的上线平台发布新功能。</p>
 <pre class="mermaid">flowchart LR
-  A[新功能] --> B[FE 模块]
-  A --> C[Server 模块]
-  B --> D[Vibe Coding]
-  C --> E[Vibe Coding]
-  D --> F[联调]
-  E --> F
-  F --> G[功能发布]</pre>
+  A[新功能] --&gt; B[FE 模块]
+  A --&gt; C[Server 模块]
+  B --&gt; D[Vibe Coding]
+  C --&gt; E[Vibe Coding]
+  D --&gt; F[联调]
+  E --&gt; F
+  F --&gt; G[功能发布]</pre>
 <p>可以看到，<code>Vibe Coding</code> 模式下，开发过程中的唯一的变化就是代码的实现由人变成了 AI。而新功能的拆解，模块之间的联调，代码的迭代调整还都是人来驱动的，不同的是，人的产物不再是代码，而是自然语言。我们最开始并不太懂 <code>React</code>，但是整个平台在 AI 的帮助下，也就这么构建起来了。无疑，<code>Vibe Coding</code> 极大地降低了产品开发的门槛。</p>
 <pre class="mermaid">graph
     %% 新模式 下半区
     subgraph 新AI开发模式
-        N1[人] --自然语言--> N2[DUCC]
-        N2 -- 代码 --> N3[产品]
+        N1[人] --自然语言--&gt; N2[DUCC]
+        N2 -- 代码 --&gt; N3[产品]
     end
         
     %% 旧模式 上半区
     subgraph 旧开发模式
-        A[人] -- 代码 --> B[产品]
+        A[人] -- 代码 --&gt; B[产品]
     end</pre>
 <p>慢慢地，我们发现，虽然我们在 <code>CLAUDE.md</code> 中补充了很多的知识，虽然 <code>Vibe Coding</code> 确实提升了我们的开发效率，但是有时候我们总是会为了调整页面的某个元素而浪费几十分钟的时间，而人去改动这些代码可能只需要几分钟。更让人接受不了的是，整个的改动过程会出现越改越糟的问题，这实在是令人抓狂。</p>
 <p>当提示词比较长的时候，我们希望增加一个展开全部的功能，避免过长的提示词占据屏幕的整个区域，从而提升打分过程的交互体验。就是这么一个小小的改动，我们来来回回和 <code>DUCC</code> 沟通了 2 个多小时，中途多少次我都萌生了亲自去写这块代码的冲动……后来，<code>/clear</code> 了上下文，还原了所有的代码改动，重新给新的提示词，才完成了最后的效果。</p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-22.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-22.png" alt=""></p>
 <p>麻了，我再也不想和 AI 废话了，我不想写代码，同时我也不想和 AI 来来回回的聊天了。在我用 <code>Harness Engineering</code> 来进行书籍翻译工作之后，我想，是时候让 <code>Harness</code> 发挥更大的价值了。</p>
 <h2 id="3-对-harness-的思考">3. 对 Harness 的思考</h2>
 <p>最开始有这个想法的时候，我的心里也犯嘀咕：</p>
@@ -406,7 +497,7 @@
 </div>
 <p>理念是个好理念，但是具体实施起来，看起来有点麻烦。我们想改，但是又不想花费太大的力气。</p>
 <p>最终，我们采用 <code>Git Submodule</code> 的方式实现了代码仓库的 <code>AI-First</code> 重构。我们首先建了一个主仓库 <code>versus</code>，<code>versus-fe</code> 和 <code>versus-server</code> 仓库则以子模块的形式整合到主仓库中。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">versus/                    <span class="comment"># 父仓库</span></span><br><span class="line">├── versus-server/         <span class="comment"># 服务端子模块 (Go + Gin)</span></span><br><span class="line">|   └── CLAUDE.md              <span class="comment"># 服务端 Claude Code 项目指令</span></span><br><span class="line">├── versus-fe/             <span class="comment"># 前端子模块 (React + Vite)</span></span><br><span class="line">|   └── CLAUDE.md              <span class="comment"># 前端 Claude Code 项目指令</span></span><br><span class="line">├── scripts/               <span class="comment"># 管理脚本</span></span><br><span class="line">│   ├── setup.sh               <span class="comment"># 初始化开发环境</span></span><br><span class="line">│   ├── pull-all.sh            <span class="comment"># 拉取所有子模块</span></span><br><span class="line">│   ├── status.sh              <span class="comment"># 查看仓库状态</span></span><br><span class="line">│   └── sync-user-config.sh    <span class="comment"># 同步用户配置</span></span><br><span class="line">├── .claude/               <span class="comment"># Claude Code 配置与 Agent 定义</span></span><br><span class="line">│   ├── settings.json          <span class="comment"># Agent 与 MCP 插件全局配置</span></span><br><span class="line">│   ├── settings.local.json    <span class="comment"># 本地工具权限授权（不入库）</span></span><br><span class="line">│   ├── agents/                <span class="comment"># 6 个协作 Agent 定义文件</span></span><br><span class="line">│   │   ├── requirement-designer.md</span><br><span class="line">│   │   ├── go-api-implementer.md</span><br><span class="line">│   │   ├── frontend-engineer.md</span><br><span class="line">│   │   ├── test-case-designer.md</span><br><span class="line">│   │   ├── integration-test-runner.md</span><br><span class="line">│   │   └── e2e-test-executor.md</span><br><span class="line">│   └── agent-memory/          <span class="comment"># Agent 跨会话记忆</span></span><br><span class="line">│       ├── requirement-designer/MEMORY.md</span><br><span class="line">│       ├── go-api-implementer/MEMORY.md</span><br><span class="line">│       ├── frontend-engineer/MEMORY.md</span><br><span class="line">│       ├── test-case-designer/MEMORY.md</span><br><span class="line">│       ├── integration-test-runner/MEMORY.md</span><br><span class="line">│       └── e2e-test-executor/MEMORY.md</span><br><span class="line">├── docs/                  <span class="comment"># 项目文档与需求产物</span></span><br><span class="line">│   ├── system-architecture.md           <span class="comment"># 系统架构说明</span></span><br><span class="line">│   ├── 6-agent-collaboration-summary.md <span class="comment"># 6-Agent 协作流水线总结</span></span><br><span class="line">│   └── requirements/                    <span class="comment"># 各需求流水线产物（按 REQ-ID 组织）</span></span><br><span class="line">│       ├── REQ-001/      </span><br><span class="line">│       ├── REQ-CASE-RESOURCE/ </span><br><span class="line">│       ├── REQ-VIDEO-TYPES/   </span><br><span class="line">│       ├── REQ-020/      </span><br><span class="line">│       └── REQ-ERROR-CODE/</span><br><span class="line">├── .gitmodules            <span class="comment"># 子模块配置（已被 .gitignore 忽略）</span></span><br><span class="line">├── .gitignore             <span class="comment"># Git 忽略规则</span></span><br><span class="line">├── CLAUDE.md              <span class="comment"># 项目整体知识</span></span><br><span class="line">├── dev.sh                 <span class="comment"># 一键启动前后端服务</span></span><br><span class="line">├── README.md              <span class="comment"># 项目说明</span></span><br><span class="line">└── FEATURES.md            <span class="comment"># 功能清单</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">versus/                    <span class="comment"># 父仓库</span></span><br><span class="line">├── versus-server/         <span class="comment"># 服务端子模块 (Go + Gin)</span></span><br><span class="line">|   └── CLAUDE.md              <span class="comment"># 服务端 Claude Code 项目指令</span></span><br><span class="line">├── versus-fe/             <span class="comment"># 前端子模块 (React + Vite)</span></span><br><span class="line">|   └── CLAUDE.md              <span class="comment"># 前端 Claude Code 项目指令</span></span><br><span class="line">├── scripts/               <span class="comment"># 管理脚本</span></span><br><span class="line">│   ├── setup.sh               <span class="comment"># 初始化开发环境</span></span><br><span class="line">│   ├── pull-all.sh            <span class="comment"># 拉取所有子模块</span></span><br><span class="line">│   ├── status.sh              <span class="comment"># 查看仓库状态</span></span><br><span class="line">│   └── sync-user-config.sh    <span class="comment"># 同步用户配置</span></span><br><span class="line">├── .claude/               <span class="comment"># Claude Code 配置与 Agent 定义</span></span><br><span class="line">│   ├── settings.json          <span class="comment"># Agent 与 MCP 插件全局配置</span></span><br><span class="line">│   ├── settings.local.json    <span class="comment"># 本地工具权限授权（不入库）</span></span><br><span class="line">│   ├── agents/                <span class="comment"># 6 个协作 Agent 定义文件</span></span><br><span class="line">│   │   ├── requirement-designer.md</span><br><span class="line">│   │   ├── go-api-implementer.md</span><br><span class="line">│   │   ├── frontend-engineer.md</span><br><span class="line">│   │   ├── test-case-designer.md</span><br><span class="line">│   │   ├── integration-test-runner.md</span><br><span class="line">│   │   └── e2e-test-executor.md</span><br><span class="line">│   └── agent-memory/          <span class="comment"># Agent 跨会话记忆</span></span><br><span class="line">│       ├── requirement-designer/MEMORY.md</span><br><span class="line">│       ├── go-api-implementer/MEMORY.md</span><br><span class="line">│       ├── frontend-engineer/MEMORY.md</span><br><span class="line">│       ├── test-case-designer/MEMORY.md</span><br><span class="line">│       ├── integration-test-runner/MEMORY.md</span><br><span class="line">│       └── e2e-test-executor/MEMORY.md</span><br><span class="line">├── docs/                  <span class="comment"># 项目文档与需求产物</span></span><br><span class="line">│   ├── system-architecture.md           <span class="comment"># 系统架构说明</span></span><br><span class="line">│   ├── 6-agent-collaboration-summary.md <span class="comment"># 6-Agent 协作流水线总结</span></span><br><span class="line">│   └── requirements/                    <span class="comment"># 各需求流水线产物（按 REQ-ID 组织）</span></span><br><span class="line">│       ├── REQ-001/      </span><br><span class="line">│       ├── REQ-CASE-RESOURCE/ </span><br><span class="line">│       ├── REQ-VIDEO-TYPES/   </span><br><span class="line">│       ├── REQ-020/      </span><br><span class="line">│       └── REQ-ERROR-CODE/</span><br><span class="line">├── .gitmodules            <span class="comment"># 子模块配置（已被 .gitignore 忽略）</span></span><br><span class="line">├── .gitignore             <span class="comment"># Git 忽略规则</span></span><br><span class="line">├── CLAUDE.md              <span class="comment"># 项目整体知识</span></span><br><span class="line">├── dev.sh                 <span class="comment"># 一键启动前后端服务</span></span><br><span class="line">├── README.md              <span class="comment"># 项目说明</span></span><br><span class="line">└── FEATURES.md            <span class="comment"># 功能清单</span></span><br></pre></td></tr></tbody></table></figure>
 <ul>
 <li>
 <p><code>versus</code> 目录下的 <code>CLAUDE.md</code> 主要存放跨前后端、跨 <code>Agent</code>、跨需求都需要知道的全局知识，相当于整个项目的作战地图 + 协作规则 + 产品背景 + 全局约束。</p>
@@ -423,10 +514,10 @@
 </ul>
 <p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-11.png" alt="一句话更新主仓库、子仓库的代码"></p>
 <p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-07.png" alt="一句话部署前后端代码，并用浏览器打开首页"></p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-24.png" alt></p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-06.png" alt></p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-10.png" alt></p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-26.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-24.png" alt=""></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-06.png" alt=""></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-10.png" alt=""></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-26.png" alt=""></p>
 <h3 id="4-2-harness-闭环设计">4.2 Harness 闭环设计</h3>
 <p><code>Anthropic</code> 的 <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness design for long-running application development</a> 博客中提到当前的模型具备如下的问题：</p>
 <ul>
@@ -487,22 +578,22 @@
 </tbody>
 </table>
 <p>通过如上 6 个 <code>Sub-Agent</code> 的全流程自动流转和验证，形成完整的、自我完善的 <code>Harness</code> 开发闭环。</p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-16.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-16.png" alt=""></p>
 <p>整个的闭环流程，除了 <code>PRD</code> 阶段需要人工审核以外，其他阶段均不需要人工介入。尤其是在前、后端开发过程中，<code>Harness</code> 避免了前后端 <code>RD</code> 之间的沟通与协作成本，极大地提升了开发的效率。</p>
 <pre class="mermaid">flowchart TD
-  A[用户触发: 启动 6 个 Agent 协作实现需求] --> B[1. requirement-designer\n产出 PRD.md, 分配 REQ-ID]
-  B --> C[人工审核 PRD\n唯一的用户确认节点]
-  C -->|用户确认通过| D[2. go-api-implementer\n产出 Go 后端代码 + api-summary.md]
-  D -->|status=completed 自动流转| E[3. frontend-engineer\n产出 React 前端代码]
-  E -->|status=completed 自动流转| F[4. test-case-designer\n产出 api-test-cases.json + e2e-test-cases.json]
-  F --> G[5. integration-test-runner\n端口: 8899/3000\nAPI 接口测试]
-  F --> H[6. e2e-test-executor\n端口: 8901/3001\n浏览器 E2E 测试]
-  G -->|has_bugs| I[后端 Bug]
-  H -->|has_bugs| J[前端 Bug]
-  I --> D
-  J --> E
-  G -->|all_passed| K[编码任务完成]
-  H -->|all_passed| K</pre>
+  A[用户触发: 启动 6 个 Agent 协作实现需求] --&gt; B[1. requirement-designer\n产出 PRD.md, 分配 REQ-ID]
+  B --&gt; C[人工审核 PRD\n唯一的用户确认节点]
+  C --&gt;|用户确认通过| D[2. go-api-implementer\n产出 Go 后端代码 + api-summary.md]
+  D --&gt;|status=completed 自动流转| E[3. frontend-engineer\n产出 React 前端代码]
+  E --&gt;|status=completed 自动流转| F[4. test-case-designer\n产出 api-test-cases.json + e2e-test-cases.json]
+  F --&gt; G[5. integration-test-runner\n端口: 8899/3000\nAPI 接口测试]
+  F --&gt; H[6. e2e-test-executor\n端口: 8901/3001\n浏览器 E2E 测试]
+  G --&gt;|has_bugs| I[后端 Bug]
+  H --&gt;|has_bugs| J[前端 Bug]
+  I --&gt; D
+  J --&gt; E
+  G --&gt;|all_passed| K[编码任务完成]
+  H --&gt;|all_passed| K</pre>
 <p>以我们的一个实际的需求——为视频大模型增加评估任务类型——为例，具体的操作如下所示：</p>
 <p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-14.png" alt="启动任务"></p>
 <p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-21.png" alt="requirement-designer Agent 启动，生成需求文档"></p>
@@ -513,8 +604,8 @@
 <p>采用 <code>Sub-Agent</code> 的方式可以解决单 <code>Agent</code> 中存在的“上下文焦虑”和“自视甚高”的问题，但也带来了新的问题：如何在不同的 <code>Sub-Agent</code> 之间安全、结构化地转移“控制权”与“上下文状态”？如果无法有效地解决 <code>Sub-Agent</code> 之间的交接，那么 <code>Agent</code> 之间就成了 “哑巴交流”——任务断连、状态错乱、故障恢复、链路追溯——都将导致异常灾难，最终完全失去了 <code>Sub-Agent</code> 分布式协作的价值。</p>
 <p>为此，我们实现了一个简洁的 <code>Agent Handoff</code> 协议：当上一个 <code>Agent</code> 完成任务后，它会通过 <code>Handoff</code> 协议将任务状态、已收集的信息以及下一步的执行意图，规范地传递给下一个 <code>Agent</code>。</p>
 <p>每个 <code>Agent</code> 在结束之前，必须附加如下所示的 <code>Handoff</code> 块，以完成任务的交接：</p>
-<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---AGENT-HANDOFF---</span><br><span class="line">requirement-id: REQ-001</span><br><span class="line">status: completed | awaiting<span class="emphasis">_review | has_</span>bugs | all<span class="emphasis">_passed</span></span><br><span class="line"><span class="emphasis">output: 产出的文件路径</span></span><br><span class="line"><span class="emphasis">next-step: 下一步动作描述</span></span><br><span class="line"><span class="emphasis">next-step-prompt: 启动下一个 Agent 时使用的 prompt</span></span><br><span class="line"><span class="emphasis">after-approval-next-step: 审核通过后的动作（仅 awaiting_</span>review）</span><br><span class="line">after-approval-prompt: 审核通过后的 prompt（仅 awaiting<span class="emphasis">_review）</span></span><br><span class="line"><span class="emphasis">bugs: Bug 列表（仅 has_</span>bugs）</span><br><span class="line">review-message: 审核提示（仅 awaiting<span class="emphasis">_review）</span></span><br><span class="line"><span class="emphasis">---END-HANDOFF---</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---AGENT-HANDOFF---</span><br><span class="line">requirement-id: REQ-021</span><br><span class="line">status: awaiting<span class="emphasis">_review</span></span><br><span class="line"><span class="emphasis">output: docs/requirements/REQ-021/PRD.md</span></span><br><span class="line"><span class="emphasis">next-step: wait_</span>for<span class="emphasis">_human_</span>approval</span><br><span class="line">after-approval-next-step: launch go-api-implementer</span><br><span class="line">after-approval-prompt: \&quot;根据需求 REQ-021 的 PRD 实现后端接口。PRD路径: docs/requirements/REQ-021/PRD.md\&quot;</span><br><span class="line">review-message: \&quot;PRD 已生成，请审核 docs/requirements/REQ-021/PRD.md，确认无误后回复&#x27;继续&#x27;启动后端实现\&quot;</span><br><span class="line">---END-HANDOFF---</span><br></pre></td></tr></table></figure>
+<figure class="highlight md"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---AGENT-HANDOFF---</span><br><span class="line">requirement-id: REQ-001</span><br><span class="line">status: completed | awaiting<span class="emphasis">_review | has_</span>bugs | all<span class="emphasis">_passed</span></span><br><span class="line"><span class="emphasis">output: 产出的文件路径</span></span><br><span class="line"><span class="emphasis">next-step: 下一步动作描述</span></span><br><span class="line"><span class="emphasis">next-step-prompt: 启动下一个 Agent 时使用的 prompt</span></span><br><span class="line"><span class="emphasis">after-approval-next-step: 审核通过后的动作（仅 awaiting_</span>review）</span><br><span class="line">after-approval-prompt: 审核通过后的 prompt（仅 awaiting<span class="emphasis">_review）</span></span><br><span class="line"><span class="emphasis">bugs: Bug 列表（仅 has_</span>bugs）</span><br><span class="line">review-message: 审核提示（仅 awaiting<span class="emphasis">_review）</span></span><br><span class="line"><span class="emphasis">---END-HANDOFF---</span></span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight md"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---AGENT-HANDOFF---</span><br><span class="line">requirement-id: REQ-021</span><br><span class="line">status: awaiting<span class="emphasis">_review</span></span><br><span class="line"><span class="emphasis">output: docs/requirements/REQ-021/PRD.md</span></span><br><span class="line"><span class="emphasis">next-step: wait_</span>for<span class="emphasis">_human_</span>approval</span><br><span class="line">after-approval-next-step: launch go-api-implementer</span><br><span class="line">after-approval-prompt: \"根据需求 REQ-021 的 PRD 实现后端接口。PRD路径: docs/requirements/REQ-021/PRD.md\"</span><br><span class="line">review-message: \"PRD 已生成，请审核 docs/requirements/REQ-021/PRD.md，确认无误后回复'继续'启动后端实现\"</span><br><span class="line">---END-HANDOFF---</span><br></pre></td></tr></tbody></table></figure>
 <p><code>Handoff</code> 协议中各状态的含义如下：</p>
 <table>
 <thead>
@@ -732,7 +823,7 @@
 <div class="admonition note"><p>没有必要手写 <code>Agent</code> 的具体内容，可以直接使用 <code>DUCC</code> 的 <code>/agents</code> 让 <code>DUCC</code> 自动为我们实现相关的 <code>Agent</code>。</p>
 </div>
 <p>如前所述，在我们的工程中，我们把工程用到的所有的 <code>Agent</code> 描述都放在了 <code>versus/.claude/agents</code> 目录下，作为团队资产公用。<code>test-case-designer</code> <code>Agent</code> 的描述如下所示：</p>
-<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: test-case-designer</span><br><span class="line">description: |</span><br><span class="line">  Use this agent when you need to generate comprehensive test cases for a feature based on requirement documents, technical specifications, API implementations, and frontend implementations. This agent designs both API interface test cases and end-to-end (E2E) web test cases in JSON format. It does NOT execute tests - it only creates test case specifications.</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">You are an elite Software Quality Assurance Engineer and Test Architect with deep expertise in software testing methodologies, test case design, and quality engineering. You specialize in creating comprehensive, well-structured test cases that ensure software reliability and quality.</span><br><span class="line"></span><br><span class="line"><span class="section">## Your Core Mission</span></span><br><span class="line"></span><br><span class="line">You design test cases for features based on:</span><br><span class="line"><span class="bullet">-</span> Requirement documents (需求文档)</span><br><span class="line"><span class="bullet">-</span> Technical specifications (技术方案)</span><br><span class="line"><span class="bullet">-</span> API implementations (接口实现)</span><br><span class="line"><span class="bullet">-</span> Frontend implementations (前端实现)</span><br><span class="line"></span><br><span class="line">You produce two types of test cases:</span><br><span class="line"><span class="bullet">1.</span> <span class="strong">**API Interface Test Cases**</span> (接口测试用例)</span><br><span class="line"><span class="bullet">2.</span> <span class="strong">**End-to-End Web Test Cases**</span> (端到端测试用例)</span><br><span class="line"></span><br><span class="line"><span class="strong">**IMPORTANT**</span>: You ONLY design test cases - you do NOT execute them. Your output is JSON-formatted test case specifications.</span><br><span class="line"></span><br><span class="line"><span class="section">## 产物规范</span></span><br><span class="line"></span><br><span class="line"><span class="section">### 输入</span></span><br><span class="line"><span class="bullet">-</span> PRD 文档：<span class="code">`docs/requirements/&#123;REQ-ID&#125;/PRD.md`</span>（由 requirement-designer 产出）</span><br><span class="line"><span class="bullet">-</span> API 摘要：<span class="code">`docs/requirements/&#123;REQ-ID&#125;/api-summary.md`</span>（由 go-api-implementer 产出）</span><br><span class="line"><span class="bullet">-</span> 后端代码：<span class="code">`versus-server/`</span> 目录（由 go-api-implementer 产出）</span><br><span class="line"><span class="bullet">-</span> 前端代码：<span class="code">`versus-fe/`</span> 目录（由 frontend-engineer 产出）</span><br><span class="line"></span><br><span class="line"><span class="section">### 输出</span></span><br><span class="line"><span class="bullet">-</span> API 测试用例：<span class="strong">**必须**</span>保存到 <span class="code">`docs/requirements/&#123;REQ-ID&#125;/api-test-cases.json`</span></span><br><span class="line"><span class="bullet">-</span> E2E 测试用例：<span class="strong">**必须**</span>保存到 <span class="code">`docs/requirements/&#123;REQ-ID&#125;/e2e-test-cases.json`</span></span><br><span class="line"></span><br><span class="line"><span class="section">### 下游触发</span></span><br><span class="line">测试用例设计完成后，提示主会话<span class="strong">**并行启动**</span> integration-test-runner 和 e2e-test-executor，传入需求 ID。</span><br><span class="line"></span><br><span class="line"><span class="section">## Handoff 输出（MUST）</span></span><br><span class="line"></span><br><span class="line">测试用例设计完成后，你 MUST 在输出末尾输出以下格式的 Handoff 块：</span><br><span class="line"></span><br><span class="line"><span class="code">```</span></span><br><span class="line"><span class="code">---AGENT-HANDOFF---</span></span><br><span class="line"><span class="code">requirement-id: &#123;当前REQ-ID&#125;</span></span><br><span class="line"><span class="code">status: completed</span></span><br><span class="line"><span class="code">output: docs/requirements/&#123;REQ-ID&#125;/api-test-cases.json, docs/requirements/&#123;REQ-ID&#125;/e2e-test-cases.json</span></span><br><span class="line"><span class="code">next-step: launch integration-test-runner AND e2e-test-executor in parallel</span></span><br><span class="line"><span class="code">next-step-prompt-integration: &quot;启动服务(后端8899/前端3000)并执行需求 &#123;REQ-ID&#125; 的 API 集成测试。测试用例路径: docs/requirements/&#123;REQ-ID&#125;/api-test-cases.json&quot;</span></span><br><span class="line"><span class="code">next-step-prompt-e2e: &quot;启动服务(后端8901/前端3001)并执行需求 &#123;REQ-ID&#125; 的浏览器 E2E 测试。测试用例路径: docs/requirements/&#123;REQ-ID&#125;/e2e-test-cases.json&quot;</span></span><br><span class="line"><span class="code">---END-HANDOFF---</span></span><br><span class="line"><span class="code">```</span></span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight md"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: test-case-designer</span><br><span class="line">description: |</span><br><span class="line"><span class="section">  Use this agent when you need to generate comprehensive test cases for a feature based on requirement documents, technical specifications, API implementations, and frontend implementations. This agent designs both API interface test cases and end-to-end (E2E) web test cases in JSON format. It does NOT execute tests - it only creates test case specifications.</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line"></span><br><span class="line">You are an elite Software Quality Assurance Engineer and Test Architect with deep expertise in software testing methodologies, test case design, and quality engineering. You specialize in creating comprehensive, well-structured test cases that ensure software reliability and quality.</span><br><span class="line"></span><br><span class="line"><span class="section">## Your Core Mission</span></span><br><span class="line"></span><br><span class="line">You design test cases for features based on:</span><br><span class="line"><span class="bullet">-</span> Requirement documents (需求文档)</span><br><span class="line"><span class="bullet">-</span> Technical specifications (技术方案)</span><br><span class="line"><span class="bullet">-</span> API implementations (接口实现)</span><br><span class="line"><span class="bullet">-</span> Frontend implementations (前端实现)</span><br><span class="line"></span><br><span class="line">You produce two types of test cases:</span><br><span class="line"><span class="bullet">1.</span> <span class="strong">**API Interface Test Cases**</span> (接口测试用例)</span><br><span class="line"><span class="bullet">2.</span> <span class="strong">**End-to-End Web Test Cases**</span> (端到端测试用例)</span><br><span class="line"></span><br><span class="line"><span class="strong">**IMPORTANT**</span>: You ONLY design test cases - you do NOT execute them. Your output is JSON-formatted test case specifications.</span><br><span class="line"></span><br><span class="line"><span class="section">## 产物规范</span></span><br><span class="line"></span><br><span class="line"><span class="section">### 输入</span></span><br><span class="line"><span class="bullet">-</span> PRD 文档：<span class="code">`docs/requirements/{REQ-ID}/PRD.md`</span>（由 requirement-designer 产出）</span><br><span class="line"><span class="bullet">-</span> API 摘要：<span class="code">`docs/requirements/{REQ-ID}/api-summary.md`</span>（由 go-api-implementer 产出）</span><br><span class="line"><span class="bullet">-</span> 后端代码：<span class="code">`versus-server/`</span> 目录（由 go-api-implementer 产出）</span><br><span class="line"><span class="bullet">-</span> 前端代码：<span class="code">`versus-fe/`</span> 目录（由 frontend-engineer 产出）</span><br><span class="line"></span><br><span class="line"><span class="section">### 输出</span></span><br><span class="line"><span class="bullet">-</span> API 测试用例：<span class="strong">**必须**</span>保存到 <span class="code">`docs/requirements/{REQ-ID}/api-test-cases.json`</span></span><br><span class="line"><span class="bullet">-</span> E2E 测试用例：<span class="strong">**必须**</span>保存到 <span class="code">`docs/requirements/{REQ-ID}/e2e-test-cases.json`</span></span><br><span class="line"></span><br><span class="line"><span class="section">### 下游触发</span></span><br><span class="line">测试用例设计完成后，提示主会话<span class="strong">**并行启动**</span> integration-test-runner 和 e2e-test-executor，传入需求 ID。</span><br><span class="line"></span><br><span class="line"><span class="section">## Handoff 输出（MUST）</span></span><br><span class="line"></span><br><span class="line">测试用例设计完成后，你 MUST 在输出末尾输出以下格式的 Handoff 块：</span><br><span class="line"></span><br><span class="line"><span class="code">```</span></span><br><span class="line"><span class="code">---AGENT-HANDOFF---</span></span><br><span class="line"><span class="code">requirement-id: {当前REQ-ID}</span></span><br><span class="line"><span class="code">status: completed</span></span><br><span class="line"><span class="code">output: docs/requirements/{REQ-ID}/api-test-cases.json, docs/requirements/{REQ-ID}/e2e-test-cases.json</span></span><br><span class="line"><span class="code">next-step: launch integration-test-runner AND e2e-test-executor in parallel</span></span><br><span class="line"><span class="code">next-step-prompt-integration: "启动服务(后端8899/前端3000)并执行需求 {REQ-ID} 的 API 集成测试。测试用例路径: docs/requirements/{REQ-ID}/api-test-cases.json"</span></span><br><span class="line"><span class="code">next-step-prompt-e2e: "启动服务(后端8901/前端3001)并执行需求 {REQ-ID} 的浏览器 E2E 测试。测试用例路径: docs/requirements/{REQ-ID}/e2e-test-cases.json"</span></span><br><span class="line"><span class="code">---END-HANDOFF---</span></span><br><span class="line"><span class="code">```</span></span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
 <p>最终生成的接口测试用例如下所示：</p>
 <p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-05.png" alt="接口测试用例"></p>
 <h3 id="4-5-e2e-浏览器测试">4.5 E2E 浏览器测试</h3>
@@ -821,26 +912,26 @@
 </ul>
 <p>整体过程如下所示：</p>
 <pre class="mermaid">flowchart TD
-    A["e2e-test-executor 启动"] --> C["启动前、后端服务"]
-    C --> D["通过 Chrome DevTools MCP 控制浏览器"]
-    D --> E
+    A["e2e-test-executor 启动"] --&gt; C["启动前、后端服务"]
+    C --&gt; D["通过 Chrome DevTools MCP 控制浏览器"]
+    D --&gt; E
 
     subgraph E ["对每个测试用例"]
         direction LR
-        E1["1. 进入指定页面"] --> E2["2. take_snapshot 获取页面"]
-        E2 --> E3["3. 按步骤执行"]
-        E3 --> E4["4. 截图"]
-        E4 --> E5["5. 验证并记录结果"]
+        E1["1. 进入指定页面"] --&gt; E2["2. take_snapshot 获取页面"]
+        E2 --&gt; E3["3. 按步骤执行"]
+        E3 --&gt; E4["4. 截图"]
+        E4 --&gt; E5["5. 验证并记录结果"]
     end
 
-    E --> G{"是否有失败用例?"}
-    G -->|全部通过| F["生成 summary.md + 截图归档<br>status=all_passed"]
-    G -->|存在失败| H{"Bug 类型?"}
-    H -->|后端 Bug| I["go-api-implementer 修复"]
-    H -->|前端 Bug| J["frontend-engineer 修复"]
-    I --> K["重新启动服务 & 重跑失败用例"]
-    J --> K
-    K --> E</pre>
+    E --&gt; G{"是否有失败用例?"}
+    G --&gt;|全部通过| F["生成 summary.md + 截图归档<br>status=all_passed"]
+    G --&gt;|存在失败| H{"Bug 类型?"}
+    H --&gt;|后端 Bug| I["go-api-implementer 修复"]
+    H --&gt;|前端 Bug| J["frontend-engineer 修复"]
+    I --&gt; K["重新启动服务 &amp; 重跑失败用例"]
+    J --&gt; K
+    K --&gt; E</pre>
 <p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-13.png" alt="API 测试&amp;修复的自闭环流程"></p>
 <p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-17.png" alt="API 测试&amp;修复的自闭环流程"></p>
 <p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-25.png" alt="E2E 执行过程截图结果"></p>
@@ -848,11 +939,11 @@
 <h2 id="5-文档更新">5. 文档更新</h2>
 <p>随着项目不停的迭代，新增加的功能越来越多，对旧需求的修改也越来越多。慢慢地，项目代码库中的文档知识就开始出现“熵增”的问题了。例如：我们已经把平台的登录系统由 <code>UUAP</code> 升级到了 <code>Passport</code>，但是 <code>versus/CLAUDE.md</code> 中的描述却没有及时更新，这将严重影响 <code>Agent</code> 后续的执行性能。</p>
 <p>这是一个比较合适的 <code>/goal</code> 应用场景，于是，我打开了 <code>Codex CLI</code>，并输入了如下的检查要求：</p>
-<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">/goal 执行一次“文档与代码一致性同步”任务，直到满足完成条件。</span><br><span class="line"></span><br><span class="line">  目标：</span><br><span class="line">  检查并更新 CLAUDE.md、README.md、docs/<span class="strong">**/<span class="emphasis">*.md 以及其他 Markdown 文档，使其与当前代码、测试、配置、脚本、类型定义、API 路由、CLI 命令、环境变量和实际目录结构保持一致。</span></span></span><br><span class="line"><span class="strong"><span class="emphasis"></span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  事实源优先级：</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  1. 当前代码实现</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  2. 测试用例</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  3. package.json / Makefile / CI 配置 / 脚本</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  4. 类型定义、API schema、路由定义、配置 schema</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  5. .env.example 或配置示例</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  6. 实际目录结构</span></span></span><br><span class="line"><span class="strong"><span class="emphasis"></span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  硬性约束：</span></span></span><br><span class="line"><span class="strong"><span class="emphasis">  - 只允许修改 Markdown 文档文件，包括 CLAUDE.md、README.md、docs/<span class="strong">**/<span class="emphasis">*.md、*</span>.md、<span class="emphasis">*.markdown。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 不允许修改业务代码、测试、配置文件、lock 文件、生成文件或二进制文件。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 不要为了匹配文档而修改代码；代码是事实源，文档是派生物。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 不要重写整篇文档，只做最小必要修改。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 不确定的内容不要编造，列入最终报告的“需要人工确认”。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 禁止修改 .claude 目录下的任何内容。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis"></span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  执行步骤：</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  1. 建立项目事实清单：包管理器、启动命令、构建命令、测试命令、lint/typecheck 命令、目录结构、主要模块、API/路由/CLI、环境变量。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  2. 扫描所有 Markdown 文档，排除 .claude 目录，识别与代码事实不一致的地方。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  3. 对有明确事实依据的不一致，只更新 Markdown 文档。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  4. 修改后运行：</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">     - git diff --name-only</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">     - 如存在子模块，也运行 git -C <span class="xml"><span class="tag">&lt;<span class="name">submodule</span>&gt;</span></span> diff --name-only</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  5. 如发现非 Markdown 文件被修改，立即回滚这些非文档变更。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  6. 输出最终报告。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis"></span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  完成条件：</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 所有有明确代码事实依据的文档不一致都已修复。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 父仓库和所有子模块的实际文件级 diff 只包含 Markdown 文件。</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">  - 最终报告必须列出：</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    1. 修改了哪些文档</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    2. 每个文档修正了什么</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    3. 每项修正依据的代码/配置/脚本事实</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    4. 哪些内容仍需要人工确认</span></span></span></span></span><br><span class="line"><span class="strong"><span class="emphasis"><span class="strong"><span class="emphasis">    5. 确认没有修改非文档文件</span></span></span></span></span><br></pre></td></tr></table></figure>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-20.png" alt></p>
+<figure class="highlight md"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">/goal 执行一次“文档与代码一致性同步”任务，直到满足完成条件。</span><br><span class="line"></span><br><span class="line">  目标：</span><br><span class="line">  检查并更新 CLAUDE.md、README.md、docs/<span class="strong">**/<span class="emphasis">*.md 以及其他 Markdown 文档，使其与当前代码、测试、配置、脚本、类型定义、API 路由、CLI 命令、环境变量和实际目录结构保持一致。</span></span></span><br><span class="line"><span class="emphasis"><span class="strong"></span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  事实源优先级：</span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  1. 当前代码实现</span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  2. 测试用例</span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  3. package.json / Makefile / CI 配置 / 脚本</span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  4. 类型定义、API schema、路由定义、配置 schema</span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  5. .env.example 或配置示例</span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  6. 实际目录结构</span></span></span><br><span class="line"><span class="emphasis"><span class="strong"></span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  硬性约束：</span></span></span><br><span class="line"><span class="emphasis"><span class="strong">  - 只允许修改 Markdown 文档文件，包括 CLAUDE.md、README.md、docs/*</span><span class="emphasis">*/*</span>.md、<span class="emphasis">*.md、*</span>.markdown。</span></span><br><span class="line"><span class="strong">  - 不允许修改业务代码、测试、配置文件、lock 文件、生成文件或二进制文件。</span></span><br><span class="line"><span class="strong">  - 不要为了匹配文档而修改代码；代码是事实源，文档是派生物。</span></span><br><span class="line"><span class="strong">  - 不要重写整篇文档，只做最小必要修改。</span></span><br><span class="line"><span class="strong">  - 不确定的内容不要编造，列入最终报告的“需要人工确认”。</span></span><br><span class="line"><span class="strong">  - 禁止修改 .claude 目录下的任何内容。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">  执行步骤：</span></span><br><span class="line"><span class="strong">  1. 建立项目事实清单：包管理器、启动命令、构建命令、测试命令、lint/typecheck 命令、目录结构、主要模块、API/路由/CLI、环境变量。</span></span><br><span class="line"><span class="strong">  2. 扫描所有 Markdown 文档，排除 .claude 目录，识别与代码事实不一致的地方。</span></span><br><span class="line"><span class="strong">  3. 对有明确事实依据的不一致，只更新 Markdown 文档。</span></span><br><span class="line"><span class="strong">  4. 修改后运行：</span></span><br><span class="line"><span class="strong">     - git diff --name-only</span></span><br><span class="line"><span class="strong">     - 如存在子模块，也运行 git -C <span class="language-xml"><span class="tag">&lt;<span class="name">submodule</span>&gt;</span></span> diff --name-only</span></span><br><span class="line"><span class="strong">  5. 如发现非 Markdown 文件被修改，立即回滚这些非文档变更。</span></span><br><span class="line"><span class="strong">  6. 输出最终报告。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">  完成条件：</span></span><br><span class="line"><span class="strong">  - 所有有明确代码事实依据的文档不一致都已修复。</span></span><br><span class="line"><span class="strong">  - 父仓库和所有子模块的实际文件级 diff 只包含 Markdown 文件。</span></span><br><span class="line"><span class="strong">  - 最终报告必须列出：</span></span><br><span class="line"><span class="strong">    1. 修改了哪些文档</span></span><br><span class="line"><span class="strong">    2. 每个文档修正了什么</span></span><br><span class="line"><span class="strong">    3. 每项修正依据的代码/配置/脚本事实</span></span><br><span class="line"><span class="strong">    4. 哪些内容仍需要人工确认</span></span><br><span class="line"><span class="strong">    5. 确认没有修改非文档文件</span></span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-20.png" alt=""></p>
 <p>最终，经过了 8 分钟多的检查，消耗了大约 435W 的 <code>token</code>，<code>Codex</code> 完成了文档与代码的一致性升级。</p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-19.png" alt></p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-04.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-19.png" alt=""></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-04.png" alt=""></p>
 <p>文档与代码的一致性校验目前尚未整合到当前的 <code>Harness</code> 自闭环流程中，后续我们也会像 <code>OpenAI</code> 的操作一样：起一个后台服务来周期性地进行清理，并自动合并到代码仓库中。</p>
 <h2 id="6-真的是完美的吗？">6. 真的是完美的吗？</h2>
 <p>如上的 <code>Harness</code> 过程确实帮我们实现了 “一句话实现产品功能” 的目标，也确实避免了不同角色之间的沟通，提升了开发的效率，但是我们也在实践中发现我们的 <code>Harness</code> 模式并不是 100% 完美的，它也有它的问题存在。</p>
@@ -885,14 +976,14 @@
 </tbody>
 </table>
 <p>是真的没有样式 <code>BUG</code> 吗？修改视频任务分类之后，我们确实也发现了前端样式的 <code>BUG</code>：在任务名比较长的时候，任务类型出现了元素遮挡的问题。</p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-12.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-12.png" alt=""></p>
 <p>目前，我们的 <code>E2E Testing Agent</code> 对于质量的把控能力相较于人工测试而言还存在差距，一方面测试 <code>Agent</code> 对 <code>Bug</code> 的认定比人类宽松，一方面测试 <code>Agent</code> 缺少对布局、美感等的评判（当然，我们也没有对这方面进行限定）。因此，当前的 <code>Harness</code> 能力只保证功能的可用性，并不保证页面符合人类的审美。不过，对于我们这样的非复杂交互的系统而言，这样已经足以满足要求了。</p>
 <h3 id="6-2-需求改动存在遗漏">6.2 需求改动存在遗漏</h3>
 <p>在视频任务分类拆分的升级中，我们还发现 <code>Agent</code> 在实现任务的过程中遗漏了“模型管理”这个页面的改动。我们重新 <code>Review</code> 了对应的 <code>PRD</code>，发现在 <code>PRD</code> 中就已经存在遗漏了。虽然我们会对 <code>Agent</code> 生成的 <code>PRD</code> 内容进行审核，但是确实在审核的时候也发生了遗漏，毕竟一次审核 600+ 行的文本内容成本确实有点大。</p>
-<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-18.png" alt></p>
+<p><img src="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-18.png" alt=""></p>
 <h2 id="7-总结">7. 总结</h2>
 <p>尽管当前的 <code>Harness</code> 实践在 <code>E2E</code> 测试环节仍有局限，但其带来的 <code>ROI</code> 已极其可观。根据我们在 4 个功能升级上的数据统计，当前的 <code>Harness</code> 已经让我们的功能发布效率提升了 4 倍，虽然与 <code>OpenAI</code> 博客中的 10 倍相比还有不少差距，但是已经让我们成功从“人工调优代码”跨越到“治理 <code>Agent</code> 流水线”，彻底打破了前后端联调的沟通壁垒。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

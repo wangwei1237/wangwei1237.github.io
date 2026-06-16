@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="从 Google Chrome version history 可以知道，2011 年 3 月 发布的 10.0.648 版本的 Chrome 浏览器就已经支持视频的硬件加速能力。从 chromium&#x2F;chrome 88 开始，视频的硬件加速已经成为默认配置。 即便如此，因为视频的硬件解码需要 GPU 的特殊支持，而目前的视频编解码标准又比较丰富，我们如何判断 Chrome 在解码视频的时候是否">
 <meta property="og:type" content="article">
@@ -17,7 +108,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/2.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/3.png">
 <meta property="article:published_time" content="2021-10-22T14:04:29.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.002Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:53.507Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="硬件加速">
 <meta property="article:tag" content="GPU">
@@ -133,7 +224,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/1.png" alt></p>
+  <html><head></head><body><p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/1.png" alt=""></p>
 <p>从 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Google_Chrome_version_history">Google Chrome version history</a> 可以知道，2011 年 3 月 发布的 10.0.648 版本的 Chrome 浏览器就已经支持视频的硬件加速能力。从 <a target="_blank" rel="noopener" href="https://www.reddit.com/r/linux/comments/l112mr/hardware_video_acceleration_now_available_in/">chromium/chrome 88 开始，视频的硬件加速已经成为默认配置</a>。</p>
 <p>即便如此，因为视频的硬件解码需要 GPU 的特殊支持，而目前的视频编解码标准又比较丰富，我们如何判断 Chrome 在解码视频的时候是否启用了硬件加速呢？</p>
 <span id="more"></span>
@@ -436,7 +527,7 @@
 </p><p><a target="_blank" rel="noopener" href="https://beebom.com/chrome-flags-guide-to-enhance-web-browsing/"><strong>chrome://flags</strong> 是一组实验性功能和设置</a>，它们隐藏在 Chrome 中，供开发人员使用。这些实验性功能包括 Google 正在开发、但尚未为普通用户启用的功能。<strong>chrome://flags</strong> 可以提升我们的浏览体验，还可以让我们使用那些新的、开发中的功能。</p>
 </div>
 <p>在 <strong>chrome://flags</strong> 中，我们可以得到如下的信息：</p>
-<p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/2.png" alt></p>
+<p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/2.png" alt=""></p>
 <p>从图中的信息，我们可以知道，对于当前的 Chrome 浏览器而言，Chrome 开启了视频的编解码硬件加速能力。</p>
 <h2 id="3-chrome-media-internals">3. chrome://media-internals</h2>
 <p>如上所述，对于播放的视频，根据视频属性以及 <code>chrome://gpu</code> 和 <code>chrome://flags</code> 提供的信息，我们可以大致判断出在播放该视频时，Chrome 是否使用了硬件解码。</p>
@@ -526,7 +617,7 @@
 </ul>
 </div>
 <p>我们可以用 Chrome 浏览器播放 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1jh411n7d7?spm_id_from=333.6.0.0">B 站视频上的视频</a>，然后使用 <strong>chrome://media-internals</strong> 工具进行分析，如下图所示：</p>
-<p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/3.png" alt></p>
+<p><img src="/2021/10/22/Analysis-For-Hardware-Acceleration-Decoding-Of-Video-In-Chromium/3.png" alt=""></p>
 <p>如上图所示，媒体播放器的所有信息都会以列表的形式展现，同时列表中的每一项都会展现该项对应的播放状态。因为视频正在播放中，因此我们选择状态为 <code>kPlay</code> 的项目来查看对应的媒体播放器的信息。<strong>Player Properties</strong> 信息展示了媒体播放器的详细属性，例如：</p>
 <table>
 <thead>
@@ -546,7 +637,7 @@
 </tr>
 <tr>
 <td>kVideoTracks</td>
-<td>[{“alpha mode”:“is_opaque”,“codec”:“h264”,“coded size”:“1920x1080”,“color space”:&quot;{primaries:BT709, transfer:BT709, matrix:BT709, range:LIMITED}&quot;,“encryption scheme”:“Unencrypted”,“has extra data”:false,“hdr metadata”:“unset”,“natural size”:“1920x1080”,“orientation”:“0°”,“profile”:“h264 high”,“visible rect”:“0,0 1920x1080”}]</td>
+<td>[{“alpha mode”:“is_opaque”,“codec”:“h264”,“coded size”:“1920x1080”,“color space”:"{primaries:BT709, transfer:BT709, matrix:BT709, range:LIMITED}",“encryption scheme”:“Unencrypted”,“has extra data”:false,“hdr metadata”:“unset”,“natural size”:“1920x1080”,“orientation”:“0°”,“profile”:“h264 high”,“visible rect”:“0,0 1920x1080”}]</td>
 </tr>
 </tbody>
 </table>
@@ -570,12 +661,12 @@
 </tr>
 <tr>
 <td>kVideoTracks</td>
-<td>[{“alpha mode”:“is_opaque”,“codec”:“av1”,“coded size”:“7680x4320”,“color space”:&quot;{primaries:BT709, transfer:BT709, matrix:BT709, range:LIMITED}&quot;,“encryption scheme”:“Unencrypted”,“has extra data”:false,“hdr metadata”:“unset”,“natural size”:“7680x4320”,“orientation”:“0°”,“profile”:“av1 profile main”,“visible rect”:“0,0 7680x4320”}]</td>
+<td>[{“alpha mode”:“is_opaque”,“codec”:“av1”,“coded size”:“7680x4320”,“color space”:"{primaries:BT709, transfer:BT709, matrix:BT709, range:LIMITED}",“encryption scheme”:“Unencrypted”,“has extra data”:false,“hdr metadata”:“unset”,“natural size”:“7680x4320”,“orientation”:“0°”,“profile”:“av1 profile main”,“visible rect”:“0,0 7680x4320”}]</td>
 </tr>
 </tbody>
 </table>
 <p><a target="_blank" rel="noopener" href="https://www.videolan.org/projects/dav1d.html">dav1d 解码器</a> 是一个跨平台的开源 AV1 解码器，因此，对于该 8K 视频而言，Chrome 在播放时使用的是 CPU 解码。</p>
- 
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">

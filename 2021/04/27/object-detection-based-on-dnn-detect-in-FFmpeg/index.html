@@ -4,7 +4,98 @@
 <html lang="zh-CN">
   
 
-    <head>
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
       <meta name="description" content="从FFmpeg的代码提交记录lavfi: add filter dnn_detect for object detection中，我们发现，FFmpeg已经以滤镜的形式提供了基于DNN的目标检测能力。">
 <meta property="og:type" content="article">
@@ -18,7 +109,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/3.jpg">
 <meta property="og:image" content="https://wangwei1237.github.io/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/4.jpg">
 <meta property="article:published_time" content="2021-04-27T16:21:49.000Z">
-<meta property="article:modified_time" content="2026-06-15T04:57:31.793Z">
+<meta property="article:modified_time" content="2026-06-16T04:09:54.225Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="FFmpeg">
 <meta property="article:tag" content="目标检测">
@@ -110,7 +201,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.2k</span>
+            <span class="post-count">1.1k</span>
         </span>
     </span>
 
@@ -119,7 +210,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">4 分钟</span>
         </span>
     </span>
 </div>
@@ -134,7 +225,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p><img src="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/1.png" alt></p>
+  <html><head></head><body><p><img src="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/1.png" alt=""></p>
 <p>从FFmpeg的代码提交记录<a target="_blank" rel="noopener" href="https://github.com/FFmpeg/FFmpeg/commit/aa9ffdaa1eaeb5e16fb6b89852f38ff488d81173"><strong>lavfi: add filter dnn_detect for object detection</strong></a>中，我们发现，FFmpeg已经以滤镜的形式提供了基于DNN的目标检测能力。</p>
 <span id="more"></span>
 <h2 id="dnn-detect滤镜">dnn_detect滤镜</h2>
@@ -143,13 +234,13 @@
 <p>当前目标检测只支持OpenVINO后端，后续还将尽快加入更多功能，比如基于TensorFlow模型的目标检测、支持OpenVINO后端的目标识别、目标检测和识别结果的可视化等。</p>
 </blockquote>
 <p>根据<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI3MjU1MjU1Mw==&amp;mid=2247483828&amp;idx=1&amp;sn=df8fe902868ca2a0ea1cf50fff28ff95"><em>目标检测，FFmpeg中第一个基于深度学习模型的视频分析功能</em></a>一文提供的demo可知，在当前的版本中，检测结果是通过<code>showinfo滤镜</code>以日志的形式输出的。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root@9d26c3a57bc7:/workspace# ffmpeg -i cici.jpg -vf dnn_detect=dnn_backend=openvino:model=face-detection-adas-0001.xml:input=data:output=detection_out:confidence=0.6:labels=face-detection-adas-0001.label,showinfo -f null -</span><br><span class="line">...</span><br><span class="line">[Parsed_showinfo_1 @ 0x561cf20c1f40]   side data - detection bounding boxes:</span><br><span class="line">[Parsed_showinfo_1 @ 0x561cf20c1f40] source: face-detection-adas-0001.xml</span><br><span class="line">[Parsed_showinfo_1 @ 0x561cf20c1f40] index: 0,  region: (1005, 813) -&gt; (1086, 905), label: face, confidence: 10000/10000.</span><br><span class="line">[Parsed_showinfo_1 @ 0x561cf20c1f40] index: 1,  region: (888, 839) -&gt; (967, 926), label: face, confidence: 6917/10000.</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root@9d26c3a57bc7:/workspace# ffmpeg -i cici.jpg -vf dnn_detect=dnn_backend=openvino:model=face-detection-adas-0001.xml:input=data:output=detection_out:confidence=0.6:labels=face-detection-adas-0001.label,showinfo -f null -</span><br><span class="line">...</span><br><span class="line">[Parsed_showinfo_1 @ 0x561cf20c1f40]   side data - detection bounding boxes:</span><br><span class="line">[Parsed_showinfo_1 @ 0x561cf20c1f40] source: face-detection-adas-0001.xml</span><br><span class="line">[Parsed_showinfo_1 @ 0x561cf20c1f40] index: 0,  region: (1005, 813) -&gt; (1086, 905), label: face, confidence: 10000/10000.</span><br><span class="line">[Parsed_showinfo_1 @ 0x561cf20c1f40] index: 1,  region: (888, 839) -&gt; (967, 926), label: face, confidence: 6917/10000.</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
 <p>日志格式的检测结果不利于直观的分析，因此我对该滤镜做了简单的修改，为其增加了检测结果框选的能力，以便可以更方便的评估<code>dnn_detect</code>的检测能力。具体效果如下所示：</p>
-<p><img src="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/2.jpg" alt></p>
+<p><img src="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/2.jpg" alt=""></p>
 <h2 id="dnn-detect滤镜的安装">dnn_detect滤镜的安装</h2>
 <h4 id="安装libtensorflow">安装libtensorflow</h4>
 <p>从<a target="_blank" rel="noopener" href="https://storage.googleapis.com/tensorflow/">https://storage.googleapis.com/tensorflow/</a>中选择适合的libtensorflow版本下载即可，由于我是在MacOS上进行的实验，因此我选择了<a target="_blank" rel="noopener" href="https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-darwin-x86_64-2.4.1.tar.gz">libtensorflow/libtensorflow-cpu-darwin-x86_64-2.4.1.tar.gz</a>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd workspace</span><br><span class="line">wget https:&#x2F;&#x2F;storage.googleapis.com&#x2F;tensorflow&#x2F;libtensorflow&#x2F;libtensorflow-cpu-darwin-x86_64-2.4.1.tar.gz --no-check-certificate</span><br><span class="line">tar xzvf libtensorflow-cpu-darwin-x86_64-2.4.1.tar.gz</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd workspace</span><br><span class="line">wget https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-darwin-x86_64-2.4.1.tar.gz --no-check-certificate</span><br><span class="line">tar xzvf libtensorflow-cpu-darwin-x86_64-2.4.1.tar.gz</span><br></pre></td></tr></tbody></table></figure>
 <h4 id="安装openvino-toolkit">安装openvino_toolkit</h4>
 <p>进入<a target="_blank" rel="noopener" href="https://software.intel.com/content/www/us/en/develop/tools/openvino-toolkit/download.html">openvino_toolkit的下载页面</a>，根据提示选择对应的版本下载并安装即可。MacOS的openvino_toolkit安装比较简单，下载对应的dmg文件之后，一路点击默认，然后安装就可以。默认会将相关的库文件安装在<code>/opt/intel/openvino_2021</code>目录。</p>
 <h4 id="重新编译ffmpeg">重新编译FFmpeg</h4>
@@ -162,16 +253,16 @@
 </li>
 <li>
 <p>设置相关的环境变量，如下所示：</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:\</span><br><span class="line">/opt/intel/openvino_2021/inference_engine/lib/intel64:\</span><br><span class="line">/opt/intel/openvino_2021/inference_engine/external/tbb/lib:\</span><br><span class="line">/opt/intel/openvino_2021/deployment_tools/ngraph/lib:\</span><br><span class="line">/workspace/tensorflow/lib:\</span><br><span class="line">/workspace/ffmpeg/outputs/lib</span><br><span class="line"></span><br><span class="line">export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:\</span><br><span class="line">/workspace/ffmpeg/outputs/lib</span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:\</span><br><span class="line">/opt/intel/openvino_2021/inference_engine/lib/intel64:\</span><br><span class="line">/opt/intel/openvino_2021/inference_engine/external/tbb/lib:\</span><br><span class="line">/opt/intel/openvino_2021/deployment_tools/ngraph/lib:\</span><br><span class="line">/workspace/tensorflow/lib:\</span><br><span class="line">/workspace/ffmpeg/outputs/lib</span><br><span class="line"></span><br><span class="line">export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:\</span><br><span class="line">/workspace/ffmpeg/outputs/lib</span><br></pre></td></tr></tbody></table></figure>
 </li>
 <li>
 <p>编译FFmpeg</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;configure --prefix&#x3D;.&#x2F;outputs \</span><br><span class="line">... \</span><br><span class="line">--enable-libtensorflow \</span><br><span class="line">--enable-libopenvino \</span><br><span class="line">--extra-cflags&#x3D;&quot;-I&#x2F;workspace&#x2F;tensorflow&#x2F;include -I&#x2F;opt&#x2F;intel&#x2F;openvino_2021&#x2F;inference_engine&#x2F;include&quot; \</span><br><span class="line">--extra-ldflags&#x3D;&quot;-L&#x2F;workspace&#x2F;tensorflow&#x2F;lib -L&#x2F;opt&#x2F;intel&#x2F;openvino_2021&#x2F;inference_engine&#x2F;lib&#x2F;intel64&quot;</span><br><span class="line"></span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=./outputs \</span><br><span class="line">... \</span><br><span class="line">--enable-libtensorflow \</span><br><span class="line">--enable-libopenvino \</span><br><span class="line">--extra-cflags="-I/workspace/tensorflow/include -I/opt/intel/openvino_2021/inference_engine/include" \</span><br><span class="line">--extra-ldflags="-L/workspace/tensorflow/lib -L/opt/intel/openvino_2021/inference_engine/lib/intel64"</span><br><span class="line"></span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></tbody></table></figure>
 </li>
 <li>
 <p>根据<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI3MjU1MjU1Mw==&amp;mid=2247483828&amp;idx=1&amp;sn=df8fe902868ca2a0ea1cf50fff28ff95"><em>目标检测，FFmpeg中第一个基于深度学习模型的视频分析功能</em></a>中的demo下载对应的模型和相关文件，并使用ffplay播放。</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd outputs &amp;&amp; .&#x2F;bin&#x2F;ffplay -i test.mp4 \</span><br><span class="line">-vf &quot;dnn_detect&#x3D;dnn_backend&#x3D;openvino:model&#x3D;model&#x2F;face-detection-adas-0001.xml:input&#x3D;data:output&#x3D;detection_out:confidence&#x3D;0.6:labels&#x3D;model&#x2F;face-detection-adas-0001.label&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/3.jpg" alt></p>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd outputs &amp;&amp; ./bin/ffplay -i test.mp4 \</span><br><span class="line">-vf "dnn_detect=dnn_backend=openvino:model=model/face-detection-adas-0001.xml:input=data:output=detection_out:confidence=0.6:labels=model/face-detection-adas-0001.label"</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/3.jpg" alt=""></p>
 </li>
 </ul>
 <h2 id="dnn-detect滤镜参数">dnn_detect滤镜参数</h2>
@@ -187,12 +278,12 @@
 <li>async：设置是否启用异步的DNN接口，默认为异步</li>
 </ul>
 <p>在使用中，可以根据自己的需要来设置滤镜的相关参数，进而达到自己的目的。例如，通过设置<code>async</code>来启用同步DNN接口，具体如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;bin&#x2F;ffplay -i test.mp4 \</span><br><span class="line">    -vf &quot;dnn_detect&#x3D;dnn_backend&#x3D;openvino:model&#x3D;model&#x2F;face-detection-adas-0001.xml:input&#x3D;data:output&#x3D;detection_out:confidence&#x3D;0.6:labels&#x3D;model&#x2F;face-detection-adas-0001.label:async&#x3D;0&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./bin/ffplay -i test.mp4 \</span><br><span class="line">    -vf "dnn_detect=dnn_backend=openvino:model=model/face-detection-adas-0001.xml:input=data:output=detection_out:confidence=0.6:labels=model/face-detection-adas-0001.label:async=0"</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="dnn-detect的其他模型">dnn_detect的其他模型</h2>
 <p>在如上的例子中，我们用人脸检测模型作为例子演示了FFmpeg中的DNN目标检测。实际上，作为一个通用的滤镜，替换模型之后，我们也可以用来进行其他类型的目标检测。</p>
 <p>在<a target="_blank" rel="noopener" href="https://github.com/openvinotoolkit/open_model_zoo">openvinotoolkit/open_model_zoo</a>中，介绍了很多预训练好的模型，我们可以拿来直接用。各预训练模型可以从<a target="_blank" rel="noopener" href="https://download.01.org/opencv/">download.01.org/opencv/</a>下载。选择模型的时候，务必保证下载和所使用的OpenVINO版本对应的模型，否则，可能会导致加载模型失败的问题。</p>
-<p><img src="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/4.jpg" alt></p>
- 
+<p><img src="/2021/04/27/object-detection-based-on-dnn-detect-in-FFmpeg/4.jpg" alt=""></p>
+</body></html> 
       <!-- reward -->
       
       <div id="reword-out">
