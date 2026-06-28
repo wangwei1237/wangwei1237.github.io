@@ -1,6 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>是时候了解一下 git worktree 了</title>
+    <url>/2026/06/28/It-is-time-to-learn-about-git-worktree/</url>
+    <content><![CDATA[<html><head></head><body><p><img src="/2026/06/28/It-is-time-to-learn-about-git-worktree/1.png" alt=""></p>
+<p>正如在 <a href="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/">如何利用 Harness “一句话交付产品功能”？</a> 一文中所提到的那样，我们可以做到在单个 <code>clone</code> 仓库中利用 Harness Engineering 实现需求的自动实现。但是当这个目录正在编写代码的时候，我们能做的只能是等待。</p>
+<p>如果我们想要同时开发另外的功能，我们只能重新 <code>clone</code> 到一个新的目录。这个过程太麻烦了，我们不想来回 <code>clone</code> 与 <code>merge</code>，我们期待能有新的解决方案来更方便的实现并行开发。于是，我们发现了 git worktree 这个特性。</p>
+<span id="more"></span>
+<p>git worktree 是 Git 中非常有趣的一个特性，自从 2015 年发布该特性的 10 年多的时间里<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>，git worktree 一直都是鲜为人知的存在。如果不是 AI Coding Agent 的快速发展，我想，git worktree 将会一直停留在 Git 的发布日志中。</p>
+<h2 id="git-worktree-简介">Git Worktree 简介</h2>
+<p>根据 Git 的官方文档<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>：git worktree 用于在同一仓库中管理多个工作目录。</p>
+<p>在单个 Git 仓库的多个分支之间进行切换，或者在本地为某个 Git 仓库创建第二个克隆（clone）目录是一件容易的事。通过如上的方式，我们可以同时在不同的分支上工作，例如：在一个克隆中启动耗时较长的测试，同时在另一个克隆中继续进行新功能的开发。然而，维护一个仓库的多个克隆意味着我们需要付出额外的精力来保持这些克隆版本之间的同步。</p>
+<p>git worktree 可以创建与现有 Git 仓库关联的新的工作目录。每个工作目录（<em>linked working tree</em>）看起来像一个独立仓库，但其实不是完整仓库。它只是有自己的一份代码目录，背后仍然共用主仓库的 Git 数据。git worktree 目录中的 .git 实际上是一个文件，指向了主仓库的历史记录和引用（references）。</p>
+<p><img src="/2026/06/28/It-is-time-to-learn-about-git-worktree/2.png" alt=""></p>
+<h2 id="linked-working-tree">Linked Working Tree</h2>
+<p>在 git worktree 中，需要理解两个关键的概念：</p>
+<ul>
+<li><strong>主工作目录（Main Working Tree）</strong>：通过 git clone 或 git init 命令创建的原始 Git 仓库目录为主工作目录，该目录包含完整的 .git 目录，是所有链接工作目录的 “母体”。</li>
+<li><strong>链接工作目录（Linked Working Tree）</strong>：通过 git worktree add 命令创建的工作目录，不包含独立的 .git 目录，而是通过一个 .git 文件链接到主工作目录的 .git 目录，实现与主仓库的关联和资源共享。</li>
+</ul>
+<h2 id="创建-worktree">创建 worktree</h2>
+<p>假设我们正在 <code>feature</code> 分支上开发一个功能，这时突然有用户提交了一个需要在 <code>main</code> 分支上紧急修复的 Bug。如果不使用 worktree，我们需要做如下的操作：</p>
+<ol>
+<li>暂存 <code>feature</code> 的所有改动，并把工作区恢复成干净状态</li>
+<li>切换到 <code>main</code> 分支，然后创建一个新的分支 <code>hotfix</code></li>
+<li>在 <code>hotfix</code> 分支上修复 Bug，并提交</li>
+<li>切换回 <code>feature</code> 分支，并回复之前的改动</li>
+</ol>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git stash</span><br><span class="line">git checkout main</span><br><span class="line">git checkout -b hotfix</span><br><span class="line"><span class="comment"># 修 bug，提交修复</span></span><br><span class="line">git checkout feature</span><br><span class="line">git stash pop</span><br></pre></td></tr></tbody></table></figure>
+<p>整个操作过程还是非常繁琐的，而使用 worktree 则可以简化这个流程。我们可以使用 <code>git worktree add</code> 命令来创建一个新的 worktree。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git worktree add ../project-hotfix -b hotfix main</span><br></pre></td></tr></tbody></table></figure>
+<p>然后，我们就得到了两个目录：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">project/        <span class="comment"># 继续开发 feature</span></span><br><span class="line">hotfix/         <span class="comment"># 专门修 Bug</span></span><br></pre></td></tr></tbody></table></figure>
+<p>我们可以分别在 <code>project</code> 和 <code>hotfix</code> 目录中进行开发和修复工作，而不要繁琐的分支切换。</p>
+<h2 id="查看-worktree">查看 worktree</h2>
+<p>若要查看主仓库下所有关联的 worktree 清单，则可以使用 <code>git worktree list</code> 命令来一目了然的查看所有并行工作目录、对应绑定分支、仓库路径。该命令会输出：每一个工作目录的本地路径、提交哈希值，以及该目录当前检出的分支名称。</p>
+<p><img src="/2026/06/28/It-is-time-to-learn-about-git-worktree/3.png" alt=""></p>
+<h2 id="删除-worktree">删除 worktree</h2>
+<p>为了保持 Git 工作目录的整洁，我们需要时不时的删除无用的工作目录。可以使用 <code>git worktree remove</code> 命令删除指定的工作目录。例如，当我们在 <code>hotfix</code> 工作目录上修复完 bug 后，我们就可以删除该工作目录。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git worktree remove ../hotfix</span><br></pre></td></tr></tbody></table></figure>
+<p>如上的命令会做两件事：</p>
+<ol>
+<li>删除该 worktree 目录下所有代码文件</li>
+<li>自动从仓库的 worktree 注册表清除记录</li>
+</ol>
+<p>如果某个工作目录内存在未提交的修改，Git 默认不允许我们删除该工作目录。此时，我们可以使用 <code>--force</code> 参数解除这一限制。和所有 <code>-f</code> 参数的使用场景一样，执行前务必谨慎，充分确认操作后果，再绕过 Git 的安全防护机制。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git worktree remove --force ../hotfix</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="worktree-与-brance">worktree 与 brance</h2>
+<p>git branch 和 git worktree 不是同一层面的东西<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>：</p>
+<ul>
+<li>branch 是代码版本线，branch 要解决的问题是——基于某个版本开一条新的开发线。</li>
+<li>worktree 是把某个版本线检出到一个独立目录里工作，worktree 要解决的问题是——同时打开多个分支工作，而不用来回 checkout。</li>
+</ul>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">Git 仓库</span><br><span class="line">├── branch: main</span><br><span class="line">├── branch: feature/1</span><br><span class="line">├── branch: fix/bug-123</span><br><span class="line">└── worktree:</span><br><span class="line">    ├── 当前目录       -&gt; main</span><br><span class="line">    ├── ../f1-dev  -&gt; feature/1</span><br><span class="line">    └── ../bugfix     -&gt; fix/bug-123</span><br></pre></td></tr></tbody></table></figure>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>branch</th>
+<th>worktree</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本质</td>
+<td>一条提交线 / 指针</td>
+<td>一个独立工作目录</td>
+</tr>
+<tr>
+<td>解决问题</td>
+<td>管理不同开发线</td>
+<td>同时在多个开发线工作</td>
+</tr>
+<tr>
+<td>是否占用目录</td>
+<td>不占独立目录</td>
+<td>会创建独立目录</td>
+</tr>
+<tr>
+<td>是否可以同时打开多个</td>
+<td>分支可以有很多，但当前目录只能 checkout 一个</td>
+<td>可以多个目录同时 checkout 不同分支</td>
+</tr>
+<tr>
+<td>典型命令</td>
+<td><code>git branch</code> / <code>git checkout</code> / <code>git switch</code></td>
+<td><code>git worktree add</code> / <code>git worktree list</code> / <code>git worktree remove</code></td>
+</tr>
+</tbody>
+</table>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">branch 是“版本线”，worktree 是“工作现场”
+</p><p>worktree 不是 branch 的替代品，worktree 通常是把某个 branch 检出到另一个目录。</p>
+</div>
+<h2 id="何时使用-worktree">何时使用 worktree</h2>
+<p>在 AI Coding Agent 出现之前，工程师通常只并行做一个（或者少量）任务，此时用 branch 就够了。但是，当我们需要同时处理多个任务（3个以上）时，用 worktree 就会更舒服，比如：</p>
+<ul>
+<li>一个目录跑主需求开发</li>
+<li>一个目录修线上 bug</li>
+<li>一个目录跑升级依赖实验</li>
+<li>一个目录做代码评审验证</li>
+<li>……</li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="https://github.blog/open-source/git/git-2-5-including-multiple-worktrees-and-triangular-workflows/">Git 2.5, including multiple worktrees and triangular workflows</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="https://git-scm.com/docs/git-worktree">git-worktree</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="https://www.worktreewise.com/blog/git-worktree-vs-branch">Git Worktree vs Branch - What Developers Actually Need to Know</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+</body></html>]]></content>
+      <categories>
+        <category>LLM</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+        <tag>worktree</tag>
+        <tag>branch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何评估 Skill？</title>
     <url>/2026/06/12/How-to-evaluate-a-Skill/</url>
     <content><![CDATA[<html><head></head><body><p><img src="/2026/06/12/How-to-evaluate-a-Skill/1.jpg" alt=""></p>
@@ -10723,10 +10922,10 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
         <category>LLM</category>
       </categories>
       <tags>
-        <tag>LLM</tag>
         <tag>LangChain</tag>
-        <tag>Ernie</tag>
         <tag>OpenAI</tag>
+        <tag>Ernie</tag>
+        <tag>LLM</tag>
       </tags>
   </entry>
   <entry>
@@ -11000,8 +11199,8 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
       </categories>
       <tags>
         <tag>LangChain</tag>
-        <tag>Ernie</tag>
         <tag>OpenAI</tag>
+        <tag>Ernie</tag>
       </tags>
   </entry>
   <entry>
@@ -14501,7 +14700,7 @@ M1001 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlis
             <div class="douban-card-item"><span>书名: </span><strong>与运气竞争</strong></div>
             <div class="douban-card-item"><span>作者: </span><span>[美]克莱顿·克里斯坦森</span></div>
             <div class="douban-card-item"><span>出版年份: </span><span>2018-5-20</span></div>
-            <div class="douban-card-item"><span>评分: </span><span>8.0</span></div>
+            <div class="douban-card-item"><span>评分: </span><span>7.9</span></div>
         </div>
     </a>
 </div>
