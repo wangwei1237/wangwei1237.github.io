@@ -100,6 +100,159 @@
 <p>接下来，我们开启两个 Session，通过 Worktree 并行开发 2 个需求。</p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/3.png" alt=""></p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/4.png" alt=""></p>
+<h2 id="3-req-id-冲突">3. REQ-ID 冲突</h2>
+<p>正当我们要利用 worktree 让 Coding Agent 并行开发多个需求的时候，我们发现我们高兴的太早了。我们启动了 2 个 Session，每个 Session 都在不同的 Worktree 中开发不同的需求。但是，我们发现这个两个 worktree 中生成的 REQ-ID 是同一个。</p>
+<p>当 <code>docs/requirements/</code> 目录下的最新需求目录为 <code>REQ-30</code> 时，两个 Coding Agent 生成的 REQ-ID 都是 <code>REQ-31</code>。</p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/5.png" alt=""></p>
+<p>从需求实现上来看，这也没有什么问题。最大的问题在于：如果 <code>REQ-ID</code> 一致，那么父仓库 <code>versus</code> 代码合并时就会存在不可避免的代码冲突。哎呀，想想都头疼。</p>
+<p><strong>很多实践就是这样，看着很简单，但是真正上手，却发现有解不完的问题。但是，这不就是创新的过程吗？</strong></p>
+<p>这是一个典型的分布式架构下，多进程并行处理相同的数据时存在的 <strong>“丢失更新”</strong> 的问题。</p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/6.jpg" alt=""></p>
+<p>经过调研，我们希望采用 Git Worktree 的“并行”特性来解决这个问题：</p>
+<ul>
+<li>Git 不允许同一个本地分支同时被多个 worktree checkout。如果目标 branch 已经在另一个 worktree 中被 checkout，那么 git worktree add 会拒绝创建一个新的 worktree。</li>
+</ul>
+<p>于是我们优化了 <code>wt.sh</code> 脚本，每创建一个 worktree 时，就在主仓库的 <code>.wt</code> 目录下，写入 <code>REQ-ID</code> 信息。在分配 <code>REQ-ID</code> 时，统一从 <code>.wt</code> 目录下读取已分配的 <code>REQ-ID</code>，避免并发冲突。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">ROOT_DIR=<span class="string">"<span class="subst">$(cd <span class="string">"<span class="subst">$(dirname <span class="string">"<span class="variable">$0</span>"</span>)</span>/.."</span> &amp;&amp; pwd)</span>"</span></span><br><span class="line">WT_ROOT=<span class="string">"<span class="variable">${WT_ROOT:-<span class="variable">$ROOT_DIR</span>/..}</span>"</span>  <span class="comment"># worktree 存放根目录，默认主仓库父目</span></span><br><span class="line">WT_META_DIR=<span class="string">"<span class="variable">$ROOT_DIR</span>/.wt"</span>         <span class="comment"># 注册表目录（.gitignore 已忽略）</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">write_meta</span></span>() {</span><br><span class="line">    <span class="built_in">local</span> <span class="built_in">id</span>=<span class="variable">$1</span> path=<span class="variable">$2</span> branch=<span class="variable">$3</span> be=<span class="variable">$4</span> fe=<span class="variable">$5</span> req_id=<span class="variable">${6:-}</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"WT_REQ_ID=<span class="variable">$req_id</span>"</span> &gt; <span class="string">"<span class="variable">$WT_META_DIR</span>/<span class="variable">$id</span>.meta"</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>同时，采用 <code>feat/req-id</code> 作为分支名，如果 <code>feat/req-id</code> 已经被 checkout，那么 worktree 的创建就会失败。然后 Coding Agent 就会重新创建 worktree，从而消除并发带来的 <code>REQ-ID</code> 一致的问题。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">req_id=$(allocate_req_id)</span><br><span class="line"> </span><br><span class="line">info <span class="string">"[1/6] 创建 Git Worktree（基于 master）..."</span></span><br><span class="line"><span class="keyword">if</span> ! git -C <span class="string">"<span class="variable">$ROOT_DIR</span>"</span> worktree add <span class="string">"<span class="variable">$wt_path</span>"</span> -b <span class="string">"feat/<span class="variable">$id</span>"</span> master 2&gt;&amp;1; <span class="keyword">then</span></span><br><span class="line">    error <span class="string">"创建 worktree 失败"</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></tbody></table></figure>
+<p>整体流程如下所示：</p>
+<pre class="mermaid">flowchart LR
+    START["Coding Agent 创建 Worktree"] --&gt; SCAN["扫描主仓库 .wt/*.meta<br>读取 WT_REQ_ID 信息"]
+    SCAN --&gt; ALLOC["得到新的 req-id"]
+    ALLOC --&gt; BRANCH["使用 feat/req-id<br>作为 Worktree 绑定分支"]
+    BRANCH --&gt; CREATE{"git worktree add"}
+
+    CREATE -- "成功" --&gt; META["写入 .wt/&lt;worktree&gt;.meta<br>记录 WT_REQ_ID 和 Worktree 信息"]
+    META --&gt; DONE["新 Worktree"]
+
+    CREATE -- "失败" --&gt; RETRY["Coding Agent 重新发起创建"]
+    RETRY --&gt; SCAN</pre>
+<p>下面我们启动 2 个 Coding Agent Sessions 并并行执行 2 个需求开发任务。从实际的运行结果看，两个 Coding Agent 分别创建了 REQ-42、REQ-43 两个 Worktree，并且成功地将它们绑定到了对应的需求分支上。</p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_1.png" alt="启动 2 个 Session 并行执行两个任务"></p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_2.png" alt="分别生成 REQ-42、REQ-43，未发生 REQ-ID 冲突"></p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_3.png" alt="两个 worktree 分别绑定 REQ-42、REQ-43，合并代码的时候不会存在代码冲突"></p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_4.png" alt="PRD Agent 完成对应需求的扩充与澄清"></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">注意
+</p><p>实际上，如上的方案在多人并行开发时依然存在 <code>REQ-ID</code> 冲突的问题。但是，当我们已经实现同一台开发机器上并行 <em>N</em> 个开发任务时，我们是否还有必要采用 <em>N</em> 个工程师来并行开发需求？</p>
+<p>我认为，当前的方案虽然不完美，但是已经解决了我们所面临的问题。没必要采用更加复杂的方案来解决可能不会发生的问题。</p>
+</div>
+<h2 id="4-多-worktree-并行开发">4. 多 Worktree 并行开发</h2>
+<p>目前，虽然 LLM Arena 平台可以满足我们的评测需求，但是仍然有许多交互体验问题需要优化，例如：</p>
+<ul>
+<li>分类管理页面没有设置分页；并且创建新分类时，父分类 ID 需要手动填写，整体的交互体验并不是特别优化。</li>
+<li>模型效果页面存在当页面滑动到最底部时，会出现媒体资源卡片显示不对齐的问题，存在较大的空白区域，整体页面视觉不美观。</li>
+</ul>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds.jpg" alt=""></p>
+<p>以前，我们会采用 Harness Engineering 串行优化这些需求。当我们把 Harness Engineering 升级到 worktree 模式后，我们就可以并行开发这些需求了。</p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_1.png" alt=""></p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_2.png" alt=""></p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_3.png" alt=""></p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_4.png" alt=""></p>
+<p>当 Coding Agent 可以在不同的、相互隔离的 worktree 中并行开发不同的需求时，开发吞吐量瞬间翻倍，真是飞一般的感觉。</p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_5.png" alt=""></p>
+<h2 id="5-teamwork-preview-编排">5. teamwork-preview 编排</h2>
+<p>截止到现在，我们对于 7 个 Sub-Agents 的编排规则位于 <code>versus/CLAUDE.md</code> 中。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment">## 自动化工作流</span></span><br><span class="line"></span><br><span class="line"><span class="comment">### 流水线概览</span></span><br><span class="line"></span><br><span class="line">```</span><br><span class="line">用户: <span class="string">"开启7个Agent协作实现XXX需求"</span></span><br><span class="line">│</span><br><span class="line">▼</span><br><span class="line">[0] worktree-manager       →  创建隔离 Worktree + 分配端口</span><br><span class="line">│</span><br><span class="line">▼ status=completed（主会话 EnterWorktree(path=...) 切换）</span><br><span class="line">[1] requirement-designer   →  产出 PRD.md + 分配需求 ID</span><br><span class="line">│</span><br><span class="line">▼ status=awaiting_review</span><br><span class="line">⏸ 人工审核 PRD（用户确认后继续）</span><br><span class="line">│</span><br><span class="line">▼ 用户确认 → status=completed</span><br><span class="line">[2] go-api-implementer     →  产出 Go 代码 + api-summary.md</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转）</span><br><span class="line">[3] frontend-engineer      →  产出 React 代码</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转）</span><br><span class="line">[4] test-case-designer     →  产出 api-test-cases.json + e2e-test-cases.json</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转，串行启动）</span><br><span class="line">[5] integration-test-runner (worktree端口)  →  [6] e2e-test-executor (worktree端口+1)</span><br><span class="line">│                                           │</span><br><span class="line">▼                                           ▼</span><br><span class="line">status=has_bugs → Bug修复循环               status=all_passed → 流水线完成</span><br><span class="line">```</span><br></pre></td></tr></tbody></table></figure>
+<p>因此，每次我们都要重复输入相同的提示词指令：</p>
+<blockquote>
+<p>开启 7 个 Agent 协作，实现：……</p>
+</blockquote>
+<p>虽然还不到 10 个词，但是再也不想重复输入了。恰好，7 月 14 日，谷歌发推文宣传 Antigravity 中新特性 Agent Teams。只需要运行 <code>/teamwork-preview</code>，就可启动一个由专业子代理组成的动态团队，他们在后台协调、规划、构建和验证复杂的工程任务。</p>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a href="https://twitter.com/antigravity/status/2076720528937611363"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>受此启发，我决定也实现一个类似的 <code>/teamwork-preview</code> 指令，这样就可以通过一条指令启动整个协作流程，而无需重复输入提示词。</p>
+<blockquote>
+<p>/teamwork-preview ……</p>
+</blockquote>
+<p>在 Claude Code 中，可以通过创建对应的 Skills 来实现类似的功能。于是，我们把 <a href="http://CLAUDE.md">CLAUDE.md</a> 中对 Sub-Agents 的定义迁移到 <code>teamwork-preview</code> Skill 中，从而实现了类似谷歌的 <code>/teamwork-preview</code> 的效果。</p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/teamwork.png" alt=""></p>
+<p>因此，<code>/teamwork-preview</code> 是一个基于 skills 编排 sub-agents 的工作流：</p>
+<ul>
+<li>通过 skills 优化知识编排和索引效率；</li>
+<li>通过外挂的状态文件增强 主 agent 的任务恢复能力；</li>
+<li>通过 管理类 skill 实现工作流编排，通过 技能类 skills 增强 sub-agents 的能力；</li>
+</ul>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/teamwork-arch.png" alt=""></p>
+<h2 id="6-总结">6. 总结</h2>
+<p>类似分布式、多进程并发问题在 AI 时代下也依然存在。采用什么架构来更优美的编排我们的 Agents、Skills 仍然属于架构范畴，任然需要一定的架构约束。</p>
+<p>我们总认为，AI 可以帮我们做非常多的事情；有了 AI，我们就可以不用向之前那样去刻苦学习哪些底层的原理、架构知识……</p>
+<p>因此，恰恰相反，AI 时代下，我们需要更认真的去学习、了解底层原理、架构知识。</p>
 </body></html>]]></content>
       <categories>
         <category>LLM</category>
