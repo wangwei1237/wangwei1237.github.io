@@ -97,12 +97,12 @@
 }
 </style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
-      <meta name="description" content="在 是时候了解一下 git worktree 了 这篇文章中，我们介绍了如何在 Codex 或者 Claude Code 这样的 Coding Agent 中使用 Git Worktree 来实现并行开发。但是，这篇文章的核心聚焦于单仓库场景的 Worktree，当我们尝试把 Worktree 应用到基于多仓库的 LLM Arena 平台时，我们却遇到了各种问题。 这篇文章着重介绍我们在多仓库场">
+      <meta name="description" content="在 是时候了解一下 Git worktree 了 一文中，我们介绍了如何在 Codex、Claude Code 等 Coding Agent 中利用 Git worktree 实现并行开发。不过，那篇文章聚焦于单仓库场景。当我们尝试将 worktree 应用于采用多仓库架构的 LLM Arena 平台时，又遇到了一系列新问题。 本文记录我们如何为多仓库场景设计面向 Coding Agent 的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="面向 Coding Agent 的多仓库 Git Worktree">
 <meta property="og:url" content="https://wangwei1237.github.io/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/index.html">
 <meta property="og:site_name" content="17哥">
-<meta property="og:description" content="在 是时候了解一下 git worktree 了 这篇文章中，我们介绍了如何在 Codex 或者 Claude Code 这样的 Coding Agent 中使用 Git Worktree 来实现并行开发。但是，这篇文章的核心聚焦于单仓库场景的 Worktree，当我们尝试把 Worktree 应用到基于多仓库的 LLM Arena 平台时，我们却遇到了各种问题。 这篇文章着重介绍我们在多仓库场">
+<meta property="og:description" content="在 是时候了解一下 Git worktree 了 一文中，我们介绍了如何在 Codex、Claude Code 等 Coding Agent 中利用 Git worktree 实现并行开发。不过，那篇文章聚焦于单仓库场景。当我们尝试将 worktree 应用于采用多仓库架构的 LLM Arena 平台时，又遇到了一系列新问题。 本文记录我们如何为多仓库场景设计面向 Coding Agent 的">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/1.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/2.png">
@@ -125,7 +125,7 @@
 <meta property="og:image" content="https://wangwei1237.github.io/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/teamwork.png">
 <meta property="og:image" content="https://wangwei1237.github.io/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/teamwork-arch.png">
 <meta property="article:published_time" content="2026-07-18T20:55:42.000Z">
-<meta property="article:modified_time" content="2026-07-19T10:24:20.660Z">
+<meta property="article:modified_time" content="2026-07-19T10:43:59.429Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="Worktree">
 <meta property="article:tag" content="Multirepo">
@@ -226,7 +226,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.3k</span>
+            <span class="post-count">3.8k</span>
         </span>
     </span>
 
@@ -235,7 +235,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14 分钟</span>
+            <span class="post-count">16 分钟</span>
         </span>
     </span>
 </div>
@@ -251,11 +251,11 @@
     <div class="article-entry" itemprop="articleBody">
        
   <html><head></head><body><p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/1.png" alt=""></p>
-<p>在 <a href="/2026/06/28/It-is-time-to-learn-about-git-worktree/">是时候了解一下 git worktree 了</a> 这篇文章中，我们介绍了如何在 Codex 或者 Claude Code 这样的 Coding Agent 中使用 Git Worktree 来实现并行开发。但是，这篇文章的核心聚焦于单仓库场景的 Worktree，当我们尝试把 Worktree 应用到基于多仓库的 LLM Arena 平台时，我们却遇到了各种问题。</p>
-<p>这篇文章着重介绍我们在多仓库场景下实现面向 Coding Agent 的 Git Worktree。</p>
+<p>在 <a href="/2026/06/28/It-is-time-to-learn-about-git-worktree/">是时候了解一下 Git worktree 了</a> 一文中，我们介绍了如何在 Codex、Claude Code 等 Coding Agent 中利用 Git worktree 实现并行开发。不过，那篇文章聚焦于单仓库场景。当我们尝试将 worktree 应用于采用多仓库架构的 LLM Arena 平台时，又遇到了一系列新问题。</p>
+<p>本文记录我们如何为多仓库场景设计面向 Coding Agent 的 worktree 工作流，以及如何处理子模块初始化、需求编号冲突和多 Agent 编排等问题。</p>
 <span id="more"></span>
-<h2 id="1-multi-repo-架构">1. Multi-Repo 架构</h2>
-<p>在 <a href="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/">如何利用 Harness “一句话交付产品功能”？</a> 中已经介绍过 <a target="_blank" rel="noopener" href="https://lj.baidu.com/sbs/">LLM Arena 平台</a> 的多仓库架构：通过 Git Submodule 管理多个代码仓库。</p>
+<h2 id="1-多仓库架构">1. 多仓库架构</h2>
+<p>在 <a href="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/">如何利用 Harness “一句话交付产品功能”？</a> 一文中，我们介绍过 <a target="_blank" rel="noopener" href="https://lj.baidu.com/sbs/">LLM Arena 平台</a> 的多仓库架构：使用 Git Submodule 管理多个代码仓库。</p>
 <pre class="mermaid">flowchart LR
     subgraph ParentRepo["versus 父仓库"]
         direction TB
@@ -265,78 +265,157 @@
 
         subgraph ServerPath["versus-server/"]
             direction TB
-            ServerRepo["Gitlink：<br>记录子仓库 Commit"]
+            ServerRepo["Gitlink：<br>记录子仓库 commit"]
         end
 
         subgraph FrontendPath["versus-fe/"]
             direction TB
-            FrontendRepo["Gitlink：<br>记录子仓库 Commit"]
+            FrontendRepo["Gitlink：<br>记录子仓库 commit"]
         end
 
         Root -.-&gt;|"定义子模块路径和子仓库的 URL"| Config
         Root --&gt; ServerRepo
         Config -.-&gt;|"path = versus-server<br>url = server repository"| ServerRepo
         Config -.-&gt;|"path = versus-fe<br>url = frontend repository"| FrontendRepo
-        Root --&gt; FrontendRepo        
+        Root --&gt; FrontendRepo
     end
 
     Server[versus-server<br> 独立 Git 仓库]
     Frontend[versus-fe<br>独立 Git 仓库]
     FrontendRepo --&gt; Frontend
     ServerRepo --&gt; Server</pre>
-<p>在这种多仓库的架构下，想要采用 worktree 实现并行开发，仅仅在 <code>versus</code> 父仓库上执行 <code>git worktree add</code> 是远远不够的。<code>versus</code>父仓库的 worktree 只负责创建 versus 的工作目录，而每个新 worktree 中的 Submodule 还需要单独初始化，并根据父仓库记录的 Gitlink，把子仓库检出到对应 Commit。</p>
-<p>建设要同时开发两个需求：</p>
+<p>在这种架构下，仅在 <code>versus</code> 父仓库中执行 <code>git worktree add</code>，并不能得到可直接开发的完整环境。父仓库的 worktree 只会创建 <code>versus</code> 的工作目录；其中的 Submodule 仍需单独初始化，并根据父仓库记录的 Gitlink 检出对应的子仓库 commit。</p>
+<p>假设要同时开发两个需求：</p>
 <ul>
 <li>REQ-001</li>
 <li>REQ-002</li>
 </ul>
 <p>并希望形成如下的目录结构：</p>
-<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── versus/ # 主仓库</span><br><span class="line">│     ├── versus-server/</span><br><span class="line">│     └── versus-fe/</span><br><span class="line">├── versus-REQ-001/  # worktree for REQ-001</span><br><span class="line">│     ├── versus-server/</span><br><span class="line">│     └── versus-fe/</span><br><span class="line">└── versus-REQ-002/  # worktree for REQ-002</span><br><span class="line">      ├── versus-server/</span><br><span class="line">      └── versus-fe/</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="1-1-为父仓库创建-worktree">1.1 为父仓库创建 Worktree</h3>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> versus</span><br><span class="line"></span><br><span class="line">git worktree add \</span><br><span class="line">  ../REQ-001 \</span><br><span class="line">  -b req-001 \</span><br><span class="line">  origin/master</span><br><span class="line"></span><br><span class="line">git worktree add \</span><br><span class="line">  ../REQ-002 \</span><br><span class="line">  -b req-002 \</span><br><span class="line">  origin/master</span><br></pre></td></tr></tbody></table></figure>
-<p>此时，每个父仓库的 Worktree：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── versus/          # 主仓库</span><br><span class="line">│     ├── versus-server/</span><br><span class="line">│     └── versus-fe/</span><br><span class="line">├── versus-REQ-001/  # REQ-001 的 worktree</span><br><span class="line">│     ├── versus-server/</span><br><span class="line">│     └── versus-fe/</span><br><span class="line">└── versus-REQ-002/  # REQ-002 的 worktree</span><br><span class="line">      ├── versus-server/</span><br><span class="line">      └── versus-fe/</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="1-1-为父仓库创建-worktree">1.1 为父仓库创建 worktree</h3>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> versus</span><br><span class="line"></span><br><span class="line">git worktree add \</span><br><span class="line">  -b req-001 \</span><br><span class="line">  ../REQ-001 \</span><br><span class="line">  origin/master</span><br><span class="line"></span><br><span class="line">git worktree add \</span><br><span class="line">  -b req-002 \</span><br><span class="line">  ../REQ-002 \</span><br><span class="line">  origin/master</span><br></pre></td></tr></tbody></table></figure>
+<p>此时，每个父仓库的 worktree：</p>
 <ul>
 <li>有独立工作目录</li>
 <li>有独立索引和当前分支</li>
 <li>共享父仓库的 Git 对象库</li>
-<li>可以由不同 Coding Agent 并行操作</li>
+<li>可以由不同的 Coding Agent 并行操作</li>
 <li><strong>但此时子模块目录可能还是空的，或者尚未初始化</strong></li>
 </ul>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/2.png" alt=""></p>
-<h3 id="1-2-在-worktree-中初始化子模块">1.2 在 Worktree 中初始化子模块</h3>
+<h3 id="1-2-在-worktree-中初始化子模块">1.2 在 worktree 中初始化子模块</h3>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ../REQ-001</span><br><span class="line"></span><br><span class="line">git submodule <span class="built_in">sync</span> --recursive</span><br><span class="line">git submodule update --init --recursive</span><br></pre></td></tr></tbody></table></figure>
-<p>可以使用如上的命令初始化子模块，但是每次都执行这样的操作太麻烦了。更重要的是，如果让 Coding Agent 来实时推理并生成对应的操作步骤：一方面太浪费 token，另一方面还容易带来不稳定性。因此，我们构建了 <code>wt.sh</code> 脚本来自动化这个过程。</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># wt.sh - Versus 多需求并行开发 Worktree 管理脚本</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 设计目标:</span></span><br><span class="line"><span class="comment">#   - 每个需求一个独立 Git Worktree，代码任务真正并行、互不干扰</span></span><br><span class="line"><span class="comment">#   - 每个 worktree 分配独立端口（后端 9000+N / 前端 4000+N），【接口测试可并行】</span></span><br><span class="line"><span class="comment">#   - 数据库共享 dev，不隔离；E2E 手动 / 顺序执行</span></span><br><span class="line"><span class="comment">#   - 不改入库业务代码：端口与代理只在 worktree 内本地改 + assume-unchanged</span></span><br><span class="line"><span class="comment">#   - 代码提交复用 scripts/commit.sh（百度 iCode Gerrit 评审流程）</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 用法:</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh new &lt;id&gt;                         # 创建 worktree（id 如 req-030 / REQ-030 / 030）</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh list                             # 列出所有 worktree + 端口 + 状态</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh go &lt;id&gt;                          # 切换到 worktree（需 shell-init 的 function）</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh remove &lt;id&gt; [--keep-branch]      # 删除 worktree（默认连带本地分支）</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh info &lt;id&gt;                        # 查看单个 worktree 详情</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh current                          # 查看当前目录属于哪个 worktree</span></span><br></pre></td></tr></tbody></table></figure>
+<p>上述命令可以完成子模块初始化，但每次手动执行都很烦琐。如果让 Coding Agent 临时推理并生成操作步骤，不仅会消耗额外的 token，还容易因上下文差异产生不稳定行为。因此，我们编写了 <code>wt.sh</code>，将 worktree 创建、子模块初始化、端口分配和环境配置固化为确定性流程。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition warning"><p class="admonition-title">Git Submodule 的限制
+</p><p>Git 官方文档指出，多 worktree 场景下的 Submodule 支持仍不完整，并不推荐对 superproject 进行多重检出。因此，这套方案需要结合实际使用的 Git 版本、子模块结构和更新方式进行验证，不能直接视为通用方案。详见 <a target="_blank" rel="noopener" href="https://git-scm.com/docs/git-worktree#_bugs">git-worktree 官方文档</a>。</p>
+</div>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># wt.sh - Versus 多需求并行开发 worktree 管理脚本</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 设计目标:</span></span><br><span class="line"><span class="comment">#   - 每个需求一个独立 Git worktree，代码任务真正并行、互不干扰</span></span><br><span class="line"><span class="comment">#   - 每个 worktree 分配独立端口（后端 9000+N / 前端 4000+N），接口测试可并行</span></span><br><span class="line"><span class="comment">#   - 数据库共享 dev，不隔离；E2E 手动 / 顺序执行</span></span><br><span class="line"><span class="comment">#   - 不改入库业务代码：端口与代理只在 worktree 内本地改 + assume-unchanged</span></span><br><span class="line"><span class="comment">#   - 代码提交复用 scripts/commit.sh（百度 iCode Gerrit 评审流程）</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 用法:</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh new &lt;id&gt;                         # 创建 worktree（id 如 req-030 / REQ-030 / 030）</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh list                             # 列出所有 worktree + 端口 + 状态</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh go &lt;id&gt;                          # 切换到 worktree（需 shell-init 的 function）</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh remove &lt;id&gt; [--keep-branch]      # 删除 worktree（默认连带本地分支）</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh info &lt;id&gt;                        # 查看单个 worktree 详情</span></span><br><span class="line"><span class="comment">#   ./scripts/wt.sh current                          # 查看当前目录属于哪个 worktree</span></span><br></pre></td></tr></tbody></table></figure>
 <pre class="mermaid">flowchart TD
-    WT["wt.sh<br>Worktree 编排器"]
+    WT["wt.sh<br>worktree 编排器"]
     Pull["pull-all.sh<br>代码更新"]
     Dev["dev.sh<br>固定端口启动服务"]
     Status["status.sh<br>代码库状态"]
     Commit["commit.sh<br>代码库提交"]
-    
+
     WT --&gt; |实现 wt pull| Pull
     WT --&gt; |实现 wt start/stop| Dev
     WT --&gt; |实现 wt status| Status
     WT --&gt; |实现 wt submit| Commit</pre>
-<h2 id="2-构建-worktree-sub-agent">2.构建 Worktree Sub-Agent</h2>
-<p>在 <a href="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/">如何利用 Harness “一句话交付产品功能”？</a> 中的 <em>4.2 Harness 闭环设计</em> 中，我们采用 6 个 Sub-Agents 实现需求开发闭环。</p>
+<h2 id="2-构建-worktree-manager-agent">2. 构建 worktree-manager Agent</h2>
+<p>在 <a href="/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/">如何利用 Harness “一句话交付产品功能”？</a> 的“4.2 Harness 闭环设计”一节中，我们使用 6 个 Sub-Agent 实现需求开发闭环。</p>
 <p><img src="https://wangwei1237.github.io/2026/05/28/How-to-Achieve-One-Command-Feature-Delivery-with-Harness/harness-16.png" alt=""></p>
-<p>而现在，我们需要把 Worktree 管理的能力也加入到整个 Harness 闭环流程中。为此，我们需要新增一个 worktree-manager 子 Agent。</p>
-<p>另外，在需求设计阶段，每个需求都有一个唯一的 <code>REQ-ID</code>，该 <code>REQ-ID</code> 贯穿整个的开发流程。增加 worktree-manager sub-agent 之后，需要把 <code>REQ-ID</code> 的生成提前到 worktree-manager sub-agent 阶段。</p>
-<h3 id="2-1-worktree-manager-agent">2.1 worktree-manager Agent</h3>
+<p>现在，我们还需要把 worktree 管理能力加入整个 Harness 闭环。为此，我们新增了 <code>worktree-manager</code> Agent。</p>
+<p>每个需求都有一个贯穿开发流程的唯一 <code>REQ-ID</code>。引入 <code>worktree-manager</code> 后，<code>REQ-ID</code> 的生成也需要从需求设计阶段前移到 worktree 创建阶段。</p>
+<h3 id="2-1-定义-worktree-manager">2.1 定义 worktree-manager</h3>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: <span class="string">"worktree-manager"</span></span><br><span class="line">description: <span class="string">"Use this agent when a new requirement or modification task needs to be started and a dedicated worktree should be created for isolated development. This agent should be triggered BEFORE the requirement-designer agent in the collaboration pipeline, ensuring that each requirement gets its own isolated Git Worktree with independent ports and runtime environment. This is essential for parallel development of multiple requirements without code or port conflicts."</span></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"><span class="comment">## Operational Procedures</span></span><br><span class="line"><span class="comment">### Step 1: Check Existing Worktrees</span></span><br><span class="line">Before creating anything, check <span class="keyword">if</span> a worktree already exists <span class="keyword">for</span> the given requirement:</span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line"><span class="comment"># Check current worktree status（在项目根目录执行）</span></span><br><span class="line">bash scripts/wt.sh list</span><br><span class="line">```</span><br><span class="line"></span><br><span class="line">Also verify with git:</span><br><span class="line">```bash</span><br><span class="line">git worktree list</span><br><span class="line">```</span><br><span class="line">......</span><br></pre></td></tr></tbody></table></figure>
-<p>如上所示，worktree-manager 子 Agent 实际上是对 <code>wt.sh</code> 脚本的封装。</p>
-<h3 id="2-2-修改-sub-agents-的编排流">2.2 修改 Sub-Agents 的编排流</h3>
-<p>在原有的 Sub-Agents 编排流基础上，增加 worktree-manager 子 Agent 的调用，具体流程如下所示。</p>
+<p>如上所示，<code>worktree-manager</code> 本质上是对 <code>wt.sh</code> 的 Agent 化封装：Agent 负责理解意图和编排步骤，脚本负责执行确定性的底层操作。</p>
+<h3 id="2-2-调整-sub-agent-编排流程">2.2 调整 Sub-Agent 编排流程</h3>
+<p>在原有流程前增加 <code>worktree-manager</code>，具体编排如下：</p>
 <pre class="mermaid">flowchart LR
-    A0["0. worktree-manager<br>创建隔离 Worktree"]
+    A0["0. worktree-manager<br>创建隔离 worktree"]
     A1["1. requirement-designer<br>生成 PRD"]
     A2["2. go-api-implementer<br>实现后端 API"]
     A3["3. frontend-engineer<br>实现前端功能"]
     A4["4. test-case-designer<br>设计测试用例"]
     A5["5. integration-test-runner<br>执行 API 测试"]
     A6["6. e2e-test-executor<br>执行 E2E 测试"]
-  
+
     A0 --&gt; A1
     A1 --&gt; A2
     A2 --&gt; A3
@@ -344,41 +423,44 @@
     A4 --&gt; A5
     A5 --&gt; A6</pre>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/7-agents.jpg" alt=""></p>
-<p>接下来，我们开启两个 Session，通过 Worktree 并行开发 2 个需求。</p>
+<p>接下来，我们开启两个 Session，通过不同的 worktree 并行开发两个需求。</p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/3.png" alt=""></p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/4.png" alt=""></p>
 <h2 id="3-req-id-冲突">3. REQ-ID 冲突</h2>
-<p>正当我们要利用 worktree 让 Coding Agent 并行开发多个需求的时候，我们发现我们高兴的太早了。我们启动了 2 个 Session，每个 Session 都在不同的 Worktree 中开发不同的需求。但是，我们发现这个两个 worktree 中生成的 REQ-ID 是同一个。</p>
-<p>当 <code>docs/requirements/</code> 目录下的最新需求目录为 <code>REQ-30</code> 时，两个 Coding Agent 生成的 REQ-ID 都是 <code>REQ-31</code>。</p>
+<p>当我们真正利用 worktree 并行开发多个需求时，新问题出现了：两个 Session 分别进入不同的 worktree，却生成了相同的 <code>REQ-ID</code>。</p>
+<p>当 <code>docs/requirements/</code> 中最新的需求目录为 <code>REQ-30</code> 时，两个 Coding Agent 都读取到相同状态，并将下一个编号计算为 <code>REQ-31</code>。</p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/5.png" alt=""></p>
-<p>从需求实现上来看，这也没有什么问题。最大的问题在于：如果 <code>REQ-ID</code> 一致，那么父仓库 <code>versus</code> 代码合并时就会存在不可避免的代码冲突。哎呀，想想都头疼。</p>
-<p><strong>很多实践就是这样，看着很简单，但是真正上手，却发现有解不完的问题。但是，这不就是创新的过程吗？</strong></p>
-<p>这是一个典型的分布式架构下，多进程并行处理相同的数据时存在的 <strong>“丢失更新”</strong> 的问题。</p>
+<p>单独看每个需求，两者都能继续开发；但当代码合并回 <code>versus</code> 父仓库时，相同的需求目录和文件路径必然产生冲突。</p>
+<p><strong>很多实践看起来简单，真正落地时却会暴露一连串问题，而解决这些问题正是创新的一部分。</strong></p>
+<p>这是一个典型的并发竞争：多个进程读取相同状态，各自计算出相同的下一个编号，然后尝试写入结果。它与数据库中的“丢失更新”问题具有相似结构。</p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/6.jpg" alt=""></p>
-<p>经过调研，我们希望采用 Git Worktree 的“并行”特性来解决这个问题：</p>
+<p>我们的解决思路是复用 Git 已有的互斥保护，而不是另外实现一套锁：</p>
 <ul>
-<li>Git 不允许同一个本地分支同时被多个 worktree checkout。如果目标 branch 已经在另一个 worktree 中被 checkout，那么 git worktree add 会拒绝创建一个新的 worktree。</li>
+<li>所有 worktree 共享同一个 Git 引用空间。</li>
+<li><code>git worktree add -b &lt;branch&gt;</code> 会创建新分支；如果该分支已经存在，命令默认失败。</li>
+<li>Git 也默认禁止同一个本地分支同时被多个 worktree 检出。</li>
 </ul>
-<p>于是我们优化了 <code>wt.sh</code> 脚本，每创建一个 worktree 时，就在主仓库的 <code>.wt</code> 目录下，写入 <code>REQ-ID</code> 信息。在分配 <code>REQ-ID</code> 时，统一从 <code>.wt</code> 目录下读取已分配的 <code>REQ-ID</code>，避免并发冲突。</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ROOT_DIR=<span class="string">"<span class="subst">$(cd <span class="string">"<span class="subst">$(dirname <span class="string">"<span class="variable">$0</span>"</span>)</span>/.."</span> &amp;&amp; pwd)</span>"</span></span><br><span class="line">WT_ROOT=<span class="string">"<span class="variable">${WT_ROOT:-<span class="variable">$ROOT_DIR</span>/..}</span>"</span>  <span class="comment"># worktree 存放根目录，默认主仓库父目</span></span><br><span class="line">WT_META_DIR=<span class="string">"<span class="variable">$ROOT_DIR</span>/.wt"</span>         <span class="comment"># 注册表目录（.gitignore 已忽略）</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">write_meta</span></span>() {</span><br><span class="line">    <span class="built_in">local</span> <span class="built_in">id</span>=<span class="variable">$1</span> path=<span class="variable">$2</span> branch=<span class="variable">$3</span> be=<span class="variable">$4</span> fe=<span class="variable">$5</span> req_id=<span class="variable">${6:-}</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"WT_REQ_ID=<span class="variable">$req_id</span>"</span> &gt; <span class="string">"<span class="variable">$WT_META_DIR</span>/<span class="variable">$id</span>.meta"</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>同时，采用 <code>feat/req-id</code> 作为分支名，如果 <code>feat/req-id</code> 已经被 checkout，那么 worktree 的创建就会失败。然后 Coding Agent 就会重新创建 worktree，从而消除并发带来的 <code>REQ-ID</code> 一致的问题。</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">req_id=$(allocate_req_id)</span><br><span class="line"> </span><br><span class="line">info <span class="string">"[1/6] 创建 Git Worktree（基于 master）..."</span></span><br><span class="line"><span class="keyword">if</span> ! git -C <span class="string">"<span class="variable">$ROOT_DIR</span>"</span> worktree add <span class="string">"<span class="variable">$wt_path</span>"</span> -b <span class="string">"feat/<span class="variable">$id</span>"</span> master 2&gt;&amp;1; <span class="keyword">then</span></span><br><span class="line">    error <span class="string">"创建 worktree 失败"</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></tbody></table></figure>
+<p>因此，我们让 <code>REQ-ID</code> 同时参与分支命名，把创建 <code>feat/&lt;REQ-ID&gt;</code> 分支作为编号预占操作。即使两个进程计算出相同的 <code>REQ-ID</code>，也只有一个能成功创建对应分支；失败的一方重新扫描并分配新编号。</p>
+<p>同时，<code>wt.sh</code> 会在主仓库的 <code>.wt</code> 目录中记录已分配的 <code>REQ-ID</code>。后续分配先扫描这些元数据，再尝试通过 Git 创建分支完成最终确认。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ROOT_DIR=<span class="string">"<span class="subst">$(cd <span class="string">"<span class="subst">$(dirname <span class="string">"<span class="variable">$0</span>"</span>)</span>/.."</span> &amp;&amp; pwd)</span>"</span></span><br><span class="line">WT_ROOT=<span class="string">"<span class="variable">${WT_ROOT:-<span class="variable">$ROOT_DIR</span>/..}</span>"</span>  <span class="comment"># worktree 存放根目录，默认为主仓库父目录</span></span><br><span class="line">WT_META_DIR=<span class="string">"<span class="variable">$ROOT_DIR</span>/.wt"</span>         <span class="comment"># 注册表目录（.gitignore 已忽略）</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">write_meta</span></span>() {</span><br><span class="line">    <span class="built_in">local</span> <span class="built_in">id</span>=<span class="variable">$1</span> path=<span class="variable">$2</span> branch=<span class="variable">$3</span> be=<span class="variable">$4</span> fe=<span class="variable">$5</span> req_id=<span class="variable">${6:-}</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"WT_REQ_ID=<span class="variable">$req_id</span>"</span> &gt; <span class="string">"<span class="variable">$WT_META_DIR</span>/<span class="variable">$id</span>.meta"</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>创建 worktree 时，脚本使用 <code>feat/$id</code> 作为分支名。若同名分支已经存在，<code>-b</code> 会拒绝覆盖，脚本便终止本次创建。上层 Agent 识别出同名分支冲突后，再重新分配编号并重试；其他错误则直接上报，避免无意义重试。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>=$(allocate_req_id)</span><br><span class="line"></span><br><span class="line">info <span class="string">"[1/6] 创建 Git Worktree（基于 master）..."</span></span><br><span class="line"><span class="keyword">if</span> ! git -C <span class="string">"<span class="variable">$ROOT_DIR</span>"</span> worktree add -b <span class="string">"feat/<span class="variable">$id</span>"</span> <span class="string">"<span class="variable">$wt_path</span>"</span> master 2&gt;&amp;1; <span class="keyword">then</span></span><br><span class="line">    error <span class="string">"创建 worktree 失败"</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></tbody></table></figure>
 <p>整体流程如下所示：</p>
 <pre class="mermaid">flowchart LR
-    START["Coding Agent 创建 Worktree"] --&gt; SCAN["扫描主仓库 .wt/*.meta<br>读取 WT_REQ_ID 信息"]
-    SCAN --&gt; ALLOC["得到新的 req-id"]
-    ALLOC --&gt; BRANCH["使用 feat/req-id<br>作为 Worktree 绑定分支"]
-    BRANCH --&gt; CREATE{"git worktree add"}
+    START["Coding Agent 创建 worktree"] --&gt; SCAN["扫描主仓库 .wt/*.meta<br>读取 WT_REQ_ID"]
+    SCAN --&gt; ALLOC["计算候选 REQ-ID"]
+    ALLOC --&gt; BRANCH["生成 feat/REQ-ID 分支名"]
+    BRANCH --&gt; CREATE{"git worktree add -b"}
 
-    CREATE -- "成功" --&gt; META["写入 .wt/&lt;worktree&gt;.meta<br>记录 WT_REQ_ID 和 Worktree 信息"]
-    META --&gt; DONE["新 Worktree"]
+    CREATE -- "成功" --&gt; META["写入 .wt/&lt;worktree&gt;.meta<br>记录 REQ-ID 和 worktree 信息"]
+    META --&gt; DONE["新 worktree"]
 
-    CREATE -- "失败" --&gt; RETRY["Coding Agent 重新发起创建"]
+    CREATE -- "分支已存在" --&gt; RETRY["重新分配编号"]
     RETRY --&gt; SCAN</pre>
-<p>下面我们启动 2 个 Coding Agent Sessions 并并行执行 2 个需求开发任务。从实际的运行结果看，两个 Coding Agent 分别创建了 REQ-42、REQ-43 两个 Worktree，并且成功地将它们绑定到了对应的需求分支上。</p>
-<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_1.png" alt="启动 2 个 Session 并行执行两个任务"></p>
+<p>下面，我们启动两个 Coding Agent 会话，并行执行两个需求。从实际结果看，两个 Agent 分别获得 <code>REQ-42</code> 和 <code>REQ-43</code>，并成功创建了对应的 worktree 与需求分支。</p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_1.png" alt="启动两个 Session 并行执行两个任务"></p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_2.png" alt="分别生成 REQ-42、REQ-43，未发生 REQ-ID 冲突"></p>
-<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_3.png" alt="两个 worktree 分别绑定 REQ-42、REQ-43，合并代码的时候不会存在代码冲突"></p>
+<p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_3.png" alt="两个 worktree 分别绑定 REQ-42、REQ-43，避免因 REQ-ID 重复而产生路径冲突"></p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/m_4.png" alt="PRD Agent 完成对应需求的扩充与澄清"></p>
 <style>.admonition {
     margin: 1.5625em 0;
@@ -457,49 +539,54 @@
   }
   </style>
 <div class="admonition warning"><p class="admonition-title">注意
-</p><p>实际上，如上的方案在多人并行开发时依然存在 <code>REQ-ID</code> 冲突的问题。但是，当我们已经实现同一台开发机器上并行 <em>N</em> 个开发任务时，我们是否还有必要采用 <em>N</em> 个工程师来并行开发需求？</p>
-<p>我认为，当前的方案虽然不完美，但是已经解决了我们所面临的问题。没必要采用更加复杂的方案来解决可能不会发生的问题。</p>
+</p><p>这套互斥机制依赖同一份本地 Git 引用空间，只能解决同一台机器、同一个父仓库中的并发分配问题。多名工程师在不同机器上并行开发时，本地分支无法形成全局互斥，仍可能生成相同的 <code>REQ-ID</code>。</p>
+<p>当前场景的目标是在一台开发机器上并行运行多个 Agent，因此该方案已经满足需求。如果未来需要跨机器分配编号，应改用中心化服务、数据库唯一约束或远程原子引用等全局协调机制。</p>
 </div>
-<h2 id="4-多-worktree-并行开发">4. 多 Worktree 并行开发</h2>
-<p>目前，虽然 LLM Arena 平台可以满足我们的评测需求，但是仍然有许多交互体验问题需要优化，例如：</p>
+<h2 id="4-多-worktree-并行开发">4. 多 worktree 并行开发</h2>
+<p>LLM Arena 平台已经能够满足基本评测需求，但仍有一些交互体验问题需要优化，例如：</p>
 <ul>
-<li>分类管理页面没有设置分页；并且创建新分类时，父分类 ID 需要手动填写，整体的交互体验并不是特别优化。</li>
-<li>模型效果页面存在当页面滑动到最底部时，会出现媒体资源卡片显示不对齐的问题，存在较大的空白区域，整体页面视觉不美观。</li>
+<li>分类管理页面缺少分页；创建分类时，父分类 ID 仍需手动填写，操作不够友好。</li>
+<li>模型效果页面滑动到底部后，媒体资源卡片可能无法对齐，页面会出现大块空白。</li>
 </ul>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds.jpg" alt=""></p>
-<p>以前，我们会采用 Harness Engineering 串行优化这些需求。当我们把 Harness Engineering 升级到 worktree 模式后，我们就可以并行开发这些需求了。</p>
+<p>过去，我们使用 Harness Engineering 串行处理这些需求。将其升级为 worktree 模式后，不同需求可以在相互隔离的环境中并行推进。</p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_1.png" alt=""></p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_2.png" alt=""></p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_3.png" alt=""></p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_4.png" alt=""></p>
-<p>当 Coding Agent 可以在不同的、相互隔离的 worktree 中并行开发不同的需求时，开发吞吐量瞬间翻倍，真是飞一般的感觉。</p>
+<p>当 Coding Agent 能够在不同且相互隔离的 worktree 中并行开发时，多个独立需求不必再排队等待，整体开发吞吐量得到显著提升。</p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/prds_5.png" alt=""></p>
-<h2 id="5-teamwork-preview-编排">5. teamwork-preview 编排</h2>
-<p>截止到现在，我们对于 7 个 Sub-Agents 的编排规则位于 <code>versus/CLAUDE.md</code> 中。</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 自动化工作流</span></span><br><span class="line"></span><br><span class="line"><span class="comment">### 流水线概览</span></span><br><span class="line"></span><br><span class="line">```</span><br><span class="line">用户: <span class="string">"开启7个Agent协作实现XXX需求"</span></span><br><span class="line">│</span><br><span class="line">▼</span><br><span class="line">[0] worktree-manager       →  创建隔离 Worktree + 分配端口</span><br><span class="line">│</span><br><span class="line">▼ status=completed（主会话 EnterWorktree(path=...) 切换）</span><br><span class="line">[1] requirement-designer   →  产出 PRD.md + 分配需求 ID</span><br><span class="line">│</span><br><span class="line">▼ status=awaiting_review</span><br><span class="line">⏸ 人工审核 PRD（用户确认后继续）</span><br><span class="line">│</span><br><span class="line">▼ 用户确认 → status=completed</span><br><span class="line">[2] go-api-implementer     →  产出 Go 代码 + api-summary.md</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转）</span><br><span class="line">[3] frontend-engineer      →  产出 React 代码</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转）</span><br><span class="line">[4] test-case-designer     →  产出 api-test-cases.json + e2e-test-cases.json</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转，串行启动）</span><br><span class="line">[5] integration-test-runner (worktree端口)  →  [6] e2e-test-executor (worktree端口+1)</span><br><span class="line">│                                           │</span><br><span class="line">▼                                           ▼</span><br><span class="line">status=has_bugs → Bug修复循环               status=all_passed → 流水线完成</span><br><span class="line">```</span><br></pre></td></tr></tbody></table></figure>
-<p>因此，每次我们都要重复输入相同的提示词指令：</p>
+<h2 id="5-teamwork-preview-编排">5. <code>/teamwork-preview</code> 编排</h2>
+<p>最初，7 个 Sub-Agent 的编排规则都定义在 <code>versus/CLAUDE.md</code> 中。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 自动化工作流</span></span><br><span class="line"></span><br><span class="line"><span class="comment">### 流水线概览</span></span><br><span class="line"></span><br><span class="line">```</span><br><span class="line">用户: <span class="string">"开启 7 个 Agent 协作实现 XXX 需求"</span></span><br><span class="line">│</span><br><span class="line">▼</span><br><span class="line">[0] worktree-manager       →  创建隔离 worktree + 分配端口</span><br><span class="line">│</span><br><span class="line">▼ status=completed（主会话 EnterWorktree(path=...) 切换）</span><br><span class="line">[1] requirement-designer   →  产出 PRD.md + 分配需求 ID</span><br><span class="line">│</span><br><span class="line">▼ status=awaiting_review</span><br><span class="line">⏸ 人工审核 PRD（用户确认后继续）</span><br><span class="line">│</span><br><span class="line">▼ 用户确认 → status=completed</span><br><span class="line">[2] go-api-implementer     →  产出 Go 代码 + api-summary.md</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转）</span><br><span class="line">[3] frontend-engineer      →  产出 React 代码</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转）</span><br><span class="line">[4] test-case-designer     →  产出 api-test-cases.json + e2e-test-cases.json</span><br><span class="line">│</span><br><span class="line">▼ status=completed（自动流转，串行启动）</span><br><span class="line">[5] integration-test-runner (worktree端口)  →  [6] e2e-test-executor (worktree端口+1)</span><br><span class="line">│                                           │</span><br><span class="line">▼                                           ▼</span><br><span class="line">status=has_bugs → Bug修复循环               status=all_passed → 流水线完成</span><br><span class="line">```</span><br></pre></td></tr></tbody></table></figure>
+<p>每次启动流程时，我们都要重复输入相同的指令：</p>
 <blockquote>
 <p>开启 7 个 Agent 协作，实现：……</p>
 </blockquote>
-<p>虽然还不到 10 个词，但是再也不想重复输入了。恰好，7 月 14 日，谷歌发推文宣传 Antigravity 中新特性 Agent Teams。只需要运行 <code>/teamwork-preview</code>，就可启动一个由专业子代理组成的动态团队，他们在后台协调、规划、构建和验证复杂的工程任务。</p>
+<p>这条指令虽然不长，但仍暴露出一个问题：工作流依赖用户记住并重复输入约定，而不是由系统提供稳定入口。恰好，7 月 14 日，Google Antigravity 发布了 Agent Teams 的演示：运行 <code>/teamwork-preview</code>，即可启动一个由专业 Sub-Agent 组成的动态团队，在后台协调、规划、构建并验证复杂任务。</p>
 <div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/antigravity/status/2076720528937611363"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>受此启发，我决定也实现一个类似的 <code>/teamwork-preview</code> 指令，这样就可以通过一条指令启动整个协作流程，而无需重复输入提示词。</p>
+<p>受此启发，我们也实现了 <code>/teamwork-preview</code>，用一条稳定指令启动完整协作流程：</p>
 <blockquote>
 <p>/teamwork-preview ……</p>
 </blockquote>
-<p>在 Claude Code 中，可以通过创建对应的 Skills 来实现类似的功能。于是，我们把 <a target="_blank" rel="noopener" href="http://CLAUDE.md">CLAUDE.md</a> 中对 Sub-Agents 的定义迁移到 <code>teamwork-preview</code> Skill 中，从而实现了类似谷歌的 <code>/teamwork-preview</code> 的效果。</p>
+<p>在 Claude Code 中，可以通过 Skill 封装这类工作流。于是，我们把 <code>CLAUDE.md</code> 中的 Sub-Agent 编排规则迁移到 <code>teamwork-preview</code> Skill，将触发方式、执行顺序、状态流转和异常恢复集中管理。</p>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/teamwork.png" alt=""></p>
-<p>因此，<code>/teamwork-preview</code> 是一个基于 skills 编排 sub-agents 的工作流：</p>
+<p>因此，<code>/teamwork-preview</code> 本质上是一个基于 Skill 编排 Sub-Agent 的工作流：</p>
 <ul>
-<li>通过 skills 优化知识编排和索引效率；</li>
-<li>通过外挂的状态文件增强 主 agent 的任务恢复能力；</li>
-<li>通过 管理类 skill 实现工作流编排，通过 技能类 skills 增强 sub-agents 的能力；</li>
+<li>使用 Skill 组织领域知识和操作流程，降低重复上下文的成本。</li>
+<li>使用外部状态文件记录执行进度，增强主 Agent 的任务恢复能力。</li>
+<li>使用管理类 Skill 编排工作流，使用能力类 Skill 增强各个 Sub-Agent。</li>
 </ul>
 <p><img src="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/teamwork-arch.png" alt=""></p>
 <h2 id="6-总结">6. 总结</h2>
-<p>类似分布式、多进程并发问题在 AI 时代下也依然存在。采用什么架构来更优美的编排我们的 Agents、Skills 仍然属于架构范畴，任然需要一定的架构约束。</p>
-<p>我们总认为，AI 可以帮我们做非常多的事情；有了 AI，我们就可以不用向之前那样去刻苦学习哪些底层的原理、架构知识……</p>
-<p>因此，恰恰相反，AI 时代下，我们需要更认真的去学习、了解底层原理、架构知识。</p>
+<p>Coding Agent 提升了代码生成和任务执行的速度，却不会让并发竞争、状态一致性和资源隔离等经典工程问题自动消失。Agent 越多、并行度越高，这些问题反而越容易暴露。</p>
+<p>这次实践最终沉淀出三个原则：</p>
+<ul>
+<li><strong>将推理与执行分离。</strong> Agent 负责理解需求和编排流程，脚本负责执行可重复、可验证的底层操作。</li>
+<li><strong>优先复用已有约束。</strong> 使用 Git 分支创建的失败保护完成本地互斥，比另行维护一套脆弱的锁机制更简单。</li>
+<li><strong>明确方案边界。</strong> 本地 Git 引用只能协调单机并发；跨机器场景需要真正的全局协调机制。</li>
+</ul>
+<p>AI 可以替我们完成更多操作，但不能替我们理解系统。恰恰因为开发速度更快、并行规模更大，我们更需要掌握底层原理，并用清晰的架构约束 Agent 的行为。</p>
 </body></html> 
       <!-- reward -->
       
@@ -920,14 +1007,6 @@
 
 <!-- Katex -->
  
-    
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
-        
-            <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js"></script>
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
-        
     
  
 <!-- busuanzi  -->
