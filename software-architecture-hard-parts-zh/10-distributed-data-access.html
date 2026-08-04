@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 10&nbsp; 分布式数据访问</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./11-distributed-workflows.html" rel="next">
+<link href="./09-data-ownership.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-reuse-patterns.html">第二部分 重新组合</a></li><li class="breadcrumb-item"><a href="./10-distributed-data-access.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#服务间通信模式" id="toc-服务间通信模式" class="nav-link active" data-scroll-target="#服务间通信模式"><span class="header-section-number">10.1</span> 服务间通信模式</a>
+  <ul class="collapse">
+  <li><a href="#权衡" id="toc-权衡" class="nav-link" data-scroll-target="#权衡"><span class="header-section-number">10.1.1</span> 权衡</a></li>
+  </ul></li>
+  <li><a href="#列模式复制模式" id="toc-列模式复制模式" class="nav-link" data-scroll-target="#列模式复制模式"><span class="header-section-number">10.2</span> 列模式复制模式</a>
+  <ul class="collapse">
+  <li><a href="#权衡-1" id="toc-权衡-1" class="nav-link" data-scroll-target="#权衡-1"><span class="header-section-number">10.2.1</span> 权衡</a></li>
+  </ul></li>
+  <li><a href="#复制式缓存模式" id="toc-复制式缓存模式" class="nav-link" data-scroll-target="#复制式缓存模式"><span class="header-section-number">10.3</span> 复制式缓存模式</a>
+  <ul class="collapse">
+  <li><a href="#权衡-2" id="toc-权衡-2" class="nav-link" data-scroll-target="#权衡-2"><span class="header-section-number">10.3.1</span> 权衡</a></li>
+  </ul></li>
+  <li><a href="#数据领域模式" id="toc-数据领域模式" class="nav-link" data-scroll-target="#数据领域模式"><span class="header-section-number">10.4</span> 数据领域模式</a>
+  <ul class="collapse">
+  <li><a href="#权衡-3" id="toc-权衡-3" class="nav-link" data-scroll-target="#权衡-3"><span class="header-section-number">10.4.1</span> 权衡</a></li>
+  </ul></li>
+  <li><a href="#sysops-squad-案例工单分配的数据访问" id="toc-sysops-squad-案例工单分配的数据访问" class="nav-link" data-scroll-target="#sysops-squad-案例工单分配的数据访问"><span class="header-section-number">10.5</span> Sysops Squad 案例：工单分配的数据访问</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-reuse-patterns.html">第二部分 重新组合</a></li><li class="breadcrumb-item"><a href="./10-distributed-data-access.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>1 月 3 日，星期一，12:43</em></p>
+<p>“既然专家资料表的所有权已经分配给用户管理服务，”Sydney 说，“工单分配服务怎样取得专家位置和技能数据？我之前说过，它要读取数据库很多次，每次查询都进行远程调用实在不可行。”</p>
+<p>“能不能修改分配算法，减少查询次数？”Addison 问。</p>
+<p>“我不知道，”Sydney 回答，“这些算法通常由 Taylen 维护。”</p>
+<p>Addison 和 Sydney 找 Taylen 讨论数据访问问题，看看他能不能修改专家分配算法，减少对专家资料表的数据库调用。</p>
+<p>“你在开玩笑吗？”Taylen 问，“我绝不可能按照你们的要求重写分配算法，完全不可能。”</p>
+<p>“但另一个选择，是分配算法每次需要专家数据时都远程调用用户管理服务。”Addison 说。</p>
+<p>“什么？”Taylen 喊道，“不能这样做！”</p>
+<p>“我也这么说，”Sydney 说，“看来又回到了原点。分布式架构真难。虽然不愿承认，但我竟然开始怀念单体应用了。等等，我知道了：不用 REST，改成通过消息调用用户维护服务呢？”</p>
+<p>“没有区别，”Taylen 说，“无论使用消息、REST 还是其他远程访问协议，我仍然必须等待信息返回。这张表就应该和工单数据表位于同一个数据领域。”</p>
+<p>“访问不再由我们拥有的数据，肯定还有其他方案，”Addison 说，“我去问问 Logan。”</p>
+<p>大多数使用单一数据库的单体系统中，开发人员读取数据库表时不需要多想。SQL 表连接司空见惯，一条简单查询就能在一次数据库调用中取回全部必要数据。然而，当数据被拆到不同服务所拥有的独立数据库或模式中，只读数据访问就开始变得困难。</p>
+<p>本章介绍服务读取自己不拥有的数据，也就是位于服务限界上下文之外的数据时，可以采用的各种方式。我们将讨论四种数据访问模式：服务间通信模式、列模式复制模式、复制式缓存模式和数据领域模式。</p>
+<p>每种模式都有自己的优点与缺点。没错，又是权衡。为更清楚地说明，我们继续使用第 9 章的愿望清单服务与目录服务示例。</p>
+<p>图 <a href="#fig-10-1" class="quarto-xref">图&nbsp;<span>10.1</span></a> 中，愿望清单服务维护客户将来可能购买的商品列表；相应愿望清单表包含客户 ID、商品 ID 和商品加入日期。目录服务负责维护公司销售的全部商品，包含商品 ID、商品描述，以及重量、高度、长度等静态产品尺寸信息。</p>
+<p>客户请求显示愿望清单时，需要向其返回商品 ID 与商品描述（<code>item_desc</code>）。但愿望清单服务自己的表中没有商品描述；这项数据属于目录服务，位于为变更控制和数据所有权建立的紧密限界上下文中。因此，架构师必须采用本章的一种数据访问模式，让愿望清单服务取得目录服务拥有的产品描述。</p>
+<div id="fig-10-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch10/fig-10-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10.1: 愿望清单服务需要商品描述，却不能访问包含数据的产品表
+</figcaption>
+</figure>
+</div>
+<section id="服务间通信模式" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="服务间通信模式"><span class="header-section-number">10.1</span> 服务间通信模式</h2>
+<p>服务间通信是分布式系统访问数据最常见的模式。一项服务或系统需要读取自己无法直接访问的数据时，只要通过某种远程访问协议向数据所有者请求即可。还有什么比这更简单？</p>
+<p>与软件架构中的大多数事情一样，表象并不等于真相。这种常见技术虽然简单，却充满缺点。图 <a href="#fig-10-2" class="quarto-xref">图&nbsp;<span>10.2</span></a> 中，愿望清单服务同步远程调用目录服务，传入一组商品 ID，换回相应商品描述。</p>
+<div id="fig-10-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch10/fig-10-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10.2: 服务间通信数据访问模式
+</figcaption>
+</figure>
+</div>
+<p>每次请求取得客户愿望清单时，愿望清单服务都必须远程调用目录服务，取得商品描述。这项模式的第一个问题，是网络延迟、安全延迟和数据延迟导致性能下降。</p>
+<p>网络延迟是数据包往返服务所需的传输时间，通常在 30–300 毫秒之间。目标服务端点需要额外授权才能执行请求时，会出现安全延迟；其大小取决于端点安全级别，多数系统可能在 20–400 毫秒之间。数据延迟则指必须调用数据库多次，才能取得返回终端用户所需的信息。本例不再只执行一条 SQL 表连接语句，而是由目录服务额外调用数据库取得商品描述，可能再增加 10–50 毫秒处理时间。全部相加后，仅仅取得商品描述就可能产生长达一秒的延迟。</p>
+<p>这项模式的另一项重大缺点是服务耦合。愿望清单服务依赖目录服务可用，两者因而在语义和静态层面耦合：目录服务不可用，愿望清单服务也无法运行。此外，两者紧密静态耦合，因此愿望清单服务为应对更高负载而扩展时，目录服务也必须一起扩展。</p>
+<p>表 <a href="#tbl-10-1" class="quarto-xref">表格&nbsp;<span>10.1</span></a> 汇总了服务间通信数据访问模式的权衡。</p>
+<section id="权衡" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="权衡"><span class="header-section-number">10.1.1</span> 权衡</h3>
+<div id="tbl-10-1" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;10.1: 服务间通信数据访问模式的权衡
+</figcaption>
+<div aria-describedby="tbl-10-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>简单</td>
+<td>网络、数据与安全延迟（性能）</td>
+</tr>
+<tr class="even">
+<td>没有数据量问题</td>
+<td>可扩展性与吞吐量问题</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>没有容错能力（可用性问题）</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>服务之间需要契约</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="列模式复制模式" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="列模式复制模式"><span class="header-section-number">10.2</span> 列模式复制模式</h2>
+<p>列模式复制模式把列复制到其他数据表，从而复制数据，使其可供其他限界上下文使用。如图 <a href="#fig-10-3" class="quarto-xref">图&nbsp;<span>10.3</span></a> 所示，把 <code>item_desc</code> 列加入愿望清单表后，愿望清单服务不必向目录服务请求，就能直接取得这项数据。</p>
+<div id="fig-10-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch10/fig-10-3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10.3: 列模式复制模式把数据复制到其他数据表
+</figcaption>
+</figure>
+</div>
+<p>数据同步与数据一致性是列模式复制模式最大的两个问题。创建产品、从目录删除产品或修改产品描述时，目录服务必须通过某种方式通知愿望清单服务以及复制这项数据的其他服务。通常使用队列、主题或事件流进行异步通信。</p>
+<p>除非必须立即完成事务性同步，否则异步通信通常优于同步通信，因为它能提高响应速度，并减少服务之间的可用性依赖。</p>
+<p>这项模式的另一项难题，是数据所有权有时很难治理。数据被复制到属于其他服务的数据表后，这些服务即使并非数据的正式所有者，也能更新数据，进而造成更多数据一致性问题。</p>
+<p>尽管服务仍因数据同步而耦合，需要只读访问的服务却能立即取得数据，并通过简单 SQL 连接或查询自己的数据表得到结果。这可以改善性能、容错能力和可扩展性，而这些恰恰是服务间通信模式的缺点。</p>
+<p>对于愿望清单与目录服务这类场景，我们通常不建议采用列模式复制。不过，在数据聚合、报表，或者因为数据量很大、响应要求很高、容错要求很高而无法采用其他访问模式时，可以考虑这项模式。</p>
+<p>表 <a href="#tbl-10-2" class="quarto-xref">表格&nbsp;<span>10.2</span></a> 汇总了列模式复制数据访问模式的权衡。</p>
+<section id="权衡-1" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="权衡-1"><span class="header-section-number">10.2.1</span> 权衡</h3>
+<div id="tbl-10-2" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;10.2: 列模式复制数据访问模式的权衡
+</figcaption>
+<div aria-describedby="tbl-10-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>良好的数据访问性能</td>
+<td>数据一致性问题</td>
+</tr>
+<tr class="even">
+<td>没有可扩展性与吞吐量问题</td>
+<td>数据所有权问题</td>
+</tr>
+<tr class="odd">
+<td>没有容错问题</td>
+<td>必须进行数据同步</td>
+</tr>
+<tr class="even">
+<td>没有服务依赖</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="复制式缓存模式" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="复制式缓存模式"><span class="header-section-number">10.3</span> 复制式缓存模式</h2>
+<p>大多数开发人员和架构师把缓存视为提高整体响应速度的技术。数据放进内存缓存后，检索时间可以从几十毫秒缩短到几纳秒。不过，缓存也是分布式数据访问与共享的有效工具。</p>
+<p>复制式缓存模式利用复制式内存缓存，把其他服务需要的数据提供到每项服务，无须再向所有者请求。它与其他缓存模型的区别是：数据保存在每项服务内部的内存中，并持续同步，让所有服务始终拥有完全相同的数据。</p>
+<p>为了理解复制式缓存，先与其他缓存模型比较。单一内存缓存是最简单的形式，每项服务都有自己的内部缓存。图 <a href="#fig-10-4" class="quarto-xref">图&nbsp;<span>10.4</span></a> 中，各缓存之间的内存数据并不同步，因此每项服务拥有只属于自己的独特数据。这种模型可以改善单项服务的响应速度与可扩展性，却不能在服务间共享数据，因为缓存彼此不同步。</p>
+<div id="fig-10-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch10/fig-10-4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10.4: 采用单一内存缓存时，每项服务包含各自独有的数据
+</figcaption>
+</figure>
+</div>
+<p>分布式架构使用的另一种模型是分布式缓存。如图 <a href="#fig-10-5" class="quarto-xref">图&nbsp;<span>10.5</span></a> 所示，数据不保存在服务内部，而是外置于缓存服务器。服务通过专有协议向缓存服务器请求，以取得或更新共享数据。与单一内存缓存不同，这种模型可以在服务之间共享数据。</p>
+<div id="fig-10-5" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch10/fig-10-5.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10.5: 分布式缓存位于服务之外
+</figcaption>
+</figure>
+</div>
+<p>不过，分布式缓存不适合实现复制式缓存数据访问模式，原因有几个。首先，它无法改善服务间通信模式的容错问题，只是把检索数据时对某项服务的依赖转移到了缓存服务器。</p>
+<p>其次，缓存数据集中而且共享，其他服务也能更新数据，破坏数据所有权的限界上下文。这可能造成缓存与所有者数据库之间的数据不一致；严格治理有时可以缓解，却无法消除这个问题。</p>
+<p>最后，集中式分布式缓存必须通过远程调用访问，网络延迟会增加检索时间，与内存复制式缓存相比，整体响应会变慢。</p>
+<p>采用复制式缓存时，每项服务都有自己的内存数据，缓存之间保持同步，使多项服务可以共享相同数据。图 <a href="#fig-10-6" class="quarto-xref">图&nbsp;<span>10.6</span></a> 中不存在外部缓存依赖。每个缓存实例会与其他实例通信；某个缓存更新后，更新会在后台以异步方式立即传播到使用相同缓存的其他服务。</p>
+<div id="fig-10-6" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch10/fig-10-6.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10.6: 采用复制式缓存时，每项服务包含相同的内存数据
+</figcaption>
+</figure>
+</div>
+<p>并非所有缓存产品都支持复制式缓存，因此必须向供应商确认。支持这项模型的流行产品包括 Hazelcast、Apache Ignite 和 Oracle Coherence。</p>
+<p>回到愿望清单服务与目录服务，看看复制式缓存如何解决分布式数据访问。图 <a href="#fig-10-7" class="quarto-xref">图&nbsp;<span>10.7</span></a> 中，目录服务拥有产品描述内存缓存，也就是只有它能修改；愿望清单服务则持有同一缓存的只读内存副本。</p>
+<div id="fig-10-7" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch10/fig-10-7.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10.7: 复制式缓存数据访问模式
+</figcaption>
+</figure>
+</div>
+<p>采用这项模式后，愿望清单服务不再需要调用目录服务来取得产品描述，因为数据已经位于自己的内存中。目录服务更新产品描述时，缓存产品会更新愿望清单服务中的副本，保持数据一致。</p>
+<p>这项模式的明显优点是响应速度、容错能力和可扩展性。服务之间不需要显式通信，数据直接位于内存中，为服务不拥有的数据提供尽可能快的访问。它也能很好地支持容错：即使目录服务停机，愿望清单服务仍能继续运行；目录服务恢复后，缓存会重新连接，不会中断愿望清单服务。最后，愿望清单服务可以独立于目录服务扩展。</p>
+<p>既然优点如此明显，这项模式怎么还会有权衡？正如我们在《Fundamentals of Software Architecture》中提出的软件架构第一定律：软件架构中的一切都是权衡。如果架构师认为自己发现了没有权衡的东西，只是因为尚未识别出权衡。</p>
+<p>第一项权衡，是缓存数据与启动时机造成的服务依赖。目录服务拥有缓存并负责填充，所以最初的愿望清单服务启动时，它必须正在运行。若目录服务不可用，首个愿望清单服务必须等待，直到与目录服务建立连接。</p>
+<p>不过，这种启动依赖只影响最初的愿望清单服务实例。如果目录服务停机，仍然可以启动其他愿望清单实例，由已有实例传输缓存数据。还要注意，愿望清单服务启动并取得缓存数据后，就不再要求目录服务始终可用；目录服务之后反复启停，都不会影响愿望清单服务或其任何实例。</p>
+<p>第二项权衡是数据量。如果数据量过大，例如超过 500 MB，这项模式的可行性会迅速下降，特别是多项服务实例都需要数据时。每个实例都有自己的复制式缓存；若缓存为 500 MB，服务需要 5 个实例，就会消耗 2.5 GB 内存。架构师必须同时分析缓存大小与需要数据的实例总数，确定内存总需求。</p>
+<p>第三项权衡是更新速率。如果数据变化太快，复制式缓存通常无法让服务之间的数据保持完全同步。具体限制取决于数据大小与复制延迟，但总体而言，它不适合产品库存数量等高度易变的数据；对于产品描述等相对静态的数据则效果很好。</p>
+<p>最后一项权衡是配置与初始化管理。复制式缓存中的服务通过 TCP/IP 广播与查找彼此发现。广播和查找范围过大时，建立服务间套接字级握手可能花费很长时间。云端与容器化环境尤其困难，因为 IP 地址难以控制，而且动态变化。</p>
+<p>表 <a href="#tbl-10-3" class="quarto-xref">表格&nbsp;<span>10.3</span></a> 汇总了复制式缓存数据访问模式的权衡。</p>
+<section id="权衡-2" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="权衡-2"><span class="header-section-number">10.3.1</span> 权衡</h3>
+<div id="tbl-10-3" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;10.3: 复制式缓存数据访问模式的权衡
+</figcaption>
+<div aria-describedby="tbl-10-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>良好的数据访问性能</td>
+<td>云端与容器化配置可能困难</td>
+</tr>
+<tr class="even">
+<td>没有可扩展性与吞吐量问题</td>
+<td>不适合大数据量</td>
+</tr>
+<tr class="odd">
+<td>良好的容错能力</td>
+<td>不适合高更新速率</td>
+</tr>
+<tr class="even">
+<td>数据保持一致</td>
+<td>首个服务实例存在启动依赖</td>
+</tr>
+<tr class="odd">
+<td>保留数据所有权</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="数据领域模式" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="数据领域模式"><span class="header-section-number">10.4</span> 数据领域模式</h2>
+<p>上一章介绍过如何用数据领域解决联合所有权：多项服务都要写入同一张表时，把共享表放进一个模式，再由多项服务共享。相同模式也可以用于数据访问。</p>
+<p>再次考虑愿望清单服务与目录服务的问题：愿望清单服务需要产品描述，却无法访问包含描述的数据表。假设目录服务存在可靠性问题，而且网络延迟与额外数据检索带来性能问题，因此服务间通信不可行；又因为必须高度保证数据一致，不能使用列模式复制；数据量很大，也无法使用复制式缓存。剩下的方案就是建立数据领域，把愿望清单表与产品表放进同一个共享模式，允许两项服务访问。</p>
+<p>图 <a href="#fig-10-8" class="quarto-xref">图&nbsp;<span>10.8</span></a> 展示了这项模式。愿望清单表和产品表都不再属于任何单项服务，而是由两者共享，形成更宽泛的限界上下文。愿望清单服务只需对两张表执行简单 SQL 连接，就能取得产品描述。</p>
+<div id="fig-10-8" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch10/fig-10-8.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10.8: 数据领域数据访问模式
+</figcaption>
+</figure>
+</div>
+<p>虽然分布式架构通常不鼓励共享数据，这项模式与其他数据访问模式相比却有巨大优势。首先，服务彼此完全解耦，消除了可用性依赖以及响应速度、吞吐量和可扩展性问题。数据可以通过普通 SQL 调用取得，服务功能内部无须执行复制式缓存模式所需的额外数据聚合，因此响应非常好。</p>
+<p>数据领域模式的数据一致性与完整性也非常高。多项服务访问相同数据表，不需要传输、复制或同步数据。数据表之间可以实施外键约束，数据完整性得以保留；视图、存储过程和触发器等其他数据库构件也能存在于数据领域中。事实上，保留这些完整性约束与数据库构件本身，就是使用数据领域模式的另一项驱动因素。</p>
+<p>这项模式不需要额外契约在服务之间传输数据，数据表模式本身就是契约。这既是优点，也是权衡。服务间通信与复制式缓存所使用的契约，会在数据表模式之上形成抽象层，使表结构变更留在紧密限界上下文中，不影响其他服务。数据领域模式却形成更宽泛的限界上下文，因此领域内任何数据表结构变化，都可能要求多项服务一起改变。</p>
+<p>另一项缺点是可能引发数据访问安全问题。图 <a href="#fig-10-8" class="quarto-xref">图&nbsp;<span>10.8</span></a> 中，愿望清单服务能够完整访问数据领域中的全部数据；对本例没有问题，但其他场景中，访问数据领域的服务可能不应看到某些数据。严格服务所有权形成的紧密限界上下文，则可以通过传递数据的契约，防止其他服务访问特定数据。</p>
+<p>表 <a href="#tbl-10-4" class="quarto-xref">表格&nbsp;<span>10.4</span></a> 汇总了数据领域数据访问模式的权衡。</p>
+<section id="权衡-3" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="权衡-3"><span class="header-section-number">10.4.1</span> 权衡</h3>
+<div id="tbl-10-4" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-10-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;10.4: 数据领域数据访问模式的权衡
+</figcaption>
+<div aria-describedby="tbl-10-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>良好的数据访问性能</td>
+<td>管理数据变更的限界上下文更宽泛</td>
+</tr>
+<tr class="even">
+<td>没有可扩展性与吞吐量问题</td>
+<td>数据所有权治理</td>
+</tr>
+<tr class="odd">
+<td>没有容错问题</td>
+<td>数据访问安全</td>
+</tr>
+<tr class="even">
+<td>没有服务依赖</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>数据保持一致</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="sysops-squad-案例工单分配的数据访问" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="sysops-squad-案例工单分配的数据访问"><span class="header-section-number">10.5</span> Sysops Squad 案例：工单分配的数据访问</h2>
+<p><em>3 月 3 日，星期四，14:59</em></p>
+<p>Logan 解释了分布式架构中的各种数据访问方式以及每种技术的权衡。Addison、Sydney 和 Taylen 接下来必须决定采用哪一种。</p>
+<p>“除非重新合并这些服务，否则我们不得不接受一个事实：工单分配服务必须以某种方式快速取得专家资料。”Taylen 说。</p>
+<p>“好，”Addison 说，“服务合并不合适，因为两项服务属于完全不同的领域；共享数据领域也不合适，理由之前说过：不能让工单分配服务连接两个不同数据库。”</p>
+<p>“那只剩两个选择，”Sydney 说，“服务间通信，或者复制式缓存。”</p>
+<p>“等等，先研究一下复制式缓存，”Taylen 说，“这里有多少数据？”</p>
+<p>“数据库里有 900 位专家。工单分配服务需要专家资料表中的哪些数据？”Sydney 问。</p>
+<p>“大部分是静态信息，因为当前专家位置流来自其他地方。需要的就是专家技能、服务地点区域，以及标准排班可用时间。”Taylen 说。</p>
+<p>“好，每位专家大约 1.3 KB。总共 900 人，也就是大约 1,200 KB，而且数据相对静态。”Sydney 说。</p>
+<p>“嗯，放在内存中的数据并不多。”Taylen 说。</p>
+<p>“别忘了，使用复制式缓存还要考虑用户管理服务和工单分配服务各有多少实例，”Addison 说，“稳妥起见，应该按预计最大实例数计算。”</p>
+<p>“我有数据，”Taylen 说，“用户管理服务最多两个实例，工单分配服务在最高峰最多四个。”</p>
+<p>“内存数据总量仍然不大。”Sydney 说。</p>
+<p>“确实不大，”Addison 说，“用之前的基于假设方法分析权衡吧。我建议采用内存复制式缓存，只缓存工单分配服务需要的数据。还能想到其他权衡吗？”</p>
+<p>Taylen 和 Sydney 坐了一会儿，努力寻找复制式缓存的缺点。</p>
+<p>“如果用户管理服务停机呢？”Sydney 问。</p>
+<p>“只要缓存已经填充，工单分配服务就不会受影响。”Addison 说。</p>
+<p>“等等，你是说即使用户管理服务不可用，数据仍然在内存中？”Taylen 问。</p>
+<p>“只要用户管理服务先于工单分配服务启动，是的。”Addison 说。</p>
+<p>“啊！”Taylen 说，“第一个权衡找到了。用户管理服务没有启动，工单分配就无法运行，这不好。”</p>
+<p>“但如果远程调用用户管理服务，它停机时工单分配服务就完全不能运行，”Addison 说，“采用复制式缓存，用户管理服务一旦启动并填充缓存，之后我们就不再依赖它。所以这里复制式缓存的容错能力其实更好。”</p>
+<p>“没错，”Taylen 说，“只要谨慎处理启动依赖。”</p>
+<p>“还能想到什么缺点？”Addison 问。他知道还有一项明显权衡，但希望开发团队自己发现。</p>
+<p>“嗯，”Sydney 说，“有一个。我们用哪种缓存产品？”</p>
+<p>“对，”Addison 说，“这确实是另一项权衡。你们做过复制式缓存吗？开发团队里有人做过吗？”</p>
+<p>Taylen 和 Sydney 都摇头。</p>
+<p>“那这里就有风险。”Addison 说。</p>
+<p>“其实，”Taylen 说，“我听说这项缓存技术很久了，一直想试。我愿意研究几种产品，并做一些概念验证。”</p>
+<p>“很好，”Addison 说，“与此同时，我会研究产品许可成本，以及部署环境有没有技术限制，比如跨可用区、防火墙之类。”</p>
+<p>团队开始研究并进行概念验证，发现这个方案在成本和工作量上都可行，也能解决专家资料表的数据访问问题。Addison 与 Logan 讨论后获得批准，并建立 ADR 说明和论证这项决策。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="ADR：为专家资料数据使用内存复制式缓存">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ADR：为专家资料数据使用内存复制式缓存
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>背景</strong></p>
+<p>工单分配服务需要持续访问专家资料表，而该表属于另一个限界上下文中的用户管理服务。可以通过服务间通信、内存复制式缓存或公共数据领域访问专家资料。</p>
+<p><strong>决策</strong></p>
+<p>我们将在用户管理服务与工单分配服务之间使用复制式缓存，并让用户管理服务成为写操作的唯一所有者。</p>
+<p>工单分配服务已经连接共享工单数据领域模式，因此不能再连接另一个模式。此外，用户管理功能与核心工单功能属于两个独立领域，我们不希望把数据表合并进同一个模式，所以不能采用公共数据领域。</p>
+<p>内存复制式缓存可以解决服务间通信方案的性能与容错问题。</p>
+<p><strong>后果</strong></p>
+<p>启动第一个工单分配服务实例时，至少必须有一个用户管理服务实例正在运行。</p>
+<p>这项方案需要承担缓存产品的许可成本。</p>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./09-data-ownership.html" class="pagination-link" aria-label="数据所有权与分布式事务">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./11-distributed-workflows.html" class="pagination-link" aria-label="管理分布式工作流">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 2&nbsp; 辨析软件架构中的耦合</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03-architectural-modularity.html" rel="next">
+<link href="./01-no-best-practices.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-no-best-practices.html">第一部分 拆分</a></li><li class="breadcrumb-item"><a href="./02-discerning-coupling.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#架构量子" id="toc-架构量子" class="nav-link active" data-scroll-target="#架构量子"><span class="header-section-number">2.1</span> 架构量子</a>
+  <ul class="collapse">
+  <li><a href="#可独立部署" id="toc-可独立部署" class="nav-link" data-scroll-target="#可独立部署"><span class="header-section-number">2.1.1</span> 可独立部署</a></li>
+  <li><a href="#高功能内聚" id="toc-高功能内聚" class="nav-link" data-scroll-target="#高功能内聚"><span class="header-section-number">2.1.2</span> 高功能内聚</a></li>
+  <li><a href="#高静态耦合" id="toc-高静态耦合" class="nav-link" data-scroll-target="#高静态耦合"><span class="header-section-number">2.1.3</span> 高静态耦合</a></li>
+  <li><a href="#动态量子耦合" id="toc-动态量子耦合" class="nav-link" data-scroll-target="#动态量子耦合"><span class="header-section-number">2.1.4</span> 动态量子耦合</a></li>
+  </ul></li>
+  <li><a href="#sysops-squad-传奇理解架构量子" id="toc-sysops-squad-传奇理解架构量子" class="nav-link" data-scroll-target="#sysops-squad-传奇理解架构量子"><span class="header-section-number">2.2</span> Sysops Squad 传奇：理解架构量子</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-no-best-practices.html">第一部分 拆分</a></li><li class="breadcrumb-item"><a href="./02-discerning-coupling.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><strong>11 月 3 日，星期三，13:00</strong></p>
+<p>Penultimate Electronics 的首席架构师 Logan 打断了餐厅里一小群架构师关于分布式架构的讨论。</p>
+<p>“Austen，你怎么又打石膏了？”</p>
+<p>“不是石膏，只是夹板。”Austen 回答，“周末玩极限飞盘高尔夫时扭伤了手腕，差不多已经好了。”</p>
+<p>“什么叫……算了。当我没问。我闯进来的这场激烈讨论是在聊什么？”</p>
+<p>“为什么不能总是选微服务中的 Saga 模式来把事务串起来？”Austen 问，“这样架构师想把服务做多小都行。”</p>
+<p>“可 Saga 不是必须使用编排吗？”Addison 问，“需要异步通信的时候怎么办？事务会变得多复杂？如果拆得太细，我们真的还能保证数据保真度吗？”</p>
+<p>“你知道，”Austen 说，“如果使用企业服务总线，大部分事情都可以交给它管理。”</p>
+<p>“我以为已经没人使用 ESB 了——这种事情不应该用 Kafka 吗？”</p>
+<p>“它们根本不是同一种东西！”Austen 说道。</p>
+<p>Logan 打断了愈发激烈的争论：“拿它们比较确实像是在比较苹果和橘子，但这些工具和方法没有一个是银弹。微服务这样的分布式架构很困难，尤其当架构师无法理清其中相互作用的全部力量时。我们需要一种方法或框架，帮助我们弄清架构里的难题。”</p>
+<p>“好吧，”Addison 说，“不管采用什么方案，都必须尽可能解耦——我读到的一切都说架构师应当尽最大可能拥抱解耦。”</p>
+<p>“照这个建议做下去，”Logan 说，“所有东西都会解耦到彼此无法通信——那样的软件可不好构建！与许多事情一样，耦合本身并不坏；架构师只需要知道如何恰当地运用它。实际上，我记得一位希腊哲学家说过一句相关的名言……”</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>万物皆有毒，无物不具毒性；唯有剂量，决定一物是否为毒。</p>
+<p>—Paracelsus</p>
+</blockquote>
+<p>架构师面对的最困难任务之一，是解开分布式架构中相互作用的各种力量与权衡。提出建议的人总在颂扬“松耦合”系统的好处，但架构师要如何设计一个任何东西都不与其他东西相连的系统？架构师通过细粒度微服务实现解耦，可编排、事务性和异步性随即成为巨大难题。泛泛的建议只说“解耦”，却没有说明怎样在实现这个目标的同时构建真正有用的系统。</p>
+<p>架构师之所以难以决定粒度与通信方式，是因为没有清晰、普适的决策指南——不存在可直接套用到复杂现实系统的最佳实践。过去，架构师缺少正确的视角和术语，无法进行细致分析，也就无法针对具体情形确定最佳（或最不坏）的权衡组合。</p>
+<p>为什么架构师一直难以在分布式架构中决策？毕竟，从上个世纪起我们就一直在构建分布式系统，使用的许多机制也相同，例如消息队列和事件。为什么到了微服务时代，复杂度会大幅上升？</p>
+<p>答案在于微服务的基础理念，而这一理念受到了<em>限界上下文</em>概念的启发。构建能够对限界上下文建模的服务，要求架构师对分布式系统的设计方式做一项细微却重要的改变：事务性如今成为一等架构关注点。在微服务出现之前，架构师设计的许多分布式系统通常让事件处理器连接到同一个关系数据库，由数据库处理完整性、事务等细节。把数据库移入服务边界，也就把数据问题变成了架构问题。</p>
+<p>正如前文所说，“软件架构”就是那些无法通过 Google 找到答案的东西。现代架构师必须掌握的一项技能，是进行权衡分析。架构权衡分析方法（Architecture Trade-off Analysis Method，ATAM）等框架已经存在数十年，却没有聚焦架构师每天真正面对的问题。</p>
+<p>本书关注架构师如何针对自身独特情境下的各种场景进行权衡分析。与架构中的许多事情一样，建议本身很简单；难点潜藏在细节中，尤其是困难的部分彼此纠缠之后，各个部分就很难被看见和理解，如图 <a href="#fig-2-1" class="quarto-xref">图&nbsp;<span>2.1</span></a> 所示。</p>
+<div id="fig-2-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.1: 辫子把头发缠在一起，使单根发丝难以辨认
+</figcaption>
+</figure>
+</div>
+<p>面对纠缠的问题时，架构师难以进行权衡分析，因为很难分离各项关注点，也就无法独立考察它们。因此，权衡分析的第一步，是解开问题的各个维度：分析哪些部分彼此耦合，以及这种耦合会对变更产生什么影响。为此，本书采用对“耦合”最简单的定义：</p>
+<dl>
+<dt>耦合</dt>
+<dd>
+<p>如果软件系统中的一个部分发生变化时，可能导致另一个部分也必须变化，那么这两个部分就是耦合的。</p>
+</dd>
+</dl>
+<p>软件架构经常产生多维问题，其中多种力量以相互依赖的方式共同作用。架构师要分析权衡，必须首先确定哪些力量需要彼此权衡。</p>
+<p>因此，我们对现代软件架构权衡分析的建议是：</p>
+<ol type="1">
+<li>找出哪些部分纠缠在一起。</li>
+<li>分析它们如何彼此耦合。</li>
+<li>确定变更对相互依赖系统的影响，以评估权衡。</li>
+</ol>
+<p>步骤虽然简单，难点却潜藏在细节中。为了展示如何实际使用这个框架，我们选择分布式架构中最困难、也可能最具普遍性的问题之一——它与微服务有关：</p>
+<div class="callout callout-style-default callout-important callout-titled" title="核心问题">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+核心问题
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>架构师应当如何确定微服务的大小和通信方式？</p>
+<p>确定微服务的恰当大小似乎是一个无处不在的问题：服务过小，会产生事务与编排问题；服务过大，又会产生伸缩与分布问题。</p>
+</div>
+</div>
+<p>本书余下内容会逐一解开回答这个问题时必须考虑的众多方面。我们会提出新的术语，以区分相似却不同的模式，并给出应用这些模式及其他模式的实践案例。</p>
+<p>不过，本书更高层的目标，是通过案例驱动的技术，教你为自身领域内的独特问题构建权衡分析。我们先从分布式架构中第一次重要的力量拆解开始：定义架构量子，以及静态耦合和动态耦合两类耦合。</p>
+<section id="架构量子" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="架构量子"><span class="header-section-number">2.1</span> 架构量子</h2>
+<p><em>量子</em>一词当然被广泛用于物理学的量子力学领域，但本书作者选择它的理由，与物理学家当初采用它的理由相同。<em>Quantum</em> 源自拉丁语 <em>quantus</em>，意为“多大”或“多少”。在物理学借用这个词之前，法律界用它表示“要求或允许的数量”，例如需要支付的损害赔偿额。这个词也出现在数学的拓扑学领域，用于研究一族形状的性质。由于它源自拉丁语，单数为 <em>quantum</em>，复数为 <em>quanta</em>，类似于 <em>datum/data</em> 的对应关系。</p>
+<p>架构量子度量软件架构中拓扑和行为的多个方面，这些方面与各部分如何连接和通信有关：</p>
+<dl>
+<dt>架构量子</dt>
+<dd>
+<p>架构量子是一个可独立部署的制品，具有高功能内聚、高静态耦合以及同步动态耦合。一个常见例子，是工作流中设计良好的微服务。</p>
+</dd>
+<dt>静态耦合</dt>
+<dd>
+<p>表示静态依赖如何通过契约在架构中解析。这些依赖包括操作系统、通过传递依赖管理交付的框架和/或库，以及让量子得以运行所需的其他任何运行条件。</p>
+</dd>
+<dt>动态耦合</dt>
+<dd>
+<p>表示多个量子在运行期如何通信，既可以是同步通信，也可以是异步通信。因此，针对这些特征的适应度函数必须持续运行，通常要利用监控工具。</p>
+</dd>
+</dl>
+<p>静态耦合与动态耦合看似相似，架构师却必须区分其中两项重要差异。一个简单的理解方式是：静态耦合描述服务如何连接起来，动态耦合则描述服务在运行期如何互相调用。</p>
+<p>例如，在微服务架构中，一个服务必须包含数据库等依赖组件，这代表静态耦合——没有所需数据，服务就无法运行。在某个工作流执行期间，该服务可能调用其他服务，这代表动态耦合。除了这个运行期工作流之外，两个服务都不要求另一个必须存在才能工作。因此，静态耦合分析运行依赖，动态耦合分析通信依赖。</p>
+<p>这些定义包含一些重要特征，下面逐一详细介绍，因为它们会影响本书中的大多数示例。</p>
+<section id="可独立部署" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="可独立部署"><span class="header-section-number">2.1.1</span> 可独立部署</h3>
+<p><em>可独立部署</em>隐含了架构量子的多个方面：每个量子代表特定架构中的一个独立部署单元。因此，单体架构——作为单个单元进行部署的架构——按定义只有一个架构量子。在微服务等分布式架构中，开发人员倾向于让服务可以独立部署，而且往往实现高度自动化。因此，从独立部署的角度看，微服务架构中的一个服务代表一个架构量子——但仍取决于下一节讨论的耦合情况。</p>
+<p>让每个架构量子代表架构中的一项可部署资产，有几个实际用途。</p>
+<p>第一，架构量子所表示的边界，为架构师、开发人员和运维人员提供了通用语言。各方都能理解正在讨论的共同范围：架构师理解耦合特征，开发人员理解行为范围，运维团队理解部署特征。</p>
+<p>第二，架构量子代表架构师在分布式架构中追求适当服务粒度时必须考虑的一项力量——静态耦合。在微服务架构中，开发人员经常面对一个难题：怎样的服务粒度能提供最优的权衡组合？其中有些权衡围绕可部署性展开：这个服务需要怎样的发布节奏，可能影响哪些其他服务，涉及哪些工程实践，等等。架构师若能准确理解分布式架构中的部署边界位于何处，就会获益良多。第 7 章会讨论服务粒度及其相关权衡。</p>
+<p>第三，独立部署迫使架构量子把数据库等常见耦合点纳入考虑。大多数架构讨论为了方便，会忽略数据库和用户界面等问题，但现实系统通常必须处理它们。因此，任何使用共享数据库的系统都不符合架构量子的独立部署准则，除非数据库与应用始终步调一致地部署。许多分布式系统原本可以拥有多个量子，但如果共享一个拥有自身部署节奏的公共数据库，就无法满足独立部署这一条件。</p>
+<p>可见，只考虑部署边界并不能单独提供有用的度量。架构师还应考虑架构量子的第二项准则——高功能内聚，从而把架构量子限制在有意义的范围内。</p>
+</section>
+<section id="高功能内聚" class="level3" data-number="2.1.2">
+<h3 data-number="2.1.2" class="anchored" data-anchor-id="高功能内聚"><span class="header-section-number">2.1.2</span> 高功能内聚</h3>
+<p><em>高功能内聚</em>从结构上指相关元素——类、组件、服务等——彼此接近。计算机科学家在历史上定义了多种内聚类型；这里把范围限定在通用的模块上，而模块依据平台不同，可以表现为类或组件。从领域角度看，高功能内聚的技术定义与领域驱动设计中限界上下文的目标相重合：实现某个特定领域工作流的行为和数据。</p>
+<p>单从独立部署来看，一个巨型单体架构也符合架构量子的定义。但它几乎肯定不具备高功能内聚，反而包含整个系统的全部功能。单体越大，就越不可能只拥有单一的功能内聚性。</p>
+<p>理想情况下，微服务架构中的每项服务都对单一领域或工作流建模，因此表现出高功能内聚。这里的内聚并不关注多个服务如何交互完成工作，而是关注一项服务相对于另一项服务有多独立、又有多耦合。</p>
+</section>
+<section id="高静态耦合" class="level3" data-number="2.1.3">
+<h3 data-number="2.1.3" class="anchored" data-anchor-id="高静态耦合"><span class="header-section-number">2.1.3</span> 高静态耦合</h3>
+<p><em>高静态耦合</em>意味着架构量子内部的元素紧密连接在一起，这实际上是契约的一个方面。架构师通常会把 REST 或 SOAP 之类的东西视为契约格式，但方法签名和运行依赖——例如通过 IP 地址或 URL 形成的耦合点——同样代表契约。因此，契约本身也是架构难点。第 13 章会讨论涉及各类契约的耦合问题，包括如何选择合适的契约。</p>
+<p>架构量子在一定程度上是静态耦合的度量，而且对大多数架构拓扑而言，这项度量很简单。下面的图采用《软件架构基础》中介绍的架构风格，并标明了架构量子的静态耦合。</p>
+<p>任何单体架构风格都必然只有一个量子，如图 <a href="#fig-2-2" class="quarto-xref">图&nbsp;<span>2.2</span></a> 所示。</p>
+<div id="fig-2-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.2: 单体架构的架构量子始终为一个
+</figcaption>
+</figure>
+</div>
+<p>任何作为单一单元部署并使用单一数据库的架构，都只有一个量子。架构量子的静态耦合度量包含数据库，因此，依赖单一数据库的系统不可能拥有多个量子。由此可见，架构量子的静态耦合度量能够识别整个架构中的耦合点，而不只识别开发中软件组件内部的耦合点。大多数单体架构都包含一个让量子数量固定为一的耦合点，通常就是数据库。</p>
+<p>分布式架构经常在组件层面体现解耦。先来看图 <a href="#fig-2-3" class="quarto-xref">图&nbsp;<span>2.3</span></a> 所示的基于服务的架构。</p>
+<div id="fig-2-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.3: 基于服务的架构中的架构量子
+</figcaption>
+</figure>
+</div>
+<p>尽管这个独立服务模型表现出微服务中常见的隔离，整个架构仍然使用一个关系数据库，因此架构量子数量依然为一。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="基于服务的架构">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+基于服务的架构
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>本书所说的<em>基于服务的架构</em>，并不是泛指一切以服务为基础的架构，而是一种特定的混合架构风格。它采用分布式宏观分层结构，由独立部署的用户界面、独立部署的远程粗粒度服务以及单体数据库组成。</p>
+<p>这种架构处理了微服务的一项复杂性——数据库层面的分离。基于服务的架构中的服务遵循与微服务相同的原则，以领域驱动设计的限界上下文为基础；但它仍依赖单一关系数据库，因为架构师认为拆分数据库没有价值，或者会带来太多负面权衡。</p>
+<p>重构单体架构时，经常把基于服务的架构作为目标。这样既能分解应用，又不必破坏现有数据库模式与集成点。第 5 章会介绍分解模式。</p>
+</div>
+</div>
+<p>到目前为止，所有拓扑的架构量子静态耦合度量结果都是一。分布式架构创造了拥有多个量子的可能，却不保证一定如此。例如，中介者风格的事件驱动架构始终会被评估为单一架构量子，如图 <a href="#fig-2-4" class="quarto-xref">图&nbsp;<span>2.4</span></a> 所示。</p>
+<div id="fig-2-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.4: 带中介者的事件驱动架构只有一个架构量子
+</figcaption>
+</figure>
+</div>
+<p>这种风格虽然代表分布式架构，却有两个耦合点把它推向单一架构量子：一个是与前述单体架构相同的数据库，另一个是请求编排器本身。凡是架构正常工作所必需的整体性耦合点，都会围绕自己形成一个架构量子。</p>
+<p>代理者式事件驱动架构没有中心中介者，耦合程度更低，但这并不保证完全解耦。请看图 <a href="#fig-2-5" class="quarto-xref">图&nbsp;<span>2.5</span></a> 所示的事件驱动架构。</p>
+<div id="fig-2-5" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-5.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.5: 代理者式事件驱动架构这样的分布式架构也可能只有一个量子
+</figcaption>
+</figure>
+</div>
+<p>尽管没有中心中介者，这个代理者式事件驱动架构仍然只有一个架构量子，因为所有服务都使用同一个关系数据库；数据库充当了公共耦合点。架构量子的静态分析所回答的问题是：“要启动这项服务，架构中的这项依赖是否必不可少？”即使某些事件驱动架构服务并不访问数据库，只要它们依赖那些会访问数据库的服务，就会成为架构量子静态耦合的一部分。</p>
+<p>那么，在不存在公共耦合点的分布式架构中，情况又如何？请看图 <a href="#fig-2-6" class="quarto-xref">图&nbsp;<span>2.6</span></a> 所示的事件驱动架构。</p>
+<div id="fig-2-6" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-6.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.6: 具有多个架构量子的事件驱动架构
+</figcaption>
+</figure>
+</div>
+<p>架构师为这个事件驱动系统设计了两个数据存储，两组服务之间没有静态依赖。注意，任一架构量子都能在类似生产环境的生态系统中运行。它可能无法参与系统要求的全部工作流，但可以成功启动并正常工作——在其架构范围内发送和接收请求。</p>
+<p>架构量子的静态耦合度量，会评估架构组件与运行组件之间的耦合依赖。因此，操作系统、数据存储、消息代理、容器编排以及其他所有运行依赖，都会成为架构量子的静态耦合点；这些耦合点使用可能最严格的契约。第 13 章会进一步说明契约在架构量子中的作用。</p>
+<p>微服务架构风格包含高度解耦的服务，也包括数据依赖的解耦。这类架构的设计者倾向于高度解耦，并谨慎避免在服务之间建立耦合点，让每项服务都能形成自己的量子，如图 <a href="#fig-2-7" class="quarto-xref">图&nbsp;<span>2.7</span></a> 所示。</p>
+<div id="fig-2-7" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-7.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.7: 微服务可以各自形成架构量子
+</figcaption>
+</figure>
+</div>
+<p>每项服务作为一个限界上下文，可以拥有自己的一组架构特征——例如，一项服务的可伸缩性或安全性可以高于另一项服务。这种细粒度的架构特征作用范围，是微服务架构风格的一项优势。高度解耦使负责某项服务的团队能够尽可能快速地推进，而不必担心破坏其他依赖。</p>
+<p>不过，如果系统与用户界面紧密耦合，整个架构会形成一个架构量子，如图 <a href="#fig-2-8" class="quarto-xref">图&nbsp;<span>2.8</span></a> 所示。</p>
+<div id="fig-2-8" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-8.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.8: 紧密耦合的用户界面会把微服务架构的量子数量降为一
+</figcaption>
+</figure>
+</div>
+<p>用户界面会在前端与后端之间产生耦合点；如果后端的某些部分不可用，大多数用户界面都无法正常工作。</p>
+<p>此外，如果所有服务都必须在单一用户界面中协同工作，架构师很难为每项服务设计不同水平的运行期架构特征，例如性能、规模、弹性和可靠性。同步调用时，这个问题尤其明显；下一节“动态量子耦合”会进一步说明。</p>
+<p>架构师也可以利用异步性设计用户界面，避免在前端与后端之间建立耦合。许多微服务项目正在采用微前端框架构建用户界面元素。在这种架构中，代表服务进行交互的用户界面元素由服务自身发出；用户界面表面就像一张画布，各种界面元素可以出现在上面。它还促成组件之间通常基于事件的松耦合通信。图 <a href="#fig-2-9" class="quarto-xref">图&nbsp;<span>2.9</span></a> 展示了这种架构。</p>
+<div id="fig-2-9" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-9.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.9: 在微前端架构中，每个“服务 + 用户界面组件”形成一个架构量子
+</figcaption>
+</figure>
+</div>
+<p>在这个例子中，四项带颜色的服务及其对应微前端分别形成架构量子；这些服务可以具有不同的架构特征。</p>
+<p>架构中的任何耦合点，从量子的角度看都可能形成静态耦合。图 <a href="#fig-2-10" class="quarto-xref">图&nbsp;<span>2.10</span></a> 展示了两个系统共享数据库所产生的影响。</p>
+<div id="fig-2-10" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-10.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.10: 共享数据库在两个系统之间形成耦合点，从而建立一个架构量子
+</figcaption>
+</figure>
+</div>
+<p>即使面对包含集成架构的复杂系统，对静态耦合的分析也能提供宝贵见解。理解遗留架构时，一种越来越常见的架构技术，是绘制静态量子图，说明各部分如何“连接”起来。这有助于判断变更会影响哪些系统，也提供了一种理解架构，并可能对其解耦的方式。</p>
+<p>静态耦合只是分布式架构中相互作用力量的一半，另一半是动态耦合。</p>
+</section>
+<section id="动态量子耦合" class="level3" data-number="2.1.4">
+<h3 data-number="2.1.4" class="anchored" data-anchor-id="动态量子耦合"><span class="header-section-number">2.1.4</span> 动态量子耦合</h3>
+<p>架构量子定义的最后一部分，是运行期的同步耦合。换言之，它描述多个架构量子相互交互、在分布式架构中组成工作流时的行为。</p>
+<p>服务之间的调用方式会带来困难的权衡决策，因为它形成了一个多维决策空间，受到三项相互关联的力量影响：</p>
+<dl>
+<dt>通信</dt>
+<dd>
+<p>指连接使用何种同步性：同步或异步。</p>
+</dd>
+<dt>一致性</dt>
+<dd>
+<p>描述工作流通信是否要求原子性，或者能否采用最终一致性。</p>
+</dd>
+<dt>协调</dt>
+<dd>
+<p>描述工作流是使用编排器，还是由服务通过编舞方式通信。</p>
+</dd>
+</dl>
+<section id="通信" class="level4" data-number="2.1.4.1">
+<h4 data-number="2.1.4.1" class="anchored" data-anchor-id="通信"><span class="header-section-number">2.1.4.1</span> 通信</h4>
+<p>两项服务彼此通信时，架构师必须回答的一项基本问题是：通信应当同步还是异步？</p>
+<p>同步通信要求请求方等待接收方响应，如图 <a href="#fig-2-11" class="quarto-xref">图&nbsp;<span>2.11</span></a> 所示。</p>
+<div id="fig-2-11" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-11.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.11: 同步调用等待接收方返回结果
+</figcaption>
+</figure>
+</div>
+<p>调用服务使用支持同步调用的某种协议（例如 gRPC）发出调用，随后阻塞——不再进行后续处理——直到接收方返回一个值，或者返回表示状态变化或错误情况的状态。</p>
+<p>两项服务进行异步通信时，调用方把消息发送给接收方，通常通过消息队列等机制。调用方一旦得到“消息将被处理”的确认，就回去继续工作。如果请求需要返回值，接收方可以使用回复队列，以异步方式把结果通知调用方，如图 <a href="#fig-2-12" class="quarto-xref">图&nbsp;<span>2.12</span></a> 所示。</p>
+<div id="fig-2-12" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-12.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.12: 异步通信允许并行处理
+</figcaption>
+</figure>
+</div>
+<p>调用方把消息发到消息队列，然后继续处理，直到接收方通过回调通知所请求的信息已经可用。架构师通常使用消息队列实现异步通信；图 <a href="#fig-2-12" class="quarto-xref">图&nbsp;<span>2.12</span></a> 上半部分用灰色圆柱形管道表示消息队列。但队列十分常见，而且会给图增加视觉噪声，所以许多架构师像下半部分那样省略它。当然，架构师也可以使用各种库或框架，在没有消息队列的情况下实现异步通信。这两种画法都表示异步消息；第二种只是视觉速记，包含的实现细节更少。</p>
+<p>架构师选择服务通信方式时，必须考虑重要的权衡。通信决策会影响同步、错误处理、事务性、可伸缩性和性能。本书余下内容会深入讨论其中许多问题。</p>
+</section>
+<section id="一致性" class="level4" data-number="2.1.4.2">
+<h4 data-number="2.1.4.2" class="anchored" data-anchor-id="一致性"><span class="header-section-number">2.1.4.2</span> 一致性</h4>
+<p><em>一致性</em>指通信调用必须遵守多严格的事务完整性。光谱的一端是原子事务——要求请求处理期间保持一致性的全有或全无事务；另一端则是不同程度的最终一致性。</p>
+<p>让多个服务共同参与一项全有或全无的事务，是分布式架构中最难建模的问题之一，因此一般建议尽量避免跨服务事务。第 6、9、10 和 12 章会讨论一致性，以及数据与架构的交汇。</p>
+</section>
+<section id="协调" class="level4" data-number="2.1.4.3">
+<h4 data-number="2.1.4.3" class="anchored" data-anchor-id="协调"><span class="header-section-number">2.1.4.3</span> 协调</h4>
+<p><em>协调</em>指通信所建模的工作流需要多大程度的协调。微服务有两种常见的通用模式：编排与编舞，第 11 章会介绍它们。简单工作流——例如单项服务响应一项请求——无须从这个维度特别考虑；但工作流越复杂，对协调的需求就越大。</p>
+<p>通信、一致性和协调这三项因素共同影响架构师必须作出的重要决策。关键在于，架构师不能孤立地选择其中任何一项；每个选项都会对其他选项产生“引力”。例如，在采用中介者的同步架构中，事务性更容易实现；而最终一致、异步、采用编舞方式的系统能够实现更高的伸缩水平。</p>
+<p>把这些力量视为彼此关联，就形成了图 <a href="#fig-2-13" class="quarto-xref">图&nbsp;<span>2.13</span></a> 所示的三维空间。</p>
+<div id="fig-2-13" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch02/fig-2-13.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2.13: 动态量子耦合的三个维度
+</figcaption>
+</figure>
+</div>
+<p>服务通信中每项起作用的力量都表现为一个维度。对于某项具体决策，架构师可以在空间中标出一个位置，表示这些力量的强弱。</p>
+<p>架构师清楚理解特定情形中起作用的力量之后，就能建立权衡分析的准则。对于动态耦合，表 <a href="#tbl-2-1" class="quarto-xref">表格&nbsp;<span>2.1</span></a> 根据八种可能的组合，为识别基本模式名称提供了一个框架。</p>
+<div id="tbl-2-1" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-2-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;2.1: 分布式架构各维度交叉组合矩阵
+</figcaption>
+<div aria-describedby="tbl-2-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>模式名称</th>
+<th>通信</th>
+<th>一致性</th>
+<th>协调</th>
+<th>耦合程度</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>史诗传奇（sao）</td>
+<td>同步</td>
+<td>原子</td>
+<td>编排</td>
+<td>非常高</td>
+</tr>
+<tr class="even">
+<td>电话传话传奇（sac）</td>
+<td>同步</td>
+<td>原子</td>
+<td>编舞</td>
+<td>高</td>
+</tr>
+<tr class="odd">
+<td>童话传奇（seo）</td>
+<td>同步</td>
+<td>最终一致</td>
+<td>编排</td>
+<td>高</td>
+</tr>
+<tr class="even">
+<td>时间旅行传奇（sec）</td>
+<td>同步</td>
+<td>最终一致</td>
+<td>编舞</td>
+<td>中等</td>
+</tr>
+<tr class="odd">
+<td>奇幻小说传奇（aao）</td>
+<td>异步</td>
+<td>原子</td>
+<td>编排</td>
+<td>高</td>
+</tr>
+<tr class="even">
+<td>恐怖故事（aac）</td>
+<td>异步</td>
+<td>原子</td>
+<td>编舞</td>
+<td>中等</td>
+</tr>
+<tr class="odd">
+<td>并行传奇（aeo）</td>
+<td>异步</td>
+<td>最终一致</td>
+<td>编排</td>
+<td>低</td>
+</tr>
+<tr class="even">
+<td>选集传奇（aec）</td>
+<td>异步</td>
+<td>最终一致</td>
+<td>编舞</td>
+<td>非常低</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>要充分理解这个矩阵，必须先分别研究每个维度。因此，后续章节会帮助你建立背景知识，理解通信、一致性和协调各自的权衡，然后在第 12 章把它们重新纠缠起来。</p>
+<p>第一部分余下各章会聚焦静态耦合，帮助读者理解分布式架构中相互作用的多个维度，包括数据所有权、事务性和服务粒度。第二部分“重新组合”则聚焦动态耦合，帮助读者理解微服务中的通信模式。</p>
+</section>
+</section>
+</section>
+<section id="sysops-squad-传奇理解架构量子" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="sysops-squad-传奇理解架构量子"><span class="header-section-number">2.2</span> Sysops Squad 传奇：理解架构量子</h2>
+<blockquote class="blockquote">
+<p><strong>11 月 23 日，星期二，14:32</strong></p>
+<p>Austen 一反常态地满脸不悦，来到 Addison 的办公室。</p>
+<p>“嘿，Addison，能打扰你一分钟吗？”</p>
+<p>“当然，怎么了？”</p>
+<p>“我一直在读架构量子的东西，可我就是……搞……不……懂！”</p>
+<p>Addison 笑了：“我明白你的感受。它还只是抽象概念时，我也很难理解；但把它落实到具体事物上，就会发现它提供了一组很有用的视角。”</p>
+<p>“什么意思？”</p>
+<p>“嗯，”Addison 说，“架构量子基本上是用架构术语定义 DDD 的限界上下文。”</p>
+<p>“那为什么不直接使用‘限界上下文’？”Austen 问。</p>
+<p>“限界上下文在 DDD 中有明确的定义。如果硬给它加入架构方面的含义，人们就得不停地区分。两者相似，却不是同一个东西。架构量子定义的第一部分——功能内聚与独立部署——确实符合基于限界上下文的服务。但架构量子的定义更进一步，识别出了不同类型的耦合；这就是静态和动态发挥作用的地方。”</p>
+<p>“这究竟是怎么回事？耦合不就是耦合吗？为什么要区分？”</p>
+<p>“原来，许多不同的关注点分别围绕不同的耦合类型展开。”Addison 说，“先看静态耦合。我喜欢把它理解为各部分如何连接。还有一种理解方式：想想我们正在目标架构中构建的某项服务。要启动这项服务，需要哪些连接？”</p>
+<p>“它用 Java 编写，使用 Postgres 数据库，运行在 Docker 中——就这些，对吧？”</p>
+<p>“你漏掉了许多东西。”Addison 说，“假设现有设施一无所有，要从零开始构建这项服务呢？它使用 Java，同时还使用 Spring Boot，以及大约十五到二十个不同的框架和库，对吧？”</p>
+<p>“没错，可以查看 Maven POM 文件来找出所有这些依赖。还有什么？”</p>
+<p>“静态量子耦合背后的概念，是正常运行所必需的连接。我们使用事件在服务之间通信——事件代理怎么办？”</p>
+<p>“但那不是动态部分吗？”</p>
+<p>“代理的存在不是。如果我要启动的服务——更宽泛地说，架构量子——依靠消息代理才能运行，代理就必须存在。服务通过代理调用另一项服务时，才进入动态一侧。”</p>
+<p>“好，我明白了。”Austen 说，“如果思考从零开始启动它需要哪些东西，那就是静态量子耦合。”</p>
+<p>“正是如此。而且仅凭这些信息就已经非常有用了。我们最近出于防御目的，为每项服务绘制了静态量子耦合图。”</p>
+<p>Austen 笑了：“出于防御目的？你是说……”</p>
+<p>“我们在做可靠性分析，想确定：如果我改变这个东西，可能破坏什么？这里的‘东西’可以是架构或运维中的任何事物。他们在设法降低风险——改变一项服务时，要知道必须测试什么。”</p>
+<p>“懂了——这就是静态量子耦合。我能看出这个视角为什么有用。它还显示团队可能怎样彼此影响，确实很有价值。有没有可以下载的工具，能自动为我们算出来？”</p>
+<p>“要是真有就好了！”Addison 笑道，“可惜，没有哪个恰好拥有与我们相同架构组合的人，已经构建并开源了我们想要的工具。不过，平台团队的一些成员正在开发工具把这件事自动化；它必然要针对我们的架构进行定制。他们使用容器清单、POM 文件、NPM 依赖和其他依赖工具，构建并维护构建依赖列表。我们还为所有服务建立了可观测性，因此现在拥有格式一致的日志，记录哪些系统互相调用、在何时调用、调用多频繁。他们正在利用这些日志构建调用图，观察各部分如何连接。”</p>
+<p>“好，那么静态耦合描述各部分如何连接。动态耦合呢？”</p>
+<p>“动态耦合关注多个量子如何互相通信，尤其是同步调用与异步调用，以及它们对运行期架构特征的影响，比如性能、规模、弹性、可靠性等。先想想弹性——还记得可伸缩性与弹性的区别吗？”</p>
+<p>Austen 得意地笑了：“我可不知道还有测验。让我想想……可伸缩性是支持大量并发用户的能力；弹性是在短时间内支持突发用户请求的能力。”</p>
+<p>“正确！奖励一颗小金星。好，我们来想想弹性。假设未来架构中有工单和分配两项服务，以及两种调用方式。我们精心设计服务，让它们在静态上高度解耦，因此可以各自独立扩展。顺便说一句，这也是静态耦合的另一项作用——它能划定运行期架构特征的作用范围。假设工单服务的弹性规模是分配服务的十倍，而我们需要在两者之间发起调用。如果使用同步调用，整个工作流都会慢下来，因为调用方必须等待较慢的服务处理并返回。反过来，如果使用异步调用，把消息队列作为缓冲，就能让两项服务在运行上彼此独立：调用方把消息加入队列后继续工作，等工作流完成时再接收通知。”</p>
+<p>“哦，我懂了，我懂了！架构量子界定了架构特征的作用范围——静态耦合如何影响这个范围显而易见。但我现在也明白，根据调用类型的不同，两项服务可能会临时耦合起来。”</p>
+<p>“没错，”Addison 说，“如果调用的性质把性能、响应能力、规模以及其他许多特征联系在一起，多个架构量子就会在调用期间暂时彼此纠缠。”</p>
+<p>“好，我想我已经理解架构量子是什么，也理解这些耦合定义如何工作了。但 <em>quantum/quanta</em> 这对单复数，我永远也记不住！”</p>
+<p>“<em>datum/data</em> 也一样，但从来没人使用 <em>datum</em>！”Addison 笑道，“继续深入研究我们的架构，你还会看到动态耦合对工作流和事务型 Saga 产生更多影响。”</p>
+<p>“我已经等不及了！”</p>
+</blockquote>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./01-no-best-practices.html" class="pagination-link" aria-label="没有“最佳实践”时会发生什么？">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03-architectural-modularity.html" class="pagination-link" aria-label="架构模块化">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

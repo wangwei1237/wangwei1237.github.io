@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 索引</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./appendix-c-tradeoffs.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./appendix-a-concepts.html">附录</a></li><li class="breadcrumb-item"><a href="./index-terms.html">索引</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#a" id="toc-a" class="nav-link active" data-scroll-target="#a">A</a></li>
+  <li><a href="#b" id="toc-b" class="nav-link" data-scroll-target="#b">B</a></li>
+  <li><a href="#c" id="toc-c" class="nav-link" data-scroll-target="#c">C</a></li>
+  <li><a href="#d" id="toc-d" class="nav-link" data-scroll-target="#d">D</a></li>
+  <li><a href="#e" id="toc-e" class="nav-link" data-scroll-target="#e">E</a></li>
+  <li><a href="#f" id="toc-f" class="nav-link" data-scroll-target="#f">F</a></li>
+  <li><a href="#g" id="toc-g" class="nav-link" data-scroll-target="#g">G</a></li>
+  <li><a href="#h" id="toc-h" class="nav-link" data-scroll-target="#h">H</a></li>
+  <li><a href="#i" id="toc-i" class="nav-link" data-scroll-target="#i">I</a></li>
+  <li><a href="#jl" id="toc-jl" class="nav-link" data-scroll-target="#jl">J–L</a></li>
+  <li><a href="#m" id="toc-m" class="nav-link" data-scroll-target="#m">M</a></li>
+  <li><a href="#no" id="toc-no" class="nav-link" data-scroll-target="#no">N–O</a></li>
+  <li><a href="#pr" id="toc-pr" class="nav-link" data-scroll-target="#pr">P–R</a></li>
+  <li><a href="#s" id="toc-s" class="nav-link" data-scroll-target="#s">S</a></li>
+  <li><a href="#t" id="toc-t" class="nav-link" data-scroll-target="#t">T</a></li>
+  <li><a href="#uz" id="toc-uz" class="nav-link" data-scroll-target="#uz">U–Z</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./appendix-a-concepts.html">附录</a></li><li class="breadcrumb-item"><a href="./index-terms.html">索引</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">索引</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>本索引按原书英文术语的首字母编排。条目保留英文名称，便于与图中标注、代码和业界资料对应；定位采用本中文版章节，避免英文原书页码与重新排版后的页码不一致。</p>
+<section id="a" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="a">A</h2>
+<ul>
+<li>抽象度（abstractness）：第 4 章</li>
+<li>ACID 事务：第 10、12 章</li>
+<li>传入耦合（afferent coupling）：第 4 章</li>
+<li>聚合导向（aggregate orientation）：第 6 章</li>
+<li>敏捷性（agility）：第 3、7、15 章</li>
+<li>Amazon DynamoDB：第 6 章</li>
+<li>分析数据（analytical data）：第 1、14 章</li>
+<li>注解（annotations）：第 12 章</li>
+<li>选集 Saga（Anthology Saga）：第 2、11、12 章</li>
+<li>Apache Cassandra：第 6 章</li>
+<li>Apache Ignite：第 10 章</li>
+<li>API：第 8、13 章</li>
+<li>架构决策记录（ADR）：第 1 章及各 Sysops Squad 案例；另见附录 B</li>
+<li>架构分解（architectural decomposition）：第 4—6 章</li>
+<li>架构适应度函数（architecture fitness functions）：第 1、4、13—15 章</li>
+<li>架构治理（architecture governance）：第 1、13、14 章</li>
+<li>架构量子（architecture quantum）：第 2、3、6—8、14 章</li>
+<li>架构故事（architecture stories）：第 5 章</li>
+<li>异步通信（asynchronous communication）：第 2、7、9—12、14、15 章</li>
+<li>原子工作流与原子一致性（atomic workflow/consistency）：第 2、10、12 章</li>
+<li>可用性（availability）：第 3、6、12、15 章</li>
+<li>AWS Redshift、Azure Cosmos DB：第 6 章</li>
+</ul>
+</section>
+<section id="b" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="b">B</h2>
+<ul>
+<li>背压（backpressure）：第 7 章</li>
+<li>备份与恢复：第 6 章</li>
+<li>带宽与印记耦合：第 13 章</li>
+<li>BASE 事务：第 10 章</li>
+<li>最佳实践并不存在：第 1 章</li>
+<li>大泥球反模式（Big Ball of Mud）：第 4 章</li>
+<li>限界上下文（bounded context）：第 2、3、6、7、9、13 章</li>
+<li>破坏性变更（breaking changes）：第 6、8、13 章</li>
+<li>脆弱性（brittleness）：第 8、13、14 章</li>
+<li>代理式事件驱动架构（broker style）：第 2 章</li>
+<li>业务论证（business case）：第 3 章</li>
+</ul>
+</section>
+<section id="c" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="c">C</h2>
+<ul>
+<li>缓存（caching）：第 10 章</li>
+<li>责任链模式（Chain of Responsibility）：第 12 章</li>
+<li>编排式协调（choreographed coordination）：第 2、7、11—13 章</li>
+<li>客户/服务器架构：第 14 章</li>
+<li>云原生数据库：第 6 章</li>
+<li>代码复制：第 8 章</li>
+<li>代码复用模式：第 8 章</li>
+<li>代码易变性：第 7 章</li>
+<li>内聚与功能内聚（cohesion）：第 2—5、7 章</li>
+<li>列族数据库：第 6 章</li>
+<li>通信（communication）：第 2、7、10—13、15 章</li>
+<li>补偿事务与补偿更新：第 12 章</li>
+<li>组件：第 3—5 章</li>
+<li>基于组件的分解：第 4、5 章</li>
+<li>一致性（consistency）：第 2、9、10、12、14 章</li>
+<li>消费者驱动契约：第 13、14 章</li>
+<li>契约（contracts）：第 13 章</li>
+<li>协调（coordination）：第 2、7、11、12 章</li>
+<li>耦合（coupling）：第 2、4、7—15 章</li>
+<li>CQRS：第 9 章</li>
+<li>圈复杂度：第 4 章</li>
+</ul>
+</section>
+<section id="d" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="d">D</h2>
+<ul>
+<li>数据：第 1、6、9、10、14 章</li>
+<li>数据访问模式：第 10 章</li>
+<li>数据库分解：第 6 章</li>
+<li>数据领域（data domain）：第 6、9、10 章</li>
+<li>数据湖（data lake）：第 14 章</li>
+<li>数据网格（data mesh）：第 14 章</li>
+<li>数据所有权：第 9 章</li>
+<li>数据产品量子（DPQ）：第 14 章</li>
+<li>数据主权：第 6、9 章</li>
+<li>数据仓库：第 14 章</li>
+<li>死信队列（dead-letter queue）：第 9 章</li>
+<li>决策矩阵与权衡矩阵：第 1、2、15 章</li>
+<li>委托技术：第 9 章</li>
+<li>可部署性：第 3、7、15 章</li>
+<li>文档数据库：第 6 章</li>
+<li>领域驱动设计（DDD）：第 2、6、11 章</li>
+<li>领域分区：第 3、5、6、11、14 章</li>
+<li>动态量子耦合：第 2、11、12、14、15 章</li>
+</ul>
+</section>
+<section id="e" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="e">E</h2>
+<ul>
+<li>传出耦合（efferent coupling）：第 4 章</li>
+<li>弹性（elasticity）：第 3、6、12、15 章</li>
+<li>史诗 Saga（Epic Saga）：第 2、11、12 章</li>
+<li>事件驱动架构：第 2、9 章</li>
+<li>基于事件的数据所有权：第 9 章</li>
+<li>最终一致性（eventual consistency）：第 2、9、10、12、14 章</li>
+<li>可演化性（evolvability）：第 1、3、13、14 章</li>
+</ul>
+</section>
+<section id="f" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="f">F</h2>
+<ul>
+<li>童话 Saga（Fairy Tale Saga）：第 2、11、12 章</li>
+<li>奇幻 Saga（Fantasy Fiction Saga）：第 2、11、12 章</li>
+<li>容错能力：第 3、7、8、11—13、15 章</li>
+<li>适应度函数：第 1、4、13—15 章</li>
+<li>前端控制器模式：第 11、12 章</li>
+<li>功能内聚：第 2、3、5 章</li>
+</ul>
+</section>
+<section id="g" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="g">G</h2>
+<ul>
+<li>图数据库：第 6 章</li>
+<li>GraphQL：第 13 章</li>
+<li>服务粒度：第 7、8 章</li>
+<li>gRPC：第 13 章</li>
+</ul>
+</section>
+<section id="h" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="h">H</h2>
+<ul>
+<li>幸福路径（happy path）：第 11 章</li>
+<li>高静态耦合：第 2 章</li>
+<li>恐怖故事 Saga（Horror Story Saga）：第 2、11、12 章</li>
+</ul>
+</section>
+<section id="i" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="i">I</h2>
+<ul>
+<li>幂等性（idempotence）：第 9、12 章</li>
+<li>实现耦合：第 11 章</li>
+<li>信息链接（information links）：第 7 章</li>
+<li>继承与组合：第 8 章</li>
+<li>不稳定度（instability）：第 4 章</li>
+<li>集成点：第 13 章</li>
+<li>事务隔离：第 10、12 章</li>
+<li>迭代式架构：第 15 章</li>
+</ul>
+</section>
+<section id="jl" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="jl">J–L</h2>
+<ul>
+<li>Java 注解：第 12 章</li>
+<li>JSON 与 JSON Schema：第 13 章</li>
+<li>Kafka：第 9、15 章</li>
+<li>键值数据库：第 6 章</li>
+<li>分层架构：第 3、11 章</li>
+<li>宽松契约（loose contracts）：第 13、14 章</li>
+</ul>
+</section>
+<section id="m" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="m">M</h2>
+<ul>
+<li>可维护性：第 3、7、15 章</li>
+<li>MECE 列表：第 15 章</li>
+<li>中介者（mediator）：第 2、9、11、12 章</li>
+<li>消息代理与消息队列：第 2、7、9—12、15 章</li>
+<li>微服务架构：贯穿全书，重点见第 2、3、6—14 章</li>
+<li>模块化与模块化驱动因素：第 3、4 章</li>
+<li>MongoDB：第 6 章</li>
+<li>单体架构：第 3—6、11、12 章</li>
+<li>monorepo：第 15 章</li>
+</ul>
+</section>
+<section id="no" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="no">N–O</h2>
+<ul>
+<li>名称-值对：第 13 章</li>
+<li>NewSQL 数据库：第 6 章</li>
+<li>NoSQL 数据库：第 6 章</li>
+<li>可观测性：第 3、7、8 章</li>
+<li>运行数据（operational data）：第 1、14 章</li>
+<li>正交耦合：第 8、14 章</li>
+<li>协调式协调（orchestrated coordination）：第 2、7、11、12 章</li>
+<li>协调器（orchestrator）：第 9、11、12、15 章</li>
+<li>“脱离上下文”陷阱：第 15 章</li>
+<li>数据过度耦合：第 13 章</li>
+<li>数据所有权：第 9 章</li>
+</ul>
+</section>
+<section id="pr" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="pr">P–R</h2>
+<ul>
+<li>并行 Saga（Parallel Saga）：第 2、11、12、14 章</li>
+<li>分区：第 3、5、6、11、14 章</li>
+<li>性能：第 3、6—8、10—13、15 章</li>
+<li>持久化耦合：第 2、6、9、10 章</li>
+<li>管道与过滤器：第 12 章</li>
+<li>点对点消息：第 15 章</li>
+<li>多语言持久化：第 6 章</li>
+<li>Profile 数据与 Profile 服务：第 10、13 章</li>
+<li>发布-订阅消息：第 9、15 章</li>
+<li>定性与定量分析：第 15 章</li>
+<li>队列：第 2、9—12、15 章</li>
+<li>响应速度：第 11、12、15 章</li>
+<li>REST：第 10、13、15 章</li>
+<li>复用模式：第 8 章</li>
+<li>风险：第 3、7、8、14 章</li>
+</ul>
+</section>
+<section id="s" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="s">S</h2>
+<ul>
+<li>Saga：第 2、11、12 章</li>
+<li>Saga 状态机：第 12 章</li>
+<li>可扩展性：第 3、6—8、11、12、15 章</li>
+<li>模式耦合（schema coupling）：第 6、9、13、14 章</li>
+<li>安全：第 7、13—15 章</li>
+<li>语义耦合：第 7、11—15 章</li>
+<li>服务：第 5—13 章</li>
+<li>服务边界：第 2、5—7、9 章</li>
+<li>服务发现：第 8 章</li>
+<li>服务粒度：第 7 章</li>
+<li>服务网格与边车：第 8、14 章</li>
+<li>共享库：第 8、15 章</li>
+<li>共享服务：第 8、15 章</li>
+<li>边车模式（Sidecar Pattern）：第 8、14 章</li>
+<li>蛇油与技术布道：第 15 章</li>
+<li>星型模式：第 14 章</li>
+<li>状态机与状态管理：第 11、12 章</li>
+<li>静态量子耦合：第 2、14、15 章</li>
+<li>印记耦合（stamp coupling）：第 11—13 章</li>
+<li>严格契约（strict contracts）：第 13、14 章</li>
+<li>同步通信：第 2、7、10—12、15 章</li>
+<li>Sysops Squad：贯穿全书的案例</li>
+</ul>
+</section>
+<section id="t" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="t">T</h2>
+<ul>
+<li>表所有权：第 9 章</li>
+<li>战术分叉（tactical forking）：第 4 章</li>
+<li>技术分区：第 3、5、11、14 章</li>
+<li>技术债务：第 3、4 章</li>
+<li>可测试性：第 3、7、15 章</li>
+<li>三阶段权衡分析：第 2、15 章</li>
+<li>时序数据库：第 6 章</li>
+<li>时间旅行 Saga：第 2、11、12 章</li>
+<li>工单分配、工单管理与工单工作流：各章 Sysops Squad 案例</li>
+<li>事务与事务边界：第 2、6、9、10、12、14 章</li>
+<li>传递依赖：第 2、8、15 章</li>
+</ul>
+</section>
+<section id="uz" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="uz">U–Z</h2>
+<ul>
+<li>用户界面与架构量子：第 2 章</li>
+<li>版本控制与版本化：第 4、8、13 章</li>
+<li>易变性与基于易变性的分解：第 6、7 章</li>
+<li>数据仓库：第 14 章</li>
+<li>工作流：第 7、9、11—13 章</li>
+<li>工作流状态管理：第 11、12 章</li>
+<li>YAML：第 13 章</li>
+<li>零停机部署：第 3、7 章</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./appendix-c-tradeoffs.html" class="pagination-link" aria-label="权衡参考">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">权衡参考</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

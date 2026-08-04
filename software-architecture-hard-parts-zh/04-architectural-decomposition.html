@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 4&nbsp; 架构分解</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./05-component-decomposition-patterns.html" rel="next">
+<link href="./03-architectural-modularity.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-no-best-practices.html">第一部分 拆分</a></li><li class="breadcrumb-item"><a href="./04-architectural-decomposition.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#代码库是否可分解" id="toc-代码库是否可分解" class="nav-link active" data-scroll-target="#代码库是否可分解"><span class="header-section-number">4.1</span> 代码库是否可分解？</a>
+  <ul class="collapse">
+  <li><a href="#传入耦合与传出耦合" id="toc-传入耦合与传出耦合" class="nav-link" data-scroll-target="#传入耦合与传出耦合"><span class="header-section-number">4.1.1</span> 传入耦合与传出耦合</a></li>
+  <li><a href="#抽象度与不稳定度" id="toc-抽象度与不稳定度" class="nav-link" data-scroll-target="#抽象度与不稳定度"><span class="header-section-number">4.1.2</span> 抽象度与不稳定度</a></li>
+  <li><a href="#到主序的距离" id="toc-到主序的距离" class="nav-link" data-scroll-target="#到主序的距离"><span class="header-section-number">4.1.3</span> 到主序的距离</a></li>
+  </ul></li>
+  <li><a href="#基于组件的分解" id="toc-基于组件的分解" class="nav-link" data-scroll-target="#基于组件的分解"><span class="header-section-number">4.2</span> 基于组件的分解</a></li>
+  <li><a href="#战术分叉" id="toc-战术分叉" class="nav-link" data-scroll-target="#战术分叉"><span class="header-section-number">4.3</span> 战术分叉</a>
+  <ul class="collapse">
+  <li><a href="#权衡" id="toc-权衡" class="nav-link" data-scroll-target="#权衡"><span class="header-section-number">4.3.1</span> 权衡</a></li>
+  </ul></li>
+  <li><a href="#sysops-squad-案例选择分解方法" id="toc-sysops-squad-案例选择分解方法" class="nav-link" data-scroll-target="#sysops-squad-案例选择分解方法"><span class="header-section-number">4.4</span> Sysops Squad 案例：选择分解方法</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-no-best-practices.html">第一部分 拆分</a></li><li class="breadcrumb-item"><a href="./04-architectural-decomposition.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><strong>10 月 4 日，星期一，10:04</strong></p>
+<p>Addison 和 Austen 已获准迁移到分布式架构，拆分单体 Sysops Squad 应用。现在，他们需要确定从何着手，以及哪一种方法最好。</p>
+<p>“应用太大了，我甚至不知道从哪里开始。它简直像大象一样大！”Addison 感叹道。</p>
+<p>“那么，”Austen 说，“怎样吃掉一头大象？”</p>
+<p>“哈，这个笑话我听过，Austen。当然是一口一口吃！”Addison 笑道。</p>
+<p>“正是如此。那就把同样的原则用到 Sysops Squad 应用上。”Austen 说，“何不一口一口开始拆？还记得我说报告功能是导致应用卡死的因素之一吗？也许可以从那里着手。”</p>
+<p>“这可能是个不错的起点，”Addison 说，“但数据怎么办？只把报告做成独立服务并不能解决问题。我们还得拆分数据，甚至另建报告数据库，并用数据泵向它输送数据。我觉得刚开始就咬这么大一口，实在太难了。”</p>
+<p>“你说得对。”Austen 说，“嘿，知识库功能怎么样？它相当独立，提取起来也许比较容易。”</p>
+<p>“确实。调查功能呢？它应该也很容易分离。”Addison 说，“问题是，我总觉得应当采用更系统的方法，而不能只是一口一口地吃掉大象。”</p>
+<p>“也许 Logan 能给些建议。”Austen 说。</p>
+<p>Addison 和 Austen 与 Logan 会面，讨论他们正在考虑的几种应用拆分方法。两人解释说，他们想先处理知识库和调查功能，却不知道之后该做什么。</p>
+<p>“你们提出的方法，”Logan 说，“就是所谓的‘大象迁移反模式’。一口一口吃掉大象，起初似乎是个好办法，但多数情况下会演变成缺乏结构的方法，最终形成分布式大泥球；也有人称它为分布式单体。我不建议这样做。”</p>
+<p>“那么还有哪些方法？有没有可以用来拆分应用的模式？”Addison 问。</p>
+<p>“需要从整体上审视应用，然后采用战术分叉或基于组件的分解。”Logan 说，“这是我知道的两种最有效方法。”</p>
+<p>Addison 和 Austen 看着 Logan：“可我们怎么知道该用哪一种？”</p>
+</blockquote>
+<p>架构模块化描述的是<em>为什么</em>要拆分单体应用，架构分解则描述<em>怎样</em>拆分。拆分庞大、复杂的单体应用可能是一项复杂而耗时的工作；在开始之前，务必知道它是否可行，以及应当采用什么方法。</p>
+<p>基于组件的分解和战术分叉，是拆分单体应用的两种常见方法。</p>
+<p><em>基于组件的分解</em>是一种提取方法。它应用多种重构模式，逐步精炼并提取组件——应用的逻辑构建块——以渐进且受控的方式形成分布式架构。</p>
+<p><em>战术分叉</em>则先复制应用，再逐步削除不需要的部分，最终形成服务；这类似于雕塑家从花岗岩或大理石块中雕刻出精美作品。</p>
+<p>哪一种方法最有效？答案当然是：视情况而定。</p>
+<p>选择分解方法的一项主要因素，是现有单体应用代码的结构是否良好。代码库中是否存在清晰的组件和组件边界？还是说，代码库基本上是一个缺乏结构的大泥球？</p>
+<p>图 <a href="#fig-4-1" class="quarto-xref">图&nbsp;<span>4.1</span></a> 的流程图表明，架构分解工作的第一步，是确定代码库是否能够分解，下一节会详细讨论。如果代码库可分解，下一步要判断源代码是不是一团缺乏结构的混乱内容，完全没有可清晰定义的组件。如果确实如此，战术分叉很可能是正确方法。反过来，如果源代码文件把同类功能组织在定义良好——甚至只是宽松定义——的组件中，就应采用基于组件的分解。</p>
+<div id="fig-4-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.1: 选择分解方法的决策树
+</figcaption>
+</figure>
+</div>
+<p>本章会介绍这两种方法；第 5 章则用一整章详细说明每一种基于组件的分解模式。</p>
+<section id="代码库是否可分解" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="代码库是否可分解"><span class="header-section-number">4.1</span> 代码库是否可分解？</h2>
+<p>如果代码库缺少内部结构，会发生什么？它还能被分解吗？这类软件有一个通俗名称——<em>大泥球反模式</em>。Brian Foote 在 1999 年一篇同名文章中创造了这个说法。例如，一个复杂 Web 应用把事件处理器直接连接到数据库调用、完全没有模块化，就可以视为大泥球架构。</p>
+<p>架构师通常不会花太多时间为这类系统创建模式：软件架构关注内部结构，而这些系统恰恰缺少这一决定性特征。</p>
+<p>遗憾的是，如果没有谨慎治理，许多软件系统都会退化成大泥球，只能留给后来的架构师——或者留给已经被自己厌恶的过去那个自己——去修复。</p>
+<p>任何架构重构工作的第一步，都是由架构师确定重构计划；而要制订计划，必须理解内部结构。因此，架构师需要回答的关键问题是：<strong>这个代码库还有没有挽救的可能？</strong>换言之，它是否适合应用分解模式，还是说其他方法更合适？</p>
+<p>没有任何单一指标能够判定代码库是否拥有合理的内部结构，这项评估要由一名或多名架构师完成。不过，架构师确实拥有一些工具，可以帮助判断代码库的宏观特征，尤其是通过耦合指标评估其内部结构。</p>
+<section id="传入耦合与传出耦合" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="传入耦合与传出耦合"><span class="header-section-number">4.1.1</span> 传入耦合与传出耦合</h3>
+<p>1979 年，Edward Yourdon 和 Larry Constantine 出版《结构化设计：计算机程序和系统设计学科基础》（<em>Structured Design: Fundamentals of a Discipline of Computer Program and Systems Design</em>），定义了许多核心概念，其中包括传入耦合和传出耦合指标。</p>
+<p><em>传入耦合</em>（afferent coupling）度量一个代码制品——组件、类、函数等——拥有多少条传入连接。<em>传出耦合</em>（efferent coupling）则度量它连接到其他代码制品的传出连接。</p>
+<p>仅仅这两项度量，在改变系统结构时就很有价值。例如，把单体解构为分布式架构时，架构师会发现 <code>Address</code> 等共享类。构建单体时，开发人员复用 <code>Address</code> 这样的核心概念十分常见，也值得鼓励；但拆分单体时，架构师必须弄清系统还有多少其他部分使用这项共享资产。</p>
+<p>几乎每个平台都有工具帮助架构师分析代码的耦合特征，从而重构、迁移或理解代码库。各类平台上都有许多工具可以用矩阵视图展示类和/或组件关系，如图 <a href="#fig-4-2" class="quarto-xref">图&nbsp;<span>4.2</span></a> 所示。</p>
+<div id="fig-4-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.2: Eclipse 中 JDepend 对耦合关系的分析视图
+</figcaption>
+</figure>
+</div>
+<p>在这个例子中，Eclipse 插件把 JDepend 的输出可视化，其中包含按包进行的耦合分析，以及下一节重点介绍的一些聚合指标。</p>
+</section>
+<section id="抽象度与不稳定度" class="level3" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="抽象度与不稳定度"><span class="header-section-number">4.1.2</span> 抽象度与不稳定度</h3>
+<p>软件架构领域的知名人物 Robert Martin 在 20 世纪 90 年代末为一本 C++ 图书创建了一些派生指标，它们适用于任何面向对象语言。其中的<em>抽象度</em>与<em>不稳定度</em>，用于衡量代码库内部特征是否平衡。</p>
+<p>抽象度是抽象制品——抽象类、接口等——相对于具体制品——实现类——的比例。它度量抽象与实现之间的关系。抽象元素可以帮助开发人员更好地理解代码库的总体功能。例如，一个代码库只有一个 <code>main()</code> 方法，却包含 10,000 行代码，那么它在这项指标上的得分会接近于零，而且很难理解。</p>
+<p>抽象度的公式如下：</p>
+<p><span class="math display">\[
+A = \frac{\sum m_a}{\sum m_c + \sum m_a}
+\]</span></p>
+<p>其中，<span class="math inline">\(m_a\)</span> 表示代码库中的抽象元素——接口或抽象类，<span class="math inline">\(m_c\)</span> 表示具体元素。架构师用抽象制品总数除以抽象制品与具体制品的总数，得到抽象度。</p>
+<p>另一个派生指标<em>不稳定度</em>，是传出耦合相对于传出与传入耦合总和的比例：</p>
+<p><span class="math display">\[
+I = \frac{C_e}{C_e + C_a}
+\]</span></p>
+<p>其中，<span class="math inline">\(C_e\)</span> 表示传出耦合，<span class="math inline">\(C_a\)</span> 表示传入耦合。</p>
+<p>不稳定度指标用于判断代码库的易变程度。高度不稳定的代码库由于耦合很高，发生变更时更容易损坏。设想两个场景，它们的 <span class="math inline">\(C_a\)</span> 都为 2。第一个场景中 <span class="math inline">\(C_e=0\)</span>，所以不稳定度为零；另一个场景中 <span class="math inline">\(C_e=3\)</span>，所以不稳定度为 <span class="math inline">\(3/5\)</span>。因此，组件的不稳定度反映相关组件发生变化时，可能迫使该组件进行多少潜在变更。</p>
+<p>不稳定度接近 1 的组件高度不稳定；接近 0 时，则可能稳定，也可能僵化。如果模块或组件主要包含抽象元素，它就是稳定的；如果主要由具体元素组成，它就是僵化的。不过，高稳定性的权衡是复用能力不足——如果每个组件都完全自包含，往往就会出现重复。</p>
+<p>所以，一般必须把 <span class="math inline">\(I\)</span> 与 <span class="math inline">\(A\)</span> 结合起来看，而不能孤立考察。这正是下一节引入主序的原因。</p>
+</section>
+<section id="到主序的距离" class="level3" data-number="4.1.3">
+<h3 data-number="4.1.3" class="anchored" data-anchor-id="到主序的距离"><span class="header-section-number">4.1.3</span> 到主序的距离</h3>
+<p>架构师可以用来评估架构结构的少数整体性指标之一，是<em>到主序的距离</em>。它是根据不稳定度和抽象度得到的派生指标：</p>
+<p><span class="math display">\[
+D = A + I - 1
+\]</span></p>
+<p>其中，<span class="math inline">\(A\)</span> 表示抽象度，<span class="math inline">\(I\)</span> 表示不稳定度。</p>
+<p>到主序的距离假定抽象度和不稳定度之间存在一种理想关系；落在这条理想直线附近的组件，能健康地平衡这两个相互竞争的关注点。例如，把某个组件画到图中后，开发人员就能计算它到主序的距离，如图 <a href="#fig-4-3" class="quarto-xref">图&nbsp;<span>4.3</span></a> 所示。</p>
+<div id="fig-4-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.3: 某个组件到主序的归一化距离
+</figcaption>
+</figure>
+</div>
+<p>开发人员在图中标出候选组件，再测量它到理想直线的距离。组件越靠近这条线，平衡就越好。过于深入右上角的组件会进入架构师所说的<em>无用区</em>：代码太抽象，就很难使用。反过来，落入左下角的代码会进入<em>痛苦区</em>：实现太多、抽象不足，会导致代码脆弱而难以维护，如图 <a href="#fig-4-4" class="quarto-xref">图&nbsp;<span>4.4</span></a> 所示。</p>
+<div id="fig-4-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.4: 无用区与痛苦区
+</figcaption>
+</figure>
+</div>
+<p>许多平台都有提供这些度量的工具。当架构师因为不熟悉代码库、需要迁移，或要评估技术债而分析代码库时，这些工具都能提供帮助。</p>
+<p>到主序的距离能告诉准备重构应用的架构师什么？与建筑工程一样，移动一个地基不良的大型结构会带来风险。类似地，如果架构师准备重构应用，先改善内部结构，就能使整个实体更容易迁移。</p>
+<p>这项指标还能很好地提示内部结构是否平衡。如果评估代码库时，许多组件都落入无用区或痛苦区，那么花时间把内部结构加固到可修复的程度，也许并不是明智选择。</p>
+<p>按照图 <a href="#fig-4-1" class="quarto-xref">图&nbsp;<span>4.1</span></a> 的流程图，架构师判定代码库可分解之后，下一步是选择分解应用的方法。下面介绍两种方法：基于组件的分解和战术分叉。</p>
+</section>
+</section>
+<section id="基于组件的分解" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="基于组件的分解"><span class="header-section-number">4.2</span> 基于组件的分解</h2>
+<p>根据我们的经验，把单体应用迁移到微服务这样的高度分布式架构时，大多数困难和复杂性都来自定义不良的架构组件。</p>
+<p>这里把<em>组件</em>定义为应用中的构建块：它在系统中拥有明确定义的角色和职责，以及一组明确定义的操作。大多数应用的组件表现为命名空间或目录结构，并通过组件文件或源文件实现。例如，在图 <a href="#fig-4-5" class="quarto-xref">图&nbsp;<span>4.5</span></a> 中，目录结构 <code>penultimate/ss/ticket/assign</code> 代表一个名为“工单分配”的组件，其命名空间为 <code>penultimate.ss.ticket.assign</code>。</p>
+<div id="fig-4-5" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-5.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.5: 代码库的目录结构成为组件的命名空间
+</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="迁移原则">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+迁移原则
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>把单体应用拆成分布式架构时，应当用组件构建服务，而不是用单个类构建服务。</p>
+</div>
+</div>
+<p>在多年把单体应用迁移到微服务等分布式架构的共同经验中，我们形成了一组第 5 章介绍的基于组件的分解模式，用来为单体应用的迁移做好准备。这些模式通过重构源代码，形成一组定义良好的组件；它们最终可以变成服务，从而减少把应用迁移到分布式架构所需的工作。</p>
+<p>这些模式实质上让单体架构可以迁移到第 2 章定义的基于服务架构。《软件架构基础》对此还有更详细的介绍。基于服务架构是微服务架构风格的一种混合形式：应用被拆成领域服务，也就是包含某一领域全部业务逻辑、独立部署的粗粒度服务。</p>
+<p>迁移到基于服务架构，既可以作为最终目标，也可以作为走向微服务的垫脚石：</p>
+<ul>
+<li>作为垫脚石，它让架构师可以判断哪些领域需要进一步细分为微服务，哪些可以继续作为粗粒度领域服务。第 7 章会详细讨论这项决策。</li>
+<li>基于服务架构不要求拆分数据库。因此，架构师可以先关注领域和功能分区，再处理数据库分解。第 6 章会详细讨论后者。</li>
+<li>基于服务架构不要求运行自动化或容器化。每项领域服务都可以继续使用原应用的部署制品，例如 EAR 文件、WAR 文件或程序集进行部署。</li>
+<li>迁移到基于服务架构是一项技术工作，通常不涉及业务利益相关者，也不要求改变 IT 部门的组织结构、测试环境或部署环境。</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled" title="迁移建议">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+迁移建议
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>把单体应用迁移到微服务时，可以考虑先迁移到基于服务架构，把它作为走向微服务的垫脚石。</p>
+</div>
+</div>
+<p>但如果代码库是一团缺乏结构的大泥球，没有多少可观察的组件呢？这就轮到战术分叉登场了。</p>
+</section>
+<section id="战术分叉" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="战术分叉"><span class="header-section-number">4.3</span> 战术分叉</h2>
+<p><em>战术分叉</em>模式由 Fausto De La Torre 命名，是一种重构大泥球架构的务实方法。</p>
+<p>架构师思考如何重构代码库时，通常首先想到的是提取某些部分，如图 <a href="#fig-4-6" class="quarto-xref">图&nbsp;<span>4.6</span></a> 所示。</p>
+<div id="fig-4-6" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-6.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.6: 从系统中提取一个部分
+</figcaption>
+</figure>
+</div>
+<p>不过，还可以换一种方式思考如何隔离系统的一部分：删除不再需要的部分，如图 <a href="#fig-4-7" class="quarto-xref">图&nbsp;<span>4.7</span></a> 所示。</p>
+<div id="fig-4-7" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-7.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.7: 删除不需要的部分，也是隔离系统组成部分的一种方式
+</figcaption>
+</figure>
+</div>
+<p>图 <a href="#fig-4-6" class="quarto-xref">图&nbsp;<span>4.6</span></a> 中，开发人员必须不停处理定义该架构的大量耦合线索。提取某个部分时，他们会发现由于存在依赖，必须把越来越多的单体内容一起带走。图 <a href="#fig-4-7" class="quarto-xref">图&nbsp;<span>4.7</span></a> 中，开发人员删除不需要的代码，但依赖仍然保留，从而避免提取过程中不断拆解耦合的影响。</p>
+<p>提取与删除的差异，启发了战术分叉模式。这种分解方法从一个单体应用开始，如图 <a href="#fig-4-8" class="quarto-xref">图&nbsp;<span>4.8</span></a> 所示。</p>
+<div id="fig-4-8" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-8.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.8: 重构之前，单体包含多个组成部分
+</figcaption>
+</figure>
+</div>
+<p>这个系统包含多种领域行为——图中用简单几何形状表示——但几乎没有内部组织。在这个场景中，期望目标是让两个团队从现有单体中创建两项服务：一项服务包含六边形和正方形领域，另一项包含圆形领域。</p>
+<p>战术分叉的第一步，是克隆整个单体，给每个团队一份完整代码库的副本，如图 <a href="#fig-4-9" class="quarto-xref">图&nbsp;<span>4.9</span></a> 所示。</p>
+<div id="fig-4-9" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-9.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.9: 第一步是克隆单体
+</figcaption>
+</figure>
+</div>
+<p>每个团队都获得整个代码库的副本，然后开始删除不需要的代码，而不是提取想要的代码。在紧密耦合的代码库中，开发人员往往认为这种方式更容易，因为不必设法提取高耦合产生的大量依赖。删除策略中，功能一旦被隔离，就可以删除任何不会导致其他内容损坏的代码。</p>
+<p>随着模式继续推进，团队开始隔离目标部分，如图 <a href="#fig-4-10" class="quarto-xref">图&nbsp;<span>4.10</span></a> 所示。随后，每个团队继续逐步删除不需要的代码。</p>
+<div id="fig-4-10" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-10.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.10: 团队持续重构，删除不需要的代码
+</figcaption>
+</figure>
+</div>
+<p>战术分叉模式完成时，团队已经把原单体应用拆成两个部分，并在每个部分中保留行为的粗粒度结构，如图 <a href="#fig-4-11" class="quarto-xref">图&nbsp;<span>4.11</span></a> 所示。</p>
+<div id="fig-4-11" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch04/fig-4-11.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4.11: 战术分叉的最终状态包含两项服务
+</figcaption>
+</figure>
+</div>
+<p>至此重构完成，结果是两项粗粒度服务。</p>
+<section id="权衡" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="权衡"><span class="header-section-number">4.3.1</span> 权衡</h3>
+<p>战术分叉是较正式分解方法的一种可行替代方案，最适合内部结构很少或完全没有内部结构的代码库。与所有架构实践一样，它也包含自身的权衡。</p>
+<p><strong>好处</strong></p>
+<ul>
+<li>团队几乎无须任何前期分析，就可以立即开始工作。</li>
+<li>开发人员通常认为删除代码比提取代码更容易。从混乱代码库中提取代码会因高耦合而非常困难；不再需要的代码则可以通过编译或简单测试来确认。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>生成的服务很可能仍保留单体中大量几乎不会执行的遗留代码。</li>
+<li>除非开发人员投入额外精力，否则新服务内部的代码并不会比原单体中的混乱代码更好，只是数量少了一些。</li>
+<li>共享代码与共享组件文件的命名可能不一致，导致公共代码难以识别，也难以保持一致。</li>
+</ul>
+<p>这个模式的名字十分贴切——优秀的模式名称都应如此。它为重构架构提供的是一种战术性而非战略性的方法，让团队可以快速把重要或关键系统迁移到下一代平台，尽管迁移过程并不十分规整。</p>
+</section>
+</section>
+<section id="sysops-squad-案例选择分解方法" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sysops-squad-案例选择分解方法"><span class="header-section-number">4.4</span> Sysops Squad 案例：选择分解方法</h2>
+<p><em>10 月 29 日，星期五，10:01</em></p>
+<p>Addison 和 Austen 已经理解两种方法，于是来到主会议室，使用抽象度和不稳定度指标分析 Sysops Squad 应用，判断哪种方法更适合当前情况。</p>
+<p>“看看这个，”Addison 说，“大部分代码都落在主序附近。当然也有几个离群点，但我认为可以断定，这个应用是能够拆分的。下一步就是决定采用哪种方法。”</p>
+<p>“我真的很喜欢战术分叉，”Austen 说，“这让我想到那些著名雕塑家。别人问他们如何从整块大理石中雕出如此美丽的作品，他们会回答：只是把不该存在的大理石去掉。我觉得 Sysops Squad 应用也可以成为我的雕塑！”</p>
+<p>“先别急，米开朗琪罗，”Addison 说，“先是体育，现在又是雕塑？你得想清楚业余时间到底喜欢做什么。我不喜欢战术分叉的一点，是每项服务都会存在重复代码和共享功能。我们的大多数问题都与可维护性、可测试性和整体可靠性有关。想象一下，同一项变更必须同时应用到好几项服务上，那会是一场噩梦！”</p>
+<p>“可是，共享功能到底有多少？”Austen 问。</p>
+<p>“我不确定，”Addison 说，“但我知道日志、安全等基础设施功能共享了不少代码；应用持久层中的很多数据库调用也是共享的。”</p>
+<p>Austen 停下来想了想 Addison 的论点。“也许你是对的。既然我们已经定义了良好的组件边界，我愿意采用速度较慢的基于组件分解方法，放弃我的雕塑事业。不过体育我是不会放弃的！”</p>
+<p>Addison 和 Austen 最终一致认为，基于组件的分解最适合 Sysops Squad 应用。Addison 为这个决定编写了一份 ADR，列明该方法的权衡与理由。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="ADR：使用基于组件的分解方法进行迁移">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ADR：使用基于组件的分解方法进行迁移
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>背景</strong></p>
+<p>我们将把单体 Sysops Squad 应用拆成若干独立部署的服务。迁移到分布式架构时，我们考虑了两种方法：战术分叉与基于组件的分解。</p>
+<p><strong>决策</strong></p>
+<p>我们将采用基于组件的分解方法，把现有单体 Sysops Squad 应用迁移到分布式架构。</p>
+<p>该应用具有定义良好的组件边界，适合采用基于组件的分解方法。</p>
+<p>这种方法可以降低每项服务中都需要维护重复代码的概率。</p>
+<p>采用战术分叉时，我们必须预先定义服务边界，才能知道需要创建多少份应用副本。采用基于组件的分解时，服务定义会在组件分组过程中自然浮现。</p>
+<p>鉴于当前应用在可靠性、可用性、可扩展性和工作流方面存在的问题，基于组件的分解比战术分叉提供了更安全、可控的渐进式迁移路径。</p>
+<p><strong>后果</strong></p>
+<p>基于组件的分解可能比战术分叉耗时更长。不过，我们认为上述理由足以抵消这一代价。</p>
+<p>这种方法允许团队中的开发人员协作识别共享功能、组件边界和领域边界。战术分叉则要求把团队拆成多个更小、彼此独立的团队，分别负责每个应用副本，并会增加小团队之间所需的协调工作。</p>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./03-architectural-modularity.html" class="pagination-link" aria-label="架构模块化">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./05-component-decomposition-patterns.html" class="pagination-link" aria-label="基于组件的分解模式">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 13&nbsp; 契约</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./14-analytical-data.html" rel="next">
+<link href="./12-transactional-sagas.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-reuse-patterns.html">第二部分 重新组合</a></li><li class="breadcrumb-item"><a href="./13-contracts.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#严格契约与宽松契约" id="toc-严格契约与宽松契约" class="nav-link active" data-scroll-target="#严格契约与宽松契约"><span class="header-section-number">13.1</span> 严格契约与宽松契约</a>
+  <ul class="collapse">
+  <li><a href="#严格契约与宽松契约之间的权衡" id="toc-严格契约与宽松契约之间的权衡" class="nav-link" data-scroll-target="#严格契约与宽松契约之间的权衡"><span class="header-section-number">13.1.1</span> 严格契约与宽松契约之间的权衡</a></li>
+  </ul></li>
+  <li><a href="#微服务中的契约" id="toc-微服务中的契约" class="nav-link" data-scroll-target="#微服务中的契约"><span class="header-section-number">13.2</span> 微服务中的契约</a>
+  <ul class="collapse">
+  <li><a href="#耦合程度" id="toc-耦合程度" class="nav-link" data-scroll-target="#耦合程度"><span class="header-section-number">13.2.1</span> 耦合程度</a></li>
+  <li><a href="#消费者驱动契约" id="toc-消费者驱动契约" class="nav-link" data-scroll-target="#消费者驱动契约"><span class="header-section-number">13.2.2</span> 消费者驱动契约</a></li>
+  </ul></li>
+  <li><a href="#印记耦合" id="toc-印记耦合" class="nav-link" data-scroll-target="#印记耦合"><span class="header-section-number">13.3</span> 印记耦合</a>
+  <ul class="collapse">
+  <li><a href="#印记耦合造成的过度耦合" id="toc-印记耦合造成的过度耦合" class="nav-link" data-scroll-target="#印记耦合造成的过度耦合"><span class="header-section-number">13.3.1</span> 印记耦合造成的过度耦合</a></li>
+  <li><a href="#带宽" id="toc-带宽" class="nav-link" data-scroll-target="#带宽"><span class="header-section-number">13.3.2</span> 带宽</a></li>
+  <li><a href="#用印记耦合管理工作流" id="toc-用印记耦合管理工作流" class="nav-link" data-scroll-target="#用印记耦合管理工作流"><span class="header-section-number">13.3.3</span> 用印记耦合管理工作流</a></li>
+  </ul></li>
+  <li><a href="#sysops-squad-案例管理工单契约" id="toc-sysops-squad-案例管理工单契约" class="nav-link" data-scroll-target="#sysops-squad-案例管理工单契约"><span class="header-section-number">13.4</span> Sysops Squad 案例：管理工单契约</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-reuse-patterns.html">第二部分 重新组合</a></li><li class="breadcrumb-item"><a href="./13-contracts.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>4 月 15 日，星期五，12:01</em></p>
+<p>午餐时，Addison 与 Sydney 在餐厅碰面，讨论工单管理工作流中，工单协调器与它所集成服务之间的协调问题。</p>
+<p>“为什么不让所有通信都使用 gRPC？我听说它速度很快。”Sydney 说。</p>
+<p>“那是一种实现，不是架构，”Addison 说，“在选择实现方式之前，需要先决定采用哪一种契约。首先要在严格契约与宽松契约之间选择。类型确定后，只要实现能够通过适应度函数，我会把具体方式交给你决定。”</p>
+<p>“什么因素决定我们需要哪种契约？”Sydney 问。</p>
+<p>第 2 章开始讨论三种重要力量——通信、一致性与协调——的交集，以及如何围绕它们形成权衡。我们把三种力量的相交空间建模为一个组合的三维空间，图 <a href="#fig-13-1" class="quarto-xref">图&nbsp;<span>13.1</span></a> 再次展示了该模型。第 12 章则通过各种通信风格及其权衡重新考察了这些力量。</p>
+<div id="fig-13-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.1: 分布式架构中消息传递力量相交的三维空间
+</figcaption>
+</figure>
+</div>
+<p>架构无论多么善于辨识这类关系，总有一些力量会横切概念空间，并同等影响其他所有维度。沿用三维视觉隐喻，这些横切力量就像额外的维度，如同时间与三个物理维度正交。</p>
+<p>软件架构中有一个恒定因素会横切并影响几乎所有架构决策，那就是<strong>契约</strong>；广义地说，它描述架构中不同部分如何彼此连接。字典对 contract 的定义如下：</p>
+<blockquote class="blockquote">
+<p><strong>契约</strong>：旨在由法律强制执行的书面或口头协议，尤其涉及雇佣、销售或租赁的协议。</p>
+</blockquote>
+<p>在软件中，我们广泛使用契约来描述架构集成点等事物。许多契约格式都属于软件开发设计过程的一部分：SOAP、REST、gRPC、XMLRPC，以及一长串其他缩写。不过，我们把这个定义扩展得更广，也使它更加一致：</p>
+<blockquote class="blockquote">
+<p><strong>本书所说的契约</strong>：架构各部分用于传递信息或依赖关系的格式。</p>
+</blockquote>
+<p>这个契约定义涵盖所有把系统各部分“连接起来”的技术，包括框架与库的传递依赖、内部与外部集成点、缓存，以及各部分之间的任何其他通信。</p>
+<p>本章说明契约如何影响架构的许多部分，包括静态与动态量子耦合，以及改善或损害工作流有效性的方式。</p>
+<section id="严格契约与宽松契约" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="严格契约与宽松契约"><span class="header-section-number">13.1</span> 严格契约与宽松契约</h2>
+<p>与软件架构中的许多事物一样，契约不是非黑即白，而是分布在从严格到宽松的广阔光谱上。图 <a href="#fig-13-2" class="quarto-xref">图&nbsp;<span>13.2</span></a> 用契约类型示例展示了这条光谱。</p>
+<div id="fig-13-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.2: 从严格到宽松的契约类型光谱
+</figcaption>
+</figure>
+</div>
+<p>严格契约要求名称、类型、顺序及其他所有细节完全一致，不留任何歧义。软件中最严格的契约例子，是使用 Java RMI 等平台机制进行远程方法调用。此时，远程调用模仿内部方法调用，名称、参数、类型及其他所有细节都必须匹配。</p>
+<p>许多严格契约格式都模仿方法调用的语义。例如，开发人员会遇到许多包含某种 RPC 变体的协议；RPC 传统上是远程过程调用（Remote Procedure Call）的缩写。gRPC 就是一种流行的远程调用框架，默认使用严格契约。</p>
+<p>许多架构师喜欢严格契约，因为它们能够为内部方法调用完全相同的语义行为建模。不过，严格契约会让集成架构变得脆弱，这是应该避免的。第 8 章讨论过，如果某个事物既频繁变化，又被多个不同架构部分使用，就会在架构中造成问题。契约正符合这种描述，因为它们是分布式架构中的黏合剂：变化越频繁，对其他服务造成的连锁问题就越多。不过，架构师并非必须使用严格契约，只应该在确有优势时使用。</p>
+<p>即使 JSON 这种表面上宽松的格式，也能选择性地给简单名称-值对增加模式信息。示例 <a href="#lst-13-1" class="quarto-xref">列表&nbsp;<span>13.1</span></a> 展示了附带模式信息的严格 JSON 契约。</p>
+<div id="lst-13-1" class="json listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-13-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.1: 严格 JSON 契约
+</figcaption>
+<div aria-describedby="lst-13-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-13-1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="lst-13-1-1"><a href="#lst-13-1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="lst-13-1-2"><a href="#lst-13-1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"$schema"</span><span class="fu">:</span> <span class="st">"http://json-schema.org/draft-04/schema#"</span><span class="fu">,</span></span>
+<span id="lst-13-1-3"><a href="#lst-13-1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"properties"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="lst-13-1-4"><a href="#lst-13-1-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"acct"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">},</span></span>
+<span id="lst-13-1-5"><a href="#lst-13-1-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"cusip"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"string"</span><span class="fu">},</span></span>
+<span id="lst-13-1-6"><a href="#lst-13-1-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"shares"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">,</span> <span class="dt">"minimum"</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">}</span></span>
+<span id="lst-13-1-7"><a href="#lst-13-1-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">},</span></span>
+<span id="lst-13-1-8"><a href="#lst-13-1-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"acct"</span><span class="ot">,</span> <span class="st">"cusip"</span><span class="ot">,</span> <span class="st">"shares"</span><span class="ot">]</span></span>
+<span id="lst-13-1-9"><a href="#lst-13-1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<p>第一行引用了要使用并验证的模式定义。接着定义 <code>acct</code>、<code>cusip</code> 和 <code>shares</code> 三项属性及其类型；最后一行指定必填属性。这便创建了一个明确规定必填字段与类型的严格契约。</p>
+<p>较宽松的契约包括 REST 和 GraphQL 等格式。两者非常不同，却都比基于 RPC 的格式具有更松的耦合。REST 让架构师为资源而不是方法或过程端点建模，因此契约不那么脆弱。例如，架构师构建一个描述飞机部件的 RESTful 资源，以支持座位查询；以后即使有人给资源增加发动机详情，原有查询也不会中断——增加信息不会破坏已经存在的内容。</p>
+<p>类似地，分布式架构使用 GraphQL 提供只读聚合数据，避免跨大量服务执行成本高昂的协调调用。示例 <a href="#lst-13-2" class="quarto-xref">列表&nbsp;<span>13.2</span></a> 与 <a href="#lst-13-3" class="quarto-xref">列表&nbsp;<span>13.3</span></a> 提供了 <code>Profile</code> 契约的两个不同但都有效的视图。</p>
+<div id="lst-13-2" class="graphql listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-13-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.2: 客户心愿单的 Profile 表示
+</figcaption>
+<div aria-describedby="lst-13-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-13-2"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="lst-13-2-1"><a href="#lst-13-2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> Profile {</span>
+<span id="lst-13-2-2"><a href="#lst-13-2-2" aria-hidden="true" tabindex="-1"></a>    name: <span class="dt">String</span></span>
+<span id="lst-13-2-3"><a href="#lst-13-2-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<div id="lst-13-3" class="graphql listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-13-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.3: 客户 Profile 表示
+</figcaption>
+<div aria-describedby="lst-13-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-13-3"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="lst-13-3-1"><a href="#lst-13-3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> Profile {</span>
+<span id="lst-13-3-2"><a href="#lst-13-3-2" aria-hidden="true" tabindex="-1"></a>    name: <span class="dt">String</span></span>
+<span id="lst-13-3-3"><a href="#lst-13-3-3" aria-hidden="true" tabindex="-1"></a>    addr1: <span class="dt">String</span></span>
+<span id="lst-13-3-4"><a href="#lst-13-3-4" aria-hidden="true" tabindex="-1"></a>    addr2: <span class="dt">String</span></span>
+<span id="lst-13-3-5"><a href="#lst-13-3-5" aria-hidden="true" tabindex="-1"></a>    country: <span class="dt">String</span></span>
+<span id="lst-13-3-6"><a href="#lst-13-3-6" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="lst-13-3-7"><a href="#lst-13-3-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<p>两个例子中都出现 <code>Profile</code> 概念，但值不同。在这个场景中，客户心愿单无法在内部访问客户姓名，只有一个唯一标识符；因此，它需要访问客户 Profile，把标识符映射到客户姓名。另一方面，客户 Profile 除姓名之外，还包含大量客户信息。对心愿单而言，<code>Profile</code> 中唯一有趣的内容就是姓名。</p>
+<p>有些架构师会落入一种常见反模式：假定心愿单以后可能需要其他所有部分，因此从一开始就把它们全部放进契约。这是印记耦合的例子，在多数情况下也是反模式，因为它在不必要之处引入破坏性变更，使架构脆弱，却几乎没有收益。例如，心愿单只关心 <code>Profile</code> 中的客户姓名，但契约为了“以防万一”规定了 <code>Profile</code> 的每个字段，那么即使 <code>Profile</code> 修改了心愿单完全不关心的内容，也会打破契约，迫使双方协调修复。把契约保持在“需要知道”的级别，能在语义耦合与必要信息之间取得平衡，同时避免给集成架构制造不必要的脆弱性。</p>
+<p>契约耦合光谱的最宽松一端，是通常以 YAML 或 JSON 名称-值对表达的极宽松契约，如示例 <a href="#lst-13-4" class="quarto-xref">列表&nbsp;<span>13.4</span></a> 所示。</p>
+<div id="lst-13-4" class="json listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-13-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;13.4: JSON 中的名称-值对
+</figcaption>
+<div aria-describedby="lst-13-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-13-4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="lst-13-4-1"><a href="#lst-13-4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="lst-13-4-2"><a href="#lst-13-4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"Mark"</span><span class="fu">,</span></span>
+<span id="lst-13-4-3"><a href="#lst-13-4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"status"</span><span class="fu">:</span> <span class="st">"active"</span><span class="fu">,</span></span>
+<span id="lst-13-4-4"><a href="#lst-13-4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"joined"</span><span class="fu">:</span> <span class="st">"2003"</span></span>
+<span id="lst-13-4-5"><a href="#lst-13-4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<p>这个例子只包含原始事实，没有任何额外元数据、类型信息或其他内容，只有名称-值对。</p>
+<p>如此宽松的契约能形成高度解耦的系统，而这通常正是微服务等架构的目标之一。不过，契约的宽松也伴随着代价，例如缺少契约确定性和验证，并增加应用逻辑。后面的“微服务中的契约”会说明架构师如何利用契约适应度函数解决这个问题。</p>
+<section id="严格契约与宽松契约之间的权衡" class="level3" data-number="13.1.1">
+<h3 data-number="13.1.1" class="anchored" data-anchor-id="严格契约与宽松契约之间的权衡"><span class="header-section-number">13.1.1</span> 严格契约与宽松契约之间的权衡</h3>
+<p>架构师什么时候应该使用严格契约，什么时候应该使用宽松契约？与所有架构难题一样，这个问题没有通用答案，因此理解每一种契约最适合的场景非常重要。</p>
+<section id="严格契约" class="level4" data-number="13.1.1.1">
+<h4 data-number="13.1.1.1" class="anchored" data-anchor-id="严格契约"><span class="header-section-number">13.1.1.1</span> 严格契约</h4>
+<p>严格契约具有若干优点：</p>
+<ul>
+<li><strong>保证契约保真度</strong>：在契约中建立模式验证，可以确保值、类型及其他受治理元数据完全一致。某些问题空间会从契约变更的紧耦合中获益。</li>
+<li><strong>版本化</strong>：严格契约通常需要版本策略，以支持接受不同值的两个端点，或管理领域随时间演化。这允许集成点逐步变化，同时保留有限数量的旧版本，使集成协作更容易。</li>
+<li><strong>更容易在构建时验证</strong>：许多模式工具都提供构建时验证契约的机制，为集成点增加一层类型检查。</li>
+<li><strong>文档更好</strong>：明确的参数和类型提供没有歧义的优秀文档。</li>
+</ul>
+<p>严格契约也有一些缺点：</p>
+<ul>
+<li><strong>紧耦合</strong>：按照本书对耦合的一般定义，严格契约会创建紧耦合点。如果两项服务共享严格契约，而契约发生变化，两项服务都必须改变。</li>
+<li><strong>版本化</strong>：版本既是优点，也是缺点。保留不同版本虽然能提供精确性，但如果团队没有清晰的弃用策略，或试图支持太多版本，就可能演变为集成噩梦。</li>
+</ul>
+<p>表 <a href="#tbl-13-1" class="quarto-xref">表格&nbsp;<span>13.1</span></a> 汇总了严格契约的权衡。</p>
+</section>
+<section id="权衡" class="level4" data-number="13.1.1.2">
+<h4 data-number="13.1.1.2" class="anchored" data-anchor-id="权衡"><span class="header-section-number">13.1.1.2</span> 权衡</h4>
+<div id="tbl-13-1" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-13-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;13.1: 严格契约的权衡
+</figcaption>
+<div aria-describedby="tbl-13-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>保证契约保真度</td>
+<td>紧耦合</td>
+</tr>
+<tr class="even">
+<td>版本化</td>
+<td>版本化</td>
+</tr>
+<tr class="odd">
+<td>更容易在构建时验证</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>文档更好</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="宽松契约" class="level4" data-number="13.1.1.3">
+<h4 data-number="13.1.1.3" class="anchored" data-anchor-id="宽松契约"><span class="header-section-number">13.1.1.3</span> 宽松契约</h4>
+<p>名称-值对等宽松契约提供耦合最少的集成点，但它们也有权衡，见表 <a href="#tbl-13-2" class="quarto-xref">表格&nbsp;<span>13.2</span></a>。</p>
+<p>宽松契约的部分优点如下：</p>
+<ul>
+<li><strong>高度解耦</strong>：许多架构师明确把高度解耦列为微服务架构目标，而宽松契约能够提供最大的灵活性。</li>
+<li><strong>更容易演化</strong>：契约几乎没有模式信息，因此可以更自由地演化。当然，语义耦合发生变化时，仍然需要所有相关方协调——实现无法减少语义耦合——但宽松契约让实现更容易演化。</li>
+</ul>
+<p>宽松契约也有一些缺点：</p>
+<ul>
+<li><strong>契约管理</strong>：按照定义，宽松契约不具备严格契约的特征，因此可能出现名称拼写错误、缺少名称-值对等问题；模式本可以消除这些缺陷。</li>
+<li><strong>需要适应度函数</strong>：为了解决这些契约问题，许多团队使用消费者驱动契约作为架构适应度函数，确保宽松契约仍包含足够信息，可以正常发挥作用。</li>
+</ul>
+</section>
+<section id="权衡-1" class="level4" data-number="13.1.1.4">
+<h4 data-number="13.1.1.4" class="anchored" data-anchor-id="权衡-1"><span class="header-section-number">13.1.1.4</span> 权衡</h4>
+<div id="tbl-13-2" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-13-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;13.2: 宽松契约的权衡
+</figcaption>
+<div aria-describedby="tbl-13-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>高度解耦</td>
+<td>契约管理</td>
+</tr>
+<tr class="even">
+<td>更容易演化</td>
+<td>需要适应度函数</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>微服务架构中的契约是架构师常见权衡的一个例子。</p>
+</section>
+</section>
+</section>
+<section id="微服务中的契约" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="微服务中的契约"><span class="header-section-number">13.2</span> 微服务中的契约</h2>
+<p>架构师必须不断决定服务如何相互交互、传递哪些信息（语义）、如何传递（实现），以及服务之间应该耦合得多紧。</p>
+<section id="耦合程度" class="level3" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="耦合程度"><span class="header-section-number">13.2.1</span> 耦合程度</h3>
+<p>考虑两项具有独立事务性的微服务，它们必须共享客户地址等领域信息，如图 <a href="#fig-13-3" class="quarto-xref">图&nbsp;<span>13.3</span></a> 所示。</p>
+<div id="fig-13-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.3: 必须共享客户领域信息的两项服务
+</figcaption>
+</figure>
+</div>
+<p>架构师可以用同一技术栈实现两项服务，并采用严格类型化契约；可以选择 RMI 等平台专用远程过程协议，也可以选择 gRPC 等与实现无关的协议。这样就能以很高的契约保真度把客户信息从一项服务传给另一项服务。不过，这种紧耦合违反了微服务架构的一个理想目标：架构师希望建立解耦的服务。</p>
+<p>再考虑另一种方式：每项服务都拥有自己的 <code>Customer</code> 内部表示，集成时利用名称-值对在两项服务之间传递信息，如图 <a href="#fig-13-4" class="quarto-xref">图&nbsp;<span>13.4</span></a> 所示。</p>
+<div id="fig-13-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.4: 拥有各自内部语义表示的微服务，可以通过简单消息传递值
+</figcaption>
+</figure>
+</div>
+<p>这里，每项服务都有自己在限界上下文中对 <code>Customer</code> 的定义。传递信息时，架构师利用 JSON 名称-值对，在宽松契约中传递相关信息。</p>
+<p>这种松耦合满足微服务的许多总体目标。第一，它建立以限界上下文建模的高度解耦服务，让每个团队都能按需积极演化内部表示。第二，它建立实现解耦。即使两项服务最初采用相同技术栈，第二个团队以后决定迁移到另一平台，也很可能完全不影响第一项服务。所有常用平台都能生成和使用名称-值对，因此它们成为集成架构的通用语。</p>
+<p>宽松契约最大的缺点是契约保真度：作为架构师，如何知道开发人员在集成调用中传递了正确数量和类型的参数？JSON 等协议包含模式工具，允许架构师在宽松契约上叠加更多元数据；架构师也可以使用一种称为<strong>消费者驱动契约</strong>的架构适应度函数。</p>
+</section>
+<section id="消费者驱动契约" class="level3" data-number="13.2.2">
+<h3 data-number="13.2.2" class="anchored" data-anchor-id="消费者驱动契约"><span class="header-section-number">13.2.2</span> 消费者驱动契约</h3>
+<p>微服务架构中一个常见问题，是松耦合与契约保真度两个目标看起来彼此矛盾。消费者驱动契约利用软件开发技术进步，提供了一种创新方案，在微服务架构中很常见。</p>
+<p>许多架构集成场景都由服务决定向其他集成伙伴发出什么信息，这是一种推送模型：服务提供者把契约推给消费者。消费者驱动契约把这种关系反转成拉取模型：消费者根据自己需要从提供者取得的项目建立契约，再把契约交给提供者；提供者把它加入自己的构建，并始终保持契约测试通过。契约封装了消费者需要从提供者取得的信息。提供者可能必须遵守由相互连接的请求组成的网络，如图 <a href="#fig-13-5" class="quarto-xref">图&nbsp;<span>13.5</span></a> 所示。</p>
+<div id="fig-13-5" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-5.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.5: 消费者驱动契约让提供者与消费者通过自动化架构治理保持同步
+</figcaption>
+</figure>
+</div>
+<p>该例中，左侧团队向右侧每个消费者团队提供可能彼此重叠的部分信息。每个消费者创建一份契约，指定自己需要的信息，再把它交给提供者；提供者把相应测试纳入持续集成或部署流水线。这样，每个团队都能根据需要，把契约规定得足够严格或足够宽松，同时在构建过程中保证契约保真度。许多消费者驱动契约测试工具可以自动执行构建时契约检查，提供与严格契约类似的另一层好处。</p>
+<p>消费者驱动契约在微服务架构中很常见，因为它允许架构师同时解决松耦合与受治理集成这两个问题。其权衡见表 <a href="#tbl-13-3" class="quarto-xref">表格&nbsp;<span>13.3</span></a>。</p>
+<p>消费者驱动契约的优点如下：</p>
+<ul>
+<li><strong>允许服务之间采用宽松契约耦合</strong>：名称-值对是两项服务之间最宽松的耦合，允许改变实现，同时把破坏契约的可能性降到最低。</li>
+<li><strong>允许不同严格程度</strong>：如果团队使用架构适应度函数，架构师可以建立比模式或其他类型增强工具通常提供的验证更严格的检查。例如，大多数模式允许指定数值类型，却无法指定可接受的数值范围；适应度函数允许架构师按需建立任意程度的精确约束。</li>
+<li><strong>可演化</strong>：松耦合意味着可演化。使用简单名称-值对后，集成点可以改变实现细节，而不会破坏服务间传递信息的语义。</li>
+</ul>
+<p>消费者驱动契约的缺点如下：</p>
+<ul>
+<li><strong>要求工程成熟度</strong>：架构适应度函数只有在纪律严明的团队拥有良好实践、不会跳过步骤时，才能真正发挥作用。例如，如果所有团队都运行包含契约测试的持续集成，适应度函数就是很好的验证机制。反之，如果许多团队忽略失败测试，或者不能及时运行契约测试，架构中的集成点就可能在过长时间内保持中断状态。</li>
+<li><strong>两套相互配合的机制，而不是一套</strong>：架构师经常寻找单一机制解决问题，许多模式工具也拥有构建端到端连接的复杂能力。然而，有时两项简单而相互配合的机制可以更简单地解决问题。因此，许多架构师组合名称-值对与消费者驱动契约来验证契约，但这也意味着团队需要两套机制，而不是一套。</li>
+</ul>
+<p>这一权衡的最佳答案，最终取决于团队成熟度，以及采用宽松契约获得解耦，与采用严格契约获得复杂性加确定性之间的取舍。</p>
+<section id="权衡-2" class="level4" data-number="13.2.2.1">
+<h4 data-number="13.2.2.1" class="anchored" data-anchor-id="权衡-2"><span class="header-section-number">13.2.2.1</span> 权衡</h4>
+<div id="tbl-13-3" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-13-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;13.3: 消费者驱动契约的权衡
+</figcaption>
+<div aria-describedby="tbl-13-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>允许服务间采用宽松契约耦合</td>
+<td>要求工程成熟度</td>
+</tr>
+<tr class="even">
+<td>允许不同严格程度</td>
+<td>两套相互配合的机制，而不是一套</td>
+</tr>
+<tr class="odd">
+<td>可演化</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+</section>
+<section id="印记耦合" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="印记耦合"><span class="header-section-number">13.3</span> 印记耦合</h2>
+<p>印记耦合是分布式架构中的一种常见模式，有时也是反模式。它表示服务之间传递一个大型数据结构，但每项服务只与其中很小一部分交互。考虑图 <a href="#fig-13-6" class="quarto-xref">图&nbsp;<span>13.6</span></a> 所示的四项服务。</p>
+<div id="fig-13-6" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-6.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.6: 四项服务之间的印记耦合
+</figcaption>
+</figure>
+</div>
+<p>每项服务只访问服务间传递数据结构中的一小部分，可能读取、写入或二者兼有。当行业中存在通常采用 XML 的标准文档格式时，这种模式很常见。例如，旅游业拥有全球标准 XML 文档格式，用于规定旅行行程详情；多个处理旅行相关服务的系统会传递整份文档，只更新与自己相关的部分。</p>
+<p>不过，印记耦合经常意外演变为反模式：架构师在契约中规定了并不需要的过多细节，或者让普通调用无意中消耗过多带宽。</p>
+<section id="印记耦合造成的过度耦合" class="level3" data-number="13.3.1">
+<h3 data-number="13.3.1" class="anchored" data-anchor-id="印记耦合造成的过度耦合"><span class="header-section-number">13.3.1</span> 印记耦合造成的过度耦合</h3>
+<p>回到心愿单服务与 Profile 服务，考虑利用严格契约与印记耦合把两者绑定起来，如图 <a href="#fig-13-7" class="quarto-xref">图&nbsp;<span>13.7</span></a> 所示。</p>
+<div id="fig-13-7" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-7.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.7: 心愿单服务通过印记耦合连接 Profile 服务
+</figcaption>
+</figure>
+</div>
+<p>在这个例子中，心愿单服务只需要姓名，可以通过唯一 ID 访问；但架构师可能出于错误的“面向未来”考虑，把 <code>Profile</code> 的整个数据结构都耦合作为契约。契约耦合过多的负面副作用是脆弱：即使 <code>Profile</code> 修改心愿单毫不关心的字段，例如州，也会打破契约。</p>
+<p>在契约中过度规定细节通常是一种反模式，但当架构师同时为了工作流管理等合理关注点使用印记耦合时，也很容易陷入这种情况。</p>
+</section>
+<section id="带宽" class="level3" data-number="13.3.2">
+<h3 data-number="13.3.2" class="anchored" data-anchor-id="带宽"><span class="header-section-number">13.3.2</span> 带宽</h3>
+<p>有些架构师会无意中落入另一个反模式，也就是分布式计算的著名谬误之一：<strong>带宽无限</strong>。在单体中，架构师和开发人员很少需要考虑方法调用次数累积后的总体大小，因为存在自然屏障；而分布式架构中，许多屏障会消失，无意间制造问题。</p>
+<p>考虑前面的例子，每秒有 2,000 个请求。如果每个载荷是 500 KB，那么仅这一个请求就需要每秒 1,000,000 KB 的带宽！这显然是在毫无意义地过度使用带宽。相反，如果心愿单与 Profile 之间的耦合只包含必要信息——姓名——每个请求的开销就会降到 200 字节，每秒合计 400 KB，完全合理。</p>
+<p>印记耦合使用过度时会制造问题，包括与带宽耦合过紧导致的问题。不过，与架构中的所有事物一样，它也有有益的用途。</p>
+</section>
+<section id="用印记耦合管理工作流" class="level3" data-number="13.3.3">
+<h3 data-number="13.3.3" class="anchored" data-anchor-id="用印记耦合管理工作流"><span class="header-section-number">13.3.3</span> 用印记耦合管理工作流</h3>
+<p>第 12 章介绍了多种动态量子通信模式，其中有几种采用编排式协调。由于前面已经阐述的许多原因，架构师面对复杂工作流时倾向使用中介者。不过，如果扩展能力等其他因素迫使架构师选择既采用编排、又很复杂的方案，该怎么办？</p>
+<p>架构师可以利用印记耦合管理服务间的工作流状态，把领域知识与工作流状态都纳入契约传递，如图 <a href="#fig-13-8" class="quarto-xref">图&nbsp;<span>13.8</span></a> 所示。</p>
+<div id="fig-13-8" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-8.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.8: 利用印记耦合管理工作流
+</figcaption>
+</figure>
+</div>
+<p>该例中，架构师把工作流信息设计进契约，包括工作流状态、事务状态等。每项领域服务接收契约后，更新契约中属于自己的部分及工作流状态，再继续传递。工作流结束时，接收方可以查询契约，确定成功或失败，并获得状态与错误消息等信息。如果系统需要全程实现事务一致性，领域服务还应该把契约重新广播给已经访问过的服务，以恢复原子一致性。</p>
+<p>利用印记耦合管理工作流，确实会让服务之间的耦合高于通常水平，但语义耦合总要存在于某个地方；记住，架构师无法通过实现减少语义耦合。不过，许多情况下，改用编排能够提高吞吐量与可扩展性，让印记耦合相对于中介成为很有吸引力的选择。表 <a href="#tbl-13-4" class="quarto-xref">表格&nbsp;<span>13.4</span></a> 展示了印记耦合的权衡。</p>
+<section id="权衡-3" class="level4" data-number="13.3.3.1">
+<h4 data-number="13.3.3.1" class="anchored" data-anchor-id="权衡-3"><span class="header-section-number">13.3.3.1</span> 权衡</h4>
+<div id="tbl-13-4" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-13-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;13.4: 印记耦合的权衡
+</figcaption>
+<div aria-describedby="tbl-13-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>允许编排方案承载复杂工作流</td>
+<td>在协作者之间建立有时属于人为造成的高耦合</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>高规模下可能造成带宽问题</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+</section>
+<section id="sysops-squad-案例管理工单契约" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="sysops-squad-案例管理工单契约"><span class="header-section-number">13.4</span> Sysops Squad 案例：管理工单契约</h2>
+<p><em>5 月 10 日，星期二，10:10</em></p>
+<p>Sydney 与 Addison 再次在餐厅喝咖啡，讨论工单管理工作流中的契约。</p>
+<p>Addison 说：“看看正在讨论的工单管理工作流。我已经画出了我们应该采用的契约类型，想请你帮忙看看是否遗漏了什么。见图 <a href="#fig-13-9" class="quarto-xref">图&nbsp;<span>13.9</span></a>。”</p>
+<div id="fig-13-9" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch13/fig-13-9.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13.9: 工单管理工作流中各协作者之间的契约类型
+</figcaption>
+</figure>
+</div>
+<p>“协调器与两项工单服务——工单管理、工单分配——之间使用严格契约；这些信息具有很高的语义耦合，很可能一起变化，”Addison 说，“例如，如果我们增加要管理的新事物类型，分配也必须同步调整。通知与调查服务可以宽松得多：信息变化较慢，也无法从脆弱耦合中获益。”</p>
+<p>Sydney 说：“这些决策都很合理，但协调器与 Sysops Squad 专家应用之间的契约怎么办？它看起来应该与分配一样严格。”</p>
+<p>“提醒得好。通常，我们希望移动应用契约与工单分配相匹配。不过，移动应用通过公共应用商店部署，而审核过程有时很长。如果保持更宽松的契约，就能获得灵活性和较慢的变化速率。”</p>
+<p>两人一起写下以下 ADR：</p>
+<div class="callout callout-style-default callout-note callout-titled" title="ADR：Sysops Squad 专家移动应用使用宽松契约">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ADR：Sysops Squad 专家移动应用使用宽松契约
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>背景</strong></p>
+<p>Sysops Squad 专家使用的移动应用必须通过公共应用商店部署，因此更新契约的能力会受到延迟影响。</p>
+<p><strong>决策</strong></p>
+<p>协调器与移动应用之间传递信息时，使用宽松的名称-值对契约。</p>
+<p>建立扩展机制，允许为了短期灵活性加入临时扩展。</p>
+<p><strong>后果</strong></p>
+<p>如果应用商店政策允许更快或持续部署，应重新评估这项决策。</p>
+<p>协调器与移动应用中必须包含更多用于验证契约的逻辑。</p>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./12-transactional-sagas.html" class="pagination-link" aria-label="事务型 Saga">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./14-analytical-data.html" class="pagination-link" aria-label="管理分析型数据">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

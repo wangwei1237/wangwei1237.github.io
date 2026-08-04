@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 11&nbsp; 管理分布式工作流</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./12-transactional-sagas.html" rel="next">
+<link href="./10-distributed-data-access.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-reuse-patterns.html">第二部分 重新组合</a></li><li class="breadcrumb-item"><a href="./11-distributed-workflows.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#协调式通信风格" id="toc-协调式通信风格" class="nav-link active" data-scroll-target="#协调式通信风格"><span class="header-section-number">11.1</span> 协调式通信风格</a>
+  <ul class="collapse">
+  <li><a href="#权衡" id="toc-权衡" class="nav-link" data-scroll-target="#权衡"><span class="header-section-number">11.1.1</span> 权衡</a></li>
+  </ul></li>
+  <li><a href="#编排式通信风格" id="toc-编排式通信风格" class="nav-link" data-scroll-target="#编排式通信风格"><span class="header-section-number">11.2</span> 编排式通信风格</a>
+  <ul class="collapse">
+  <li><a href="#工作流状态管理" id="toc-工作流状态管理" class="nav-link" data-scroll-target="#工作流状态管理"><span class="header-section-number">11.2.1</span> 工作流状态管理</a></li>
+  </ul></li>
+  <li><a href="#协调与编排之间的权衡" id="toc-协调与编排之间的权衡" class="nav-link" data-scroll-target="#协调与编排之间的权衡"><span class="header-section-number">11.3</span> 协调与编排之间的权衡</a>
+  <ul class="collapse">
+  <li><a href="#状态所有者与耦合" id="toc-状态所有者与耦合" class="nav-link" data-scroll-target="#状态所有者与耦合"><span class="header-section-number">11.3.1</span> 状态所有者与耦合</a></li>
+  </ul></li>
+  <li><a href="#sysops-squad-案例管理工作流" id="toc-sysops-squad-案例管理工作流" class="nav-link" data-scroll-target="#sysops-squad-案例管理工作流"><span class="header-section-number">11.4</span> Sysops Squad 案例：管理工作流</a>
+  <ul class="collapse">
+  <li><a href="#权衡-5" id="toc-权衡-5" class="nav-link" data-scroll-target="#权衡-5"><span class="header-section-number">11.4.1</span> 权衡</a></li>
+  <li><a href="#权衡-6" id="toc-权衡-6" class="nav-link" data-scroll-target="#权衡-6"><span class="header-section-number">11.4.2</span> 权衡</a></li>
+  <li><a href="#权衡-7" id="toc-权衡-7" class="nav-link" data-scroll-target="#权衡-7"><span class="header-section-number">11.4.3</span> 权衡</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-reuse-patterns.html">第二部分 重新组合</a></li><li class="breadcrumb-item"><a href="./11-distributed-workflows.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>2 月 15 日，星期二，14:34</em></p>
+<p>午饭刚过，Austen 就冲进 Logan 的办公室。“我一直在看新架构设计，也想帮忙。需要我写 ADR 或协助做技术探针吗？我很乐意写一份 ADR，规定新架构只使用编排，保持服务解耦。”</p>
+<p>“慢点，你这个疯子，”Logan 说，“从哪听来的？为什么会这样想？”</p>
+<p>“我读了很多微服务资料，所有人的建议似乎都是保持高度解耦。通信模式中，编排看起来解耦程度最高，所以我们应该始终使用它，对吧？”</p>
+<p>“‘始终’在软件架构中是个危险词。我有位导师的观点让人印象深刻，他总说：谈论架构时永远不要使用绝对说法，除非谈论的就是绝对说法。换句话说，永远不要说‘永远不’。架构决策中，很少有什么可以用‘始终’或‘绝不’。”</p>
+<p>“好，”Austen 说，“那么架构师怎样选择不同通信模式？”</p>
+<p>继续分析现代分布式架构的权衡时，我们来到了量子耦合的动态部分，并把第 2 章描述和命名的许多模式具体化。事实上，即使这些具名模式也只触及现代架构中大量排列组合的一部分。因此，架构师应该理解其中发挥作用的各种力量，以便尽可能客观地进行权衡分析。</p>
+<p>第 2 章识别了分布式架构交互模型中的三种耦合力量：通信、一致性和协调，如图 <a href="#fig-11-1" class="quarto-xref">图&nbsp;<span>11.1</span></a> 所示。</p>
+<div id="fig-11-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.1: 动态量子耦合的维度
+</figcaption>
+</figure>
+</div>
+<p>本章讨论协调：在分布式架构中组合两项或更多服务，完成某项领域工作，以及随之而来的许多问题。</p>
+<p>分布式架构有两种基本协调模式：协调与编排。图 <a href="#fig-11-2" class="quarto-xref">图&nbsp;<span>11.2</span></a> 展示了两种风格在拓扑上的根本差异。协调式方案的显著特征是使用协调器，而编排式方案不使用。</p>
+<div id="fig-11-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.2: 分布式架构中的协调与编排
+</figcaption>
+</figure>
+</div>
+<section id="协调式通信风格" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="协调式通信风格"><span class="header-section-number">11.1</span> 协调式通信风格</h2>
+<p>协调模式使用协调器，有时也称为中介者，来管理工作流状态、可选行为、错误处理、通知以及其他许多工作流维护任务。它以交响乐团的显著特征命名：指挥负责同步总谱中不完整的各个部分，形成统一乐曲。图 <a href="#fig-11-3" class="quarto-xref">图&nbsp;<span>11.3</span></a> 展示了协调最通用的形式。</p>
+<div id="fig-11-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.3: 分布式微服务之间的协调
+</figcaption>
+</figure>
+</div>
+<p>服务 A–D 都是领域服务，各自负责自己的限界上下文、数据与行为。协调器组件通常不包含它所协调工作流之外的任何领域行为。</p>
+<p>微服务架构为每项工作流设置独立协调器，而不使用企业服务总线（ESB）之类的全局协调器。微服务风格的主要目标之一是解耦，ESB 这样的全局组件会形成不理想的耦合点。因此，微服务倾向于每个工作流使用一个协调器。</p>
+<p>当架构师必须建模复杂工作流，除了单一“幸福路径”外还包含替代路径和错误情况时，协调非常有用。为理解这种模式的基本形态，下面先从没有错误的幸福路径开始。</p>
+<p>考虑一个很简单的例子：Penultimate Electronics 在线向客户销售电子设备，如图 <a href="#fig-11-4" class="quarto-xref">图&nbsp;<span>11.4</span></a> 所示。</p>
+<div id="fig-11-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.4: 使用协调器购买电子设备的“幸福路径”工作流；虚线表示对时间不太敏感的异步调用
+</figcaption>
+</figure>
+</div>
+<p>系统把“下单”请求交给订单下达协调器。协调器同步调用订单下达服务，后者记录订单并返回状态消息。接下来，中介者调用支付服务更新付款信息；再异步调用履约服务处理订单。履约不需要像付款验证那样严格依赖时间，因此采用异步调用。例如，如果每天只处理几次履约，就没有必要承担同步调用的开销。协调器同样会调用电子邮件服务，通知用户电子产品订单成功。</p>
+<p>如果世界只有幸福路径，软件架构就会很容易。然而，错误情况与错误路径正是软件架构的主要难点之一。</p>
+<p>考虑购买电子产品时的两种潜在错误。第一种：客户的付款方式被拒绝，会发生什么？图 <a href="#fig-11-5" class="quarto-xref">图&nbsp;<span>11.5</span></a> 展示了这一场景。</p>
+<div id="fig-11-5" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-5.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.5: 付款被拒绝时的错误情况
+</figcaption>
+</figure>
+</div>
+<p>订单下达协调器仍然先通过订单下达服务更新订单；但尝试付款时，支付服务拒绝了请求，可能因为信用卡已经过期。支付服务随即通知协调器，协调器通常以异步方式调用电子邮件服务，向客户发送订单失败消息；同时更新订单下达服务的状态，因为后者仍认为这是一张有效订单。</p>
+<p>这个例子允许每项服务维护自己的事务状态，对应第 12 章将介绍的“童话 Saga（seo）模式”。管理事务是现代架构最困难的部分之一。</p>
+<p>第二种错误发生在工作流已经推进得更远的时候：如果履约服务报告商品缺货，需要延期交货，会怎样？图 <a href="#fig-11-6" class="quarto-xref">图&nbsp;<span>11.6</span></a> 展示了这个错误场景。</p>
+<div id="fig-11-6" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-6.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.6: 商品延期交货时，协调器必须修正状态
+</figcaption>
+</figure>
+</div>
+<p>工作流按正常路径推进，直到履约服务通知协调器当前商品没有库存，必须延期交货。此时，协调器必须退还付款，这也是很多在线服务在发货而不是下单时才扣款的原因；同时还要更新订单下达服务的状态。</p>
+<p>图 <a href="#fig-11-6" class="quarto-xref">图&nbsp;<span>11.6</span></a> 有一项值得注意的特点：即使错误场景相当复杂，架构师也不必增加正常工作流原本不存在的通信路径。这一点与下一节的编排式通信风格不同。</p>
+<p>协调式通信风格的一般优点包括：</p>
+<dl>
+<dt><strong>集中式工作流</strong></dt>
+<dd>
+<p>随着复杂度上升，使用统一组件管理状态与行为会更有价值。</p>
+</dd>
+<dt><strong>错误处理</strong></dt>
+<dd>
+<p>错误处理是许多领域工作流的重要部分；为工作流设置状态所有者能让它更容易完成。</p>
+</dd>
+<dt><strong>可恢复性</strong></dt>
+<dd>
+<p>协调器会监控工作流状态，因此某项或多项领域服务短暂中断时，架构师可以加入重试逻辑。</p>
+</dd>
+<dt><strong>状态管理</strong></dt>
+<dd>
+<p>协调器使工作流状态可以查询，也为其他工作流和其他临时状态提供存放位置。</p>
+</dd>
+</dl>
+<p>一般缺点包括：</p>
+<dl>
+<dt><strong>响应速度</strong></dt>
+<dd>
+<p>所有通信都必须经过中介者，可能形成吞吐量瓶颈并损害响应速度。</p>
+</dd>
+<dt><strong>容错能力</strong></dt>
+<dd>
+<p>协调提高领域服务的可恢复性，却也可能为工作流形成单点故障。可以通过冗余处理，但会增加复杂度。</p>
+</dd>
+<dt><strong>可扩展性</strong></dt>
+<dd>
+<p>协调式通信的扩展能力不如编排，因为协调器增加了协调点，降低并行处理的潜力。第 2 章介绍的多种动态耦合模式使用编排，因此能达到更高扩展能力，特别是第 12 章的“时间旅行 Saga（sec）模式”和“选集 Saga（aec）模式”。</p>
+</dd>
+<dt><strong>服务耦合</strong></dt>
+<dd>
+<p>中央协调器会加强它与领域组件之间的耦合，不过有时这是必要的。</p>
+</dd>
+</dl>
+<p>表 <a href="#tbl-11-1" class="quarto-xref">表格&nbsp;<span>11.1</span></a> 汇总了协调式通信风格的权衡。</p>
+<section id="权衡" class="level3" data-number="11.1.1">
+<h3 data-number="11.1.1" class="anchored" data-anchor-id="权衡"><span class="header-section-number">11.1.1</span> 权衡</h3>
+<div id="tbl-11-1" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.1: 协调式通信的权衡
+</figcaption>
+<div aria-describedby="tbl-11-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>集中式工作流</td>
+<td>响应速度</td>
+</tr>
+<tr class="even">
+<td>错误处理</td>
+<td>容错能力</td>
+</tr>
+<tr class="odd">
+<td>可恢复性</td>
+<td>可扩展性</td>
+</tr>
+<tr class="even">
+<td>状态管理</td>
+<td>服务耦合</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="编排式通信风格" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="编排式通信风格"><span class="header-section-number">11.2</span> 编排式通信风格</h2>
+<p>协调式通信以协调器提供的中央协调为比喻命名；编排模式则通过视觉形象表达没有中央协调的通信风格。每项服务像舞伴一样与其他服务共同参与。这并不是即兴表演：动作由编舞者，也就是架构师，提前规划，却在没有中央协调者的情况下执行。</p>
+<p>图 <a href="#fig-11-4" class="quarto-xref">图&nbsp;<span>11.4</span></a> 展示了客户向 Penultimate Electronics 购买电子产品的协调式工作流。图 <a href="#fig-11-7" class="quarto-xref">图&nbsp;<span>11.7</span></a> 使用编排式通信风格建模同一工作流。</p>
+<div id="fig-11-7" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-7.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.7: 通过编排购买电子产品
+</figcaption>
+</figure>
+</div>
+<p>初始请求到达责任链的第一项服务，本例中是订单下达服务。更新订单内部记录后，它发送异步请求，由支付服务接收；付款完成后，支付服务生成消息，交给履约服务；履约服务安排配送，再向电子邮件服务发送消息。</p>
+<p>乍看之下，编排方案更简单：服务数量更少，因为没有协调器，而且只是简单的事件或命令消息链。然而，与软件架构的许多问题一样，困难不在默认路径，而在边界与错误情况。</p>
+<p>仍然考虑前述两种错误。第一种是付款失败，如图 <a href="#fig-11-8" class="quarto-xref">图&nbsp;<span>11.8</span></a> 所示。</p>
+<div id="fig-11-8" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-8.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.8: 编排中的付款错误
+</figcaption>
+</figure>
+</div>
+<p>支付服务不再向履约服务发送消息，而是把失败消息分别发送给电子邮件服务与订单下达服务，后者更新订单状态。这条替代工作流看起来还不复杂，只增加了一条幸福路径中不存在的通信连接。</p>
+<p>不过，再考虑图 <a href="#fig-11-9" class="quarto-xref">图&nbsp;<span>11.9</span></a> 所示的商品延期交货错误，复杂度就会上升。</p>
+<div id="fig-11-9" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-9.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.9: 管理商品延期交货的工作流错误
+</figcaption>
+</figure>
+</div>
+<p>引发错误的“缺货”事件出现时，工作流已经完成了很多步骤。每项服务都实现自己的事务性，这是第 12 章“选集 Saga（aec）模式”的例子，因此错误发生时，每项服务都必须向其他服务发送补偿消息。履约服务发现错误后，应生成符合自身限界上下文的事件，也许是一条广播消息，由电子邮件、支付和订单下达服务订阅。</p>
+<p>图 <a href="#fig-11-9" class="quarto-xref">图&nbsp;<span>11.9</span></a> 展示了复杂工作流与中介者之间的依赖。图 <a href="#fig-11-7" class="quarto-xref">图&nbsp;<span>11.7</span></a> 的初始编排工作流看起来比图 <a href="#fig-11-4" class="quarto-xref">图&nbsp;<span>11.4</span></a> 简单，但错误情况以及其他替代路径会持续给编排方案增加复杂度。图 <a href="#fig-11-10" class="quarto-xref">图&nbsp;<span>11.10</span></a> 中，每个错误场景都迫使领域服务相互交互，增加幸福路径原本不需要的通信连接。</p>
+<div id="fig-11-10" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-10.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.10: 编排中的错误情况通常会增加通信连接
+</figcaption>
+</figure>
+</div>
+<p>架构师需要在软件中建模的每项工作流，都包含一定程度的语义耦合，也就是问题领域固有的耦合。例如，把工单分配给 Sysops Squad 成员具有固定流程：客户请求服务，把技能与特定专家匹配，再与日程和位置交叉核对。架构师如何对这些交互建模，属于实现耦合。</p>
+<p>工作流的语义耦合由解决方案的领域要求决定，必须以某种方式建模。无论架构师多么聪明，都无法减少语义耦合，但实现选择可能让它恶化。当然，这并不意味着架构师不能挑战业务用户定义的不切实际或不可实现语义；某些领域要求确实会造成异常困难的架构问题。</p>
+<p>考虑标准分层单体与较现代的模块化单体，如图 <a href="#fig-11-11" class="quarto-xref">图&nbsp;<span>11.11</span></a> 所示。左侧传统分层架构按照持久化、业务规则等技术能力分隔；右侧同一解决方案则按照“目录结算”和“更新库存”等领域关注点，而不是技术能力分隔。</p>
+<div id="fig-11-11" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-11.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.11: 架构中的技术分区与领域分区
+</figcaption>
+</figure>
+</div>
+<p>两种拓扑都是组织代码库的合理方式。不过，比较“目录结算”等领域概念在两种架构中的位置，如图 <a href="#fig-11-12" class="quarto-xref">图&nbsp;<span>11.12</span></a> 所示。</p>
+<div id="fig-11-12" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-12.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.12: 在技术分区架构中，目录结算散布在多个实现层
+</figcaption>
+</figure>
+</div>
+<p>目录结算“涂抹”在技术架构的多个层中；采用领域分区时，它只出现在对应领域组件及数据库中。当然，让领域与领域分区架构对齐并不是什么新发现；领域驱动设计的一项洞见，就是领域工作流具有首要地位。</p>
+<p>无论如何，架构师想要建模工作流，就必须让这些活动部件共同工作。如果架构与领域采用相同组织方式，工作流实现应该具有相近复杂度；如果架构师额外增加层次，例如图 <a href="#fig-11-12" class="quarto-xref">图&nbsp;<span>11.12</span></a> 的技术分区，就会增加总体实现复杂度，因为除了语义复杂度，还必须设计额外的实现复杂度。</p>
+<p>额外复杂度有时值得。例如，很多分层架构来自架构师通过统一数据库连接池等架构模式节省成本的愿望。此时，架构师权衡了数据库连接技术分区带来的成本节约与它强加的复杂度，并在很多情况下取得收益。</p>
+<p>过去十年架构设计的一项主要教训，是让实现尽可能贴近工作流语义。</p>
+<blockquote class="blockquote">
+<p>架构师永远无法通过实现减少语义耦合，却可以让它变得更糟。</p>
+</blockquote>
+<p>因此，语义耦合与协调需求之间存在关系：工作流所需步骤越多，潜在错误与其他可选路径就越多。</p>
+<section id="工作流状态管理" class="level3" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="工作流状态管理"><span class="header-section-number">11.2.1</span> 工作流状态管理</h3>
+<p>大多数工作流都包含描述状态的临时信息：哪些元素已经执行、哪些尚未执行、执行顺序、错误情况、重试等。协调式方案显然由协调器拥有工作流状态，尽管某些架构方案会为提高扩展能力而建立无状态协调器。编排则没有显而易见的状态所有者。以下是管理编排状态的三种常见选择。</p>
+<p>第一种是<strong>前端控制器模式</strong>，把状态职责交给责任链中最先被调用的服务，本例中就是订单下达服务。它同时保存订单信息和工作流状态后，部分领域服务就必须建立通信连接，以查询和更新订单状态，如图 <a href="#fig-11-13" class="quarto-xref">图&nbsp;<span>11.13</span></a> 所示。</p>
+<div id="fig-11-13" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-13.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.13: 编排中的前端控制器既拥有工作流状态，也负责领域行为
+</figcaption>
+</figure>
+</div>
+<p>部分服务必须返回订单下达服务更新订单状态，因为它是状态所有者。这可以简化工作流，却增加通信开销，也使订单下达服务比只处理领域行为时更加复杂。表 <a href="#tbl-11-2" class="quarto-xref">表格&nbsp;<span>11.2</span></a> 展示了前端控制器的权衡。</p>
+<section id="权衡-1" class="level4" data-number="11.2.1.1">
+<h4 data-number="11.2.1.1" class="anchored" data-anchor-id="权衡-1"><span class="header-section-number">11.2.1.1</span> 权衡</h4>
+<div id="tbl-11-2" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.2: 前端控制器模式的权衡
+</figcaption>
+<div aria-describedby="tbl-11-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>在编排中建立伪协调器</td>
+<td>给领域服务增加额外工作流状态</td>
+</tr>
+<tr class="even">
+<td>查询订单状态非常简单</td>
+<td>增加通信开销</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>集成通信往来增加，损害性能与扩展能力</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>第二种是<strong>无状态编排</strong>：完全不保留临时工作流状态，而通过查询各项服务实时构建快照。这简化了第一项服务的状态，却显著增加服务之间的网络通信开销。</p>
+<p>例如，图 <a href="#fig-11-7" class="quarto-xref">图&nbsp;<span>11.7</span></a> 的简单编排幸福路径没有额外状态。客户想知道订单状态时，架构师必须建立一项工作流，查询每项领域服务，才能确定最新状态。这种方案高度灵活，但重建状态可能很复杂，而且会损害可扩展性与性能等运行特性。无状态编排以工作流控制换取高性能，如表 <a href="#tbl-11-3" class="quarto-xref">表格&nbsp;<span>11.3</span></a> 所示。</p>
+</section>
+<section id="权衡-2" class="level4" data-number="11.2.1.2">
+<h4 data-number="11.2.1.2" class="anchored" data-anchor-id="权衡-2"><span class="header-section-number">11.2.1.2</span> 权衡</h4>
+<div id="tbl-11-3" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.3: 无状态编排的权衡
+</figcaption>
+<div aria-describedby="tbl-11-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>提供高性能与扩展能力</td>
+<td>必须即时构建工作流状态</td>
+</tr>
+<tr class="even">
+<td>高度解耦</td>
+<td>复杂工作流会使复杂度迅速上升</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>第三种方案使用<strong>印记耦合</strong>，把额外工作流状态存进服务间传递的消息契约，第 13 章会进一步介绍。每项领域服务更新整体状态中属于自己的部分，再把它传给责任链的下一项服务。这样，契约的任何消费者都能检查工作流状态，不必查询每项服务。</p>
+<p>这只是部分解决方案，因为用户仍然没有一个可以查询正在执行工作流状态的单一位置。不过，它让状态能够作为工作流的一部分在服务间传递，为每项服务提供可能有用的额外上下文。表 <a href="#tbl-11-4" class="quarto-xref">表格&nbsp;<span>11.4</span></a> 展示了印记耦合的权衡。</p>
+</section>
+<section id="权衡-3" class="level4" data-number="11.2.1.3">
+<h4 data-number="11.2.1.3" class="anchored" data-anchor-id="权衡-3"><span class="header-section-number">11.2.1.3</span> 权衡</h4>
+<div id="tbl-11-4" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.4: 印记耦合的权衡
+</figcaption>
+<div aria-describedby="tbl-11-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>领域服务可以传递工作流状态，无须额外查询状态所有者</td>
+<td>契约必须扩大以容纳工作流状态</td>
+</tr>
+<tr class="even">
+<td>不再需要前端控制器</td>
+<td>无法提供即时状态查询</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>第 13 章会介绍契约如何降低或增加编排式方案中的工作流耦合。</p>
+<p>编排式通信风格的一般优点包括：</p>
+<ul>
+<li><strong>响应速度</strong>：单一瓶颈更少，因此具有更多并行机会。</li>
+<li><strong>可扩展性</strong>：缺少协调器等协调点，可以进行更多独立扩展。</li>
+<li><strong>容错能力</strong>：没有单一协调器，架构师可以用多个实例提高容错能力。</li>
+<li><strong>服务解耦</strong>：没有协调器意味着耦合更少。</li>
+</ul>
+<p>一般缺点包括：</p>
+<ul>
+<li><strong>分布式工作流</strong>：没有工作流所有者，错误管理和其他边界情况更难处理。</li>
+<li><strong>状态管理</strong>：没有中央状态保存者，妨碍持续状态管理。</li>
+<li><strong>错误处理</strong>：没有协调器，领域服务必须掌握更多工作流知识，使错误处理更加困难。</li>
+<li><strong>可恢复性</strong>：没有协调器尝试重试和其他修复措施，恢复同样更困难。</li>
+</ul>
+<p>表 <a href="#tbl-11-5" class="quarto-xref">表格&nbsp;<span>11.5</span></a> 汇总了编排式通信风格的权衡。</p>
+</section>
+<section id="权衡-4" class="level4" data-number="11.2.1.4">
+<h4 data-number="11.2.1.4" class="anchored" data-anchor-id="权衡-4"><span class="header-section-number">11.2.1.4</span> 权衡</h4>
+<div id="tbl-11-5" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.5: 编排式通信风格的权衡
+</figcaption>
+<div aria-describedby="tbl-11-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>响应速度</td>
+<td>分布式工作流</td>
+</tr>
+<tr class="even">
+<td>可扩展性</td>
+<td>状态管理</td>
+</tr>
+<tr class="odd">
+<td>容错能力</td>
+<td>错误处理</td>
+</tr>
+<tr class="even">
+<td>服务解耦</td>
+<td>可恢复性</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+</section>
+<section id="协调与编排之间的权衡" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="协调与编排之间的权衡"><span class="header-section-number">11.3</span> 协调与编排之间的权衡</h2>
+<p>与软件架构中的所有事情一样，协调和编排都不是适用于所有可能性的完美方案。若干关键权衡会把架构师引向其中一种。</p>
+<section id="状态所有者与耦合" class="level3" data-number="11.3.1">
+<h3 data-number="11.3.1" class="anchored" data-anchor-id="状态所有者与耦合"><span class="header-section-number">11.3.1</span> 状态所有者与耦合</h3>
+<p>如图 <a href="#fig-11-13" class="quarto-xref">图&nbsp;<span>11.13</span></a> 所示，状态所有权通常位于某个地方：可能是充当协调器的正式中介者，也可能是编排方案中的前端控制器。编排移除中介者后，会迫使服务之间进行更多通信。这可能是完全合理的权衡。例如，如果工作流需要更高扩展能力，而且错误情况通常很少，就值得用编排的高扩展能力交换更复杂的错误处理。</p>
+<p>不过，随着工作流复杂度上升，对协调器的需求也成比例增长，如图 <a href="#fig-11-14" class="quarto-xref">图&nbsp;<span>11.14</span></a> 所示。工作流包含的语义复杂度越高，协调器就越实用。记住，实现耦合无法改善语义耦合，只会让它恶化。</p>
+<div id="fig-11-14" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-14.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.14: 随着工作流复杂度上升，协调变得更有用
+</figcaption>
+</figure>
+</div>
+<p>编排最适合既要求响应速度与可扩展性，又没有复杂错误场景或错误很少发生的工作流。它能提供高吞吐量，第 12 章的“传话 Saga（sac）”“时间旅行 Saga（sec）”和“选集 Saga（aec）”都使用这种风格。不过，它与其他力量混合后也可能造成极难实现的方案，形成“恐怖故事（aac）模式”。</p>
+<p>协调则最适合包含边界与错误情况的复杂工作流。它的扩展能力不如编排，却能在多数情况下显著降低复杂度。第 12 章的“史诗 Saga（sao）”“童话 Saga（seo）”“奇幻 Saga（aao）”与“并行 Saga（aeo）”都使用这种风格。</p>
+<p>协调是架构师决定微服务最佳通信方式时造成复杂度的主要力量之一。接下来，我们会研究它与另一项主要力量–一致性–怎样相交。</p>
+</section>
+</section>
+<section id="sysops-squad-案例管理工作流" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="sysops-squad-案例管理工作流"><span class="header-section-number">11.4</span> Sysops Squad 案例：管理工作流</h2>
+<p><em>3 月 15 日，星期四，11:00</em></p>
+<p>Addison 和 Austen 准时到达 Logan 的办公室，带着演示文稿和厨房里那只仪式感十足的咖啡壶。</p>
+<p>“准备好见我们了吗？”Addison 问。</p>
+<p>“当然，”Logan 说，“时间正好，我刚结束电话会议。你们准备讨论主要工单流程的工作流方案了吗？”</p>
+<p>“准备好了！”Austen 说，“我认为应该使用编排，但 Addison 认为应该协调，我们决定不了。”</p>
+<p>“先概述一下工作流。”</p>
+<p>“这是主要工单工作流，”Addison 说，“涉及四项服务，步骤如下。”</p>
+<p><strong>面向客户的操作</strong></p>
+<ol type="1">
+<li>客户通过工单管理服务提交故障工单，并取得工单编号。</li>
+</ol>
+<p><strong>后台操作</strong></p>
+<ol type="1">
+<li>工单分配服务为故障工单找到合适的 Sysops 专家。</li>
+<li>工单分配服务把故障工单路由到系统专家的移动设备。</li>
+<li>通知服务告知客户，Sysops 专家正在前往现场修复问题。</li>
+<li>专家解决问题并把工单标记为完成，结果发送给工单管理服务。</li>
+<li>工单管理服务与调查服务通信，请客户填写调查。</li>
+</ol>
+<p>“两种方案都建模了吗？”Logan 问。</p>
+<p>“是的。编排方案见图 <a href="#fig-11-15" class="quarto-xref">图&nbsp;<span>11.15</span></a>。”</p>
+<div id="fig-11-15" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-15.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.15: 以编排方式建模的主要工单流程
+</figcaption>
+</figure>
+</div>
+<p>“……协调方案见图 <a href="#fig-11-16" class="quarto-xref">图&nbsp;<span>11.16</span></a>。”</p>
+<div id="fig-11-16" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch11/fig-11-16.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11.16: 以协调方式建模的主要工单工作流
+</figcaption>
+</figure>
+</div>
+<p>Logan 看了一会儿两张图，然后说：“看起来没有显而易见的胜者。你们知道这意味着什么。”</p>
+<p>Austen 脱口而出：“权衡！”</p>
+<p>“当然，”Logan 笑了，“想想可能出现的场景，看看每种方案怎样应对。你们最关心什么？”</p>
+<p>“首先是工单丢失或路由错误，”Addison 说，“业务部门一直抱怨，这已经成为优先事项。”</p>
+<p>“哪一种更擅长处理：协调还是编排？”</p>
+<p>“协调器更容易控制工作流，我们可以在那里处理全部工作流问题。”Austen 主动回答。</p>
+<p>“好，把问题与首选方案记进表 <a href="#tbl-11-6" class="quarto-xref">表格&nbsp;<span>11.6</span></a>。”Logan 说。</p>
+<section id="权衡-5" class="level3" data-number="11.4.1">
+<h3 data-number="11.4.1" class="anchored" data-anchor-id="权衡-5"><span class="header-section-number">11.4.1</span> 权衡</h3>
+<div id="tbl-11-6" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.6: 工单工作流中协调与编排的权衡
+</figcaption>
+<div aria-describedby="tbl-11-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>协调</th>
+<th>编排</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>工作流控制</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>“下一项需要建模的问题是什么？”Addison 问。</p>
+<p>“我们需要随时知道故障工单的状态。业务部门要求这项功能，而且它也便于跟踪多项指标。这似乎意味着需要协调器，让我们能够查询工作流状态。”</p>
+<p>“但不一定非要协调器。我们可以查询任意服务，看看它是否已经处理工作流的特定部分，也可以使用印记耦合。”Addison 说。</p>
+<p>“没错，这不是零和游戏，”Logan 说，“两种方案都适合，或者都不适合，完全有可能。更新表 <a href="#tbl-11-7" class="quarto-xref">表格&nbsp;<span>11.7</span></a> 时给两者都记一项。”</p>
+</section>
+<section id="权衡-6" class="level3" data-number="11.4.2">
+<h3 data-number="11.4.2" class="anchored" data-anchor-id="权衡-6"><span class="header-section-number">11.4.2</span> 权衡</h3>
+<div id="tbl-11-7" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.7: 更新后的工单工作流协调与编排权衡
+</figcaption>
+<div aria-describedby="tbl-11-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>协调</th>
+<th>编排</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>工作流控制</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>状态查询</td>
+<td>状态查询</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>“好，还有什么？”</p>
+<p>“我只想到一项，”Addison 说，“客户可能取消工单；专家不可用、与专家移动设备失去连接，或者专家在客户现场延误时，也可能重新分配工单。因此，正确处理错误很重要。这意味着应该协调？”</p>
+<p>“通常是。复杂工作流总要放在某个地方，要么集中在协调器中，要么散布到多项服务里。把错误处理集中到一处很好。而编排在这里显然得分不高，所以按表 <a href="#tbl-11-8" class="quarto-xref">表格&nbsp;<span>11.8</span></a> 更新。”</p>
+</section>
+<section id="权衡-7" class="level3" data-number="11.4.3">
+<h3 data-number="11.4.3" class="anchored" data-anchor-id="权衡-7"><span class="header-section-number">11.4.3</span> 权衡</h3>
+<div id="tbl-11-8" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-11-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;11.8: 工单工作流协调与编排的最终权衡
+</figcaption>
+<div aria-describedby="tbl-11-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>协调</th>
+<th>编排</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>工作流控制</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>状态查询</td>
+<td>状态查询</td>
+</tr>
+<tr class="odd">
+<td>错误处理</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>“看起来不错。还有吗？”</p>
+<p>“没有其他不明显的问题了，”Addison 说，“我们会写进 ADR；以后想到其他问题，可以继续补充。”</p>
+<div class="callout callout-style-default callout-note callout-titled" title="ADR：主要工单工作流采用协调">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ADR：主要工单工作流采用协调
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>背景</strong></p>
+<p>主要工单工作流必须支持轻松跟踪丢失或错误追踪的消息、出色的错误处理，以及工单状态跟踪。图 <a href="#fig-11-16" class="quarto-xref">图&nbsp;<span>11.16</span></a> 的协调方案或图 <a href="#fig-11-15" class="quarto-xref">图&nbsp;<span>11.15</span></a> 的编排方案都可以工作。</p>
+<p><strong>决策</strong></p>
+<p>主要工单工作流将采用协调。</p>
+<p>我们对协调与编排进行了建模，得出表 <a href="#tbl-11-8" class="quarto-xref">表格&nbsp;<span>11.8</span></a> 所列的权衡。</p>
+<p><strong>后果</strong></p>
+<p>工单工作流可能会因单一协调器遇到可扩展性问题。如果当前扩展要求发生变化，应重新评估这项决策。</p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./10-distributed-data-access.html" class="pagination-link" aria-label="分布式数据访问">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./12-transactional-sagas.html" class="pagination-link" aria-label="事务型 Saga">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

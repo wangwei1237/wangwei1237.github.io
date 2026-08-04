@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 1&nbsp; 没有“最佳实践”时会发生什么？</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./02-discerning-coupling.html" rel="next">
+<link href="./00-preface.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-no-best-practices.html">第一部分 拆分</a></li><li class="breadcrumb-item"><a href="./01-no-best-practices.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#为什么叫难点" id="toc-为什么叫难点" class="nav-link active" data-scroll-target="#为什么叫难点"><span class="header-section-number">1.1</span> 为什么叫“难点”？</a></li>
+  <li><a href="#给出经得起时间考验的软件架构建议" id="toc-给出经得起时间考验的软件架构建议" class="nav-link" data-scroll-target="#给出经得起时间考验的软件架构建议"><span class="header-section-number">1.2</span> 给出经得起时间考验的软件架构建议</a></li>
+  <li><a href="#数据在架构中的重要性" id="toc-数据在架构中的重要性" class="nav-link" data-scroll-target="#数据在架构中的重要性"><span class="header-section-number">1.3</span> 数据在架构中的重要性</a></li>
+  <li><a href="#架构决策记录" id="toc-架构决策记录" class="nav-link" data-scroll-target="#架构决策记录"><span class="header-section-number">1.4</span> 架构决策记录</a>
+  <ul class="collapse">
+  <li><a href="#adr包含架构决策的简短名词短语" id="toc-adr包含架构决策的简短名词短语" class="nav-link" data-scroll-target="#adr包含架构决策的简短名词短语"><span class="header-section-number">1.4.1</span> ADR：包含架构决策的简短名词短语</a></li>
+  </ul></li>
+  <li><a href="#架构适应度函数" id="toc-架构适应度函数" class="nav-link" data-scroll-target="#架构适应度函数"><span class="header-section-number">1.5</span> 架构适应度函数</a>
+  <ul class="collapse">
+  <li><a href="#使用适应度函数" id="toc-使用适应度函数" class="nav-link" data-scroll-target="#使用适应度函数"><span class="header-section-number">1.5.1</span> 使用适应度函数</a></li>
+  </ul></li>
+  <li><a href="#架构与设计保持定义简单" id="toc-架构与设计保持定义简单" class="nav-link" data-scroll-target="#架构与设计保持定义简单"><span class="header-section-number">1.6</span> 架构与设计：保持定义简单</a></li>
+  <li><a href="#sysops-squad-传奇登场" id="toc-sysops-squad-传奇登场" class="nav-link" data-scroll-target="#sysops-squad-传奇登场"><span class="header-section-number">1.7</span> Sysops Squad 传奇登场</a>
+  <ul class="collapse">
+  <li><a href="#非工单工作流" id="toc-非工单工作流" class="nav-link" data-scroll-target="#非工单工作流"><span class="header-section-number">1.7.1</span> 非工单工作流</a></li>
+  <li><a href="#工单工作流" id="toc-工单工作流" class="nav-link" data-scroll-target="#工单工作流"><span class="header-section-number">1.7.2</span> 工单工作流</a></li>
+  <li><a href="#糟糕的现状" id="toc-糟糕的现状" class="nav-link" data-scroll-target="#糟糕的现状"><span class="header-section-number">1.7.3</span> 糟糕的现状</a></li>
+  <li><a href="#sysops-squad-架构组件" id="toc-sysops-squad-架构组件" class="nav-link" data-scroll-target="#sysops-squad-架构组件"><span class="header-section-number">1.7.4</span> Sysops Squad 架构组件</a></li>
+  <li><a href="#sysops-squad-数据模型" id="toc-sysops-squad-数据模型" class="nav-link" data-scroll-target="#sysops-squad-数据模型"><span class="header-section-number">1.7.5</span> Sysops Squad 数据模型</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-no-best-practices.html">第一部分 拆分</a></li><li class="breadcrumb-item"><a href="./01-no-best-practices.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>为什么软件架构师这样的技术人员会在会议上演讲，或者写一本书？因为他们发现了俗称“最佳实践”的东西。这个词已经被滥用到一种程度，以至于说出它的人越来越容易遭到反感。不论用什么称呼，当技术人员找到某个普遍问题的新颖解法，并希望让更多人知道时，他们就会写书。</p>
+<p>然而，那一大类根本没有良好解法的问题又该怎么办？软件架构中存在许多成类的问题，它们没有普遍适用的好答案，摆在面前的只是一组杂乱的权衡，与另一组（几乎）同样杂乱的权衡彼此对立。</p>
+<p>软件开发人员很擅长上网搜索当前问题的答案。例如，当他们需要弄清楚如何在自己的环境中配置某个工具时，熟练使用 Google 通常就能找到答案。</p>
+<p>但架构师并非如此。</p>
+<p>架构师面对的许多问题之所以独特，是因为它们揉合了组织自身精确的环境和具体情形。某个人恰好遇到完全相同的场景，还把它写进博客或贴到 Stack Overflow 上的概率能有多大？</p>
+<p>架构师或许曾经疑惑：与框架、API 等技术主题相比，为什么架构类图书这么少？架构师很少遇到共通的问题，却必须不断在新情形下艰难决策。对架构师而言，每个问题都像一片独一无二的雪花。很多时候，问题不只对某个组织而言是新的，在全世界范围内也是新的。这样的难题没有现成的书，也没有现成的会议演讲可以参考。</p>
+<p>架构师不应不停寻找能解决问题的“银弹”。银弹如今仍和 1986 年 Fred Brooks 创造这个说法时一样罕见：</p>
+<blockquote class="blockquote">
+<p>无论在技术还是管理方法上，都不存在某一项单独的发展，能够保证在十年内让生产率、可靠性或简洁性提高一个数量级（十倍）。</p>
+<p>—Fred Brooks，《没有银弹》</p>
+</blockquote>
+<p>几乎每个问题都会带来新的挑战，因此架构师真正的工作，是客观识别和评估一项重大决策两侧的全部权衡，并尽可能妥善地解决问题。本书和现实工作中都不谈“最佳方案”，因为“最佳”意味着架构师已经把设计中所有相互竞争的因素同时最大化。我们半开玩笑地给出这样的建议：</p>
+<div class="callout callout-style-default callout-important callout-titled" title="架构建议">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+架构建议
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>不要试图在软件架构中寻找最佳设计；应当努力寻找权衡组合中最不坏的那一种。</p>
+</div>
+</div>
+<p>架构师所能创造的最佳设计，往往就是一组“最不坏”的权衡：没有任何单项架构特征能像单独优化时那样出众，但所有相互竞争的架构特征取得平衡，才会推动项目成功。</p>
+<p>这就引出了一个问题：“架构师如何找到最不坏的权衡组合，并有效地记录下来？”本书主要讨论决策，帮助架构师在面对新情形时作出更好的决定。</p>
+<section id="为什么叫难点" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="为什么叫难点"><span class="header-section-number">1.1</span> 为什么叫“难点”？</h2>
+<p>为什么我们把本书命名为《软件架构：难点》？标题中的“难”其实有双重含义。</p>
+<p>第一，它表示困难。架构师不断面对一些从字面上和比喻意义上都前所未有的难题：其中包含许多会产生长期影响的技术决策，而这些决策又叠加在人际关系和组织政治环境之上。</p>
+<p>第二，它表示坚硬、稳固。正如硬件与软件的区分，坚硬的部分变化得应当少得多，因为它为柔软的部分提供基础。与此类似，架构师也会区分架构与设计：前者关乎结构，后者更容易改变。因此，本书讨论的是架构中具有基础性的部分。</p>
+<p>“软件架构”的定义本身，已经让从业者耗费了无数小时做毫无成果的争论。一个颇受欢迎的戏谑定义是：“软件架构，就是那些以后很难改变的东西。”这些“东西”，正是本书要讨论的内容。</p>
+</section>
+<section id="给出经得起时间考验的软件架构建议" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="给出经得起时间考验的软件架构建议"><span class="header-section-number">1.2</span> 给出经得起时间考验的软件架构建议</h2>
+<p>软件开发生态系统一直在混乱地变化和扩张。几年前还炙手可热的主题，要么已经被生态系统吸收而消失，要么被不同或更好的事物取代。</p>
+<p>例如，十年前，大型企业占主导地位的架构风格是由编排驱动的面向服务架构。如今几乎没有人再采用这种风格（原因会在后文逐步揭示）；当前许多分布式系统青睐的是微服务。这样的转变为何发生，又是如何发生的？</p>
+<p>架构师考察一种特定风格——尤其是历史上的风格——时，必须考虑当时有哪些约束，使它成为主流。当时许多公司正在通过合并发展成大型企业，同时承受转型带来的各种集成难题。此外，对大公司而言，开源软件不是可行选项，原因往往更多在政治而非技术。因此，架构师把共享资源和集中式编排作为解决方案的重点。</p>
+<p>然而，此后开源软件和 Linux 逐渐成为可行替代方案，让操作系统在商业意义上变得免费。真正的转折点，则是 Puppet、Chef 等工具出现之后，Linux 在运维意义上也变得“免费”：开发团队可以把环境的创建写成程序，作为自动化构建的一部分。有了这种能力，微服务引发了一场架构革命，容器以及 Kubernetes 等编排工具的基础设施也迅速兴起。</p>
+<p>这说明软件开发生态系统会以完全出人意料的方式扩张和演化。一项新能力带来另一项能力，后者又意外创造更多能力。随着时间推移，生态系统逐件替换自身，最后焕然一新。</p>
+<p>这给一般技术图书、尤其是软件架构图书的作者带来一个古老难题：怎样才能写出一本不会立刻过时的书？</p>
+<p>本书不把重点放在具体技术或其他实现细节上，而是关注架构师如何决策，以及在面对新情形时如何客观衡量权衡。我们使用当下的场景和例子提供细节与语境，但其底层原则始终是：遇到新问题时如何做权衡分析与决策。</p>
+</section>
+<section id="数据在架构中的重要性" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="数据在架构中的重要性"><span class="header-section-number">1.3</span> 数据在架构中的重要性</h2>
+<blockquote class="blockquote">
+<p>数据十分珍贵，而且会比系统本身存在得更久。</p>
+<p>—Tim Berners-Lee</p>
+</blockquote>
+<p>对许多架构从业者来说，数据就是一切。任何构建系统的企业都必须处理数据；数据往往比系统或架构存在得更久，因此需要审慎思考和设计。然而，数据架构师构建紧耦合系统的许多本能，会与现代分布式架构发生冲突。例如，架构师和数据库管理员必须确保业务数据能在单体系统拆分过程中幸存下来，并确保无论架构如何变化，企业仍能从数据中获得价值。</p>
+<p>人们常说，数据是公司最重要的资产。企业希望从已有数据中提取价值，并不断寻找让数据参与决策的新方式。企业的每个部分如今都由数据驱动：服务现有客户、获取新客户、提高客户留存、改进产品、预测销售以及发现其他趋势。对数据的这种依赖意味着，一切软件架构都服务于数据，确保企业各个部分都能获得并使用正确的数据。</p>
+<p>分布式系统刚流行的几十年前，本书作者构建过许多这样的系统。但现代微服务中的决策似乎更加困难，我们想弄清原因。最终我们意识到，在分布式架构早期，大多数数据仍然保存在一个关系数据库中。到了微服务时代，人们遵循领域驱动设计中的<em>限界上下文</em>理念，以限制实现细节耦合的范围，数据和事务性也随之上升为架构问题。现代架构的许多难点，都源于数据问题与架构问题之间的张力。第一部分和第二部分会分别拆解这些张力。</p>
+<p>本书多个章节都会涉及一项重要区分：操作型数据与分析型数据的分离。</p>
+<dl>
+<dt>操作型数据</dt>
+<dd>
+<p>用于企业日常运营的数据，包括销售数据、交易数据、库存等。公司依靠这些数据运转；一旦它们中断，组织很快就会无法正常工作。这类数据属于在线事务处理（Online Transactional Processing，OLTP）数据，通常涉及在数据库中插入、更新和删除数据。</p>
+</dd>
+<dt>分析型数据</dt>
+<dd>
+<p>数据科学家和其他业务分析人员用于预测、趋势分析以及其他商业智能用途的数据。这类数据通常不具备事务性，而且往往不是关系型的；它可能位于图数据库中，也可能是格式不同于原始事务形式的快照。它对日常运营并不关键，却影响企业长期的战略方向与决策。</p>
+</dd>
+</dl>
+<p>全书都会讨论这两类数据所产生的影响。</p>
+</section>
+<section id="架构决策记录" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="架构决策记录"><span class="header-section-number">1.4</span> 架构决策记录</h2>
+<p>记录架构决策最有效的方式之一，是使用架构决策记录（Architectural Decision Record，ADR）。Michael Nygard 最先在一篇博客文章中大力推广 ADR，Thoughtworks 技术雷达后来将其标记为“采用”。一份 ADR 是一个简短的文本文件，通常只有一到两页，用来描述一项具体的架构决策。ADR 可以采用纯文本，但通常使用 AsciiDoc、Markdown 等文本文档格式，也可以使用 Wiki 页面模板。我们在前一本书《软件架构基础》中用了一整章介绍 ADR。</p>
+<p>本书会用 ADR 记录贯穿全书的各种架构决策。假定每项 ADR 均获批准，我们采用以下格式：</p>
+<section id="adr包含架构决策的简短名词短语" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="adr包含架构决策的简短名词短语"><span class="header-section-number">1.4.1</span> ADR：包含架构决策的简短名词短语</h3>
+<section id="背景" class="level4" data-number="1.4.1.1">
+<h4 data-number="1.4.1.1" class="anchored" data-anchor-id="背景"><span class="header-section-number">1.4.1.1</span> 背景</h4>
+<p>用一到两句话简要说明问题，并列出可选解决方案。</p>
+</section>
+<section id="决策" class="level4" data-number="1.4.1.2">
+<h4 data-number="1.4.1.2" class="anchored" data-anchor-id="决策"><span class="header-section-number">1.4.1.2</span> 决策</h4>
+<p>陈述架构决策，并详细说明作出该决策的理由。</p>
+</section>
+<section id="后果" class="level4" data-number="1.4.1.3">
+<h4 data-number="1.4.1.3" class="anchored" data-anchor-id="后果"><span class="header-section-number">1.4.1.3</span> 后果</h4>
+<p>说明决策实施后的后果，并讨论决策过程中考虑的权衡。</p>
+<p>本书创建的全部架构决策记录见附录 B。</p>
+<p>对架构师而言，记录决策很重要；治理决策能否被正确采用，则是另一个问题。幸运的是，现代工程实践可以借助架构适应度函数，自动完成许多常见的治理工作。</p>
+</section>
+</section>
+</section>
+<section id="架构适应度函数" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="架构适应度函数"><span class="header-section-number">1.5</span> 架构适应度函数</h2>
+<p>架构师识别出组件之间的关系并把它们固化到设计之后，如何保证实施人员遵循这项设计？更广泛地说，如果架构师并不亲自实施，又该如何确保自己定义的设计原则成为现实？</p>
+<p>这些问题属于<em>架构治理</em>，即对软件开发一个或多个方面进行有组织的监督。本书主要讨论架构结构，因此会在多处介绍如何用适应度函数自动落实设计原则和质量原则。</p>
+<p>软件开发经过缓慢演化，逐渐形成了独特的工程实践。早期的软件开发经常套用制造业隐喻，大到瀑布式开发流程，小到项目的集成方式皆是如此。20 世纪 90 年代初，Kent Beck 和 C3 项目的其他工程师重新思考软件开发工程实践，提出极限编程（eXtreme Programming，XP），证明增量反馈与自动化是提高软件开发生产率的关键。21 世纪初，同样的经验被用在软件开发与运维的交汇处，催生了 DevOps 这一新角色，并把许多原先手工执行的运维杂务自动化。与此前一样，自动化让团队能放心提速，因为良好的反馈机制可以及时发现破坏。因此，自动化和反馈已经成为高效软件开发的核心信条。</p>
+<p>想想那些促成自动化突破的环境与情形。在持续集成出现之前，大多数软件项目都有漫长的集成阶段。每位开发人员要先在一定程度上独立工作，最后再把全部代码合入集成阶段。强迫开发者建立分支、妨碍持续集成的版本控制工具中，至今仍残留着这种实践的痕迹。不出所料，项目规模越大，集成阶段就越痛苦，两者高度相关。XP 团队开创持续集成，展示了快速、持续反馈的价值。</p>
+<p>DevOps 革命走过了相似的道路。Linux 和其他开源软件对企业而言变得“足够好”，再加上可以用程序定义机器（最终是虚拟机）的工具出现，运维人员意识到，他们可以把机器定义以及许多重复工作自动化。</p>
+<p>在这两个案例中，技术与认知的进步，使原本由昂贵角色负责的重复工作实现了自动化——这恰好描述了大多数组织中架构治理的现状。例如，架构师选择了某种架构风格或通信媒介之后，怎样确保开发人员正确实现？手工治理时，架构师会审查代码，或召开架构评审委员会来评估治理状况。然而，就像手工配置运维机器一样，肤浅的审查很容易遗漏重要细节。</p>
+<section id="使用适应度函数" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="使用适应度函数"><span class="header-section-number">1.5.1</span> 使用适应度函数</h3>
+<p>在 2017 年出版的《演进式架构》（<em>Building Evolutionary Architectures</em>，O’Reilly）中，Neal Ford、Rebecca Parsons 和 Patrick Kua 将<em>架构适应度函数</em>定义为：<strong>对某项架构特征或一组架构特征进行客观完整性评估的任何机制</strong>。下面逐项拆解这一定义。</p>
+<dl>
+<dt>任何机制</dt>
+<dd>
+<p>架构师可以使用多种工具实现适应度函数，本书会给出许多例子。例如，专用测试库可以测试架构结构；监控工具可以测试性能、可伸缩性等运行期架构特征；混沌工程框架则可以测试可靠性和韧性。</p>
+</dd>
+<dt>客观完整性评估</dt>
+<dd>
+<p>自动化治理的一项关键条件，是客观定义架构特征。架构师不能只说希望网站“性能很高”；他们必须给出能被测试、监控或其他适应度函数测量的客观数值。</p>
+</dd>
+<dd>
+<p>架构师还必须警惕<em>复合架构特征</em>。这类特征本身无法客观测量，实际上是其他可测量事物的组合。例如，“敏捷性”无法直接测量；但拆解这个宽泛术语后，其目标其实是让团队能够快速而有信心地响应生态系统或领域中的变化。于是，架构师就能找到对敏捷性有贡献的可测特征：可部署性、可测试性、周期时间等。架构特征无法测量，往往说明定义过于模糊。追求可测量属性，才能让适应度函数的应用自动化。</p>
+</dd>
+<dt>某项架构特征或一组架构特征</dt>
+<dd>
+<p>这句话描述了适应度函数的两种作用范围：</p>
+</dd>
+<dd>
+<p><strong>原子型。</strong> 此类适应度函数单独处理一项架构特征。例如，检查代码库中是否存在组件环的适应度函数，其范围就是原子型的。</p>
+</dd>
+<dd>
+<p><strong>整体型。</strong> 此类适应度函数验证一组架构特征。架构特征有时会与其他特征产生协同作用，使问题更加复杂。例如，架构师想提高安全性时，很可能会影响性能；可伸缩性与弹性有时也相互冲突——支持大量并发用户，可能让系统更难应对突发流量。整体型适应度函数会同时检验彼此关联的一组架构特征，确保组合后的效果不会对架构产生负面影响。</p>
+</dd>
+</dl>
+<p>架构师实现适应度函数，是为了保护架构特征免受意外变化。在敏捷软件开发中，开发人员通过单元测试、功能测试和用户验收测试来验证领域设计的不同维度；但直到最近，都没有相应机制验证设计中的架构特征。事实上，适应度函数与单元测试之间的分界，可以为架构师提供很好的范围判断方法：适应度函数验证架构特征，而不是领域准则；单元测试恰好相反。要判断需要适应度函数还是单元测试，架构师可以问：“执行这个测试是否需要领域知识？”如果答案是“是”，应使用单元测试、功能测试或用户验收测试；如果答案是“否”，则需要适应度函数。</p>
+<p>例如，架构师所说的弹性，是应用承受用户量突然激增的能力。架构师不需要知道任何领域细节——它可能是电商网站、在线游戏或其他系统。因此，弹性是架构问题，属于适应度函数的范围。另一方面，如果架构师想验证邮寄地址是否包含正确的组成部分，就应使用传统测试。当然，两者并非纯粹的二元划分：有些适应度函数会涉及领域，反之亦然；但目标上的差异提供了一种很好的心智分界。</p>
+<p>下面用几个例子让这个概念更具体。</p>
+<p>架构师的一个常见目标，是让代码库保持良好的内部结构完整性。然而，在许多平台上，某些“恶意力量”会与架构师的良好意图作对。例如，在任何流行的 Java 或 .NET 开发环境中编写代码时，只要开发人员引用了尚未导入的类，IDE 就会贴心地弹出对话框，询问是否自动导入。这样的事情发生得太频繁，多数程序员已经养成条件反射般点掉自动导入提示的习惯。</p>
+<p>然而，在类或组件之间随意导入，会给模块化带来灾难。图 <a href="#fig-1-1" class="quarto-xref">图&nbsp;<span>1.1</span></a> 展示了架构师竭力避免的一种破坏性反模式。</p>
+<div id="fig-1-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-1-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch01/fig-1-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1.1: 组件之间的循环依赖
+</figcaption>
+</figure>
+</div>
+<p>在这种反模式中，每个组件都引用另外两个组件中的内容。这样的组件网络会破坏模块化，因为开发人员无法在不带上其他组件的情况下复用其中任何一个。当然，如果其他组件还与更多组件耦合，架构就会越来越接近“大泥球”反模式。架构师怎样才能治理这种行为，而不必时刻站在那些“手快”开发人员身后监督？代码审查有所帮助，但它在开发周期中发生得太晚，难以真正奏效。如果架构师允许开发团队在一周内肆意跨越代码库导入，直到代码审查才处理，代码库早已遭到严重破坏。</p>
+<p>解决方法是编写一个避免组件成环的适应度函数，如示例 1-1 所示。</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>示例 1-1：检测组件环的适应度函数</strong></pre>
+</div>
+<div class="sourceCode" id="lst-cycle-test" data-filename="示例 1-1：检测组件环的适应度函数"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-cycle-test-1"><a href="#lst-cycle-test-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> CycleTest <span class="op">{</span></span>
+<span id="lst-cycle-test-2"><a href="#lst-cycle-test-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> JDepend jdepend<span class="op">;</span></span>
+<span id="lst-cycle-test-3"><a href="#lst-cycle-test-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-cycle-test-4"><a href="#lst-cycle-test-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@BeforeEach</span></span>
+<span id="lst-cycle-test-5"><a href="#lst-cycle-test-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">init</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="lst-cycle-test-6"><a href="#lst-cycle-test-6" aria-hidden="true" tabindex="-1"></a>        jdepend <span class="op">=</span> <span class="kw">new</span> <span class="fu">JDepend</span><span class="op">();</span></span>
+<span id="lst-cycle-test-7"><a href="#lst-cycle-test-7" aria-hidden="true" tabindex="-1"></a>        jdepend<span class="op">.</span><span class="fu">addDirectory</span><span class="op">(</span><span class="st">"/path/to/project/persistence/classes"</span><span class="op">);</span></span>
+<span id="lst-cycle-test-8"><a href="#lst-cycle-test-8" aria-hidden="true" tabindex="-1"></a>        jdepend<span class="op">.</span><span class="fu">addDirectory</span><span class="op">(</span><span class="st">"/path/to/project/web/classes"</span><span class="op">);</span></span>
+<span id="lst-cycle-test-9"><a href="#lst-cycle-test-9" aria-hidden="true" tabindex="-1"></a>        jdepend<span class="op">.</span><span class="fu">addDirectory</span><span class="op">(</span><span class="st">"/path/to/project/thirdpartyjars"</span><span class="op">);</span></span>
+<span id="lst-cycle-test-10"><a href="#lst-cycle-test-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-cycle-test-11"><a href="#lst-cycle-test-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-cycle-test-12"><a href="#lst-cycle-test-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Test</span></span>
+<span id="lst-cycle-test-13"><a href="#lst-cycle-test-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">testAllPackages</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="lst-cycle-test-14"><a href="#lst-cycle-test-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Collection</span> packages <span class="op">=</span> jdepend<span class="op">.</span><span class="fu">analyze</span><span class="op">();</span></span>
+<span id="lst-cycle-test-15"><a href="#lst-cycle-test-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">assertEquals</span><span class="op">(</span><span class="st">"Cycles exist"</span><span class="op">,</span> <span class="kw">false</span><span class="op">,</span> jdepend<span class="op">.</span><span class="fu">containsCycles</span><span class="op">());</span></span>
+<span id="lst-cycle-test-16"><a href="#lst-cycle-test-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-cycle-test-17"><a href="#lst-cycle-test-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>这段代码使用度量工具 JDepend 检查包之间的依赖。该工具理解 Java 包结构；如果存在环，测试就会失败。架构师可以把这项测试接入项目的持续构建，从而不再担心开发人员无意中引入循环依赖。这是适应度函数保护软件开发中“重要但不紧急”实践的绝佳例子：它对架构师十分重要，却几乎不影响日常编码。</p>
+<p>示例 1-1 是一个很底层、以代码为中心的适应度函数。许多流行的代码卫生工具（如 SonarQube）已经以开箱即用的方式实现了大量常见适应度函数。不过，架构师除了验证微观结构，可能还希望验证架构的宏观结构。设计图 <a href="#fig-1-2" class="quarto-xref">图&nbsp;<span>1.2</span></a> 所示的分层架构时，架构师通过定义层来确保关注点分离。</p>
+<div id="fig-1-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-1-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch01/fig-1-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1.2: 传统分层架构
+</figcaption>
+</figure>
+</div>
+<p>但架构师如何确保开发人员尊重这些层？有些开发人员可能不了解模式的重要性；另一些人则可能因为性能等局部问题，采取“先斩后奏”的态度。可一旦允许实现人员侵蚀架构存在的理由，架构的长期健康就会受损。</p>
+<p>ArchUnit 能让架构师通过适应度函数处理这个问题，如示例 1-2 所示。</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>示例 1-2：治理分层的 ArchUnit 适应度函数</strong></pre>
+</div>
+<div class="sourceCode" id="lst-archunit" data-filename="示例 1-2：治理分层的 ArchUnit 适应度函数"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-archunit-1"><a href="#lst-archunit-1" aria-hidden="true" tabindex="-1"></a><span class="fu">layeredArchitecture</span><span class="op">()</span></span>
+<span id="lst-archunit-2"><a href="#lst-archunit-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">layer</span><span class="op">(</span><span class="st">"Controller"</span><span class="op">).</span><span class="fu">definedBy</span><span class="op">(</span><span class="st">"..controller.."</span><span class="op">)</span></span>
+<span id="lst-archunit-3"><a href="#lst-archunit-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">layer</span><span class="op">(</span><span class="st">"Service"</span><span class="op">).</span><span class="fu">definedBy</span><span class="op">(</span><span class="st">"..service.."</span><span class="op">)</span></span>
+<span id="lst-archunit-4"><a href="#lst-archunit-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">layer</span><span class="op">(</span><span class="st">"Persistence"</span><span class="op">).</span><span class="fu">definedBy</span><span class="op">(</span><span class="st">"..persistence.."</span><span class="op">)</span></span>
+<span id="lst-archunit-5"><a href="#lst-archunit-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">whereLayer</span><span class="op">(</span><span class="st">"Controller"</span><span class="op">).</span><span class="fu">mayNotBeAccessedByAnyLayer</span><span class="op">()</span></span>
+<span id="lst-archunit-6"><a href="#lst-archunit-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">whereLayer</span><span class="op">(</span><span class="st">"Service"</span><span class="op">).</span><span class="fu">mayOnlyBeAccessedByLayers</span><span class="op">(</span><span class="st">"Controller"</span><span class="op">)</span></span>
+<span id="lst-archunit-7"><a href="#lst-archunit-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">whereLayer</span><span class="op">(</span><span class="st">"Persistence"</span><span class="op">).</span><span class="fu">mayOnlyBeAccessedByLayers</span><span class="op">(</span><span class="st">"Service"</span><span class="op">)</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>在示例 1-2 中，架构师定义层之间期望的关系，并编写验证用的适应度函数来治理它。这样，架构师就能把架构原则从图表和其他说明性制品中提取出来，并持续验证。</p>
+<p>.NET 领域的类似工具 NetArchTest 可以为该平台执行同类测试。示例 1-3 展示了 C# 中的分层验证。</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>示例 1-3：使用 NetArchTest 验证层依赖</strong></pre>
+</div>
+<div class="sourceCode" id="lst-netarchtest" data-filename="示例 1-3：使用 NetArchTest 验证层依赖"><pre class="sourceCode csharp code-with-copy"><code class="sourceCode cs"><span id="lst-netarchtest-1"><a href="#lst-netarchtest-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 表示层中的类不应直接引用存储库</span></span>
+<span id="lst-netarchtest-2"><a href="#lst-netarchtest-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> result <span class="op">=</span> Types<span class="op">.</span><span class="fu">InCurrentDomain</span><span class="op">()</span></span>
+<span id="lst-netarchtest-3"><a href="#lst-netarchtest-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">That</span><span class="op">()</span></span>
+<span id="lst-netarchtest-4"><a href="#lst-netarchtest-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">ResideInNamespace</span><span class="op">(</span><span class="st">"NetArchTest.SampleLibrary.Presentation"</span><span class="op">)</span></span>
+<span id="lst-netarchtest-5"><a href="#lst-netarchtest-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">ShouldNot</span><span class="op">()</span></span>
+<span id="lst-netarchtest-6"><a href="#lst-netarchtest-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">HaveDependencyOn</span><span class="op">(</span><span class="st">"NetArchTest.SampleLibrary.Data"</span><span class="op">)</span></span>
+<span id="lst-netarchtest-7"><a href="#lst-netarchtest-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">GetResult</span><span class="op">()</span></span>
+<span id="lst-netarchtest-8"><a href="#lst-netarchtest-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">IsSuccessful</span><span class="op">;</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>这一领域仍在不断出现成熟度越来越高的工具。后文在解决方案旁说明适应度函数时，会继续介绍许多这样的技术。</p>
+<p>为适应度函数找到客观结果至关重要，但“客观”并不意味着“静态”。有些适应度函数返回与上下文无关的值，例如真/假，或性能阈值这样的数字；另一些被称为<em>动态适应度函数</em>，会根据某种上下文返回结果。例如，衡量可伸缩性时，架构师既测量并发用户数，通常也测量每位用户得到的性能。系统设计往往允许并发用户增加时单用户性能略有下降，却不能断崖式下跌。因此，架构师会设计把并发用户数纳入考虑的性能适应度函数。只要架构特征的度量是客观的，就可以测试。</p>
+<p>大多数适应度函数都应自动执行并持续运行，但有些必然要由人工完成。<em>手工适应度函数</em>需要人来实施验证。例如，对包含敏感法律信息的系统，律师可能必须审阅关键部分的变更，确认其合法性；这无法自动化。多数部署流水线都支持手工阶段，团队可以借此容纳手工适应度函数。理想情况下，应在合理范围内尽可能频繁地执行它们——不运行的验证什么也验证不了。团队可以按需执行适应度函数（较少见），也可以把它们纳入持续集成工作流（最常见）。要充分获得适应度函数等验证机制的收益，就应持续运行它们。</p>
+<p>持续性非常重要，下面这个用适应度函数做企业级治理的案例可以说明这一点。设想这样的场景：企业所用的某个开发框架或库被发现零日漏洞时，公司该怎么办？大多数公司的安全专家会搜查各个项目，找出使用有问题版本的项目并确保升级。但这个过程很少自动化，依赖许多手工步骤。这不是一个抽象问题；大型金融机构 Equifax 的真实数据泄露事件正是如此。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Equifax 数据泄露事件">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Equifax 数据泄露事件
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>2017 年 9 月 7 日，美国大型征信机构 Equifax 宣布发生数据泄露。问题最终追溯到 Java 生态中流行的 Struts Web 框架所遭受的攻击利用（Apache Struts CVE-2017-5638）。基金会于 2017 年 3 月 7 日发布声明公布漏洞并提供补丁。美国国土安全部第二天联系 Equifax 等公司发出警告；Equifax 在 3 月 15 日运行扫描，却没有发现所有受影响系统。因此，许多旧系统直到 2017 年 7 月 29 日才打上这个关键补丁；那一天，Equifax 的安全专家识别出了导致数据泄露的攻击行为。</p>
+</div>
+</div>
+<p>想象另一个世界：每个项目都运行部署流水线，安全团队在每个团队的流水线中都有一个可以部署适应度函数的“插槽”。大多数时候，其中运行的是一些平常检查，例如防止开发人员把密码存进数据库，以及其他常规治理工作。但零日漏洞出现时，由于处处都有相同机制，安全团队可以向每个项目插入一项测试，检查特定框架及版本号。一旦找到危险版本，就让构建失败并通知安全团队。团队把部署流水线配置为在生态系统发生任何变化时唤醒，无论变化来自代码、数据库模式、部署配置还是适应度函数。这样，企业就能全面自动化重要的治理任务。</p>
+<p>适应度函数给架构师带来许多好处，其中之一甚至是再次写代码的机会。架构师普遍抱怨自己不再有太多机会写代码，但适应度函数往往就是代码。通过构建一份可执行的架构规范，让任何人都能随时运行项目构建来验证，架构师必须充分理解系统及其持续演化。这与“随着项目成长，始终跟上项目代码”这一核心目标高度重合。</p>
+<p>适应度函数再强大，架构师也应避免滥用。架构师不应组成小圈子，躲进象牙塔，构建一套复杂得不可思议、彼此环环相扣、只会让开发人员和团队受挫的适应度函数。它应该帮助架构师为软件项目中“重要但不紧急”的原则建立可执行检查清单。许多项目被紧急事务淹没，让某些重要原则从缝隙中溜走。这常常就是技术债的来源：“我们知道这样不好，但以后会回来修复”——而“以后”从未到来。把代码质量、结构以及防止腐化的其他规则固化为持续运行的适应度函数，架构师就建立了一份开发人员无法跳过的质量清单。</p>
+<p>Atul Gawande 的优秀著作《清单革命》（<em>The Checklist Manifesto</em>）强调了清单在外科医生、飞行员等专业人士中的用途。这些领域把清单作为工作的一部分，有时甚至由法律强制要求。原因并不是他们不懂自己的工作，或特别健忘；而是专业人士反复执行同一项任务时，很容易误以为自己已经做过某一步，清单可以防止这种情况。适应度函数就是一份由架构师定义的重要原则清单，随构建一起运行，确保开发人员不会无意中跳过这些原则，也不会因为进度压力等外部因素而故意绕过。</p>
+<p>全书都会抓住机会使用适应度函数，既说明架构解决方案的初始设计，也说明如何治理它。</p>
+</section>
+</section>
+<section id="架构与设计保持定义简单" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="架构与设计保持定义简单"><span class="header-section-number">1.6</span> 架构与设计：保持定义简单</h2>
+<p>架构师一直在努力把架构和设计当作两项彼此独立又相互关联的活动。我们不想卷入这一区分永无休止的争论，但出于几个原因，本书力求始终站在光谱的架构一侧。</p>
+<p>第一，架构师必须理解底层架构原则，才能有效决策。例如，在引入实现细节之前，同步通信与异步通信的选择已经包含许多权衡。在《软件架构基础》中，作者提出软件架构第二定律：<strong>为什么比怎么做更重要</strong>。架构师最终必须理解如何实现解决方案，但首先要理解为什么一种选择的权衡优于另一种。</p>
+<p>第二，聚焦架构概念，可以避开这些概念多种多样的实现方式。异步通信有许多实现方法；我们关注架构师为何选择异步通信，把实现细节留给其他资料。</p>
+<p>第三，如果我们沿着实现所有备选方案的道路走下去，这将成为有史以来最长的一本书。聚焦架构原则，可以让讨论尽可能保持通用。</p>
+<p>为了让主题尽量立足于架构，我们对关键概念采用最简单的定义。例如，仅“架构中的耦合”就足以写满整本书——事实上已经有人这么做过。为此，本书采用以下简单、甚至近乎过度简化的定义。</p>
+<dl>
+<dt>服务</dt>
+<dd>
+<p>通俗地说，服务是作为一个独立可执行程序部署的、具有内聚性的一组功能。本书关于服务的大多数概念广泛适用于分布式架构，尤其适用于微服务架构。</p>
+</dd>
+<dd>
+<p>按第 2 章定义的术语，服务是<em>架构量子</em>的一部分；架构量子还进一步定义了服务与其他量子之间的静态耦合和动态耦合。</p>
+</dd>
+<dt>耦合</dt>
+<dd>
+<p>如果一个制品的变化可能要求另一个制品也发生变化，才能维持正常功能，那么这两个制品（包括服务）就是耦合的。</p>
+</dd>
+<dt>组件</dt>
+<dd>
+<p>应用中的架构构建块，执行某类业务或基础设施功能，通常体现为包结构（Java）、命名空间（C#），或目录结构中源代码文件的物理分组。例如，“订单历史”组件可以由位于 <code>app.business.order.history</code> 命名空间中的一组类文件实现。</p>
+</dd>
+<dt>同步通信</dt>
+<dd>
+<p>如果调用方必须等待响应才能继续，则两个制品以同步方式通信。</p>
+</dd>
+<dt>异步通信</dt>
+<dd>
+<p>如果调用方无需等待响应即可继续，则两个制品以异步方式通信。请求完成时，接收方也可以选择通过单独的通道通知调用方。</p>
+</dd>
+<dt>编排式协调</dt>
+<dd>
+<p>如果工作流包含一个主要职责为协调该工作流的服务，则工作流采用编排方式。</p>
+</dd>
+<dt>编舞式协调</dt>
+<dd>
+<p>如果工作流中没有编排器，而是由其中的服务共同承担协调职责，则工作流采用编舞方式。</p>
+</dd>
+<dt>原子性</dt>
+<dd>
+<p>如果工作流的所有部分始终保持一致状态，则工作流具有原子性；其反面是最终一致性的连续谱，第 6 章会介绍这一主题。</p>
+</dd>
+<dt>契约</dt>
+<dd>
+<p>本书广义地使用“契约”一词，表示两个软件部分之间的接口。契约可以涵盖方法或函数调用、集成架构中的远程调用、依赖关系等。凡是两段软件相接之处，都存在契约。</p>
+</dd>
+</dl>
+<p>软件架构天生具有抽象性。我们不可能知道每位读者所处的平台、技术、商业软件以及其他令人眼花缭乱的可能性究竟如何组合，只知道没有两种组合完全一样。本书会讨论许多抽象思想，但必须用一些实现细节让它们落到实处。因此，我们需要一个承载架构概念的具体问题——这就引出了 Sysops Squad。</p>
+</section>
+<section id="sysops-squad-传奇登场" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="sysops-squad-传奇登场"><span class="header-section-number">1.7</span> Sysops Squad 传奇登场</h2>
+<blockquote class="blockquote">
+<p><strong>saga（传奇）</strong><br>
+一段关于英雄功业的长篇故事。</p>
+<p>—《牛津英语词典》</p>
+</blockquote>
+<p>本书会讨论许多字面和比喻意义上的传奇。架构师已经借用 <em>saga</em> 一词描述分布式架构中的事务行为，第 12 章会详细介绍。然而，架构讨论很容易变得抽象，尤其是在思考架构难点这样的抽象问题时。为了提供真实世界的语境，我们将真正讲述一段关于 Sysops Squad 的长篇故事。</p>
+<p>每一章都会借助 Sysops Squad 传奇，说明本书介绍的技术与权衡。许多软件架构书籍关注从零开始的新项目，但现实世界中大量问题都存在于已有系统内。因此，我们的故事从现有的 Sysops Squad 架构开始。</p>
+<p>Penultimate Electronics 是一家大型电子产品巨头，在全国各地拥有许多零售店。客户购买计算机、电视、音响及其他电子设备时，可以选择购买支持计划。设备出现问题后，面向客户的技术专家——Sysops Squad——会前往客户住宅或办公地点修理。</p>
+<p>Sysops Squad 工单应用有四类主要用户。</p>
+<dl>
+<dt>管理员</dt>
+<dd>
+<p>管理系统内部用户，包括专家列表及其技能、位置和可用状态；处理使用本系统的客户账单；维护静态参考数据，例如支持的产品和系统中的名称-值对。</p>
+</dd>
+<dt>客户</dt>
+<dd>
+<p>注册 Sysops Squad 服务，维护客户资料、支持合同和账单信息；在系统中提交问题工单，并在工作完成后填写调查问卷。</p>
+</dd>
+<dt>Sysops Squad 专家</dt>
+<dd>
+<p>接收问题工单，并依据工单解决问题；使用知识库搜索客户问题的解决方案，并记录维修说明。</p>
+</dd>
+<dt>经理</dt>
+<dd>
+<p>跟踪问题工单的运行情况，接收整个 Sysops Squad 问题工单系统的操作型报告与分析型报告。</p>
+</dd>
+</dl>
+<section id="非工单工作流" class="level3" data-number="1.7.1">
+<h3 data-number="1.7.1" class="anchored" data-anchor-id="非工单工作流"><span class="header-section-number">1.7.1</span> 非工单工作流</h3>
+<p>非工单工作流包括管理员、经理和客户执行的、与问题工单无关的操作：</p>
+<ol type="1">
+<li>管理员向系统添加并维护 Sysops Squad 专家，录入其区域、可用状态和技能。</li>
+<li>客户注册 Sysops Squad 系统，并根据所购产品拥有多个支持计划。</li>
+<li>系统依据客户资料中的信用卡信息按月自动计费。客户可以在系统中查看账单历史和对账单。</li>
+<li>经理请求并接收各种操作型和分析型报告，包括财务报告、专家绩效报告和工单报告。</li>
+</ol>
+</section>
+<section id="工单工作流" class="level3" data-number="1.7.2">
+<h3 data-number="1.7.2" class="anchored" data-anchor-id="工单工作流"><span class="header-section-number">1.7.2</span> 工单工作流</h3>
+<p>工单工作流始于客户向系统提交问题工单，终于维修完成后客户填写调查问卷：</p>
+<ol type="1">
+<li>已购买支持计划的客户通过 Sysops Squad 网站提交问题工单。</li>
+<li>工单进入系统后，系统根据技能、当前位置、服务区域和可用状态，确定最适合这项工作的 Sysops Squad 专家。</li>
+<li>分配完成后，问题工单上传到该专家移动设备上的专用定制应用；专家同时会收到短信，得知有新的问题工单。</li>
+<li>系统根据客户资料中的偏好，通过短信或电子邮件通知客户专家正在赶来。</li>
+<li>专家通过手机上的定制移动应用获取工单信息和地点，也可以访问知识库，查找过去解决同类问题的方法。</li>
+<li>专家解决问题后，把工单标记为“已完成”，随后可以把问题及维修相关信息添加到知识库。</li>
+<li>系统收到工单完成通知后，向客户发送带有调查问卷链接的电子邮件，客户随后填写问卷。</li>
+<li>系统接收客户完成的问卷，并记录调查信息。</li>
+</ol>
+</section>
+<section id="糟糕的现状" class="level3" data-number="1.7.3">
+<h3 data-number="1.7.3" class="anchored" data-anchor-id="糟糕的现状"><span class="header-section-number">1.7.3</span> 糟糕的现状</h3>
+<p>最近，Sysops Squad 问题工单应用的情况很不妙。当前故障工单系统是一个多年前开发的庞大单体应用。客户抱怨顾问因为工单丢失而始终没有上门，而且经常派来一个对问题一无所知的错误顾问。客户还抱怨系统并非始终可用，导致无法提交新的问题工单。</p>
+<p>这个大型单体中的变更也既困难又危险。每次改动通常都耗时过长，而且总会破坏其他功能。可靠性问题导致系统频繁“卡死”或崩溃；在定位问题并重启应用的五分钟到两小时内，所有应用功能都不可用。</p>
+<p>如果不尽快采取行动，Penultimate Electronics 将被迫放弃利润丰厚的支持合同业务线，并解雇 Sysops Squad 的所有管理员、专家、经理和 IT 开发人员——包括架构师。</p>
+</section>
+<section id="sysops-squad-架构组件" class="level3" data-number="1.7.4">
+<h3 data-number="1.7.4" class="anchored" data-anchor-id="sysops-squad-架构组件"><span class="header-section-number">1.7.4</span> Sysops Squad 架构组件</h3>
+<p>Sysops Squad 应用的单体系统负责工单管理、操作型报告、客户注册和计费，还处理用户维护、登录、专家技能与资料维护等常规管理功能。图 <a href="#fig-1-3" class="quarto-xref">图&nbsp;<span>1.3</span></a> 和表 <a href="#tbl-1-1" class="quarto-xref">表格&nbsp;<span>1.1</span></a> 展示并说明现有单体应用的组件；命名空间中的 <code>ss.</code> 表示 Sysops Squad 应用上下文。</p>
+<div id="fig-1-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-1-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch01/fig-1-3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1.3: 现有 Sysops Squad 应用中的组件
+</figcaption>
+</figure>
+</div>
+<div id="tbl-1-1" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-1-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;1.1: 现有 Sysops Squad 组件
+</figcaption>
+<div aria-describedby="tbl-1-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>组件</th>
+<th>命名空间</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>登录</td>
+<td><code>ss.login</code></td>
+<td>内部用户与客户的登录和安全逻辑</td>
+</tr>
+<tr class="even">
+<td>账单支付</td>
+<td><code>ss.billing.payment</code></td>
+<td>客户月度计费与客户信用卡信息</td>
+</tr>
+<tr class="odd">
+<td>账单历史</td>
+<td><code>ss.billing.history</code></td>
+<td>支付历史与以往对账单</td>
+</tr>
+<tr class="even">
+<td>客户通知</td>
+<td><code>ss.customer.notification</code></td>
+<td>向客户发送账单及一般信息通知</td>
+</tr>
+<tr class="odd">
+<td>客户资料</td>
+<td><code>ss.customer.profile</code></td>
+<td>维护客户资料与客户注册</td>
+</tr>
+<tr class="even">
+<td>专家资料</td>
+<td><code>ss.expert.profile</code></td>
+<td>维护专家资料（姓名、位置、技能等）</td>
+</tr>
+<tr class="odd">
+<td>知识库维护</td>
+<td><code>ss.kb.maintenance</code></td>
+<td>维护并查看知识库条目</td>
+</tr>
+<tr class="even">
+<td>知识库搜索</td>
+<td><code>ss.kb.search</code></td>
+<td>搜索知识库的查询引擎</td>
+</tr>
+<tr class="odd">
+<td>报告</td>
+<td><code>ss.reporting</code></td>
+<td>所有报告（专家、工单、财务）</td>
+</tr>
+<tr class="even">
+<td>工单</td>
+<td><code>ss.ticket</code></td>
+<td>工单创建、维护、完成及公共代码</td>
+</tr>
+<tr class="odd">
+<td>工单分配</td>
+<td><code>ss.ticket.assign</code></td>
+<td>查找专家并分配工单</td>
+</tr>
+<tr class="even">
+<td>工单通知</td>
+<td><code>ss.ticket.notify</code></td>
+<td>通知客户专家正在赶来</td>
+</tr>
+<tr class="odd">
+<td>工单路由</td>
+<td><code>ss.ticket.route</code></td>
+<td>把工单发送到专家的移动设备应用</td>
+</tr>
+<tr class="even">
+<td>支持合同</td>
+<td><code>ss.supportcontract</code></td>
+<td>客户支持合同及计划所含产品</td>
+</tr>
+<tr class="odd">
+<td>调查</td>
+<td><code>ss.survey</code></td>
+<td>维护调查问卷，捕获并记录调查结果</td>
+</tr>
+<tr class="even">
+<td>调查通知</td>
+<td><code>ss.survey.notify</code></td>
+<td>向客户发送调查邮件</td>
+</tr>
+<tr class="odd">
+<td>调查模板</td>
+<td><code>ss.survey.templates</code></td>
+<td>根据服务类型维护不同调查问卷</td>
+</tr>
+<tr class="even">
+<td>用户维护</td>
+<td><code>ss.users</code></td>
+<td>维护内部用户和角色</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>后续章节会使用这些组件，说明把应用拆成分布式架构时所涉及的各种技术与权衡。</p>
+</section>
+<section id="sysops-squad-数据模型" class="level3" data-number="1.7.5">
+<h3 data-number="1.7.5" class="anchored" data-anchor-id="sysops-squad-数据模型"><span class="header-section-number">1.7.5</span> Sysops Squad 数据模型</h3>
+<p>Sysops Squad 应用及表 <a href="#tbl-1-1" class="quarto-xref">表格&nbsp;<span>1.1</span></a> 所列组件共用数据库中的一个模式，所有表和相关数据库代码都放在其中。数据库持久化客户、用户、合同、账单、付款、知识库和客户调查数据。表 <a href="#tbl-1-2" class="quarto-xref">表格&nbsp;<span>1.2</span></a> 列出数据库表，图 <a href="#fig-1-4" class="quarto-xref">图&nbsp;<span>1.4</span></a> 展示其 ER 模型。</p>
+<div id="fig-1-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-1-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch01/fig-1-4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1.4: 现有 Sysops Squad 应用的数据模型
+</figcaption>
+</figure>
+</div>
+<div id="tbl-1-2" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-1-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;1.2: 现有 Sysops Squad 数据库表
+</figcaption>
+<div aria-describedby="tbl-1-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>表</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Customer</code></td>
+<td>需要 Sysops 支持的实体</td>
+</tr>
+<tr class="even">
+<td><code>Customer_Notification</code></td>
+<td>客户的通知偏好</td>
+</tr>
+<tr class="odd">
+<td><code>Survey</code></td>
+<td>支持服务完成后的客户满意度调查</td>
+</tr>
+<tr class="even">
+<td><code>Question</code></td>
+<td>调查中的问题</td>
+</tr>
+<tr class="odd">
+<td><code>Survey_Question</code></td>
+<td>分配给调查的问题</td>
+</tr>
+<tr class="even">
+<td><code>Survey_Administered</code></td>
+<td>分配给客户的调查问题</td>
+</tr>
+<tr class="odd">
+<td><code>Survey_Response</code></td>
+<td>客户对调查的回答</td>
+</tr>
+<tr class="even">
+<td><code>Billing</code></td>
+<td>支持合同的账单信息</td>
+</tr>
+<tr class="odd">
+<td><code>Contract</code></td>
+<td>实体与 Sysops 之间的支持合同</td>
+</tr>
+<tr class="even">
+<td><code>Payment_Method</code></td>
+<td>支持的付款方式</td>
+</tr>
+<tr class="odd">
+<td><code>Payment</code></td>
+<td>已处理的账单付款</td>
+</tr>
+<tr class="even">
+<td><code>SysOps_User</code></td>
+<td>Sysops 的各类用户</td>
+</tr>
+<tr class="odd">
+<td><code>Profile</code></td>
+<td>Sysops 用户的资料信息</td>
+</tr>
+<tr class="even">
+<td><code>Expert_Profile</code></td>
+<td>专家资料</td>
+</tr>
+<tr class="odd">
+<td><code>Expertise</code></td>
+<td>Sysops 中的各类专业能力</td>
+</tr>
+<tr class="even">
+<td><code>Location</code></td>
+<td>专家服务的地点</td>
+</tr>
+<tr class="odd">
+<td><code>Article</code></td>
+<td>知识库文章</td>
+</tr>
+<tr class="even">
+<td><code>Tag</code></td>
+<td>文章标签</td>
+</tr>
+<tr class="odd">
+<td><code>Keyword</code></td>
+<td>文章关键字</td>
+</tr>
+<tr class="even">
+<td><code>Article_Tag</code></td>
+<td>文章与标签的关联</td>
+</tr>
+<tr class="odd">
+<td><code>Article_Keyword</code></td>
+<td>文章与关键字的连接表</td>
+</tr>
+<tr class="even">
+<td><code>Ticket</code></td>
+<td>客户提交的支持工单</td>
+</tr>
+<tr class="odd">
+<td><code>Ticket_Type</code></td>
+<td>不同类型的工单</td>
+</tr>
+<tr class="even">
+<td><code>Ticket_History</code></td>
+<td>支持工单历史</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Sysops 数据模型是一个标准的第三范式数据模型，只有少量存储过程或触发器，但存在相当数量主要供“报告”组件使用的视图。架构团队尝试拆分应用并转向分布式架构时，必须与数据库团队合作，完成数据库层面的任务。全书会持续使用这组数据库表和视图，讨论拆分数据库的各种技术及其权衡。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./00-preface.html" class="pagination-link" aria-label="前言">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">前言</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./02-discerning-coupling.html" class="pagination-link" aria-label="辨析软件架构中的耦合">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

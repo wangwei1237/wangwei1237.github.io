@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 12&nbsp; 事务型 Saga</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./13-contracts.html" rel="next">
+<link href="./11-distributed-workflows.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-reuse-patterns.html">第二部分 重新组合</a></li><li class="breadcrumb-item"><a href="./12-transactional-sagas.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#事务型-saga-模式" id="toc-事务型-saga-模式" class="nav-link active" data-scroll-target="#事务型-saga-模式"><span class="header-section-number">12.1</span> 事务型 Saga 模式</a>
+  <ul class="collapse">
+  <li><a href="#史诗-sagasao模式" id="toc-史诗-sagasao模式" class="nav-link" data-scroll-target="#史诗-sagasao模式"><span class="header-section-number">12.1.1</span> 史诗 Saga（sao）模式</a></li>
+  <li><a href="#传话-sagasac模式" id="toc-传话-sagasac模式" class="nav-link" data-scroll-target="#传话-sagasac模式"><span class="header-section-number">12.1.2</span> 传话 Saga（sac）模式</a></li>
+  <li><a href="#童话-sagaseo模式" id="toc-童话-sagaseo模式" class="nav-link" data-scroll-target="#童话-sagaseo模式"><span class="header-section-number">12.1.3</span> 童话 Saga（seo）模式</a></li>
+  <li><a href="#时间旅行-sagasec模式" id="toc-时间旅行-sagasec模式" class="nav-link" data-scroll-target="#时间旅行-sagasec模式"><span class="header-section-number">12.1.4</span> 时间旅行 Saga（sec）模式</a></li>
+  <li><a href="#奇幻-sagaaao模式" id="toc-奇幻-sagaaao模式" class="nav-link" data-scroll-target="#奇幻-sagaaao模式"><span class="header-section-number">12.1.5</span> 奇幻 Saga（aao）模式</a></li>
+  <li><a href="#恐怖故事-sagaaac模式" id="toc-恐怖故事-sagaaac模式" class="nav-link" data-scroll-target="#恐怖故事-sagaaac模式"><span class="header-section-number">12.1.6</span> 恐怖故事 Saga（aac）模式</a></li>
+  <li><a href="#并行-sagaaeo模式" id="toc-并行-sagaaeo模式" class="nav-link" data-scroll-target="#并行-sagaaeo模式"><span class="header-section-number">12.1.7</span> 并行 Saga（aeo）模式</a></li>
+  <li><a href="#选集-sagaaec模式" id="toc-选集-sagaaec模式" class="nav-link" data-scroll-target="#选集-sagaaec模式"><span class="header-section-number">12.1.8</span> 选集 Saga（aec）模式</a></li>
+  </ul></li>
+  <li><a href="#状态管理与最终一致性" id="toc-状态管理与最终一致性" class="nav-link" data-scroll-target="#状态管理与最终一致性"><span class="header-section-number">12.2</span> 状态管理与最终一致性</a>
+  <ul class="collapse">
+  <li><a href="#saga-状态机" id="toc-saga-状态机" class="nav-link" data-scroll-target="#saga-状态机"><span class="header-section-number">12.2.1</span> Saga 状态机</a></li>
+  </ul></li>
+  <li><a href="#saga-管理技术" id="toc-saga-管理技术" class="nav-link" data-scroll-target="#saga-管理技术"><span class="header-section-number">12.3</span> Saga 管理技术</a></li>
+  <li><a href="#sysops-squad-案例原子事务与补偿更新" id="toc-sysops-squad-案例原子事务与补偿更新" class="nav-link" data-scroll-target="#sysops-squad-案例原子事务与补偿更新"><span class="header-section-number">12.4</span> Sysops Squad 案例：原子事务与补偿更新</a>
+  <ul class="collapse">
+  <li><a href="#权衡-1" id="toc-权衡-1" class="nav-link" data-scroll-target="#权衡-1"><span class="header-section-number">12.4.1</span> 权衡</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-reuse-patterns.html">第二部分 重新组合</a></li><li class="breadcrumb-item"><a href="./12-transactional-sagas.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>3 月 31 日，星期四，16:55</em></p>
+<p>一个刮着大风的星期四傍晚，Austen 来到 Logan 的办公室。“Addison 刚把我打发过来，让我问你一个什么恐怖故事？”</p>
+<p>Logan 停下手里的事情，抬起头。“这是在形容你这周末又要玩的疯狂极限运动吗？这次是什么？”</p>
+<p>“已经是晚春了，所以我们一群人要去逐渐解冻的湖面上滑冰。我们会穿上连体服，因此其实是滑冰和游泳的混合运动。不过 Addison 说的完全不是这回事。我把工单工作流设计拿给 Addison 看，马上就被要求来找你，并告诉你我创造了一个恐怖故事。”</p>
+<p>Logan 笑了。“哦，我明白了——你无意中撞上了恐怖故事 Saga 通信模式。你设计的是一个采用异步通信、原子事务和编排的工作流，对吧？”</p>
+<p>“你怎么知道？”</p>
+<p>“那就是恐怖故事 Saga 模式，准确地说，是反模式。我们从八种通用 Saga 模式开始分析，所以最好了解它们，因为每一种模式都有不同的权衡平衡。”</p>
+<p>架构中的 Saga 概念早于微服务出现，最初关注的是在早期分布式架构中限制数据库锁的作用范围；普遍认为，这个概念来自 1987 年 ACM 会议论文集中的一篇论文。Chris Richardson 在《Microservices Patterns》（Manning Publications）以及他网站的“Saga Pattern”一节中，把微服务 Saga 模式描述为一系列本地事务：每次更新都会发布一个事件，从而触发序列中的下一次更新。如果其中任意更新失败，Saga 就会发出一系列补偿更新，撤销此前在 Saga 中完成的更改。</p>
+<p>不过，回想第 2 章，这只是八种可能的 Saga 类型之一。本章将深入研究事务型 Saga 的内部工作原理及其管理方式，尤其关注错误发生时的处理。毕竟，分布式事务缺乏原子性（见第 10 章“分布式事务”），真正让它们变得有趣的，正是问题发生的时候。</p>
+<section id="事务型-saga-模式" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="事务型-saga-模式"><span class="header-section-number">12.1</span> 事务型 Saga 模式</h2>
+<p>第 2 章介绍了一张矩阵，把架构师实现事务型 Saga 时必须选择的各个相交维度并列起来；表 <a href="#tbl-12-1" class="quarto-xref">表格&nbsp;<span>12.1</span></a> 再次列出该矩阵。</p>
+<div id="tbl-12-1" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.1: 分布式架构的维度交集矩阵
+</figcaption>
+<div aria-describedby="tbl-12-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>模式名称</th>
+<th>通信</th>
+<th>一致性</th>
+<th>协调</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>史诗 Saga（sao）</td>
+<td>同步</td>
+<td>原子</td>
+<td>协调</td>
+</tr>
+<tr class="even">
+<td>传话 Saga（sac）</td>
+<td>同步</td>
+<td>原子</td>
+<td>编排</td>
+</tr>
+<tr class="odd">
+<td>童话 Saga（seo）</td>
+<td>同步</td>
+<td>最终</td>
+<td>协调</td>
+</tr>
+<tr class="even">
+<td>时间旅行 Saga（sec）</td>
+<td>同步</td>
+<td>最终</td>
+<td>编排</td>
+</tr>
+<tr class="odd">
+<td>奇幻 Saga（aao）</td>
+<td>异步</td>
+<td>原子</td>
+<td>协调</td>
+</tr>
+<tr class="even">
+<td>恐怖故事 Saga（aac）</td>
+<td>异步</td>
+<td>原子</td>
+<td>编排</td>
+</tr>
+<tr class="odd">
+<td>并行 Saga（aeo）</td>
+<td>异步</td>
+<td>最终</td>
+<td>协调</td>
+</tr>
+<tr class="even">
+<td>选集 Saga（aec）</td>
+<td>异步</td>
+<td>最终</td>
+<td>编排</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>我们为每种组合取了一个有趣的名称，都来自 Saga 的不同文学类型。不过，模式名称只是为了帮助区分各种可能性；我们不想让读者死记硬背模式名称与特征组合之间的对应关系。因此，每种 Saga 类型都带有三个字母的标记，按表 <a href="#tbl-12-1" class="quarto-xref">表格&nbsp;<span>12.1</span></a> 三个维度的字母顺序表示对应取值。例如，史诗 Saga（sao）表示通信、一致性和协调分别采用同步（synchronous）、原子（atomic）和协调（orchestrated）。这些字母可以帮助读者更容易地把名称与特征组合联系起来。</p>
+<p>架构师使用某些模式的频率会高于另一些模式，但八种模式都有合理用途，也各自具有不同的权衡。</p>
+<p>下面用两种方式展示每一种通信组合：一是把三种力量在空间中的交点表现为三维图，二是用通用分布式服务展示示例工作流。我们把后一种称为<strong>同构图</strong>，以最通用的方式展示服务之间的交互，从而尽可能简单地表达架构概念。所有同构图都采用图 <a href="#fig-12-1" class="quarto-xref">图&nbsp;<span>12.1</span></a> 所示的通用符号。</p>
+<div id="fig-12-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.1: ISO 架构交互图图例
+</figcaption>
+</figure>
+</div>
+<p>对于每一种架构模式，我们不会展示所有可能的交互，否则内容会变得重复；我们只识别并展示模式的差异化特征，也就是它的行为与其他模式有何不同。</p>
+<section id="史诗-sagasao模式" class="level3" data-number="12.1.1">
+<h3 data-number="12.1.1" class="anchored" data-anchor-id="史诗-sagasao模式"><span class="header-section-number">12.1.1</span> 史诗 Saga（sao）模式</h3>
+<p>这种通信方式就是许多架构师所理解的“传统”Saga 模式；由于采用协调式协调，它也称为<strong>协调式 Saga</strong>。它的维度关系见图 <a href="#fig-12-2" class="quarto-xref">图&nbsp;<span>12.2</span></a>。</p>
+<div id="fig-12-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.2: 史诗 Saga（sao）模式的动态耦合关系：通信、一致性与协调
+</figcaption>
+</figure>
+</div>
+<p>该模式采用同步通信、原子一致性和协调式协调。架构师选择它时，目标是模仿单体系统的行为。事实上，如果把单体系统加入图 <a href="#fig-12-2" class="quarto-xref">图&nbsp;<span>12.2</span></a>，它会位于原点（0, 0, 0），完全没有分布。因此，传统事务系统的架构师和开发人员最熟悉这种通信风格。</p>
+<p>史诗 Saga（sao）模式的同构表示见图 <a href="#fig-12-3" class="quarto-xref">图&nbsp;<span>12.3</span></a>。</p>
+<div id="fig-12-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.3: 史诗 Saga（sao）模式的同构通信图
+</figcaption>
+</figure>
+</div>
+<p>这里，一项协调器服务负责协调工作流，其中包含对三项服务的更新，并且期望它们以事务方式发生：三次调用要么全部成功，要么一次也不成功。如果其中一次调用失败，全部调用都失败，并恢复到以前的状态。在分布式架构中，架构师可以用多种方式解决这个协调问题，但每一种都很复杂；而且，这种事务会限制数据库的选择，并具有臭名昭著的故障模式。</p>
+<p>许多刚入行或经验不足的架构师会以为，既然某个问题存在一种模式，它就一定代表干净利落的解决方案。然而，模式只是在识别共性，而不是保证问题可解。分布式事务很好地说明了这一点：习惯在非分布式系统中为事务建模的架构师，有时认为把这种能力迁移到分布式世界只是渐进式变化。事实上，分布式架构中的事务带来许多挑战，而且问题领域的语义耦合越复杂，这些挑战就会按比例加重。</p>
+<p>考虑史诗 Saga（sao）模式的一种常见实现：使用<strong>补偿事务</strong>。补偿更新是在分布式事务范围内，撤销另一项服务已经执行的数据写入操作，例如反向更新、重新插入先前删除的行，或删除先前插入的行。补偿更新试图反转更改，使分布式数据源恢复到事务开始之前的原始状态，但这种方式充满复杂问题、挑战和权衡。</p>
+<p>补偿事务模式会指定一项服务来监控请求的事务完整性，如图 <a href="#fig-12-4" class="quarto-xref">图&nbsp;<span>12.4</span></a> 所示。</p>
+<div id="fig-12-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.4: 使用补偿事务成功完成的协调式事务型史诗 Saga
+</figcaption>
+</figure>
+</div>
+<p>不过，与架构中的许多事情一样，真正造成困难的是错误情况。在补偿事务框架中，中介者监视调用是否成功；如果一个或多个请求失败，它就向其他服务发出补偿调用，如图 <a href="#fig-12-5" class="quarto-xref">图&nbsp;<span>12.5</span></a> 所示。</p>
+<div id="fig-12-5" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-5.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.5: 发生错误时，中介者必须向其他服务发送补偿请求
+</figcaption>
+</figure>
+</div>
+<p>中介者既接收请求，也负责调解工作流。对前两项服务的同步调用都成功了，但调用最后一项服务时失败，原因可能来自各种领域或运行问题。史诗 Saga（sao）的目标是原子一致性，因此中介者必须使用补偿事务，请求另外两项服务撤销先前执行的操作，使总体状态恢复到事务开始之前。</p>
+<p>这种模式应用十分广泛：它对熟悉的行为建模，并且拥有一个成熟的模式名称。许多架构师默认选择史诗 Saga（sao），一方面因为它让人联想到单体架构，另一方面也因为利益相关者会要求、甚至强制要求状态变化必须同步，而不顾技术约束。然而，其他动态量子耦合模式可能提供更好的权衡组合。</p>
+<p>史诗 Saga（sao）的明显优势，是能够模仿单体系统的事务协调，并通过协调器明确表示工作流所有者。不过，它的缺点很多。首先，协调加事务性会影响性能、扩展能力、弹性等运行架构特性：协调器必须确认事务的所有参与者都已成功或失败，从而形成时序瓶颈。其次，用于实现分布式事务性的各种模式，例如补偿事务，容易遭遇种类繁多的故障模式和边界条件；撤销操作还会引入固有复杂度。分布式事务会带来一系列困难，因此最好尽可能避免。</p>
+<p>史诗 Saga（sao）模式具有以下特征：</p>
+<p><strong>耦合程度</strong></p>
+<p>该模式在所有可能维度上都表现出极高耦合：同步通信、原子一致性和协调式协调。事实上，它是八种模式中耦合最高的一种。这并不意外，因为它模仿了高耦合单体系统的通信行为，但也因此在分布式架构中产生了许多问题。</p>
+<p><strong>复杂度</strong></p>
+<p>错误情况和其他高强度协调，再加上原子性要求，会给架构增加复杂度。不过，这种架构使用的同步调用缓解了部分复杂度，因为架构师不必担心调用过程中的竞态条件与死锁。</p>
+<p><strong>响应速度/可用性</strong></p>
+<p>协调会形成瓶颈，尤其当协调器还必须维持事务原子性时，响应速度会进一步下降。该模式采用同步调用，也会继续损害性能和响应能力。如果任意服务不可用，或者发生不可恢复的错误，该模式就会失败。</p>
+<p><strong>扩展能力/弹性</strong></p>
+<p>与响应速度类似，实现该模式所需的瓶颈和协调会使扩展及其他运行关注点变得困难。</p>
+<p>史诗 Saga（sao）因为让人熟悉而广受欢迎，但无论从设计还是运行特性角度看，它都带来很多挑战，如表 <a href="#tbl-12-2" class="quarto-xref">表格&nbsp;<span>12.2</span></a> 所示。</p>
+<div id="tbl-12-2" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.2: 史诗 Saga（sao）评分
+</figcaption>
+<div aria-describedby="tbl-12-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>史诗 Saga（sao）模式</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信</td>
+<td>同步</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>原子</td>
+</tr>
+<tr class="odd">
+<td>协调</td>
+<td>协调</td>
+</tr>
+<tr class="even">
+<td>耦合</td>
+<td>极高</td>
+</tr>
+<tr class="odd">
+<td>复杂度</td>
+<td>低</td>
+</tr>
+<tr class="even">
+<td>响应速度/可用性</td>
+<td>低</td>
+</tr>
+<tr class="odd">
+<td>扩展能力/弹性</td>
+<td>极低</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>幸运的是，架构师不必默认采用那些看似熟悉、实则制造偶然复杂度的模式；还有很多具有不同权衡组合的选择。本章稍后的“Sysops Squad 案例：原子事务与补偿更新”会给出史诗 Saga（sao）的具体例子，展示它带来的部分复杂挑战以及应对方式。</p>
+</section>
+<section id="传话-sagasac模式" class="level3" data-number="12.1.2">
+<h3 data-number="12.1.2" class="anchored" data-anchor-id="传话-sagasac模式"><span class="header-section-number">12.1.2</span> 传话 Saga（sac）模式</h3>
+<p>传话 Saga（sac）改变了史诗 Saga（sao）的一个维度：把协调方式从协调式改为编排式，如图 <a href="#fig-12-6" class="quarto-xref">图&nbsp;<span>12.6</span></a> 所示。</p>
+<div id="fig-12-6" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-6.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.6: 传话模式采用松耦合通信
+</figcaption>
+</figure>
+</div>
+<p>这个名称来自北美儿童熟悉的“传话游戏”（Telephone）：孩子们围成一圈，一个人把秘密悄悄告诉下一个人，再由对方传给再下一个，直到最后一个人说出最终版本。图 <a href="#fig-12-6" class="quarto-xref">图&nbsp;<span>12.6</span></a> 以编排取代协调，因此通信结构也相应改变，如图 <a href="#fig-12-7" class="quarto-xref">图&nbsp;<span>12.7</span></a> 所示。</p>
+<div id="fig-12-7" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-7.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.7: 由于没有协调器，每个参与者都必须协调状态
+</figcaption>
+</figure>
+</div>
+<p>传话 Saga（sac）既要求原子性，又采用编排，这意味着架构师不会指定正式协调器。然而，原子性总需要某种程度的协调。在图 <a href="#fig-12-7" class="quarto-xref">图&nbsp;<span>12.7</span></a> 中，最先被调用的服务成为协调点，有时也称为<strong>前端控制器</strong>。它完成自己的工作后，把请求传给工作流中的下一项服务，如此持续到工作流成功。不过，如果发生错误，每项服务都必须内置逻辑，把补偿请求沿调用链反向传回。</p>
+<p>架构目标既然是事务原子性，用于协调原子性的逻辑就必须存在于某个地方。因此，领域服务必须包含更多关于自己所参与工作流上下文的逻辑，包括错误处理和路由。对于复杂工作流，该模式中的前端控制器会变得与大多数中介者一样复杂，从而降低这种模式的吸引力和适用范围。因此，它通常用于需要更高扩展能力的简单工作流，但可能损害性能。</p>
+<p>为什么编排比协调更有利于扩展等运行架构特性？即使通信仍然同步，编排也能减少瓶颈：在没有错误的情况下，工作流最后一项服务可以直接返回结果，从而获得更高吞吐量和更少的阻塞点。由于不需要协调，幸福路径的性能可能高于史诗 Saga（sao）。不过，没有中介者时，错误情况会慢得多：每项服务都必须沿调用链逐步回滚，这也会增加服务间耦合。</p>
+<p>总体而言，传话 Saga（sac）没有中介者，因此扩展能力略好于史诗 Saga（sao）；中介者有时会成为限制性瓶颈。不过，在错误情况与其他工作流复杂性下，这种模式的性能更低。没有中介者时，工作流必须通过服务间通信来解决，会直接影响性能。</p>
+<p>非协调式架构有一个很好的特征：不存在<strong>耦合奇点</strong>，也就是工作流所耦合的单一位置。即使该模式采用同步请求，幸福路径需要等待的条件仍然较少，因此能够扩展到更高规模。一般来说，降低耦合就能提高扩展能力。</p>
+<p>不过，缺少协调虽然改善了可扩展性，却要求领域服务在承担本职职责之外管理工作流关注点，因而增加复杂度。面对复杂工作流，更高的复杂度与服务间通信量可能迫使架构师重新选择协调，并接受它的权衡。</p>
+<p>传话 Saga（sac）的特征组合相当少见。通常，架构师选择编排时，也会选择异步通信；但某些情况适合这种组合：同步调用确保每项领域服务在调用下一项服务之前完成工作流中属于自己的部分，从而消除竞态条件。如果错误情况容易解决，或者领域服务能够使用幂等性与重试，那么与史诗 Saga（sao）相比，架构师可以利用该模式构建并行度更高的扩展方案。</p>
+<p>传话 Saga（sac）模式具有以下特征：</p>
+<p><strong>耦合程度</strong></p>
+<p>该模式放松了史诗 Saga（sao）的一个耦合维度，采用编排式而不是协调式工作流，因此耦合略低。不过，事务要求保持不变，意味着工作流复杂度必须分散到各项领域服务中。</p>
+<p><strong>复杂度</strong></p>
+<p>该模式明显比史诗 Saga（sao）复杂，而且复杂度会与工作流的语义复杂度成线性比例增长：工作流越复杂，为弥补缺少协调器而必须出现在每项服务中的逻辑就越多。另一种做法是把工作流信息加入消息本身，形成一种印记耦合，以维持状态；第 13 章“用于工作流管理的印记耦合”会进一步介绍，但它会增加每项服务必须处理的上下文开销。</p>
+<p><strong>响应速度/可用性</strong></p>
+<p>协调越少，通常响应越快；但没有协调器时，该模式中的错误情况更难建模，需要通过回调和其他耗时活动进行更多协调。</p>
+<p><strong>扩展能力/弹性</strong></p>
+<p>没有协调器意味着瓶颈更少，通常能提高可扩展性，但提升幅度有限。该模式在三个维度中的两个仍然采用紧耦合，因此扩展能力并非亮点，特别是在错误经常发生时。</p>
+<p>传话 Saga（sac）的评分见表 <a href="#tbl-12-3" class="quarto-xref">表格&nbsp;<span>12.3</span></a>。</p>
+<div id="tbl-12-3" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.3: 传话 Saga（sac）评分
+</figcaption>
+<div aria-describedby="tbl-12-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>传话 Saga（sac）模式</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信</td>
+<td>同步</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>原子</td>
+</tr>
+<tr class="odd">
+<td>协调</td>
+<td>编排</td>
+</tr>
+<tr class="even">
+<td>耦合</td>
+<td>高</td>
+</tr>
+<tr class="odd">
+<td>复杂度</td>
+<td>高</td>
+</tr>
+<tr class="even">
+<td>响应速度/可用性</td>
+<td>低</td>
+</tr>
+<tr class="odd">
+<td>扩展能力/弹性</td>
+<td>低</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>传话 Saga（sac）更适合没有太多常见错误情况的简单工作流。它的部分特性优于史诗 Saga（sao），但缺少协调器带来的复杂度抵消了许多优势。</p>
+</section>
+<section id="童话-sagaseo模式" class="level3" data-number="12.1.3">
+<h3 data-number="12.1.3" class="anchored" data-anchor-id="童话-sagaseo模式"><span class="header-section-number">12.1.3</span> 童话 Saga（seo）模式</h3>
+<p>典型童话故事情节简单、幸福美满，因此得名<strong>童话 Saga（seo）</strong>。该模式采用同步通信、最终一致性和协调，如图 <a href="#fig-12-8" class="quarto-xref">图&nbsp;<span>12.8</span></a> 所示。</p>
+<div id="fig-12-8" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-8.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.8: 童话 Saga（seo）体现最终一致性
+</figcaption>
+</figure>
+</div>
+<p>这种通信模式放松了棘手的原子性要求，为架构师设计系统提供更多选择。例如，如果某项服务暂时宕机，最终一致性允许先缓存变更，等服务恢复后再处理。童话 Saga（seo）的通信结构见图 <a href="#fig-12-9" class="quarto-xref">图&nbsp;<span>12.9</span></a>。</p>
+<div id="fig-12-9" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-9.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.9: 童话 Saga 交互的同构图
+</figcaption>
+</figure>
+</div>
+<p>该模式由协调器协调请求、响应和错误处理。不过，协调器不负责管理事务；事务仍由每项领域服务自行负责（常见工作流示例见第 11 章）。因此，协调器可以管理补偿调用，却不要求它们发生在一个活动事务之内。</p>
+<p>这是一种吸引力强得多的模式，在许多微服务架构中都很常见。中介者让工作流更容易管理；同步通信是两种通信方式中更容易的一种；最终一致性则移除了最困难的协调挑战，尤其是错误处理方面的挑战。</p>
+<p>童话 Saga（seo）最吸引人的优点，是不需要整体事务。每项领域服务管理自己的事务行为，整体工作流则依赖最终一致性。</p>
+<p>与许多其他模式相比，该模式通常具有很均衡的权衡：</p>
+<p><strong>耦合程度</strong></p>
+<p>童话 Saga（seo）的耦合较高，因为三个耦合驱动因素中有两个被推到最大：同步通信和协调式协调。不过，最容易引发耦合复杂度的因素——事务性——在该模式中被最终一致性取代。协调器仍须管理复杂工作流，但不再受到事务范围的严格约束。</p>
+<p><strong>复杂度</strong></p>
+<p>童话 Saga（seo）的复杂度非常低：它包含最方便的选择（协调与同步）和最宽松的限制（最终一致性）。所以它被称为童话 Saga——一个简单而结局美满的故事。</p>
+<p><strong>响应速度/可用性</strong></p>
+<p>这种通信风格通常响应更快。尽管调用仍然同步，中介者需要保存的进行中事务时效状态更少，因此更容易进行负载均衡。不过，性能的真正显著差异来自异步通信，后面的模式会加以展示。</p>
+<p><strong>扩展能力/弹性</strong></p>
+<p>耦合越少，通常扩展能力越高；去掉事务耦合后，每项服务能够更加独立地扩展。</p>
+<p>童话 Saga（seo）的评分见表 <a href="#tbl-12-4" class="quarto-xref">表格&nbsp;<span>12.4</span></a>。</p>
+<div id="tbl-12-4" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.4: 童话 Saga（seo）评分
+</figcaption>
+<div aria-describedby="tbl-12-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>童话 Saga（seo）模式</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信</td>
+<td>同步</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>最终</td>
+</tr>
+<tr class="odd">
+<td>协调</td>
+<td>协调</td>
+</tr>
+<tr class="even">
+<td>耦合</td>
+<td>高</td>
+</tr>
+<tr class="odd">
+<td>复杂度</td>
+<td>极低</td>
+</tr>
+<tr class="even">
+<td>响应速度/可用性</td>
+<td>中</td>
+</tr>
+<tr class="odd">
+<td>扩展能力/弹性</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>如果架构师能够利用最终一致性，这种模式就很有吸引力：它组合了最容易处理的活动部件与最少的可怕限制，因此深受架构师欢迎。</p>
+</section>
+<section id="时间旅行-sagasec模式" class="level3" data-number="12.1.4">
+<h3 data-number="12.1.4" class="anchored" data-anchor-id="时间旅行-sagasec模式"><span class="header-section-number">12.1.4</span> 时间旅行 Saga（sec）模式</h3>
+<p>时间旅行 Saga（sec）采用同步通信、最终一致性和编排式工作流。换句话说，它避开中央中介者，把工作流职责完全交给参与其中的领域服务，如图 <a href="#fig-12-10" class="quarto-xref">图&nbsp;<span>12.10</span></a> 所示。</p>
+<div id="fig-12-10" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-10.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.10: 时间旅行 Saga（sec）采用三种解耦技术中的两种
+</figcaption>
+</figure>
+</div>
+<p>它的结构拓扑体现出缺少协调器的特征，如图 <a href="#fig-12-11" class="quarto-xref">图&nbsp;<span>12.11</span></a> 所示。</p>
+<div id="fig-12-11" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-11.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.11: 没有协调器时，复杂工作流会变得难以管理
+</figcaption>
+</figure>
+</div>
+<p>在这个工作流中，每项服务接收请求、执行操作，再把请求转发给另一项服务。这种架构可以实现责任链设计模式或管道与过滤器架构风格，也就是任何由单向步骤序列组成的工作流。该模式中的每项服务都“拥有”自己的事务性，因此架构师必须把工作流错误情况设计进领域设计。总体而言，由于没有中介者提供内置协调，工作流复杂度与编排方案的复杂度成正比：工作流越复杂，编排就越困难。它之所以称为时间旅行 Saga（sec），是因为从时间角度看，一切都已解耦：每项服务拥有自己的事务上下文，工作流一致性随时间逐渐形成；根据交互设计，状态最终会变得一致。</p>
+<p>时间旅行 Saga（sec）没有整体事务，因此工作流更容易建模；不过，缺少协调器意味着每项领域服务必须包含大部分工作流状态和信息。与所有编排方案一样，工作流复杂度和协调器效用之间存在直接关系，所以这种模式最适合简单工作流。</p>
+<p>对于需要高吞吐量的方案，该模式特别适合“发后即忘”式工作流，例如电子数据摄取、批量事务等。不过，因为没有协调器，领域服务必须自行处理错误情况与协调。</p>
+<p>低耦合提高了该模式的可扩展性；只有加入异步通信，才能进一步提升扩展能力，如选集 Saga（aec）。不过，该模式没有整体事务协调，架构师必须额外投入精力同步数据。</p>
+<p>时间旅行 Saga（sec）的定性评估如下：</p>
+<p><strong>耦合程度</strong></p>
+<p>时间旅行 Saga（sec）的耦合程度处于中等范围。没有协调器降低了耦合，但同步通信仍然保留部分耦合，两者相互平衡。与所有最终一致性模式一样，缺少事务耦合也缓解了许多数据关注点。</p>
+<p><strong>复杂度</strong></p>
+<p>去掉事务性降低了该模式的复杂度。这是一种近似专用的模式，极其适合高吞吐量的单向通信架构，其耦合程度也与这种架构风格十分匹配。</p>
+<p><strong>响应速度/可用性</strong></p>
+<p>该模式的响应速度评分为中等：用于前述专门用途的系统时相当高，但涉及复杂错误处理时会很低。由于不存在协调器，发生错误时，每项领域服务都必须处理恢复最终一致性的场景；同步调用会产生大量开销，影响响应速度与性能。</p>
+<p><strong>扩展能力/弹性</strong></p>
+<p>该架构模式提供极好的扩展能力和弹性；只有改为异步通信才能更进一步，参见选集 Saga（aec）。</p>
+<p>时间旅行 Saga（sec）的评分见表 <a href="#tbl-12-5" class="quarto-xref">表格&nbsp;<span>12.5</span></a>。</p>
+<div id="tbl-12-5" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.5: 时间旅行 Saga（sec）评分
+</figcaption>
+<div aria-describedby="tbl-12-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>时间旅行 Saga（sec）模式</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信</td>
+<td>同步</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>最终</td>
+</tr>
+<tr class="odd">
+<td>协调</td>
+<td>编排</td>
+</tr>
+<tr class="even">
+<td>耦合</td>
+<td>中</td>
+</tr>
+<tr class="odd">
+<td>复杂度</td>
+<td>低</td>
+</tr>
+<tr class="even">
+<td>响应速度/可用性</td>
+<td>中</td>
+</tr>
+<tr class="odd">
+<td>扩展能力/弹性</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>时间旅行 Saga（sec）为采用更复杂、但最终扩展能力更强的选集 Saga（aec）提供了一个入口。架构师和开发人员普遍认为，同步通信更容易推理、实现和调试；如果这种模式已经提供足够的可扩展性，团队就不必转向更复杂但更能扩展的替代方案。</p>
+</section>
+<section id="奇幻-sagaaao模式" class="level3" data-number="12.1.5">
+<h3 data-number="12.1.5" class="anchored" data-anchor-id="奇幻-sagaaao模式"><span class="header-section-number">12.1.5</span> 奇幻 Saga（aao）模式</h3>
+<p>奇幻 Saga（aao）采用原子一致性、异步通信和协调式协调，如图 <a href="#fig-12-12" class="quarto-xref">图&nbsp;<span>12.12</span></a> 所示。</p>
+<div id="fig-12-12" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-12.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.12: 异步通信使该模式中的事务性难以实现
+</figcaption>
+</figure>
+</div>
+<p>图 <a href="#fig-12-13" class="quarto-xref">图&nbsp;<span>12.13</span></a> 的结构表示开始显露出该模式的困难。</p>
+<div id="fig-12-13" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-13.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.13: 奇幻 Saga（aao）有些不切实际，因为异步通信中的事务协调很困难
+</figcaption>
+</figure>
+</div>
+<p>某种架构力量组合存在，并不意味着它一定构成有吸引力的模式；不过，这种相对不太合理的组合仍有用途。它除通信方式之外，在所有方面都与史诗 Saga（sao）相似：这里采用异步通信，而不是同步通信。传统上，架构师提高分布式系统响应速度的一种方式就是使用异步通信，让操作并行而不是串行执行。因此，这似乎是改善史诗 Saga（sao）感知性能的好办法。</p>
+<p>然而，异步并不是一个简单变化。它会给架构增加许多层复杂度，尤其是协调方面，要求中介者复杂得多。例如，假设事务工作流 Alpha 启动；一切都是异步的，因此 Alpha 仍在等待时，事务工作流 Beta 又启动。现在，中介者必须跟踪所有处于等待状态的进行中事务。</p>
+<p>情况还会变得更糟。假设工作流 Gamma 启动，但它对第一项领域服务的调用依赖仍未完成的 Alpha 结果，架构师应如何建模？这并非不可能，但复杂度会不断增长。</p>
+<p>给协调式工作流加入异步通信，就把异步事务状态带入问题，打破了关于串行顺序的假设，并引入死锁、竞态条件及许多其他并行系统挑战。</p>
+<p>该模式面临以下挑战：</p>
+<p><strong>耦合程度</strong></p>
+<p>该模式的耦合程度极高：同时使用协调器和原子性，却又采用异步通信。异步通信强加竞态条件及其他乱序问题，使协调变得更加困难。</p>
+<p><strong>复杂度</strong></p>
+<p>耦合如此棘手，复杂度也随之升高。不仅存在设计复杂度，迫使架构师开发过度复杂的工作流；还存在大规模异步工作流的调试复杂度与运行复杂度。</p>
+<p><strong>响应速度/可用性</strong></p>
+<p>该模式试图跨调用协调事务，因此整体响应速度会受到影响；如果一项或多项服务不可用，表现会极差。</p>
+<p><strong>扩展能力/弹性</strong></p>
+<p>事务系统几乎不可能实现高扩展能力，即使采用异步通信也是如此。相似的并行 Saga（aeo）把原子一致性改为最终一致性，扩展能力要好得多。</p>
+<p>奇幻 Saga（aao）的评分见表 <a href="#tbl-12-6" class="quarto-xref">表格&nbsp;<span>12.6</span></a>。</p>
+<div id="tbl-12-6" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.6: 奇幻 Saga（aao）评分
+</figcaption>
+<div aria-describedby="tbl-12-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>奇幻 Saga（aao）模式</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信</td>
+<td>异步</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>原子</td>
+</tr>
+<tr class="odd">
+<td>协调</td>
+<td>协调</td>
+</tr>
+<tr class="even">
+<td>耦合</td>
+<td>高</td>
+</tr>
+<tr class="odd">
+<td>复杂度</td>
+<td>高</td>
+</tr>
+<tr class="even">
+<td>响应速度/可用性</td>
+<td>低</td>
+</tr>
+<tr class="odd">
+<td>扩展能力/弹性</td>
+<td>低</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>遗憾的是，这种模式比它应有的流行程度更高，主要源自一个错误方向：在维持事务性的同时改善史诗 Saga（sao）的性能。通常，更好的选择是并行 Saga（aeo）。</p>
+</section>
+<section id="恐怖故事-sagaaac模式" class="level3" data-number="12.1.6">
+<h3 data-number="12.1.6" class="anchored" data-anchor-id="恐怖故事-sagaaac模式"><span class="header-section-number">12.1.6</span> 恐怖故事 Saga（aac）模式</h3>
+<p>八种模式中总有一种是最糟糕的组合。名副其实的<strong>恐怖故事 Saga（aac）</strong>采用异步通信、原子一致性和编排式协调，如图 <a href="#fig-12-14" class="quarto-xref">图&nbsp;<span>12.14</span></a> 所示。</p>
+<div id="fig-12-14" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-14.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.14: 最困难的组合：在异步和编排条件下实现事务性
+</figcaption>
+</figure>
+</div>
+<p>为什么这种组合如此可怕？它把一致性上最严格的耦合要求（原子性）与两种最宽松的耦合风格（异步与编排）混在一起。其结构通信见图 <a href="#fig-12-15" class="quarto-xref">图&nbsp;<span>12.15</span></a>。</p>
+<div id="fig-12-15" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-15.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.15: 事务性要求与缺少中介者，使该模式需要大量服务间通信
+</figcaption>
+</figure>
+</div>
+<p>该模式没有中介者来管理多项服务之间的事务一致性，却又使用异步通信。因此，每项领域服务都必须跟踪多个等待中事务的撤销信息；因为异步性，这些事务还可能乱序，并且在发生错误时必须彼此协调。随便举一个可怕的例子：事务 Alpha 启动，尚未完成时事务 Beta 又启动；随后，Alpha 中的一次调用失败。现在，采用编排的服务必须倒转触发顺序，沿途撤销事务中每个可能乱序的元素。</p>
+<p>错误情况的数量与复杂度，使这成为一种令人望而生畏的选择。架构师为什么会选择它？异步通信能提升性能，很有吸引力；但架构师可能同时试图维持事务完整性，而后者拥有无数故障模式。更好的选择通常是去掉整体事务性的选集 Saga（aec）。</p>
+<p>恐怖故事 Saga（aac）的定性评估如下：</p>
+<p><strong>耦合程度</strong></p>
+<p>令人意外的是，该模式的耦合程度并非最差；这项“殊荣”属于史诗 Saga（sao）。恐怖故事虽然试图实现最糟糕的单项耦合——事务性，却放松了另外两个维度：既没有中介者，也没有会增加耦合的同步通信。</p>
+<p><strong>复杂度</strong></p>
+<p>正如其名，该模式的复杂度确实极其可怕，是所有模式中最糟糕的：它要求用最难的两个因素组合（异步与编排）实现最严格的要求（事务性）。</p>
+<p><strong>扩展能力/弹性</strong></p>
+<p>该模式比拥有中介者的模式扩展得更好，异步通信也允许更多工作并行执行。</p>
+<p><strong>响应速度/可用性</strong></p>
+<p>与其他要求整体事务的模式类似，该模式响应速度较低。工作流协调需要大量服务间“闲聊”，损害性能与响应能力。</p>
+<p>恐怖故事 Saga（aac）的权衡见表 <a href="#tbl-12-7" class="quarto-xref">表格&nbsp;<span>12.7</span></a>。</p>
+<div id="tbl-12-7" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.7: 恐怖故事 Saga（aac）评分
+</figcaption>
+<div aria-describedby="tbl-12-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>恐怖故事 Saga（aac）模式</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信</td>
+<td>异步</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>原子</td>
+</tr>
+<tr class="odd">
+<td>协调</td>
+<td>编排</td>
+</tr>
+<tr class="even">
+<td>耦合</td>
+<td>中</td>
+</tr>
+<tr class="odd">
+<td>复杂度</td>
+<td>极高</td>
+</tr>
+<tr class="even">
+<td>响应速度/可用性</td>
+<td>低</td>
+</tr>
+<tr class="odd">
+<td>扩展能力/弹性</td>
+<td>中</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>名副其实的恐怖故事 Saga（aac），往往源自一位出于善意的架构师：先从史诗 Saga（sao）开始，因为复杂工作流导致性能缓慢，随后意识到异步通信和编排可以改善性能。然而，这种思路没有考虑问题空间中所有相互纠缠的维度。孤立来看，异步通信的确改善性能；但作为架构师，我们不能把它与一致性、协调等其他架构维度的纠缠割裂开来。</p>
+</section>
+<section id="并行-sagaaeo模式" class="level3" data-number="12.1.7">
+<h3 data-number="12.1.7" class="anchored" data-anchor-id="并行-sagaaeo模式"><span class="header-section-number">12.1.7</span> 并行 Saga（aeo）模式</h3>
+<p>并行 Saga（aeo）以“传统”史诗 Saga（sao）为基础，但有两项关键差异放松了限制，使它更容易实现：异步通信与最终一致性。它的维度图见图 <a href="#fig-12-16" class="quarto-xref">图&nbsp;<span>12.16</span></a>。</p>
+<div id="fig-12-16" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-16.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.16: 并行 Saga（aeo）比传统 Saga 具有更好的性能
+</figcaption>
+</figure>
+</div>
+<p>史诗 Saga（sao）中最困难的目标围绕事务和同步通信展开，两者都会造成瓶颈与性能下降。图 <a href="#fig-12-16" class="quarto-xref">图&nbsp;<span>12.16</span></a> 展示了该模式如何放松这两项约束。</p>
+<p>并行 Saga（aeo）的同构表示见图 <a href="#fig-12-17" class="quarto-xref">图&nbsp;<span>12.17</span></a>。</p>
+<div id="fig-12-17" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-17.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.17: 每项服务拥有自己的事务性，中介者负责协调请求与响应
+</figcaption>
+</figure>
+</div>
+<p>该模式使用中介者，因此适合复杂工作流；同时又使用异步通信，能够获得更好的响应速度与并行执行能力。一致性由领域服务负责，可能需要在后台或由中介者驱动来同步共享数据。与其他需要协调的架构问题一样，中介者在这里非常有用。</p>
+<p>例如，如果执行工作流时发生错误，中介者可以向每项相关领域服务发送异步消息，补偿失败的变更；补救措施可能包括重试、数据同步或许多其他方式。</p>
+<p>当然，放松约束意味着必须交换掉某些好处，这正是软件架构的本质。缺少事务性会给中介者增加更多负担，用于解决错误及其他工作流问题。异步通信虽然改善响应速度，却使时序和同步问题更难解决；竞态条件、死锁、队列可靠性以及许多其他分布式架构难题都存在于这个空间。</p>
+<p>并行 Saga（aeo）的定性评分如下：</p>
+<p><strong>耦合程度</strong></p>
+<p>该模式耦合程度较低，把会加强耦合的事务力量限制在各项领域服务内部。它还采用异步通信，进一步解除服务与等待状态之间的耦合，允许更多并行处理，但也给架构师的耦合分析增加了时间维度。</p>
+<p><strong>复杂度</strong></p>
+<p>并行 Saga（aeo）的复杂度同样较低，反映出前述耦合的减轻。架构师相当容易理解这种模式，而且协调让工作流与错误处理设计更简单。</p>
+<p><strong>扩展能力/弹性</strong></p>
+<p>异步通信与较小的事务边界，使该架构能够很好地扩展，并在服务之间保持良好隔离。例如，在微服务架构中，部分面向公众的服务可能需要更高扩展能力与弹性，而后台服务不需要扩展，却要求更高安全性。把事务隔离在领域级别，让架构能够围绕领域概念扩展。</p>
+<p><strong>响应速度/可用性</strong></p>
+<p>由于不存在协调式事务，并且采用异步通信，该架构响应速度很高。事实上，每项服务都维持自己的事务上下文，所以该架构很适合服务之间性能特征差异极大的情况，允许架构师根据需求让某些服务比其他服务扩展得更多。</p>
+<p>并行 Saga（aeo）的评分见表 <a href="#tbl-12-8" class="quarto-xref">表格&nbsp;<span>12.8</span></a>。</p>
+<div id="tbl-12-8" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.8: 并行 Saga（aeo）评分
+</figcaption>
+<div aria-describedby="tbl-12-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>并行 Saga（aeo）模式</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信</td>
+<td>异步</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>最终</td>
+</tr>
+<tr class="odd">
+<td>协调</td>
+<td>协调</td>
+</tr>
+<tr class="even">
+<td>耦合</td>
+<td>低</td>
+</tr>
+<tr class="odd">
+<td>复杂度</td>
+<td>低</td>
+</tr>
+<tr class="even">
+<td>响应速度/可用性</td>
+<td>高</td>
+</tr>
+<tr class="odd">
+<td>扩展能力/弹性</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>总体而言，并行 Saga（aeo）为许多场景提供了很有吸引力的权衡组合，尤其适合需要高扩展能力的复杂工作流。</p>
+</section>
+<section id="选集-sagaaec模式" class="level3" data-number="12.1.8">
+<h3 data-number="12.1.8" class="anchored" data-anchor-id="选集-sagaaec模式"><span class="header-section-number">12.1.8</span> 选集 Saga（aec）模式</h3>
+<p>选集 Saga（aec）的特征与传统史诗 Saga（sao）完全相反：它采用异步通信、最终一致性和编排式协调，是所有模式中耦合最低的典型。它的维度视图见图 <a href="#fig-12-18" class="quarto-xref">图&nbsp;<span>12.18</span></a>。</p>
+<div id="fig-12-18" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-18.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.18: 选集 Saga（aec）与史诗 Saga 处于两个极端，因此耦合最低
+</figcaption>
+</figure>
+</div>
+<p>选集模式不使用协调器，而是通过消息队列向其他领域服务发送异步消息，如图 <a href="#fig-12-19" class="quarto-xref">图&nbsp;<span>12.19</span></a> 所示。</p>
+<div id="fig-12-19" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-19.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.19: 缺少协调、最终一致性与异步性使该模式高度解耦，但协调也更具挑战
+</figcaption>
+</figure>
+</div>
+<p>可以看到，每项服务都维持自己的事务完整性，同时不存在协调器；因此，每项领域服务被迫包含更多关于自己所参与工作流的上下文，包括错误处理及其他协调策略。</p>
+<p>缺少协调器会让服务更加复杂，但也带来高得多的吞吐量、可扩展性、弹性及其他有利的运行架构特性。该架构不存在瓶颈或耦合阻塞点，因此响应速度和扩展能力都很高。</p>
+<p>不过，这种模式不太适合复杂工作流，尤其不适合解决数据一致性错误。虽然没有协调器似乎无法携带状态，但也可以像相似的传话 Saga（sac）一样，利用印记耦合携带工作流状态；第 13 章“用于工作流管理的印记耦合”会进一步介绍。</p>
+<p>该模式最适合简单、近似线性的工作流，并且架构师希望获得很高的处理吞吐量。它在高性能和高扩展能力方面拥有最大潜力，因此当两者是系统的关键驱动因素时，很有吸引力。不过，如此高的解耦程度会使协调变得困难；面对复杂或关键工作流，代价甚至高到无法接受。</p>
+<p>这项以短篇小说集为灵感的选集 Saga（aec）具有以下特征：</p>
+<p><strong>耦合程度</strong></p>
+<p>该模式的耦合程度是所有力量组合中最低的，形成高度解耦的架构，非常适合高扩展能力和高弹性。</p>
+<p><strong>复杂度</strong></p>
+<p>耦合虽然极低，复杂度却相应很高，尤其面对复杂工作流时更是如此；这类工作流通常很适合使用协调器，但该模式恰恰没有协调器。</p>
+<p><strong>扩展能力/弹性</strong></p>
+<p>该模式在扩展能力和弹性类别中获得最高评分，与它整体缺少耦合的特征相符。</p>
+<p><strong>响应速度</strong></p>
+<p>该架构没有速度限制因素（事务一致性、同步通信），并且采用响应加速因素（编排式协调），因此响应速度很高。</p>
+<p>选集 Saga（aec）的评分见表 <a href="#tbl-12-9" class="quarto-xref">表格&nbsp;<span>12.9</span></a>。</p>
+<div id="tbl-12-9" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.9: 选集 Saga（aec）评分
+</figcaption>
+<div aria-describedby="tbl-12-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>选集 Saga（aec）模式</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信</td>
+<td>异步</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>最终</td>
+</tr>
+<tr class="odd">
+<td>协调</td>
+<td>编排</td>
+</tr>
+<tr class="even">
+<td>耦合</td>
+<td>极低</td>
+</tr>
+<tr class="odd">
+<td>复杂度</td>
+<td>高</td>
+</tr>
+<tr class="even">
+<td>响应速度/可用性</td>
+<td>高</td>
+</tr>
+<tr class="odd">
+<td>扩展能力/弹性</td>
+<td>极高</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>选集 Saga（aec）非常适合吞吐量极高，并且错误情况简单或很少发生的通信。例如，管道与过滤器架构与该模式完全契合。</p>
+<p>架构师可以用多种方式实现本节介绍的模式。例如，可以利用补偿更新，以原子事务管理事务型 Saga；也可以采用最终一致性管理事务状态。本节展示了每种方式的优缺点，帮助架构师决定采用哪一种事务型 Saga 模式。</p>
+</section>
+</section>
+<section id="状态管理与最终一致性" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="状态管理与最终一致性"><span class="header-section-number">12.2</span> 状态管理与最终一致性</h2>
+<p>状态管理与最终一致性利用有限状态机（见下一节“Saga 状态机”），持续掌握事务型 Saga 的当前状态，并通过重试、自动修正或人工修正，最终消除错误情况。为了说明这种方式，考虑图 <a href="#fig-12-20" class="quarto-xref">图&nbsp;<span>12.20</span></a> 所示工单完成示例的童话 Saga（seo）实现。</p>
+<div id="fig-12-20" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-20.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.20: 童话 Saga 改善响应速度，但在纠正之前，各数据源会保持不同步
+</figcaption>
+</figure>
+</div>
+<p>注意，在分布式事务的作用范围内，调查服务不可用。不过，这种 Saga 不会发出补偿更新，而是把 Saga 状态改为 <code>NO_SURVEY</code>，再向 Sysops 专家发送成功响应，即图中的第 7 步。随后，工单协调器服务以异步方式在后台通过重试与错误分析来解决问题。如果无法解决，它会把错误发送给管理员或主管，由人工修复和处理。</p>
+<p>通过管理 Saga 状态而不是发出补偿更新，最终用户（本例中的 Sysops Squad 专家）不必关心调查没有发送给客户；那是工单协调器服务的责任。从最终用户角度看，响应速度很好，而且系统处理错误时，用户可以继续执行其他任务。</p>
+<section id="saga-状态机" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="saga-状态机"><span class="header-section-number">12.2.1</span> Saga 状态机</h3>
+<p>状态机是一种描述分布式架构中所有可能路径的模式。它总是从启动事务型 Saga 的起始状态开始，然后包含转换状态，以及转换发生时应该执行的相应操作。</p>
+<p>为了说明 Saga 状态机的工作方式，考虑客户在 Sysops Squad 系统中创建新故障工单的工作流：</p>
+<ol type="1">
+<li>客户在系统中输入新的故障工单。</li>
+<li>工单被分配给下一个可用的 Sysops Squad 专家。</li>
+<li>工单被路由到专家的移动设备。</li>
+<li>专家收到工单并处理问题。</li>
+<li>专家完成维修，把工单标记为已完成。</li>
+<li>系统向客户发送调查。</li>
+</ol>
+<p>该事务型 Saga 中可能存在的各个状态及其转换操作见图 <a href="#fig-12-21" class="quarto-xref">图&nbsp;<span>12.21</span></a>。事务型 Saga 从 <code>START</code> 节点开始，该节点表示 Saga 入口；在表示 Saga 出口的 <code>CLOSED</code> 节点终止。</p>
+<div id="fig-12-21" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-21-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-21.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-21-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.21: 创建新故障工单的状态图
+</figcaption>
+</figure>
+</div>
+<p>下面更详细地说明该事务型 Saga，以及每个状态中发生的状态转换操作。</p>
+<p><strong>START</strong></p>
+<p>事务型 Saga 从客户在系统中输入新的故障工单开始。系统验证客户的支持计划和工单数据。工单插入数据库的工单表后，Saga 状态变为 <code>CREATED</code>，并通知客户工单已成功创建。这次状态转换只有这一种可能结果；该状态内出现任何错误，都会阻止 Saga 启动。</p>
+<p><strong>CREATED</strong></p>
+<p>工单成功创建后，会被分配给一名 Sysops Squad 专家。如果没有可用专家，工单会保持等待状态，直到专家可用。专家分配完成后，Saga 状态变为 <code>ASSIGNED</code>。这次状态转换也只有一种结果：在工单能够完成分配之前，一直保持 <code>CREATED</code> 状态。</p>
+<p><strong>ASSIGNED</strong></p>
+<p>工单分配给专家后，唯一可能的结果就是把工单路由给该专家。这里假设分配算法已经找到专家，并确认其可用。如果因为无法找到专家或专家不可用而无法路由，Saga 会保持这一状态，直到路由成功。路由完成后，专家必须确认已经收到工单；随后，事务型 Saga 状态变为 <code>ACCEPTED</code>。这也是该状态转换的唯一可能结果。</p>
+<p><strong>ACCEPTED</strong></p>
+<p>Sysops Squad 专家接受工单后，存在两种可能状态：<code>COMPLETED</code> 或 <code>REASSIGN</code>。专家完成维修并把工单标记为“已完成”后，Saga 状态变为 <code>COMPLETED</code>。不过，如果工单由于某种原因分配错误，或者专家无法完成维修，专家会通知系统，状态变为 <code>REASSIGN</code>。</p>
+<p><strong>REASSIGN</strong></p>
+<p>进入该 Saga 状态后，系统会把工单重新分配给另一位专家。与 <code>CREATED</code> 状态一样，如果没有专家可用，事务型 Saga 会保持 <code>REASSIGN</code>，直到专家完成分配。找到另一位专家并再次分配工单后，状态变为 <code>ASSIGNED</code>，等待另一位专家接受。这是该状态转换的唯一可能结果；工单分配给专家之前，Saga 会一直保持此状态。</p>
+<p><strong>COMPLETED</strong></p>
+<p>专家完成工单后，存在两种可能状态：<code>CLOSED</code> 或 <code>NO_SURVEY</code>。工单处于此状态时，系统会向客户发送调查，请其为专家和服务评分；随后 Saga 状态变为 <code>CLOSED</code>，结束事务型 Saga。如果调查服务不可用，或者发送调查时发生错误，状态就变为 <code>NO_SURVEY</code>，表示问题已经修复，但调查未发送给客户。</p>
+<p><strong>NO_SURVEY</strong></p>
+<p>在这个错误情况状态下，系统会继续尝试向客户发送调查。发送成功后，状态变为 <code>CLOSED</code>，标志事务型 Saga 结束。这是该状态转换唯一可能的结果。</p>
+<p>许多情况下，把所有可能状态转换及相应转换操作列进表格会很有用。开发人员可以利用该表，在协调器服务中实现状态转换触发器及可能的错误情况；如果采用编排，也可以在各项相关服务中实现。表 <a href="#tbl-12-10" class="quarto-xref">表格&nbsp;<span>12.10</span></a> 列出了所有可能状态，以及状态转换发生时触发的操作。</p>
+<div id="tbl-12-10" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.10: Sysops Squad 系统新故障工单的 Saga 状态机
+</figcaption>
+<div aria-describedby="tbl-12-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>起始状态</th>
+<th>转换状态</th>
+<th>事务操作</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>START</code></td>
+<td><code>CREATED</code></td>
+<td>把工单分配给专家</td>
+</tr>
+<tr class="even">
+<td><code>CREATED</code></td>
+<td><code>ASSIGNED</code></td>
+<td>把工单路由给已分配专家</td>
+</tr>
+<tr class="odd">
+<td><code>ASSIGNED</code></td>
+<td><code>ACCEPTED</code></td>
+<td>专家修复问题</td>
+</tr>
+<tr class="even">
+<td><code>ACCEPTED</code></td>
+<td><code>COMPLETED</code></td>
+<td>向客户发送调查</td>
+</tr>
+<tr class="odd">
+<td><code>ACCEPTED</code></td>
+<td><code>REASSIGN</code></td>
+<td>重新分配给另一位专家</td>
+</tr>
+<tr class="even">
+<td><code>REASSIGN</code></td>
+<td><code>ASSIGNED</code></td>
+<td>把工单路由给已分配专家</td>
+</tr>
+<tr class="odd">
+<td><code>COMPLETED</code></td>
+<td><code>CLOSED</code></td>
+<td>工单 Saga 完成</td>
+</tr>
+<tr class="even">
+<td><code>COMPLETED</code></td>
+<td><code>NO_SURVEY</code></td>
+<td>向客户发送调查</td>
+</tr>
+<tr class="odd">
+<td><code>NO_SURVEY</code></td>
+<td><code>CLOSED</code></td>
+<td>工单 Saga 完成</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>分布式事务工作流究竟使用补偿更新还是状态管理，取决于具体情况，以及响应速度与一致性之间的权衡分析。无论使用哪种技术管理分布式事务中的错误，都应该了解并管理分布式事务的状态。</p>
+<p>表 <a href="#tbl-12-11" class="quarto-xref">表格&nbsp;<span>12.11</span></a> 总结了采用状态管理，而不是使用补偿更新的原子分布式事务时所涉及的权衡。</p>
+<section id="权衡" class="level4" data-number="12.2.1.1">
+<h4 data-number="12.2.1.1" class="anchored" data-anchor-id="权衡"><span class="header-section-number">12.2.1.1</span> 权衡</h4>
+<div id="tbl-12-11" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.11: 状态管理相对于使用补偿更新的原子分布式事务的权衡
+</figcaption>
+<div aria-describedby="tbl-12-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>响应速度好</td>
+<td>发生错误时，数据可能不同步</td>
+</tr>
+<tr class="even">
+<td>错误对最终用户影响较小</td>
+<td>最终一致可能需要一段时间</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+</section>
+<section id="saga-管理技术" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="saga-管理技术"><span class="header-section-number">12.3</span> Saga 管理技术</h2>
+<p>分布式事务并不是可以简单“丢进”系统里的东西。它们无法像 ACID 事务管理器那样，通过某种框架或产品下载或购买；必须由开发人员和架构师设计、编码并维护。</p>
+<p>我们喜欢用来帮助管理分布式事务的一种技术，是利用注解（Java）、自定义特性（C#），或其他语言中的类似构造。这些语言构造本身不包含实际功能，却提供了一种程序化方式，用于捕获并记录系统中的事务型 Saga，也能把服务与事务型 Saga 关联起来。</p>
+<p>示例 <a href="#lst-12-1" class="quarto-xref">列表&nbsp;<span>12.1</span></a>（Java）和示例 <a href="#lst-12-2" class="quarto-xref">列表&nbsp;<span>12.2</span></a>（C#）展示了这些注解与自定义特性的实现方式。两种实现都把事务型 Saga（<code>NEW_TICKET</code>、<code>CANCEL_TICKET</code> 等）放进 <code>Transaction</code> 枚举，从而在源代码中提供一个统一位置，列出并记录应用上下文中的各种 Saga。</p>
+<div id="lst-12-1" class="java listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-12-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;12.1: 定义事务型 Saga 注解的源代码（Java）
+</figcaption>
+<div aria-describedby="lst-12-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-12-1"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-12-1-1"><a href="#lst-12-1-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Retention</span><span class="op">(</span><span class="bu">RetentionPolicy</span><span class="op">.</span><span class="fu">RUNTIME</span><span class="op">)</span></span>
+<span id="lst-12-1-2"><a href="#lst-12-1-2" aria-hidden="true" tabindex="-1"></a><span class="at">@Target</span><span class="op">(</span><span class="bu">ElementType</span><span class="op">.</span><span class="fu">TYPE</span><span class="op">)</span></span>
+<span id="lst-12-1-3"><a href="#lst-12-1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="at">@interface</span> Saga <span class="op">{</span></span>
+<span id="lst-12-1-4"><a href="#lst-12-1-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">public</span> Transaction<span class="op">[]</span> <span class="fu">value</span><span class="op">();</span></span>
+<span id="lst-12-1-5"><a href="#lst-12-1-5" aria-hidden="true" tabindex="-1"></a>   <span class="kw">public</span> <span class="kw">enum</span> Transaction <span class="op">{</span></span>
+<span id="lst-12-1-6"><a href="#lst-12-1-6" aria-hidden="true" tabindex="-1"></a>      NEW_TICKET<span class="op">,</span></span>
+<span id="lst-12-1-7"><a href="#lst-12-1-7" aria-hidden="true" tabindex="-1"></a>      CANCEL_TICKET<span class="op">,</span></span>
+<span id="lst-12-1-8"><a href="#lst-12-1-8" aria-hidden="true" tabindex="-1"></a>      NEW_CUSTOMER<span class="op">,</span></span>
+<span id="lst-12-1-9"><a href="#lst-12-1-9" aria-hidden="true" tabindex="-1"></a>      UNSUBSCRIBE<span class="op">,</span></span>
+<span id="lst-12-1-10"><a href="#lst-12-1-10" aria-hidden="true" tabindex="-1"></a>      NEW_SUPPORT_CONTRACT</span>
+<span id="lst-12-1-11"><a href="#lst-12-1-11" aria-hidden="true" tabindex="-1"></a>   <span class="op">}</span></span>
+<span id="lst-12-1-12"><a href="#lst-12-1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<div id="lst-12-2" class="csharp listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-12-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;12.2: 定义事务型 Saga 特性的源代码（C#）
+</figcaption>
+<div aria-describedby="lst-12-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-12-2"><pre class="sourceCode csharp code-with-copy"><code class="sourceCode cs"><span id="lst-12-2-1"><a href="#lst-12-2-1" aria-hidden="true" tabindex="-1"></a><span class="op">[</span><span class="fu">AttributeUsage</span><span class="op">(</span>AttributeTargets<span class="op">.</span><span class="fu">Class</span><span class="op">)]</span></span>
+<span id="lst-12-2-2"><a href="#lst-12-2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Saga <span class="op">:</span> System<span class="op">.</span><span class="fu">Attribute</span> <span class="op">{</span></span>
+<span id="lst-12-2-3"><a href="#lst-12-2-3" aria-hidden="true" tabindex="-1"></a>   <span class="kw">public</span> Transaction<span class="op">[]</span> transaction<span class="op">;</span></span>
+<span id="lst-12-2-4"><a href="#lst-12-2-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">public</span> <span class="kw">enum</span> Transaction <span class="op">{</span></span>
+<span id="lst-12-2-5"><a href="#lst-12-2-5" aria-hidden="true" tabindex="-1"></a>      NEW_TICKET<span class="op">,</span></span>
+<span id="lst-12-2-6"><a href="#lst-12-2-6" aria-hidden="true" tabindex="-1"></a>      CANCEL_TICKET<span class="op">,</span></span>
+<span id="lst-12-2-7"><a href="#lst-12-2-7" aria-hidden="true" tabindex="-1"></a>      NEW_CUSTOMER<span class="op">,</span></span>
+<span id="lst-12-2-8"><a href="#lst-12-2-8" aria-hidden="true" tabindex="-1"></a>      UNSUBSCRIBE<span class="op">,</span></span>
+<span id="lst-12-2-9"><a href="#lst-12-2-9" aria-hidden="true" tabindex="-1"></a>      NEW_SUPPORT_CONTRACT</span>
+<span id="lst-12-2-10"><a href="#lst-12-2-10" aria-hidden="true" tabindex="-1"></a>   <span class="op">};</span></span>
+<span id="lst-12-2-11"><a href="#lst-12-2-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<p>定义完成后，可以利用这些注解或特性识别参与事务型 Saga 的服务。例如，示例 <a href="#lst-12-3" class="quarto-xref">列表&nbsp;<span>12.3</span></a> 表明，调查服务（以 <code>SurveyServiceAPI</code> 类作为服务入口）参与 <code>NEW_TICKET</code> Saga；工单服务（以 <code>TicketServiceAPI</code> 类作为服务入口）则参与两个 Saga：<code>NEW_TICKET</code> 和 <code>CANCEL_TICKET</code>。</p>
+<div id="lst-12-3" class="java listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-12-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+列表&nbsp;12.3: 使用事务型 Saga 注解的源代码（Java）
+</figcaption>
+<div aria-describedby="lst-12-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode" id="lst-12-3"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-12-3-1"><a href="#lst-12-3-1" aria-hidden="true" tabindex="-1"></a><span class="at">@ServiceEntrypoint</span></span>
+<span id="lst-12-3-2"><a href="#lst-12-3-2" aria-hidden="true" tabindex="-1"></a><span class="at">@Saga</span><span class="op">(</span>Transaction<span class="op">.</span><span class="fu">NEW_TICKET</span><span class="op">)</span></span>
+<span id="lst-12-3-3"><a href="#lst-12-3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> SurveyServiceAPI <span class="op">{</span></span>
+<span id="lst-12-3-4"><a href="#lst-12-3-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">...</span></span>
+<span id="lst-12-3-5"><a href="#lst-12-3-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-12-3-6"><a href="#lst-12-3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-12-3-7"><a href="#lst-12-3-7" aria-hidden="true" tabindex="-1"></a><span class="at">@ServiceEntrypoint</span></span>
+<span id="lst-12-3-8"><a href="#lst-12-3-8" aria-hidden="true" tabindex="-1"></a><span class="at">@Saga</span><span class="op">({</span>Transaction<span class="op">.</span><span class="fu">NEW_TICKET</span><span class="op">,</span></span>
+<span id="lst-12-3-9"><a href="#lst-12-3-9" aria-hidden="true" tabindex="-1"></a>       Transaction<span class="op">.</span><span class="fu">CANCEL_TICKET</span><span class="op">})</span></span>
+<span id="lst-12-3-10"><a href="#lst-12-3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> TicketServiceAPI <span class="op">{</span></span>
+<span id="lst-12-3-11"><a href="#lst-12-3-11" aria-hidden="true" tabindex="-1"></a>   <span class="kw">...</span></span>
+<span id="lst-12-3-12"><a href="#lst-12-3-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+<p>注意，<code>NEW_TICKET</code> Saga 同时包含调查服务与工单服务。这对开发人员很有价值：修改特定工作流或 Saga 时，可以据此定义测试范围；修改事务型 Saga 中某项服务时，也能知道可能影响哪些其他服务。</p>
+<p>借助这些注解和自定义特性，架构师与开发人员可以编写简单的命令行界面（CLI）工具，遍历代码库或源代码仓库，实时提供 Saga 信息。例如，使用简单的自定义代码遍历工具，开发人员、架构师甚至业务分析师都可以查询 <code>NEW_TICKET</code> Saga 涉及哪些服务：</p>
+<pre class="text"><code>$ ./sagatool.sh NEW_TICKET -services
+-&gt; Ticket Service
+-&gt; Assignment Service
+-&gt; Routing Service
+-&gt; Survey Service
+$</code></pre>
+<p>自定义代码遍历工具可以检查应用上下文中每个包含 <code>@ServiceEntrypoint</code> 自定义注解（或特性）的类文件，再检查 <code>@Saga</code> 自定义注解中是否存在特定 Saga，本例中是 <code>Transaction.NEW_TICKET</code>。这种工具并不难编写，却能为管理事务型 Saga 提供宝贵信息。</p>
+</section>
+<section id="sysops-squad-案例原子事务与补偿更新" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="sysops-squad-案例原子事务与补偿更新"><span class="header-section-number">12.4</span> Sysops Squad 案例：原子事务与补偿更新</h2>
+<p><em>4 月 5 日，星期二，09:44</em></p>
+<p>一早，Addison 和 Austen 就在那间狭长的会议室里与 Logan 会面，彻底讨论新微服务架构中的事务问题。</p>
+<p>Logan 先开口：“我知道，并非所有人都理解你们读到的内容怎样应用到我们正在做的事情上。所以，我准备了一些工作流和示意图，帮助大家形成一致认识。今天讨论的是在系统中把工单标记为已完成。在这个工作流中，Sysops Squad 专家完成工作后，用移动设备上的应用把工单标记为‘已完成’。我想谈谈史诗 Saga 模式，以及补偿更新带来的问题。我画了图 <a href="#fig-12-22" class="quarto-xref">图&nbsp;<span>12.22</span></a> 来说明这个工作流，大家都能看见吗？”</p>
+<div id="fig-12-22" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-22-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-22.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-22-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.22: 史诗 Saga 要求在一次同步原子操作中更新工单状态并发送调查
+</figcaption>
+</figure>
+</div>
+<p>Logan 继续说：“我还列出了每一步。图中的圆圈编号与工作流步骤对应。”</p>
+<ol type="1">
+<li>Sysops Squad 专家在移动设备应用中把工单标记为已完成，工单协调器服务同步接收该操作。</li>
+<li>工单协调器服务向工单服务发送同步请求，把工单状态从“处理中”改为“已完成”。</li>
+<li>工单服务把数据库表中的工单状态更新为“已完成”，并提交更新。</li>
+<li>作为工单完成流程的一部分，工单服务把工单信息（例如维修时间、等待时间、持续时长等）异步发送到队列，等待分析服务提取。发送后，工单服务向工单协调器服务返回确认，表明更新已完成。</li>
+<li>几乎同时，分析服务异步接收更新后的工单分析数据，并开始处理工单信息。</li>
+<li>工单协调器服务随后向调查服务发送同步请求，要求准备客户调查并发送给客户。</li>
+<li>调查服务把调查信息（客户、工单信息与时间戳）插入表中，并提交插入操作。</li>
+<li>调查服务通过电子邮件把调查发送给客户，再向工单协调器服务返回确认，表明调查处理已完成。</li>
+<li>最后，工单协调器服务向 Sysops Squad 专家的移动设备返回响应，说明工单完成处理已经结束。此后，专家可以选择分配给自己的下一张故障工单。</li>
+</ol>
+<p>“哇，这真的很有帮助。你花了多长时间做这些？”Addison 问。</p>
+<p>“时间可不短，但它确实派上了用场。你们不是唯一对这些活动部件如何协同工作感到困惑的小组。这就是软件架构的难点。大家都理解工作流的基本过程了吗？”</p>
+<p>看到众人纷纷点头，Logan 继续说：“补偿更新最先出现的问题之一，是分布式事务内部不存在事务隔离（见第 10 章‘分布式事务’）。因此，分布式事务完成之前，其他服务可能已经根据事务范围内更新的数据采取了行动。为了说明这个问题，考虑图 <a href="#fig-12-23" class="quarto-xref">图&nbsp;<span>12.23</span></a> 中同一个史诗 Saga 示例：Sysops Squad 专家把工单标记为已完成，但这次调查服务不可用。此时，系统向工单服务发送补偿更新（图中第 7 步），撤销原来的更新，把工单状态从‘已完成’改回‘处理中’（图中第 8 步）。”</p>
+<p>“还要注意，图 <a href="#fig-12-23" class="quarto-xref">图&nbsp;<span>12.23</span></a> 中这是一个原子分布式事务，因此系统随后会向 Sysops Squad 专家返回错误，说明操作没有成功，请再次尝试。现在问你们一个问题：为什么调查没有发送出去，要由 Sysops Squad 专家来操心？”</p>
+<p>Austen 想了一会儿。“可这不是单体工作流的一部分吗？如果我没记错，所有事情都发生在同一个事务里。”</p>
+<p>“对，但我一直觉得这很奇怪，只是从没说出来，”Addison 说，“我不明白专家为什么要操心调查。专家只想继续处理分配给自己的下一张工单。”</p>
+<p>“没错，”Logan 说，“这就是原子分布式事务的问题：最终用户被不必要地语义耦合到业务流程。不过，图 <a href="#fig-12-23" class="quarto-xref">图&nbsp;<span>12.23</span></a> 还说明了分布式事务缺乏事务隔离的问题。原始更新把工单标记为已完成时，工单服务已经把工单信息异步发送到队列（图中第 4 步），由分析服务处理（第 5 步）。可是，向工单服务发出补偿更新（第 7 步）时，分析服务早在第 5 步就已经处理了工单信息。”</p>
+<div id="fig-12-23" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-23-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-23.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-23-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.23: 史诗 Saga（sao）需要补偿，但可能已经产生副作用
+</figcaption>
+</figure>
+</div>
+<p>“我们把这种情况称为分布式架构中的<strong>副作用</strong>。反转工单服务中的事务时，其他服务利用先前更新数据执行的操作可能已经发生，而且无法反转。这个场景说明事务隔离非常重要，而分布式事务并不支持它。为了解决这个问题，工单服务可以通过数据泵再向分析服务发送一个请求，要求它忽略先前的工单信息；但想象一下，分析服务为了处理这种补偿变更，需要多少复杂代码与时序逻辑。更何况，分析服务处理完分析数据后，可能已经触发更多下游操作，使需要反转和修正的事件链更加复杂。在分布式架构和分布式事务中，有时真的是一层之下还有一层，没完没了。”</p>
+<p>Logan 停了一会儿，然后继续：“另一个问题——”</p>
+<p>Austen 打断他：“还有问题？”</p>
+<p>Logan 笑了。“补偿更新的另一个问题，是补偿本身也可能失败。仍然考虑完成工单的史诗 Saga 示例。图 <a href="#fig-12-24" class="quarto-xref">图&nbsp;<span>12.24</span></a> 第 7 步向工单服务发出补偿更新，要求把状态从‘已完成’改回‘处理中’。可是这一次，工单服务在尝试更改工单状态时产生错误，也就是第 8 步。”</p>
+<div id="fig-12-24" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-24-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch12/fig-12-24.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-24-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12.24: 史诗 Saga 中的补偿更新可能失败，导致不一致，也让人不知道补偿失败后该怎么办
+</figcaption>
+</figure>
+</div>
+<p>“我见过这种情况！我们花了很久才找到原因。”Addison 说。</p>
+<p>“架构师和开发人员往往假定补偿更新总能成功，”Logan 说，“但有时并非如此。图 <a href="#fig-12-24" class="quarto-xref">图&nbsp;<span>12.24</span></a> 展示的情况中，应该向最终用户——这里就是 Sysops Squad 专家——返回什么响应，会变得很混乱。补偿失败后，工单状态已经标记为已完成，所以再次尝试‘标记为已完成’请求，可能只会造成另一个错误，例如‘工单已经标记为已完成’。最终用户一定会糊涂。”</p>
+<p>“我能想象开发人员来找我们，问该怎样解决。”Addison 说。</p>
+<p>“开发人员经常能检验架构方案是否不完整或令人困惑。如果他们感到困惑，通常是有充分理由的，”Logan 说，“好，再说最后一个问题。原子分布式事务及其补偿更新还会影响响应速度。如果发生错误，系统必须先通过补偿更新完成全部修正操作，才能向最终用户返回错误响应，用户只能一直等待。”</p>
+<p>“改成最终一致性，就能改善响应速度，对吗？”Austen 问。</p>
+<p>“是的。有时可以通过最终一致性异步发出补偿更新，例如并行 Saga 和选集 Saga，以改善响应速度；但多数原子分布式事务一旦涉及补偿更新，响应速度还是更差。”</p>
+<p>“明白了——原子协调总会有开销。”Austen 说。</p>
+<p>“信息很多。我们做一张表，总结原子分布式事务和补偿更新的一些权衡。”见表 <a href="#tbl-12-12" class="quarto-xref">表格&nbsp;<span>12.12</span></a>。</p>
+<section id="权衡-1" class="level3" data-number="12.4.1">
+<h3 data-number="12.4.1" class="anchored" data-anchor-id="权衡-1"><span class="header-section-number">12.4.1</span> 权衡</h3>
+<div id="tbl-12-12" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-12-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;12.12: 原子分布式事务与补偿更新的权衡
+</figcaption>
+<div aria-describedby="tbl-12-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>所有数据都恢复到以前的状态</td>
+<td>没有事务隔离</td>
+</tr>
+<tr class="even">
+<td>允许重试和重新启动</td>
+<td>补偿时可能产生副作用</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>补偿可能失败</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>最终用户响应速度差</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Logan 说：“补偿事务模式虽然存在，却也带来许多挑战。谁能说出一个？”</p>
+<p>“我知道：服务可能无法回滚，”Austen 说，“如果某项服务无法成功撤销先前操作怎么办？协调器必须包含协调代码，表明事务没有成功。”</p>
+<p>“没错。还有呢？”</p>
+<p>“究竟要不要锁定参与的服务？”Addison 说，“中介者调用一项服务并更新值后，还会继续调用工作流中的后续服务。可是，如果对第一项服务又出现一个请求，并且依赖第一个请求的处理结果，会怎么样？这个新请求可能来自同一个中介者，也可能来自不同上下文。如果调用是异步而不是同步，这个分布式架构问题会更加严重，传话 Saga（sac）就是例子。另一种做法是中介者要求其他服务在工作流进行期间拒绝调用。这样可以保证事务有效，却会摧毁性能与可扩展性。”</p>
+<p>Logan 说：“正确。我们从哲学角度想一会儿。从概念上讲，事务迫使所有参与者停下各自的世界，在某个特定值上同步。用单体架构与关系数据库对此建模太容易了，以至于架构师在这些系统中过度使用事务。现实世界中的许多事情并非事务性的；Gregor Hohpe 的著名文章《星巴克不用两阶段提交》（Starbucks Does Not Use Two-Phase Commit）就观察到了这一点。事务协调是架构最难处理的部分之一，范围越广，情况就越糟。”</p>
+<p>“除了史诗 Saga，还有其他选择吗？”Addison 问。</p>
+<p>“当然！”Logan 说，“对图 <a href="#fig-12-24" class="quarto-xref">图&nbsp;<span>12.24</span></a> 所述场景，更现实的方式可能是采用童话 Saga 或并行 Saga。发生错误时，这些 Saga 依赖异步最终一致性与状态管理，而不是使用补偿更新的原子分布式事务。采用这类 Saga，分布式事务中发生的错误对用户影响较小，因为错误在后台解决，不需要最终用户参与。状态管理与最终一致性也有更好的响应速度，因为用户不必等待分布式事务执行修正操作。如果原子性出现问题，可以把这些模式作为替代方案研究。”</p>
+<p>“谢谢，内容很多，但现在我明白架构师为什么在新架构中做出其中一些决策了。”Addison 说。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./11-distributed-workflows.html" class="pagination-link" aria-label="管理分布式工作流">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./13-contracts.html" class="pagination-link" aria-label="契约">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,2354 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>软件架构：难点 - 6&nbsp; 拆分操作型数据</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./07-service-granularity.html" rel="next">
+<link href="./05-component-decomposition-patterns.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-no-best-practices.html">第一部分 拆分</a></li><li class="breadcrumb-item"><a href="./06-pulling-apart-operational-data.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="切换侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">软件架构：难点</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="切换阅读器模式">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">中文版说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">第一部分 拆分</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-no-best-practices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">没有“最佳实践”时会发生什么？</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-discerning-coupling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">辨析软件架构中的耦合</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-architectural-modularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">架构模块化</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architectural-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">架构分解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-component-decomposition-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-pulling-apart-operational-data.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-service-granularity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">第二部分 重新组合</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-reuse-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">复用模式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-ownership.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">数据所有权与分布式事务</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-distributed-data-access.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">分布式数据访问</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distributed-workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">管理分布式工作流</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-transactional-sagas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">事务型 Saga</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-contracts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">契约</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-analytical-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">管理分析型数据</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-trade-off-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">构建自己的权衡分析</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="切換部分">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-a-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">概念与术语参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-b-adrs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">架构决策记录参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix-c-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">权衡参考</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index-terms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">索引</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#数据分解驱动因素" id="toc-数据分解驱动因素" class="nav-link active" data-scroll-target="#数据分解驱动因素"><span class="header-section-number">6.1</span> 数据分解驱动因素</a>
+  <ul class="collapse">
+  <li><a href="#数据解聚因素" id="toc-数据解聚因素" class="nav-link" data-scroll-target="#数据解聚因素"><span class="header-section-number">6.1.1</span> 数据解聚因素</a></li>
+  <li><a href="#数据聚合因素" id="toc-数据聚合因素" class="nav-link" data-scroll-target="#数据聚合因素"><span class="header-section-number">6.1.2</span> 数据聚合因素</a></li>
+  <li><a href="#sysops-squad-案例论证数据库分解" id="toc-sysops-squad-案例论证数据库分解" class="nav-link" data-scroll-target="#sysops-squad-案例论证数据库分解"><span class="header-section-number">6.1.3</span> Sysops Squad 案例：论证数据库分解</a></li>
+  </ul></li>
+  <li><a href="#分解单体数据" id="toc-分解单体数据" class="nav-link" data-scroll-target="#分解单体数据"><span class="header-section-number">6.2</span> 分解单体数据</a>
+  <ul class="collapse">
+  <li><a href="#第-1-步分析数据库并创建数据领域" id="toc-第-1-步分析数据库并创建数据领域" class="nav-link" data-scroll-target="#第-1-步分析数据库并创建数据领域"><span class="header-section-number">6.2.1</span> 第 1 步：分析数据库并创建数据领域</a></li>
+  <li><a href="#第-2-步把表分配到数据领域" id="toc-第-2-步把表分配到数据领域" class="nav-link" data-scroll-target="#第-2-步把表分配到数据领域"><span class="header-section-number">6.2.2</span> 第 2 步：把表分配到数据领域</a></li>
+  <li><a href="#第-3-步把数据库连接分离到数据领域" id="toc-第-3-步把数据库连接分离到数据领域" class="nav-link" data-scroll-target="#第-3-步把数据库连接分离到数据领域"><span class="header-section-number">6.2.3</span> 第 3 步：把数据库连接分离到数据领域</a></li>
+  <li><a href="#第-4-步把模式迁移到独立数据库服务器" id="toc-第-4-步把模式迁移到独立数据库服务器" class="nav-link" data-scroll-target="#第-4-步把模式迁移到独立数据库服务器"><span class="header-section-number">6.2.4</span> 第 4 步：把模式迁移到独立数据库服务器</a></li>
+  <li><a href="#第-5-步切换到独立数据库服务器" id="toc-第-5-步切换到独立数据库服务器" class="nav-link" data-scroll-target="#第-5-步切换到独立数据库服务器"><span class="header-section-number">6.2.5</span> 第 5 步：切换到独立数据库服务器</a></li>
+  </ul></li>
+  <li><a href="#选择数据库类型" id="toc-选择数据库类型" class="nav-link" data-scroll-target="#选择数据库类型"><span class="header-section-number">6.3</span> 选择数据库类型</a>
+  <ul class="collapse">
+  <li><a href="#关系型数据库" id="toc-关系型数据库" class="nav-link" data-scroll-target="#关系型数据库"><span class="header-section-number">6.3.1</span> 关系型数据库</a></li>
+  <li><a href="#聚合导向" id="toc-聚合导向" class="nav-link" data-scroll-target="#聚合导向"><span class="header-section-number">6.3.2</span> 聚合导向</a></li>
+  <li><a href="#键值数据库" id="toc-键值数据库" class="nav-link" data-scroll-target="#键值数据库"><span class="header-section-number">6.3.3</span> 键值数据库</a></li>
+  <li><a href="#文档数据库" id="toc-文档数据库" class="nav-link" data-scroll-target="#文档数据库"><span class="header-section-number">6.3.4</span> 文档数据库</a></li>
+  <li><a href="#列族数据库" id="toc-列族数据库" class="nav-link" data-scroll-target="#列族数据库"><span class="header-section-number">6.3.5</span> 列族数据库</a></li>
+  <li><a href="#图数据库" id="toc-图数据库" class="nav-link" data-scroll-target="#图数据库"><span class="header-section-number">6.3.6</span> 图数据库</a></li>
+  <li><a href="#newsql-数据库" id="toc-newsql-数据库" class="nav-link" data-scroll-target="#newsql-数据库"><span class="header-section-number">6.3.7</span> NewSQL 数据库</a></li>
+  <li><a href="#云原生数据库" id="toc-云原生数据库" class="nav-link" data-scroll-target="#云原生数据库"><span class="header-section-number">6.3.8</span> 云原生数据库</a></li>
+  <li><a href="#时间序列数据库" id="toc-时间序列数据库" class="nav-link" data-scroll-target="#时间序列数据库"><span class="header-section-number">6.3.9</span> 时间序列数据库</a></li>
+  <li><a href="#sysops-squad-案例多语言数据库" id="toc-sysops-squad-案例多语言数据库" class="nav-link" data-scroll-target="#sysops-squad-案例多语言数据库"><span class="header-section-number">6.3.10</span> Sysops Squad 案例：多语言数据库</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-no-best-practices.html">第一部分 拆分</a></li><li class="breadcrumb-item"><a href="./06-pulling-apart-operational-data.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">拆分操作型数据</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>10 月 7 日，星期四，08:55</em></p>
+<p>Sysops Squad 应用已经成功拆成独立部署的领域服务，Addison 和 Austen 都意识到，是时候考虑拆分 Sysops Squad 的单体数据库了。Addison 同意负责启动这项工作，Austen 则开始改进 CI/CD 部署流水线。Addison 与 Sysops Squad 数据架构师 Dana，以及为 Penultimate Electronics 数据库提供支持的 DBA Devon 开会讨论。</p>
+<p>“我想听听你们的意见，看看应该怎样拆分 Sysops Squad 数据库。”Addison 说。</p>
+<p>“等一下，”Dana 说，“谁说过要拆数据库？”</p>
+<p>“Addison 和我上周已经商定，需要拆分 Sysops Squad 数据库，”Devon 说，“你知道，Sysops Squad 应用正在经历一次大规模改造，拆分数据也是这次改造的一部分。”</p>
+<p>“我觉得单体数据库现在就很好，”Dana 说，“看不出有什么理由拆分它。除非你们能说服我，否则我不会在这件事上让步。况且，你们知道拆分这个数据库有多困难吗？”</p>
+<p>“当然会很困难，”Devon 说，“不过我知道一个五步流程，它利用所谓的数据领域，非常适合这个数据库。这样，我们甚至可以开始研究为应用某些部分采用不同类型的数据库，例如知识库，甚至客户调查功能。”</p>
+<p>“我们先别操之过急，”Dana 说，“而且不要忘了，最终由我负责所有这些数据库。”</p>
+<p>Addison 很快意识到局面正在失控，于是立刻运用关键的谈判与协调技巧。“好吧，”Addison 说，“最初讨论时我们确实应该邀请你参加，我为此道歉。我本该做得更好。要怎样才能让你支持这项工作，帮助我们分解 Sysops Squad 数据库？”</p>
+<p>“很简单，”Dana 说，“说服我 Sysops Squad 数据库确实需要拆分，给出充分有力的理由。只要你们能做到，我们就讨论 Devon 的五步流程。否则，数据库保持原状。”</p>
+<p>拆分数据库十分困难，事实上比拆分应用功能困难得多。数据通常是企业最重要的资产，因此拆分或重构数据会带来更大的业务和应用中断风险。数据还往往与应用功能高度耦合，使人更难在大型数据模型中识别定义良好的接缝。</p>
+<p>正如单体应用有时需要拆成独立部署单元，单体数据库有时也值得，甚至必须拆分。微服务等架构风格要求拆分数据，形成定义良好的限界上下文，让每项服务拥有自己的数据；基于服务架构等其他分布式架构则允许服务共享单一数据库。</p>
+<p>有趣的是，拆分应用功能所用的一些技术，也可以应用于数据拆分。例如，组件对应数据领域，类文件对应数据库表，类之间的耦合点则对应外键、视图、触发器甚至存储过程等数据库制品。</p>
+<p>本章将探讨推动数据分解的因素，并介绍如何采用迭代、可控的方式，把单体数据有效拆成独立的数据领域、模式，乃至独立数据库。数据库世界并不只有关系型数据库，因此我们还会讨论关系型、图、文档、键值、列式、NewSQL 和云原生等多种数据库，并概述每种类型的权衡。</p>
+<section id="数据分解驱动因素" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="数据分解驱动因素"><span class="header-section-number">6.1</span> 数据分解驱动因素</h2>
+<p>拆分单体数据库可能是一项艰巨任务，因此必须了解是否应该，以及何时应该分解数据库，如图 <a href="#fig-6-1" class="quarto-xref">图&nbsp;<span>6.1</span></a> 所示。架构师可以通过理解和分析<em>数据解聚因素</em>与<em>数据聚合因素</em>，为数据分解提供依据。前者是支持拆分数据的驱动因素，后者则支持把数据保留在一起。在这两股力量之间取得平衡，并分析各自权衡，是确定正确数据粒度的关键。</p>
+<div id="fig-6-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.1: 在什么情况下应当分解单体数据库？
+</figcaption>
+</figure>
+</div>
+<p>本节将探讨数据解聚因素和数据聚合因素，帮助架构师在考虑拆分单体数据时作出正确选择。</p>
+<section id="数据解聚因素" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="数据解聚因素"><span class="header-section-number">6.1.1</span> 数据解聚因素</h3>
+<p>数据解聚驱动因素回答并论证“什么时候应该考虑拆分数据？”这个问题。拆分数据的六项主要解聚驱动因素如下：</p>
+<dl>
+<dt><strong>变更控制</strong></dt>
+<dd>
+<p>修改数据库表会影响多少项服务？</p>
+</dd>
+<dt><strong>连接管理</strong></dt>
+<dd>
+<p>数据库能否处理多项分布式服务所需的连接？</p>
+</dd>
+<dt><strong>可扩展性</strong></dt>
+<dd>
+<p>数据库能否扩展以满足访问它的服务需求？</p>
+</dd>
+<dt><strong>容错能力</strong></dt>
+<dd>
+<p>数据库崩溃或维护停机会影响多少项服务？</p>
+</dd>
+<dt><strong>架构量子</strong></dt>
+<dd>
+<p>单一共享数据库是否迫使系统形成一个不理想的单一架构量子？</p>
+</dd>
+<dt><strong>数据库类型优化</strong></dt>
+<dd>
+<p>能否通过使用多种数据库类型来优化数据？</p>
+</dd>
+</dl>
+<p>下面逐一详细讨论这些解聚驱动因素。</p>
+<section id="变更控制" class="level4" data-number="6.1.1.1">
+<h4 data-number="6.1.1.1" class="anchored" data-anchor-id="变更控制"><span class="header-section-number">6.1.1.1</span> 变更控制</h4>
+<p>控制数据库表模式的变化，是主要的数据解聚驱动因素之一。删除表或列、修改表名或列名，甚至改变列类型，都会破坏访问这些表的相应 SQL，进而破坏使用这些表的服务。我们把这类变化称为<em>破坏性变更</em>。与之相对，在数据库中增加表或列通常不会影响现有查询或写入。</p>
+<p>不出所料，关系型数据库受到变更控制的影响最大，但其他数据库类型同样会产生变更控制问题，本章稍后的“选择数据库类型”将继续讨论。</p>
+<p>如图 <a href="#fig-6-2" class="quarto-xref">图&nbsp;<span>6.2</span></a> 所示，当数据库发生破坏性变更时，多项服务必须与数据库变更一起更新、测试和部署。随着共享同一数据库的独立部署服务越来越多，这种协调会迅速变得困难且容易出错。想象一下，为一次破坏性数据库变更协调 42 项独立部署的服务！</p>
+<div id="fig-6-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.2: 受数据库变更影响的服务必须与数据库一起部署
+</figcaption>
+</figure>
+</div>
+<p>为共享数据库变更协调多项分布式服务，只是问题的一半。在任何分布式架构中，修改共享数据库真正的危险，是遗漏访问刚刚修改之表的服务。如图 <a href="#fig-6-3" class="quarto-xref">图&nbsp;<span>6.3</span></a> 所示，这些被遗忘的服务会在生产环境中持续失效，直到它们得到修改、测试和重新部署。</p>
+<div id="fig-6-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-3.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.3: 受数据库变更影响但被遗漏的服务会持续失败，直到重新部署
+</figcaption>
+</figure>
+</div>
+<p>在大多数应用中，认真进行影响分析和全面回归测试，可以降低遗漏服务的风险。不过，设想一个包含 400 项服务的微服务生态系统，而所有服务共享同一个单体、高可用集群式关系数据库。你需要奔波于许多领域的开发团队之间，确认哪些服务使用正在修改的表；随后还必须把所有这些服务与数据库协调、测试，并作为单一整体一起部署。仅仅想象这个场景就足以令人麻木，甚至接近疯狂。</p>
+<p>把数据库拆成定义良好的限界上下文，有助于显著控制破坏性数据库变更。<em>限界上下文</em>概念来自 Eric Evans 的经典著作《领域驱动设计》，它描述了源代码、业务逻辑、数据结构和数据全部绑定，也就是封装在特定上下文中的状态。</p>
+<p>如图 <a href="#fig-6-4" class="quarto-xref">图&nbsp;<span>6.4</span></a> 所示，在服务及其相应数据周围形成良好的限界上下文有助于控制变更，因为变更只会影响该限界上下文中的服务。</p>
+<div id="fig-6-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-4.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.4: 数据库变更只影响相应限界上下文中的服务
+</figcaption>
+</figure>
+</div>
+<p>限界上下文通常围绕服务及其拥有的数据形成。这里的“拥有”是指服务会写入数据库，而不只是以只读方式访问数据。第 9 章将更详细地讨论分布式数据所有权。</p>
+<p>图 <a href="#fig-6-4" class="quarto-xref">图&nbsp;<span>6.4</span></a> 中，服务 C 需要访问数据库 D 中的一部分数据，而数据库 D 与服务 D 位于同一个限界上下文。由于数据库 D 属于另一个限界上下文，服务 C 不能直接访问其数据。这样做不仅会违反限界上下文规则，也会让变更控制变得混乱。因此，服务 C 必须向服务 D 请求数据。第 10 章将详细介绍在维持限界上下文的同时访问其他服务所拥有数据的多种方法。</p>
+<p>在服务 C 需要数据、而服务 D 在自身限界上下文中拥有数据的场景中，限界上下文还有一个重要方面：<em>数据库抽象</em>。图 <a href="#fig-6-5" class="quarto-xref">图&nbsp;<span>6.5</span></a> 中，服务 D 通过某种契约，例如 JSON、XML 甚至对象，把服务 C 请求的数据发送给它。</p>
+<div id="fig-6-5" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-5.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.5: 服务调用契约把调用方与底层数据库模式隔离
+</figcaption>
+</figure>
+</div>
+<p>限界上下文的优势在于，发送给服务 C 的数据契约可以不同于数据库 D 的模式。这意味着，数据库 D 某张表的破坏性变更只会影响服务 D，不一定影响发送给服务 C 的数据契约。换句话说，服务 C 与数据库 D 的实际模式结构相互隔离。</p>
+<p>为了说明这种抽象在分布式架构中的作用，假设数据库 D 包含结构如下的 <code>Wishlist</code> 表：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> Wishlist</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  CUSTOMER_ID <span class="dt">VARCHAR</span>(<span class="dv">10</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  ITEM_ID <span class="dt">VARCHAR</span>(<span class="dv">20</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  QUANTITY <span class="dt">INT</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  EXPIRATION_DT <span class="dt">DATE</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>);</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>服务 D 在服务 C 请求愿望清单项目时向其发送的相应 JSON 契约如下：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"$schema"</span><span class="fu">:</span> <span class="st">"http://json-schema.org/draft-04/schema#"</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"properties"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"cust_id"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"string"</span><span class="fu">},</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"item_id"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"string"</span><span class="fu">},</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"qty"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">},</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"exp_dt"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">}</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>JSON 模式中的到期时间字段 <code>exp_dt</code> 与数据库列名称不同，而且被指定为数字，也就是表示纪元时间的长整数，即从 1970 年 1 月 1 日午夜开始计算的毫秒数；数据库中对应字段则是 <code>DATE</code> 类型。由于存在独立的 JSON 契约，数据库中的列名或列类型发生变化时，不再影响服务 C。</p>
+<p>例如，假设业务决定不再让愿望清单项目过期。这要求修改数据库表结构：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> Wishlist</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">COLUMN</span> EXPIRATION_DT;</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>服务 D 与数据库位于同一个限界上下文，因此必须修改以适应这项变更，但相应契约不必同时变化。在契约最终得到修改之前，服务 D 可以返回很久以后的某个日期，也可以把值设为零，表示项目不会过期。关键在于，限界上下文让服务 C 与数据库 D 的破坏性变更相互隔离。</p>
+</section>
+<section id="连接管理" class="level4" data-number="6.1.1.2">
+<h4 data-number="6.1.1.2" class="anchored" data-anchor-id="连接管理"><span class="header-section-number">6.1.1.2</span> 连接管理</h4>
+<p>建立数据库连接是一项昂贵操作。数据库连接池不仅用于提高性能，也用于限制应用能够同时使用的连接数量。在单体应用中，连接池通常由应用或应用服务器拥有；在分布式架构中，每项服务，更准确地说是每个服务实例，通常都有自己的连接池。</p>
+<p>如图 <a href="#fig-6-6" class="quarto-xref">图&nbsp;<span>6.6</span></a> 所示，当多项服务共享同一个数据库时，连接数量很快就会达到饱和，尤其是在服务或服务实例不断增加的情况下。</p>
+<div id="fig-6-6" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-6.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.6: 存在多个服务实例时，数据库连接会迅速饱和
+</figcaption>
+</figure>
+</div>
+<p>达到或超过数据库可用连接上限，是决定是否拆分数据库时需要考虑的另一项驱动因素。频繁出现连接等待，也就是等待可用连接所花的时间，通常是连接数已经达到上限的第一个信号。连接等待也可能表现为请求超时或断路器触发，因此使用共享数据库时如果经常出现这些情况，我们通常建议首先检查连接等待。</p>
+<p>考虑一个例子：某个单体应用使用 200 个数据库连接，后来被拆成包含 50 项服务的分布式架构，每项服务的连接池包含 10 个连接。</p>
+<p><strong>原单体应用连接数</strong>：200<br>
+<strong>分布式服务数量</strong>：50<br>
+<strong>每项服务的连接数</strong>：10<br>
+<strong>最少服务实例数</strong>：2<br>
+<strong>服务连接总数</strong>：1,000</p>
+<p>请注意，同一个应用上下文中的数据库连接从 200 个增加到 1,000 个，而服务甚至还没有开始扩展。假设一半服务扩展到平均每项 5 个实例，数据库连接数会迅速增加到 1,700。</p>
+<p>如果没有连接策略或治理计划，服务就会尽可能使用更多连接，经常导致其他服务得不到急需的连接。因此，必须治理分布式架构中的数据库连接用法。一种有效方法是为每项服务分配<em>连接配额</em>，控制服务之间可用数据库连接的分配。连接配额规定某项服务允许使用或在连接池中提供的最大数据库连接数。</p>
+<p>设置连接配额后，服务不能创建超过分配数量的数据库连接。如果服务达到配额上限，就必须等待正在使用的某个连接恢复可用。连接配额可以采用两种方式：为每项服务平均分配相同配额，或者根据各项服务的需要分配不同配额。</p>
+<p>首次部署服务时，人们通常采用平均分配，因为尚不清楚每项服务在正常和峰值运行期间需要多少连接。这种方法虽然简单，却不够高效：某些服务可能需要更多连接，而其他服务持有的部分连接可能一直闲置。</p>
+<p>可变分配方式更复杂，但在管理共享数据库连接时高效得多。它根据每项服务的功能与扩展要求分配不同配额。优点是可以优化分布式服务对可用连接的使用，确保需要更多连接的服务能够获得连接；缺点是必须了解每项服务的功能性质和扩展要求。</p>
+<p>我们通常建议从平均分配开始，并创建适应度函数，测量每项服务的并发连接使用量。还建议把连接配额保存在外部配置服务器或服务中，以便手工调整，或者使用简单的机器学习算法自动调整。这项技术既能缓解连接饱和风险，也能在分布式服务之间合理平衡可用连接，避免浪费空闲连接。</p>
+<p>表 <a href="#tbl-6-1" class="quarto-xref">表格&nbsp;<span>6.1</span></a> 展示了一个示例：数据库最多支持 100 个并发连接，最初使用平均分配。服务 A 实际最多只需要 5 个连接，服务 C 需要 15 个，服务 E 需要 14 个；而服务 B 和 D 都已达到配额上限，并出现连接等待。</p>
+<div id="tbl-6-1" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-6-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;6.1: 平均分配的连接配额
+</figcaption>
+<div aria-describedby="tbl-6-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>服务</th>
+<th style="text-align: right;">配额</th>
+<th style="text-align: right;">最大使用数</th>
+<th>是否等待</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">5</td>
+<td>否</td>
+</tr>
+<tr class="even">
+<td>→ B</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+<td>是</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">15</td>
+<td>否</td>
+</tr>
+<tr class="even">
+<td>→ D</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+<td>是</td>
+</tr>
+<tr class="odd">
+<td>E</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">14</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>服务 A 远低于配额，因此可以先从它那里重新分配连接。把五个数据库连接转给服务 B，再把五个转给服务 D，得到表 <a href="#tbl-6-2" class="quarto-xref">表格&nbsp;<span>6.2</span></a> 的结果。</p>
+<div id="tbl-6-2" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-6-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;6.2: 采用可变分配的连接配额
+</figcaption>
+<div aria-describedby="tbl-6-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>服务</th>
+<th style="text-align: right;">配额</th>
+<th style="text-align: right;">最大使用数</th>
+<th>是否等待</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">5</td>
+<td>否</td>
+</tr>
+<tr class="even">
+<td>→ B</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">25</td>
+<td>是</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">15</td>
+<td>否</td>
+</tr>
+<tr class="even">
+<td>D</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">25</td>
+<td>否</td>
+</tr>
+<tr class="odd">
+<td>E</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">14</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>结果有所改善，但服务 B 仍在等待连接，说明它需要的连接数超过当前配额。再分别从服务 A 和服务 E 取出两个连接重新调整配额，便得到表 <a href="#tbl-6-3" class="quarto-xref">表格&nbsp;<span>6.3</span></a> 所示的更好结果。</p>
+<div id="tbl-6-3" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-6-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;6.3: 进一步调整连接配额后不再出现连接等待
+</figcaption>
+<div aria-describedby="tbl-6-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>服务</th>
+<th style="text-align: right;">配额</th>
+<th style="text-align: right;">最大使用数</th>
+<th>是否等待</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">5</td>
+<td>否</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">27</td>
+<td>否</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">15</td>
+<td>否</td>
+</tr>
+<tr class="even">
+<td>D</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">25</td>
+<td>否</td>
+</tr>
+<tr class="odd">
+<td>E</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">14</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>持续适应度函数可以从每项服务收集流式指标数据，并据此完成这类分析。它还能判断最大已用连接数距离最大可用连接数还有多近，以及每项服务的配额与最大使用量之间还保留多少缓冲。</p>
+</section>
+<section id="可扩展性" class="level4" data-number="6.1.1.3">
+<h4 data-number="6.1.1.3" class="anchored" data-anchor-id="可扩展性"><span class="header-section-number">6.1.1.3</span> 可扩展性</h4>
+<p>分布式架构的众多优势之一是可扩展性，也就是服务在保持稳定响应时间的同时处理请求量增长的能力。大多数云端和本地基础设施产品都能很好地确保服务、容器、HTTP 服务器和虚拟机随需求增长而扩展。但数据库怎么办？</p>
+<p>如图 <a href="#fig-6-7" class="quarto-xref">图&nbsp;<span>6.7</span></a> 所示，服务扩展会给数据库带来巨大压力，不仅影响前一节讨论的数据库连接，也会影响吞吐量和数据库容量。要让分布式系统扩展，系统的所有部分都必须扩展，包括数据库。</p>
+<div id="fig-6-7" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-7.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.7: 服务扩展时，数据库也必须扩展
+</figcaption>
+</figure>
+</div>
+<p>因此，可扩展性也是考虑拆分数据库时的一项数据解聚驱动因素。数据库连接、容量、吞吐量和性能，都会决定共享数据库能否满足分布式架构中多项服务的需求。</p>
+<p>回顾表 <a href="#tbl-6-3" class="quarto-xref">表格&nbsp;<span>6.3</span></a> 中经过优化的可变数据库连接配额。当服务通过增加多个实例进行扩展时，情况会发生巨大变化。表 <a href="#tbl-6-4" class="quarto-xref">表格&nbsp;<span>6.4</span></a> 假设数据库连接总数为 100。</p>
+<div id="tbl-6-4" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-6-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;6.4: 服务扩展后，使用的连接数超过可用连接数
+</figcaption>
+<div aria-describedby="tbl-6-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>服务</th>
+<th style="text-align: right;">配额</th>
+<th style="text-align: right;">最大使用数</th>
+<th style="text-align: right;">实例数</th>
+<th style="text-align: right;">使用总数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">81</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">45</td>
+</tr>
+<tr class="even">
+<td>D</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">50</td>
+</tr>
+<tr class="odd">
+<td>E</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">56</td>
+</tr>
+<tr class="even">
+<td><strong>合计</strong></td>
+<td style="text-align: right;"><strong>100</strong></td>
+<td style="text-align: right;"><strong>86</strong></td>
+<td style="text-align: right;"><strong>14</strong></td>
+<td style="text-align: right;"><strong>242</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>尽管配额最初按数据库的 100 个可用连接进行分配，但服务开始扩展后，配额就不再有效：实际使用量上升到 242，比数据库可用数量多 142 个。这很可能导致连接等待，继而引起整体性能下降和请求超时。</p>
+<p>如图 <a href="#fig-6-8" class="quarto-xref">图&nbsp;<span>6.8</span></a> 所示，把数据拆成独立数据领域，甚至为每项服务配置独立数据库，可以减少每个数据库所需的连接，从而在服务扩展时提供更好的数据库可扩展性与性能。</p>
+<div id="fig-6-8" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-8.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.8: 拆分数据库可以获得更好的数据库可扩展性
+</figcaption>
+</figure>
+</div>
+<p>除数据库连接外，可扩展性还要考虑数据库承受的负载。拆分数据库可以降低每个数据库的负载，从而改善整体性能与可扩展性。</p>
+</section>
+<section id="容错能力" class="level4" data-number="6.1.1.4">
+<h4 data-number="6.1.1.4" class="anchored" data-anchor-id="容错能力"><span class="header-section-number">6.1.1.4</span> 容错能力</h4>
+<p>多项服务共享同一个数据库时，数据库会成为单点故障，使整个系统的容错能力降低。这里把容错能力定义为：某项服务或数据库发生故障时，系统其他部分仍能不受干扰地继续运行的能力。图 <a href="#fig-6-9" class="quarto-xref">图&nbsp;<span>6.9</span></a> 中，由于全部服务共享单一数据库，一旦数据库停机，所有服务都会停止运行，因此整体容错能力很低。</p>
+<div id="fig-6-9" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-9.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.9: 数据库停机时，所有服务都会停止运行
+</figcaption>
+</figure>
+</div>
+<p>容错能力也是考虑拆分数据的驱动因素。如果系统某些部分需要容错能力，拆分数据就可以消除单点故障，如图 <a href="#fig-6-10" class="quarto-xref">图&nbsp;<span>6.10</span></a> 所示，确保数据库崩溃时系统仍有部分功能可以运行。</p>
+<div id="fig-6-10" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-10.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.10: 拆分数据库可获得更好的容错能力
+</figcaption>
+</figure>
+</div>
+<p>数据拆分后，即使数据库 B 停机，也只有服务 B 和服务 C 受到影响而无法运行，其他服务仍可不受干扰地继续工作。</p>
+</section>
+<section id="架构量子" class="level4" data-number="6.1.1.5">
+<h4 data-number="6.1.1.5" class="anchored" data-anchor-id="架构量子"><span class="header-section-number">6.1.1.5</span> 架构量子</h4>
+<p>回顾第 2 章，架构量子被定义为具有高功能内聚、高静态耦合和同步动态耦合的独立部署制品。架构量子可以指导何时拆分数据库，因此也是一项数据解聚驱动因素。</p>
+<p>考虑图 <a href="#fig-6-11" class="quarto-xref">图&nbsp;<span>6.11</span></a> 中的服务。服务 A 和服务 B 需要与其他服务不同的架构特征。虽然它们被分在一组，但由于存在单一共享数据库，它们并没有与其他服务形成独立量子。五项服务与数据库共同形成一个架构量子。</p>
+<div id="fig-6-11" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-11.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.11: 数据库是架构量子的一部分
+</figcaption>
+</figure>
+</div>
+<p>数据库属于架构量子定义中的功能内聚部分，因此必须拆分数据，才能让拆分后的每个部分分别位于自己的量子中。图 <a href="#fig-6-12" class="quarto-xref">图&nbsp;<span>6.12</span></a> 中，数据库拆分之后，服务 A、服务 B 及相应数据形成一个独立量子，与服务 C、D、E 形成的量子分开。</p>
+<div id="fig-6-12" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-12.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.12: 拆分数据库形成两个架构量子
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="数据库类型优化" class="level4" data-number="6.1.1.6">
+<h4 data-number="6.1.1.6" class="anchored" data-anchor-id="数据库类型优化"><span class="header-section-number">6.1.1.6</span> 数据库类型优化</h4>
+<p>不同数据往往需要不同的处理方式。使用单体数据库时，全部数据都必须服从同一种数据库类型，这可能导致某些数据只能采用次优方案。</p>
+<p>拆分单体数据后，架构师可以把特定数据迁移到更适合的数据库类型。例如，假设某个单体关系数据库保存应用事务数据，其中还包括国家代码、产品代码、仓库代码等键值对形式的参考数据。这类数据并不具有关系性质，而是键值性质，因此在关系数据库中很难管理。与关系数据库相比，键值数据库可以提供更合适的解决方案，本章稍后的“键值数据库”将继续介绍。</p>
+</section>
+</section>
+<section id="数据聚合因素" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="数据聚合因素"><span class="header-section-number">6.1.2</span> 数据聚合因素</h3>
+<p>数据聚合因素与前一节的数据解聚因素作用完全相反。它们回答并论证“什么时候应该考虑把数据重新放在一起？”这一问题。把解聚因素与聚合因素结合起来，才能权衡何时拆分数据、何时不应拆分。</p>
+<p>把数据重新聚合在一起的两项主要驱动因素如下：</p>
+<dl>
+<dt><strong>数据关系</strong></dt>
+<dd>
+<p>表之间是否存在外键、触发器或视图，形成紧密关系？</p>
+</dd>
+<dt><strong>数据库事务</strong></dt>
+<dd>
+<p>是否必须使用单一事务工作单元来保证数据完整性与一致性？</p>
+</dd>
+</dl>
+<p>下面分别详细讨论这两项驱动因素。</p>
+<section id="数据关系" class="level4" data-number="6.1.2.1">
+<h4 data-number="6.1.2.1" class="anchored" data-anchor-id="数据关系"><span class="header-section-number">6.1.2.1</span> 数据关系</h4>
+<p>与架构中的组件一样，数据库表也会发生耦合，关系型数据库尤其如此。外键、触发器、视图和存储过程等制品把表连接在一起，使数据难以拆分，如图 <a href="#fig-6-13" class="quarto-xref">图&nbsp;<span>6.13</span></a> 所示。</p>
+<p>想象一下，你走到 DBA 或数据架构师面前，告诉他们：为了在微服务生态中建立紧密的限界上下文，必须拆分数据库，因此数据库中的每个外键和视图都必须删除。这种场景既不太可能被接受，也不一定可行，但要在微服务中支持“每项服务一个数据库”模式，确实必须面对这个问题。</p>
+<div id="fig-6-13" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-13.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.13: 外键、触发器和视图在数据之间形成紧密耦合关系
+</figcaption>
+</figure>
+</div>
+<p>大多数关系数据库都需要这些制品来支持数据一致性和完整性。除物理制品外，数据也可能存在逻辑关系，例如故障工单表与相应的工单状态表。不过，如图 <a href="#fig-6-14" class="quarto-xref">图&nbsp;<span>6.14</span></a> 所示，把数据迁移到另一个模式或数据库以形成限界上下文时，跨边界的这些制品必须移除。</p>
+<div id="fig-6-14" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-14.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.14: 拆分数据时必须移除跨边界的数据制品
+</figcaption>
+</figure>
+</div>
+<p>服务 A 中表之间的外键关系可以保留，因为这些数据位于同一个限界上下文、模式或数据库。服务 B 与服务 C 的表之间的外键，以及服务 C 使用的视图，则必须移除，因为相应表位于不同数据库或模式中。</p>
+<p>数据之间无论是逻辑还是物理关系，都属于数据聚合驱动因素，从而与数据解聚因素形成权衡。例如，变更控制这一解聚因素，是否比保留表间外键关系这一聚合因素更重要？容错能力是否比保留表间物化视图更重要？明确什么更重要，才能判断数据是否应该拆分，以及最终模式应具有怎样的粒度。</p>
+</section>
+<section id="数据库事务" class="level4" data-number="6.1.2.2">
+<h4 data-number="6.1.2.2" class="anchored" data-anchor-id="数据库事务"><span class="header-section-number">6.1.2.2</span> 数据库事务</h4>
+<p>数据库事务是另一项数据聚合因素，第 12 章“分布式事务”将详细讨论。如图 <a href="#fig-6-15" class="quarto-xref">图&nbsp;<span>6.15</span></a> 所示，当一项服务对同一数据库或模式中的不同表执行多次写入时，可以把这些更新放入具有原子性、一致性、隔离性和持久性的 ACID 事务，作为单一工作单元统一提交或回滚。</p>
+<div id="fig-6-15" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-15.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.15: 数据位于一起时，可以形成单一事务工作单元
+</figcaption>
+</figure>
+</div>
+<p>但是，如图 <a href="#fig-6-16" class="quarto-xref">图&nbsp;<span>6.16</span></a> 所示，数据被拆到独立模式或数据库之后，服务间需要远程调用，单一事务工作单元便不复存在。这意味着某张表的插入或更新可能已经提交，其他表却因错误而未提交，从而产生数据一致性与完整性问题。</p>
+<div id="fig-6-16" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-16.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.16: 数据拆分后，不再存在单一工作单元事务
+</figcaption>
+</figure>
+</div>
+<p>第 12 章将深入讨论分布式事务管理与事务型 Saga。这里要强调的是，数据库事务也是一项数据聚合驱动因素，在考虑拆分数据库时必须将其纳入权衡。</p>
+</section>
+</section>
+<section id="sysops-squad-案例论证数据库分解" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="sysops-squad-案例论证数据库分解"><span class="header-section-number">6.1.3</span> Sysops Squad 案例：论证数据库分解</h3>
+<p><em>11 月 15 日，星期一，15:55</em></p>
+<p>准备好各项理由后，Addison 和 Devon 与 Dana 会面，试图说服她必须拆分 Sysops Squad 的单体数据库。</p>
+<p>“Dana，你好，”Addison 说，“我们认为已经有足够证据说服你，Sysops Squad 数据库确实必须拆分。”</p>
+<p>“我洗耳恭听。”Dana 双臂交叉，准备据理力争，让数据库保持现状。</p>
+<p>“我先来，”Addison 说，“你看这些日志。每次运行操作报表时，应用的工单功能都会卡住。”</p>
+<p>“是的，”Dana 说，“我承认连我也怀疑过这个问题。很明显，是工单功能访问数据库的方式有问题，不是报表。”</p>
+<p>“实际上，”Addison 说，“工单和报表都有关系。看看这里。”</p>
+<p>Addison 向 Dana 展示了指标和日志。某些查询必须在线程中执行；报表查询运行时，工单功能的查询会因为等待状态而超时。她还展示了系统的报表部分如何使用并行线程，同时查询复杂报表的多个部分，实际上占用了全部数据库连接。</p>
+<p>“好吧，我能理解从数据库连接角度看，单独设置报表数据库会改善情况。但这仍不足以说服我拆分非报表数据。”Dana 说。</p>
+<p>“说到数据库连接，”Devon 说，“看看我们开始拆分领域服务后，对连接池的估算。”</p>
+<p>Devon 向 Dana 展示了最终规划的 Sysops Squad 分布式应用预计包含多少项服务，以及应用扩展时每项服务预计有多少实例。Dana 向 Devon 解释，连接池位于每个独立服务实例内部，不像迁移当前阶段那样由应用服务器统一拥有。</p>
+<p>“所以你看，Dana，”Devon 说，“按照这些预测，为了提供处理工单负载所需的可扩展性，我们还需要增加 2,000 个数据库连接，而单一数据库根本提供不了这么多。”</p>
+<p>Dana 花了一会儿查看这些数字。“Addison，你认同这些数字吗？”</p>
+<p>“认同，”Addison 说，“Devon 和我根据 HTTP 流量以及 Parker 提供的预测增长率，经过大量分析共同得出了这些数字。”</p>
+<p>“我必须承认，”Dana 说，“你们准备得很好。我尤其满意的是，你们已经考虑到不能让服务连接多个数据库或模式。你们知道，在我这里这是绝对禁止的。”</p>
+<p>“我们也同意。不过还有一个理由要讨论，”Addison 说，“你可能知道，也可能不知道，系统无法供客户使用的问题最近频繁发生。拆分服务虽然提供了一定容错能力，但如果单体数据库因为维护或服务器崩溃而停机，所有服务都会停止运行。”</p>
+<p>“Addison 的意思是，”Devon 补充道，“拆分数据库后，我们可以为数据创建领域孤岛，从而提高容错能力。换句话说，即使调查数据库停机，工单功能仍然可用。”</p>
+<p>“我们称它为架构量子，”Addison 说，“数据库属于系统静态耦合的一部分，因此拆分数据库可以让核心工单功能独立运行，不再同步依赖系统其他部分。”</p>
+<p>“听着，”Dana 说，“你们已经说服我，拆分 Sysops Squad 数据库确实有充分理由。但你们打算怎么做到？知道这个数据库中有多少外键和视图吗？你们不可能把这些东西全部删除。”</p>
+<p>“我们不一定需要移除全部制品。这正是数据领域和五步流程发挥作用的地方，”Devon 说，“来，我解释给你听……”</p>
+</section>
+</section>
+<section id="分解单体数据" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="分解单体数据"><span class="header-section-number">6.2</span> 分解单体数据</h2>
+<p>分解单体数据库十分困难，架构师必须与数据库团队密切协作，才能安全有效地拆分数据。一种特别有效的技术，是采用所谓的<em>五步流程</em>。如图 <a href="#fig-6-17" class="quarto-xref">图&nbsp;<span>6.17</span></a> 所示，这种演进式、迭代式流程以数据领域为载体，有条理地把数据迁移到独立模式，进而迁移到不同的物理数据库。</p>
+<div id="fig-6-17" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-17.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.17: 分解单体数据库的五步流程
+</figcaption>
+</figure>
+</div>
+<p><em>数据领域</em>是一组相互耦合的数据库制品，包括表、视图、外键和触发器；它们都与特定领域有关，并经常在有限的功能范围内共同使用。</p>
+<p>为了说明数据领域的概念，可以回顾表 1.2 中介绍的 Sysops Squad 数据表，以及表 <a href="#tbl-6-5" class="quarto-xref">表格&nbsp;<span>6.5</span></a> 所示的建议数据领域分配。</p>
+<div id="tbl-6-5" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-6-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;6.5: 分配到数据领域的现有 Sysops Squad 数据库表
+</figcaption>
+<div aria-describedby="tbl-6-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>数据表</th>
+<th>建议数据领域</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>customer</code></td>
+<td>客户</td>
+</tr>
+<tr class="even">
+<td><code>customer_notification</code></td>
+<td>客户</td>
+</tr>
+<tr class="odd">
+<td><code>survey</code></td>
+<td>调查</td>
+</tr>
+<tr class="even">
+<td><code>question</code></td>
+<td>调查</td>
+</tr>
+<tr class="odd">
+<td><code>survey_administered</code></td>
+<td>调查</td>
+</tr>
+<tr class="even">
+<td><code>survey_question</code></td>
+<td>调查</td>
+</tr>
+<tr class="odd">
+<td><code>survey_response</code></td>
+<td>调查</td>
+</tr>
+<tr class="even">
+<td><code>billing</code></td>
+<td>支付</td>
+</tr>
+<tr class="odd">
+<td><code>contract</code></td>
+<td>支付</td>
+</tr>
+<tr class="even">
+<td><code>payment_method</code></td>
+<td>支付</td>
+</tr>
+<tr class="odd">
+<td><code>payment</code></td>
+<td>支付</td>
+</tr>
+<tr class="even">
+<td><code>sysops_user</code></td>
+<td>资料</td>
+</tr>
+<tr class="odd">
+<td><code>profile</code></td>
+<td>资料</td>
+</tr>
+<tr class="even">
+<td><code>expert_profile</code></td>
+<td>资料</td>
+</tr>
+<tr class="odd">
+<td><code>expertise</code></td>
+<td>资料</td>
+</tr>
+<tr class="even">
+<td><code>location</code></td>
+<td>资料</td>
+</tr>
+<tr class="odd">
+<td><code>article</code></td>
+<td>知识库</td>
+</tr>
+<tr class="even">
+<td><code>tag</code></td>
+<td>知识库</td>
+</tr>
+<tr class="odd">
+<td><code>keyword</code></td>
+<td>知识库</td>
+</tr>
+<tr class="even">
+<td><code>article_tag</code></td>
+<td>知识库</td>
+</tr>
+<tr class="odd">
+<td><code>article_keyword</code></td>
+<td>知识库</td>
+</tr>
+<tr class="even">
+<td><code>ticket</code></td>
+<td>工单</td>
+</tr>
+<tr class="odd">
+<td><code>ticket_type</code></td>
+<td>工单</td>
+</tr>
+<tr class="even">
+<td><code>ticket_history</code></td>
+<td>工单</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>表 <a href="#tbl-6-5" class="quarto-xref">表格&nbsp;<span>6.5</span></a> 列出了 Sysops Squad 应用中的六个数据领域：客户、调查、支付、资料、知识库和工单。<code>billing</code> 表属于支付领域，<code>ticket</code> 和 <code>ticket_type</code> 表属于工单领域，以此类推。</p>
+<p>从概念上理解数据领域的一种方法，是把数据库想象成足球，每个白色六边形代表一个独立数据领域。如图 <a href="#fig-6-18" class="quarto-xref">图&nbsp;<span>6.18</span></a> 所示，每个白色六边形都包含一组与领域相关的表，以及外键、视图、存储过程等全部耦合制品。</p>
+<div id="fig-6-18" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-18.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.18: 六边形中的数据库对象属于一个数据领域
+</figcaption>
+</figure>
+</div>
+<p>以这种方式可视化数据库，可以让架构师和数据库团队清楚看到数据领域边界，以及必须拆除的跨领域依赖，例如外键、视图和存储过程。图 <a href="#fig-6-18" class="quarto-xref">图&nbsp;<span>6.18</span></a> 中，每个白色六边形内部的全部数据表依赖和关系都可以保留，但白色六边形之间的关系不能保留。实线代表数据领域内部自包含的依赖，虚线则跨越数据领域；把数据领域提取到独立模式时，必须移除虚线依赖。</p>
+<p>提取数据领域时，必须移除跨领域依赖，包括数据领域之间的外键约束、视图、触发器、函数和存储过程。数据库团队可以采用 Scott Ambler 与 Pramod Sadalage 所著《重构数据库：演进式数据库设计》中的重构模式，安全且迭代地消除这些数据依赖。</p>
+<div id="fig-6-19" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-19.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.19: 提取属于数据领域的表，并识别必须拆除的连接
+</figcaption>
+</figure>
+</div>
+<p>为了说明如何定义数据领域并移除跨领域引用，考虑图 <a href="#fig-6-19" class="quarto-xref">图&nbsp;<span>6.19</span></a> 中创建的“支付”数据领域。<code>customer</code> 表与 <code>v_customer_contract</code> 视图属于不同数据领域，因此必须从“支付”领域的视图中移除 <code>customer</code> 表。定义数据领域之前，原始视图如下。</p>
+<p><strong>示例 6-1：使用跨领域连接获取客户未结合同的数据库视图</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> [payment].[v_customer_contract]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AS</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    customer.customer_id, customer.customer_name,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    contract.contract_start_date, contract.contract_duration,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    billing.billing_date, billing.billing_amount</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> payment.contract <span class="kw">AS</span> contract</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> customer.customer <span class="kw">AS</span> customer</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> (contract.customer_id <span class="op">=</span> customer.customer_id)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> payment.billing <span class="kw">AS</span> billing</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> (contract.contract_id <span class="op">=</span> billing.contract_id)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> contract.auto_renewal <span class="op">=</span> <span class="dv">0</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>在示例 6-2 更新后的视图中，客户表与支付表之间的连接已经删除，客户名称字段 <code>customer.customer_name</code> 也一并移除。</p>
+<p><strong>示例 6-2：在支付领域中获取指定客户未结合同的数据库视图</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> [payment].[v_customer_contract]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AS</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    billing.customer_id, contract.contract_start_date,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    contract.contract_duration, billing.billing_date,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    billing.billing_amount</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> payment.contract <span class="kw">AS</span> contract</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> payment.billing <span class="kw">AS</span> billing</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> (contract.contract_id <span class="op">=</span> billing.contract_id)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> contract.auto_renewal <span class="op">=</span> <span class="dv">0</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>数据领域的限界上下文规则与单个数据表完全相同：一项服务不能访问多个数据领域。因此，从视图中移除客户表之后，“支付”服务必须调用“客户”服务，取得原来直接从视图获得的客户名称。</p>
+<p>架构师和数据库团队理解数据领域概念之后，就可以应用分解单体数据库的五步流程。下面依次介绍这五个步骤。</p>
+<section id="第-1-步分析数据库并创建数据领域" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="第-1-步分析数据库并创建数据领域"><span class="header-section-number">6.2.1</span> 第 1 步：分析数据库并创建数据领域</h3>
+<p>如图 <a href="#fig-6-20" class="quarto-xref">图&nbsp;<span>6.20</span></a> 所示，所有服务都可以访问数据库中的全部数据。这种做法称为<em>共享数据库集成风格</em>，由 Gregor Hohpe 和 Bobby Woolf 在《企业集成模式：设计、构建及部署消息传递解决方案》中描述。它会让数据与访问数据的服务形成紧密耦合。正如前面的“数据分解驱动因素”所述，数据库中的这种紧密耦合会使变更管理非常困难。</p>
+<div id="fig-6-20" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-20.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.20: 多项服务使用同一数据库，并按读写需要访问所有表
+</figcaption>
+</figure>
+</div>
+<p>拆分数据库的第一步，是识别数据库中的特定领域分组。例如，表 <a href="#tbl-6-5" class="quarto-xref">表格&nbsp;<span>6.5</span></a> 把相关表归在一起，帮助识别可能的数据领域。</p>
+</section>
+<section id="第-2-步把表分配到数据领域" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="第-2-步把表分配到数据领域"><span class="header-section-number">6.2.2</span> 第 2 步：把表分配到数据领域</h3>
+<p>下一步是沿特定限界上下文对表进行分组，把属于某个数据领域的表分配到自己的模式中。模式是数据库服务器中的逻辑构造，包含表、视图和函数等对象。在 Oracle 等某些数据库服务器中，模式与用户相同；在 SQL Server 等其他数据库中，模式是存放数据库对象、并供用户获得访问权限的逻辑空间。</p>
+<p>如图 <a href="#fig-6-21" class="quarto-xref">图&nbsp;<span>6.21</span></a> 所示，我们为每个数据领域创建模式，并把表移动到它们所属的模式。</p>
+<div id="fig-6-21" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-21-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-21.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-21-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.21: 服务根据数据领域需要使用主要模式
+</figcaption>
+</figure>
+</div>
+<p>如果属于不同数据领域的表彼此紧密耦合并高度相关，就必须合并数据领域，形成更宽的限界上下文，让多项服务共同拥有某个数据领域。第 9 章将更详细地讨论合并数据领域。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="数据领域与数据库模式">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+数据领域与数据库模式
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>数据领域是架构概念，模式则是保存某个数据领域数据库对象的数据库构造。数据领域与模式通常是一对一关系，但一个数据领域也可以映射到一个或多个模式，特别是在数据关系紧密耦合而必须合并数据领域时。本书后续会把“数据领域”和“模式”视为相同概念，并交替使用这两个术语。</p>
+</div>
+</div>
+<p>为了说明如何把表分配到模式，考虑 Sysops Squad 示例。<code>billing</code> 表必须从原始模式移动到名为 <code>payment</code> 的另一个数据领域模式：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">SCHEMA</span> payment TRANSFER sysops.billing;</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>另一种方式，是让数据库团队为不属于当前模式的表创建<em>同义词</em>。同义词是类似符号链接的数据库构造，为同一模式、不同模式或不同服务器中的另一个数据库对象提供别名。虽然同义词的目的在于消除跨模式查询，但仍然需要相应的读写权限。</p>
+<p>考虑以下跨领域查询：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    history.ticket_id, history.notes, <span class="kw">agent</span>.name</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ticket.ticket_history <span class="kw">AS</span> history</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> <span class="kw">profile</span>.sysops_user <span class="kw">AS</span> <span class="kw">agent</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> (history.assigned_to_sysops_user_id <span class="op">=</span> <span class="kw">agent</span>.sysops_user_id)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>接下来，在工单模式中为 <code>profile.sysops_user</code> 表创建同义词：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">SYNONYM</span> ticketing.sysops_user</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">FOR</span> <span class="kw">profile</span>.sysops_user;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>GO</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>于是，查询可以使用同义词 <code>sysops_user</code>，而不是直接访问跨领域表：</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    history.ticket_id, history.notes, <span class="kw">agent</span>.name</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ticket.ticket_history <span class="kw">AS</span> history</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> ticket.sysops_user <span class="kw">AS</span> <span class="kw">agent</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> (history.assigned_to_sysops_user_id <span class="op">=</span> <span class="kw">agent</span>.sysops_user_id)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>遗憾的是，为跨模式访问的表创建同义词，会给应用开发人员留下耦合点。为了形成正确的数据领域，后续必须拆除这些耦合点，把集成点从数据库层移动到应用层。同义词并没有真正消除跨模式查询，但它们能简化依赖检查和代码分析，使后续拆分更容易。</p>
+</section>
+<section id="第-3-步把数据库连接分离到数据领域" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="第-3-步把数据库连接分离到数据领域"><span class="header-section-number">6.2.3</span> 第 3 步：把数据库连接分离到数据领域</h3>
+<p>这一步需要重构每项服务中的数据库连接逻辑，确保服务连接到特定模式，而且只能读写属于自身数据领域的表。图 <a href="#fig-6-22" class="quarto-xref">图&nbsp;<span>6.22</span></a> 展示的这一过渡最为困难，因为所有跨模式访问都必须在服务层解决。</p>
+<div id="fig-6-22" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-22-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-22.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-22-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.22: 把跨模式对象访问移到服务层，消除直接跨模式访问
+</figcaption>
+</figure>
+</div>
+<p>数据库配置已经改变，所有数据访问都必须严格通过服务及其连接的模式完成。在图中，服务 C 与服务 D 通信，而不是直接访问模式 D。系统不再存在跨模式访问，第 2 步创建的全部同义词也已移除。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="数据访问原则">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+数据访问原则
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>需要其他领域的数据时，不要直接进入其数据库。应当通过拥有该数据领域的服务访问数据。</p>
+</div>
+</div>
+<p>完成这一步后，数据库达到<em>每项服务拥有数据主权</em>的状态，也就是每项服务都拥有自己的数据。这是分布式架构的理想状态。与所有架构实践一样，它也有好处和缺点。</p>
+<p><strong>好处</strong></p>
+<ul>
+<li>团队可以修改数据库模式，无须担心变更影响其他领域。</li>
+<li>每项服务都可以采用最适合自身使用场景的数据库技术和数据库类型。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>服务需要访问大量数据时，可能出现性能问题。</li>
+<li>数据库无法维护跨领域引用完整性，可能导致数据质量问题。</li>
+<li>所有访问其他领域表的数据库代码，例如存储过程和函数，都必须迁移到服务层。</li>
+</ul>
+</section>
+<section id="第-4-步把模式迁移到独立数据库服务器" class="level3" data-number="6.2.4">
+<h3 data-number="6.2.4" class="anchored" data-anchor-id="第-4-步把模式迁移到独立数据库服务器"><span class="header-section-number">6.2.4</span> 第 4 步：把模式迁移到独立数据库服务器</h3>
+<p>数据库团队创建并分离数据领域、隔离服务使其只访问自身数据之后，就可以把数据领域迁移到独立物理数据库。即使服务只访问自己的模式，共享单一数据库仍会形成单一架构量子，可能对可扩展性、容错能力和性能等运行特征产生不利影响，因此这一步通常不可避免。</p>
+<p>把模式迁移到独立物理数据库时，数据库团队有两个选择：备份与恢复，或者复制。</p>
+<dl>
+<dt><strong>备份与恢复</strong></dt>
+<dd>
+<p>团队先备份每个包含数据领域的模式，再为每个数据领域建立数据库服务器。随后恢复模式，让服务连接新数据库服务器中的模式，最后从原数据库服务器删除模式。这种方法通常需要迁移停机时间。</p>
+</dd>
+<dt><strong>复制</strong></dt>
+<dd>
+<p>团队先为每个数据领域建立数据库服务器，再复制模式，把连接切换到新服务器，最后从原服务器删除模式。这种方法可以避免停机，但建立复制和协调迁移需要更多工作。</p>
+</dd>
+</dl>
+<p>图 <a href="#fig-6-23" class="quarto-xref">图&nbsp;<span>6.23</span></a> 展示了复制方案。数据库团队建立多个数据库服务器，让每个数据领域拥有一台数据库服务器。</p>
+<div id="fig-6-23" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-23-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-23.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-23-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.23: 把模式，也就是数据领域，复制到各自的数据库服务器
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="第-5-步切换到独立数据库服务器" class="level3" data-number="6.2.5">
+<h3 data-number="6.2.5" class="anchored" data-anchor-id="第-5-步切换到独立数据库服务器"><span class="header-section-number">6.2.5</span> 第 5 步：切换到独立数据库服务器</h3>
+<p>模式完成复制后，就可以切换服务连接。让数据领域与服务成为独立部署单元的最后一步，是删除对旧数据库服务器的连接，并从旧服务器中删除相应模式。最终状态如图 <a href="#fig-6-24" class="quarto-xref">图&nbsp;<span>6.24</span></a> 所示。</p>
+<div id="fig-6-24" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-24-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-24.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-24-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.24: 每个数据领域拥有独立数据库服务器
+</figcaption>
+</figure>
+</div>
+<p>数据库团队分离数据领域、隔离数据库连接，并最终把数据领域迁移到各自服务器后，就可以分别优化各数据库服务器的可用性和可扩展性。团队还可以分析数据，选择最合适的数据库类型，在生态系统中引入多语言数据库使用方式。</p>
+</section>
+</section>
+<section id="选择数据库类型" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="选择数据库类型"><span class="header-section-number">6.3</span> 选择数据库类型</h2>
+<p>大约从 2005 年开始，数据库技术经历了一场革命。遗憾的是，这段时间涌现的大量产品也产生了一个称为“选择悖论”的问题。产品和选项越多，需要作出的权衡决策就越多。每种产品都针对特定权衡进行优化，因此软件架构师和数据架构师必须结合自身问题空间，理解这些权衡并选择合适产品。</p>
+<p>本节将使用星级评价不同数据库类型，并依据以下特征进行分析。</p>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>指新开发人员、数据架构师、数据建模人员、运维 DBA 及其他数据库用户学习和采用该数据库的难易程度。例如，通常可以假设大多数软件开发人员理解 SQL，而 Gremlin 这样的图查询语言可能是一项小众技能。星级越高，学习越容易；星级越低，学习越困难。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>指数据建模人员使用数据模型表示领域的难易程度。星级越高，说明数据建模适合的使用场景越多，而且完成建模后也更容易修改和采用。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>指数据库为处理更高吞吐量而扩展的程度与难易程度。数据库是否容易扩展？能否水平扩展、垂直扩展，或同时采用两种方式？星级越高，说明数据库越容易扩展并获得更高吞吐量。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>指数据库是否支持高可用配置，例如 MongoDB 副本集或 Apache Cassandra 的可调一致性，以及是否提供处理网络分区的功能。星级越高，数据库对高可用和/或分区容忍的支持越好。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>指数据库是否支持“始终一致”的范式。数据库支持 ACID 事务，还是更偏向采用最终一致性模型的 BASE 事务？是否能为不同类型的写入提供可调一致性模型？星级越高，数据库对一致性的支持越强。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>指数据库支持哪些以及多少种编程语言、产品成熟程度和社区规模。组织能否轻松招聘到掌握该数据库的人才？星级越高，说明支持越好、产品越成熟，也越容易招聘人才。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>指数据库偏重读、偏重写，还是在两者之间保持平衡。这不是非此即彼的二元选择，而是一条表示数据库优化方向的连续尺度。</p>
+</dd>
+</dl>
+<section id="关系型数据库" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="关系型数据库"><span class="header-section-number">6.3.1</span> 关系型数据库</h3>
+<p>关系型数据库也称 RDBMS，三十多年来一直是首选数据库。它们的使用价值与稳定性十分显著，在多数业务应用中尤其如此。关系型数据库以无处不在的结构化查询语言 SQL 和提供的 ACID 属性著称。SQL 接口可以在同一写模型之上实现不同读模型，因此关系型数据库常常成为首选。图 <a href="#fig-6-25" class="quarto-xref">图&nbsp;<span>6.25</span></a> 展示了关系型数据库的星级评价。</p>
+<div id="fig-6-25" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-25-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-25.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-25-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.25: 关系型数据库在各项采用特征上的评价
+</figcaption>
+</figure>
+</div>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>关系型数据库已经存在多年，学校普遍教授相关知识，也拥有成熟文档和教程，因此比其他数据库类型更容易学习。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>关系型数据库支持灵活的数据建模，可以表示键值、文档和类似图的数据结构，也可以通过增加新索引改变读取模式。任意深度的图结构等某些模型很难实现。关系型数据库把数据组织成表和行，类似电子表格，对大多数数据建模人员来说很自然。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>关系型数据库通常通过大型计算机进行垂直扩展。配置复制和自动切换比较复杂，需要更多协调与设置工作。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>关系型数据库通常更偏重一致性，而不是可用性和分区容忍性。第 9 章“表拆分技术”将继续讨论。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>关系型数据库多年来占据主导地位，主要原因之一是对 ACID 属性的支持。这些特性处理了并发系统中的许多问题，让开发人员无须操心并发的底层细节以及数据库如何处理这些细节。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>关系型数据库历史悠久，可以应用成熟的设计、实现和运维模式，因此容易采用、开发并集成到架构中。许多关系数据库缺少对响应式流 API 等新概念的支持，新架构概念进入成熟关系数据库通常需要更长时间。关系型数据库拥有大量编程语言接口，用户社区也很庞大，尽管分散在不同厂商周围。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>可以通过设计关系数据模型，让读取或写入更高效。同一个数据库能够处理不同类型的负载，在读写之间取得平衡。并非所有场景都需要 ACID 属性，尤其是数据量和流量巨大，或者需要非常灵活的模式，例如调查管理时。这些场景下，其他数据库类型可能更合适。</p>
+</dd>
+</dl>
+<p>MySQL、Oracle、Microsoft SQL Server 和 PostgreSQL 是最流行的关系型数据库，可以独立安装，也可以在主要云平台上作为数据库即服务使用。</p>
+</section>
+<section id="聚合导向" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="聚合导向"><span class="header-section-number">6.3.2</span> 聚合导向</h3>
+<p><em>聚合导向</em>是指倾向于把相关且具有复杂结构的数据作为整体处理。“聚合”一词来自 Eric Evans 的《领域驱动设计：软件核心复杂性应对之道》。可以把 Sysops Squad 中的工单或客户以及各自依赖的全部表理解为聚合。与所有架构实践一样，聚合导向也包含好处和缺点。</p>
+<p><strong>好处</strong></p>
+<ul>
+<li>可以把整个聚合复制到不同服务器，因此易于在服务器集群中分发数据。</li>
+<li>减少数据库连接操作，改善读写性能。</li>
+<li>减少应用模型与存储模型之间的阻抗失配。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>很难划分出正确聚合，改变聚合边界也很困难。</li>
+<li>跨聚合分析数据很困难。</li>
+</ul>
+</section>
+<section id="键值数据库" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="键值数据库"><span class="header-section-number">6.3.3</span> 键值数据库</h3>
+<p>键值数据库类似哈希表数据结构，也可以理解为 RDBMS 中一张以 ID 列为键、以二进制大对象列为值的表，因此能够存储任何类型的数据。键值数据库属于 NoSQL 数据库家族。本书作者之一 Pramod Sadalage 与 Martin Fowler 合著的《NoSQL 精粹：多语言持久化世界的简明指南》介绍了 NoSQL 数据库的兴起，以及使用这类数据库的动机、方法和权衡，是进一步了解这种数据库类型的良好参考资料。</p>
+<p>在 NoSQL 数据库中，键值数据库最容易理解。应用客户端可以插入一个键和值，取得已知键对应的值，或者删除已知键及其值。键值数据库既不知道也不关心值内部包含什么，因此只能通过键查询，不能通过其他内容查询。</p>
+<p>与关系型数据库不同，选择键值数据库时应以实际需求为准。Amazon DynamoDB 和 Riak KV 属于持久化键值数据库，MemcacheDB 属于非持久化数据库，Redis 等数据库则可以配置为持久化或非持久化。它们不支持连接、<code>WHERE</code>、<code>ORDER BY</code> 等关系数据库构造，而是提供 <code>get</code>、<code>put</code> 和 <code>delete</code> 操作。图 <a href="#fig-6-26" class="quarto-xref">图&nbsp;<span>6.26</span></a> 展示了键值数据库的评价。</p>
+<div id="fig-6-26" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-26-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-26.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-26-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.26: 键值数据库在各项采用特征上的评价
+</figcaption>
+</figure>
+</div>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>键值数据库容易理解。由于采用聚合导向，必须正确设计聚合，因为聚合发生任何变化都意味着要重写全部数据。从关系型数据库迁移到任何 NoSQL 数据库，都需要练习并忘掉某些熟悉做法。例如，开发人员不能简单发出“取得所有键”的查询。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>键值数据库采用聚合导向，可以把数组、映射或其他任何内存结构，乃至大型二进制对象作为值。数据只能通过键或 ID 查询，因此客户端必须在数据库之外掌握键。<code>session_id</code>、<code>user_id</code> 和 <code>order_id</code> 都是很好的键。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>键值数据库按键或 ID 建立索引，不需要连接或排序操作，因此键查找非常快。数据库直接获取值并返回客户端，从而更容易扩展并获得更高吞吐量。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>键值数据库类型繁多，各自属性不同；同一数据库也可以针对一次安装或每次读取配置不同方式。例如，Riak 支持 <code>all</code>、<code>one</code>、<code>quorum</code> 和 <code>default</code> 等仲裁属性。使用 <code>one</code> 时，只要任意一个节点响应，查询就可以成功返回；使用 <code>all</code> 时，所有节点都必须响应。每次查询都可以调整分区容忍性与可用性，因此把所有键值存储视为完全相同是错误的。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>每次写入时，可以采用与读取仲裁类似的配置，形成所谓的可调一致性。可以用延迟换取更高一致性。要让写入具有高度一致性，所有节点都必须响应，这会降低分区容忍性。多数派仲裁通常被视为良好权衡。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>键值数据库拥有良好的编程语言支持，许多开源数据库还有活跃社区帮助用户学习与理解。大多数产品提供 HTTP REST API，因此很容易集成。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>键值数据库采用聚合导向，通过键或 ID 访问数据，因此偏重读取。它们可以用作会话存储，也可以缓存用户属性和偏好。</p>
+</dd>
+</dl>
+<div class="callout callout-style-default callout-note callout-titled" title="数据库分片">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+数据库分片
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>关系型数据库中的分区概念广为人知：依据某种模式，把表数据划分为位于同一数据库服务器上的多个集合。分片与分区相似，但数据位于不同服务器或节点。各节点协作，根据分片键判断数据存在哪里或应当存到哪里。“分片”指数据库数据的水平分区。</p>
+</div>
+</div>
+</section>
+<section id="文档数据库" class="level3" data-number="6.3.4">
+<h3 data-number="6.3.4" class="anchored" data-anchor-id="文档数据库"><span class="header-section-number">6.3.4</span> 文档数据库</h3>
+<p>JSON 或 XML 等文档是文档数据库的基础。文档是人类可读、自描述的层次树结构。文档数据库也是一种 NoSQL 数据库，图 <a href="#fig-6-27" class="quarto-xref">图&nbsp;<span>6.27</span></a> 展示了相应评价。这类数据库理解数据结构，可以为文档的多个属性建立索引，从而提供更灵活的查询能力。</p>
+<div id="fig-6-27" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-27-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-27.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-27-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.27: 文档数据库在各项采用特征上的评价
+</figcaption>
+</figure>
+</div>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>文档数据库类似值可供人类阅读的键值数据库，因此更容易学习。企业已经习惯在 API 负载、JavaScript 前端等不同上下文中处理 XML 和 JSON 文档。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>与键值数据库一样，数据建模需要表示订单、工单等聚合及其他领域对象。文档数据库对聚合设计的容忍度更高，因为聚合内部的各个部分都可以查询和建立索引。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>文档数据库采用聚合导向，容易扩展。复杂索引会降低可扩展性；随着数据量增加，还需要分区或分片。引入分片会增加复杂性，并迫使团队选择分片键。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>与键值数据库一样，文档数据库可以配置为提供更高可用性。如果分片集合采用复制集群，配置就会变得复杂。云提供商正在努力提高这类配置的易用性。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>某些文档数据库已经开始支持集合内部的 ACID 事务，但在部分边界场景中可能无法正常工作。与键值数据库一样，文档数据库可以使用仲裁机制调整读写操作。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>文档数据库是最流行的 NoSQL 数据库类型，拥有活跃用户社区、大量在线学习教程和多种编程语言驱动，因而比较容易采用。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>文档数据库采用聚合导向，并提供二级索引用于查询，因此偏重读取。</p>
+</dd>
+</dl>
+<div class="callout callout-style-default callout-note callout-titled" title="无模式数据库">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+无模式数据库
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>NoSQL 数据库的一个常见特点，是数据与模式属性名称会发生重复。任意两条记录都不必具有相同模式或属性名称，这带来了独特的变更控制机制与灵活性。无模式特性很强大，但必须认识到：数据始终存在模式，只是这个模式可能是隐式的或定义在其他位置。应用必须能够处理数据库返回的多个模式版本。因此，说 NoSQL 数据库完全没有模式，是一种误导。</p>
+</div>
+</div>
+</section>
+<section id="列族数据库" class="level3" data-number="6.3.5">
+<h3 data-number="6.3.5" class="anchored" data-anchor-id="列族数据库"><span class="header-section-number">6.3.5</span> 列族数据库</h3>
+<p>列族数据库也称宽列数据库或大表数据库，其中每一行可以拥有不同数量的列，每列都是一个名称与值的配对。名称称为列键，值称为列值，行的主键称为行键。列族数据库也是一种 NoSQL 数据库，会把同时访问的相关数据分到一组。图 <a href="#fig-6-28" class="quarto-xref">图&nbsp;<span>6.28</span></a> 展示了相应评价。</p>
+<div id="fig-6-28" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-28-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-28.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-28-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.28: 列族数据库在各项采用特征上的评价
+</figcaption>
+</figure>
+</div>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>列族数据库较难理解。一行包含一组名称与值的配对，每行都可以具有不同配对。有些配对还能包含列映射，称为超级列。理解如何使用这些结构需要时间和练习。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>使用列族数据库建模需要一定适应过程。数据必须组织成共享单一行标识符的名称与值配对组，而设计行键通常需要多轮迭代。Apache Cassandra 等列族数据库引入了类似 SQL 的 Cassandra 查询语言 CQL，使数据建模更容易上手。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>所有列族数据库都具有很强的可扩展性，适合需要极高写入或读取吞吐量的场景。它们可以针对读写操作进行水平扩展。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>列族数据库天然以集群方式运行，集群部分节点停机时，对客户端仍然透明。默认复制因子通常为 3，也就是至少保存三份数据，从而改善可用性与分区容忍性。与键值和文档数据库类似，列族数据库也可以根据仲裁需要调整读写行为。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>与其他 NoSQL 数据库一样，列族数据库遵循可调一致性概念，每次操作都可以根据需要选择一致性程度。例如，在高写入量而且能够容忍少量数据丢失的场景中，可以采用 <code>ANY</code> 写一致性级别，表示至少有一个节点接受写入；<code>ALL</code> 则要求所有节点都接受写入并返回成功。读取操作也可以采用类似级别。这是一项权衡：一致性级别越高，可用性和分区容忍性越低。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>Cassandra 和 Scylla 等列族数据库拥有活跃社区，类似 SQL 的接口也使这类数据库更容易采用。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>列族数据库使用 SSTable、提交日志和内存表等概念，只在数据存在时填充名称与值配对，因此比关系型数据库更善于处理稀疏数据，非常适合高写入量场景。</p>
+</dd>
+</dl>
+<p>所有 NoSQL 数据库都围绕聚合导向设计。聚合可以改善读写性能，并让数据库以集群方式运行时获得更高可用性和分区容忍性。第 9 章“表拆分技术”将更详细地介绍 CAP 定理。</p>
+</section>
+<section id="图数据库" class="level3" data-number="6.3.6">
+<h3 data-number="6.3.6" class="anchored" data-anchor-id="图数据库"><span class="header-section-number">6.3.6</span> 图数据库</h3>
+<p>关系型数据库通过引用隐式表达关系，图数据库则使用节点保存实体及其属性。这些节点通过边连接，边也称为关系，是显式对象。节点按照关系组织，可以沿特定边遍历，从而分析相互连接的数据。</p>
+<div id="fig-6-29" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-29-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-29.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-29-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.29: 图数据库中，查询时边的方向具有重要意义
+</figcaption>
+</figure>
+</div>
+<p>图数据库中的边具有方向意义。图 <a href="#fig-6-29" class="quarto-xref">图&nbsp;<span>6.29</span></a> 中，类型为 <code>TICKET_CREATED</code> 的边，把 ID 为 <code>4235143</code> 的工单节点连接到 ID 为 <code>Neal</code> 的客户节点。可以从工单节点沿传出边 <code>TICKET_CREATED</code> 遍历，也可以从客户节点沿传入边 <code>TICKET_CREATED</code> 遍历。一旦混淆方向，图查询就会变得非常困难。图 <a href="#fig-6-30" class="quarto-xref">图&nbsp;<span>6.30</span></a> 展示了图数据库的评价。</p>
+<div id="fig-6-30" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-30-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-30.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-30-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.30: 图数据库在各项采用特征上的评价
+</figcaption>
+</figure>
+</div>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>图数据库的学习曲线陡峭，理解如何使用节点、关系、关系类型和属性需要时间。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>理解如何建模领域并把它们转换为节点与关系比较困难。初学时，人们倾向于给关系添加属性。随着建模能力提高，会更多使用节点和关系，并把部分关系属性转换成节点和额外关系类型，从而改善图遍历。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>复制节点可以改善读取扩展，并可针对读取负载调整吞吐量。图很难拆分或分片，因此写入吞吐量受所选图数据库类型限制。关系遍历非常快，因为索引和存储结构已经持久化，不必在查询时计算。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>一些具有高分区容忍性和高可用性的图数据库采用分布式架构。图数据库集群可以在当前领导节点不可用时，把其他节点提升为领导节点。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>许多图数据库支持 ACID 事务。例如 Neo4j 支持事务，使数据始终保持一致。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>图数据库拥有广泛的社区支持。Dijkstra 算法、节点相似度等许多算法已经在数据库中实现，无须从头编写。Gremlin 语言框架可以跨多种数据库使用，提高了易用性。Neo4j 支持 Cypher 查询语言，让开发人员可以方便地查询数据库。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>图数据库的数据存储针对关系遍历优化；关系型数据库则需要在查询时查找并推导关系。因此，图数据库更适合读取密集型场景。</p>
+</dd>
+</dl>
+<p>图数据库允许同一个节点具有多种关系。以 Sysops Squad 为例，<code>knowledge_base</code> 可以由 <code>sysops_user</code> 创建，同时也被 <code>sysops_user</code> 使用。因此，<code>created_by</code> 和 <code>used_by</code> 会用不同关系类型连接相同节点。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="修改关系类型">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+修改关系类型
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>修改关系类型代价很高，因为必须重新创建每一条相应关系。系统需要访问边连接的两个节点，创建新边，再移除旧边。因此，必须谨慎设计边类型或关系类型。</p>
+</div>
+</div>
+</section>
+<section id="newsql-数据库" class="level3" data-number="6.3.7">
+<h3 data-number="6.3.7" class="anchored" data-anchor-id="newsql-数据库"><span class="header-section-number">6.3.7</span> NewSQL 数据库</h3>
+<p>Matthew Aslett 最早使用 NewSQL 一词，描述既希望获得 NoSQL 数据库可扩展性，又支持 ACID 等关系数据库特性的新型数据库。NewSQL 数据库采用不同存储机制，但全部支持 SQL。</p>
+<p>图 <a href="#fig-6-31" class="quarto-xref">图&nbsp;<span>6.31</span></a> 展示了 NewSQL 数据库的评价。这类数据库通过自动数据分区或分片改进关系型数据库，实现水平扩展和更高可用性，同时让开发人员可以沿用熟悉的 SQL 与 ACID 范式，轻松完成过渡。</p>
+<div id="fig-6-31" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-31-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-31.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-31-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.31: NewSQL 数据库在各项采用特征上的评价
+</figcaption>
+</figure>
+</div>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>NewSQL 数据库类似关系型数据库，提供 SQL 接口、水平扩展和 ACID 合规性，因此学习相对容易。某些产品只以数据库即服务形式提供，这可能增加学习难度。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>NewSQL 与关系型数据库相似，数据建模为很多人所熟悉，容易掌握。额外难点是分片设计，它允许把分片数据放置在不同地理位置。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>NewSQL 数据库专为分布式系统的水平扩展而设计，可以拥有多个活动节点；关系型数据库通常只有一个活动领导节点，其余节点作为跟随者。多个活动节点使 NewSQL 具有很强的可扩展性和更高吞吐量。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>多活动节点设计可以显著提高可用性和分区容忍性。CockroachDB 是一种流行的 NewSQL 数据库，可以承受磁盘、计算机和数据中心故障。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>NewSQL 支持强一致 ACID 事务，数据始终一致，使关系型数据库用户能够轻松迁移。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>许多 NewSQL 数据库是开源产品，学习资源易于获得。部分产品还支持与现有关系数据库兼容的线协议，因而可以在不存在兼容性问题的情况下替代关系数据库。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>NewSQL 的使用方式类似关系型数据库，但还能借助索引和地理分布改善读取或写入性能。</p>
+</dd>
+</dl>
+</section>
+<section id="云原生数据库" class="level3" data-number="6.3.8">
+<h3 data-number="6.3.8" class="anchored" data-anchor-id="云原生数据库"><span class="header-section-number">6.3.8</span> 云原生数据库</h3>
+<p>随着云使用量增加，Snowflake、Amazon Redshift、Datomic 和 Azure Cosmos DB 等云数据库越来越流行。这些数据库可以减轻运维负担，提供透明成本，而且不需要前期投资，容易用于实验。图 <a href="#fig-6-32" class="quarto-xref">图&nbsp;<span>6.32</span></a> 展示了云原生数据库的评价。</p>
+<div id="fig-6-32" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-32-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-32.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-32-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.32: 云原生数据库在各项采用特征上的评价
+</figcaption>
+</figure>
+</div>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>AWS Redshift 等云数据库类似关系型数据库，因而比较容易理解。Snowflake 提供 SQL 接口，但采用不同的存储和计算机制，需要一定练习。Datomic 的模型完全不同，使用不可变原子事实。因此，学习曲线会因具体产品而异。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>Datomic 没有表的概念，也无须预先定义属性，但必须定义单个属性的性质，而实体可以拥有任意属性。Snowflake 和 Redshift 更多用于数据仓库负载。选择数据库时，必须理解该产品所提供的建模方式。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>这些数据库都只在云端提供，因此扩展相对简单，只要付出相应成本，资源就能自动分配。此类决策的主要权衡通常是价格。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>Datomic 等数据库采用生产拓扑部署时具有高可用性，没有单点故障，并由广泛缓存提供支持。Snowflake 可以跨区域和账户复制数据库。这个类别中的其他数据库也提供多种高可用配置。例如 Redshift 运行在单个可用区，需要部署多个集群才能支持更高可用性。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>Datomic 使用存储引擎把数据块保存在块存储中，并支持 ACID 事务。Snowflake 和 Redshift 等其他数据库同样支持 ACID 事务。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>许多此类数据库较新，很难找到经验丰富的人员。实验还需要云账户，形成另一项门槛。云原生数据库虽然减轻了运维 DBA 的工作量，却给开发人员带来更陡的学习曲线。Datomic 的示例和存储过程使用 Clojure，不了解 Clojure 可能成为采用障碍。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>这类数据库既可以处理读取密集型负载，也可以处理写入密集型负载。Snowflake 和 Redshift 更偏向数据仓库负载，因此以读取为主；Datomic 则可借助不同索引支持两类负载，例如优先使用 EAVT，即实体、属性、值、事务顺序。</p>
+</dd>
+</dl>
+</section>
+<section id="时间序列数据库" class="level3" data-number="6.3.9">
+<h3 data-number="6.3.9" class="anchored" data-anchor-id="时间序列数据库"><span class="header-section-number">6.3.9</span> 时间序列数据库</h3>
+<p>物联网、微服务、自动驾驶汽车和可观测性的发展，使时间序列分析需求大幅增长。这一趋势催生了针对时间窗口内数据点序列进行存储优化的数据库，让用户可以跟踪任意时间跨度内的变化。图 <a href="#fig-6-33" class="quarto-xref">图&nbsp;<span>6.33</span></a> 展示了时间序列数据库的评价。</p>
+<div id="fig-6-33" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-33-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-33.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-33-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.33: 时间序列数据库在各项采用特征上的评价
+</figcaption>
+</figure>
+</div>
+<dl>
+<dt><strong>学习曲线的平缓程度</strong></dt>
+<dd>
+<p>时间序列数据通常容易理解，每个数据点都附带时间戳，而且数据几乎总是插入，通常不会更新或删除。习惯其他数据库后，需要重新适应只追加操作，因为其他数据库允许通过更新纠正错误数据。InfluxDB、Kx 和 Timescale 都是流行的时间序列数据库。</p>
+</dd>
+<dt><strong>数据建模的容易程度</strong></dt>
+<dd>
+<p>时间序列数据库的核心概念，是分析数据随时间发生的变化。例如，在 Sysops Squad 中，可以把工单对象的变更存入时间序列数据库，并用变更时间戳和 <code>ticket_id</code> 加标签。一个标签中放入多条信息被视为不良做法。例如，<code>ticket_status=Open, ticket_id=374737</code> 优于 <code>ticket_info=Open.374737</code>。</p>
+</dd>
+<dt><strong>可扩展性与吞吐量</strong></dt>
+<dd>
+<p>Timescale 基于 PostgreSQL，可以使用标准扩展和吞吐量改进模式。InfluxDB 以集群模式运行时，可以使用管理元数据的元节点与存储实际数据的数据节点，改善扩展性和吞吐量。</p>
+</dd>
+<dt><strong>可用性与分区容忍性</strong></dt>
+<dd>
+<p>InfluxDB 等数据库通过元节点、数据节点和复制因子配置，提供更好的可用性与分区容忍选项。</p>
+</dd>
+<dt><strong>一致性</strong></dt>
+<dd>
+<p>使用关系型数据库作为存储引擎的时间序列数据库，可以通过 ACID 属性获得一致性；其他产品则可以使用 <code>any</code>、<code>one</code> 或 <code>quorum</code> 一致性级别进行调整。更高一致性配置通常意味着更高一致性与更低可用性，必须对此进行权衡。</p>
+</dd>
+<dt><strong>编程语言支持、产品成熟度、SQL 支持与社区</strong></dt>
+<dd>
+<p>时间序列数据库近年来越来越流行，学习资源丰富。InfluxDB 等产品还提供类似 SQL 的 InfluxQL 查询语言。</p>
+</dd>
+<dt><strong>读写优先级</strong></dt>
+<dd>
+<p>时间序列数据库只追加数据，通常更适合读取密集型负载。</p>
+</dd>
+</dl>
+<p>使用时间序列数据库时，数据库会为每次数据创建自动附加时间戳，数据还包含信息标签或属性。查询通常针对特定时间窗口中的某项事实。因此，时间序列数据库不是通用数据库。</p>
+<p>表 <a href="#tbl-6-6" class="quarto-xref">表格&nbsp;<span>6.6</span></a> 汇总本节讨论的数据库类型及相应流行产品。</p>
+<div id="tbl-6-6" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-6-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;6.6: 数据库类型及相应产品汇总
+</figcaption>
+<div aria-describedby="tbl-6-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>数据库类型</th>
+<th>产品</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>关系型</td>
+<td>PostgreSQL、Oracle、Microsoft SQL Server</td>
+</tr>
+<tr class="even">
+<td>键值</td>
+<td>Riak KV、Amazon DynamoDB、Redis</td>
+</tr>
+<tr class="odd">
+<td>文档</td>
+<td>MongoDB、Couchbase、AWS DocumentDB</td>
+</tr>
+<tr class="even">
+<td>列族</td>
+<td>Cassandra、Scylla、Amazon SimpleDB</td>
+</tr>
+<tr class="odd">
+<td>图</td>
+<td>Neo4j、InfiniteGraph、TigerGraph</td>
+</tr>
+<tr class="even">
+<td>NewSQL</td>
+<td>VoltDB、ClustrixDB、SingleStore（原 MemSQL）</td>
+</tr>
+<tr class="odd">
+<td>云原生</td>
+<td>Snowflake、Datomic、Redshift</td>
+</tr>
+<tr class="even">
+<td>时间序列</td>
+<td>InfluxDB、kdb+、Amazon Timestream</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="sysops-squad-案例多语言数据库" class="level3" data-number="6.3.10">
+<h3 data-number="6.3.10" class="anchored" data-anchor-id="sysops-squad-案例多语言数据库"><span class="header-section-number">6.3.10</span> Sysops Squad 案例：多语言数据库</h3>
+<p><em>12 月 16 日，星期四，16:05</em></p>
+<p>团队已经从 Sysops Squad 单体数据库中形成数据领域。Devon 注意到，“调查”数据领域非常适合从传统关系型数据库迁移到使用 JSON 的文档数据库。不过，数据架构负责人 Dana 不同意，希望继续把这些表保留为关系型。</p>
+<p>“我完全不同意，”Dana 说，“调查表过去一直以关系表形式正常工作，我看不出改变的理由。”</p>
+<p>“实际上，”Skyler 说，“如果系统最初开发时你们就和我们讨论过，就会知道从用户界面角度看，用关系数据处理客户调查这样的内容非常困难。所以我不同意。关系表对你来说可能很好，但从用户界面开发角度看，处理调查的关系数据一直是一个主要痛点。”</p>
+<p>“看吧，事实就是这样，”Devon 说，“这正是我们需要把它改成文档数据库的原因。”</p>
+<p>“你似乎忘了，我是公司的数据架构师，最终要对所有这些不同数据库负责。你们不能随便往系统里增加数据库类型。”Dana 说。</p>
+<p>“但那会是更好的解决方案。”Devon 说。</p>
+<p>“抱歉，我不会为了让 Skyler 更容易维护用户界面，就给数据库团队带来如此大的冲击。事情不是这样运作的。”</p>
+<p>“等一下，”Skyler 说，“我们不是都同意过吗？当前单体 Sysops Squad 应用的问题之一，就是开发团队与数据库团队合作得不够紧密。”</p>
+<p>“是的。”Dana 说。</p>
+<p>“那我们就开始合作，一起想清楚这个问题。”Skyler 说。</p>
+<p>“好吧，”Dana 说，“但你和 Devon 必须给出充分有力的理由，证明为什么应该引入另一种数据库。”</p>
+<p>“没问题，”Devon 说，“我们马上开始。”</p>
+<p>Devon 和 Skyler 知道，文档数据库更适合客户调查数据，却不确定怎样建立足以说服 Dana 的理由。两人都认为这在一定程度上属于架构问题，因此 Skyler 建议找 Addison 帮忙。Addison 同意，并安排与 Sysops Squad 产品负责人 Parker 开会，确认把客户调查表迁移到文档数据库是否具有业务理由。</p>
+<p>“谢谢你来参加会议，Parker，”Addison 说，“正如之前提过的，我们正在考虑改变客户调查数据的存储方式，有几个问题想问你。”</p>
+<p>“这正是我同意开会的原因之一，”Parker 说，“客户调查一直是营销部门和我的主要痛点。”</p>
+<p>“什么？”Skyler 问，“你的意思是？”</p>
+<p>“即使是最小的客户调查变更请求，你们需要多久才能完成？”Parker 问。</p>
+<p>“从数据库方面看不算太糟，”Devon 说，“新增问题就增加一列，或者修改答案类型。”</p>
+<p>“等一下，”Skyler 说，“抱歉，但即使只增加一个问题，对我来说也是重大变更。你们不知道查询所有关系数据并在用户界面渲染客户调查有多困难。所以我的答案是：需要很长时间。”</p>
+<p>“听着，”Parker 说，“在业务这边，即使最简单的变更也要你们花上好几天，这让我们非常沮丧，完全不可接受。”</p>
+<p>“我想我可以帮忙，”Addison 说，“Parker，你的意思是，客户调查经常变化，而实施变更花费的时间太长？”</p>
+<p>“没错，”Parker 说，“营销部门不仅希望客户调查更灵活，也希望 IT 部门响应得更快。他们经常不提交变更请求，因为知道最终只会感到挫败，还会产生计划外成本。”</p>
+<p>“如果我告诉你，缺乏灵活性、变更响应缓慢完全与存储客户调查所用的技术有关；只要改变数据存储方式，就能显著改善灵活性和变更请求响应时间，你会怎么想？”Addison 问。</p>
+<p>“那我和营销部门都会成为世界上最快乐的人。”Parker 说。</p>
+<p>“Devon、Skyler，我想我们找到业务理由了。”Addison 说。</p>
+<p>业务理由确立后，Devon、Skyler 和 Addison 说服 Dana 使用文档数据库。接下来，团队必须为客户调查数据找出最佳结构。图 <a href="#fig-6-34" class="quarto-xref">图&nbsp;<span>6.34</span></a> 展示了现有关系数据库表。每份客户调查包含两张主要表：“调查”表和“问题”表，两者为一对多关系。</p>
+<div id="fig-6-34" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-34-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-34.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-34-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.34: Sysops Squad 调查数据领域中的表与关系
+</figcaption>
+</figure>
+</div>
+<p>图 <a href="#fig-6-35" class="quarto-xref">图&nbsp;<span>6.35</span></a> 展示了每张表中的示例数据，其中“问题”表包含问题内容、答案选项和答案的数据类型。</p>
+<div id="fig-6-35" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-35-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-35.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-35-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.35: 调查数据领域中“调查”与“问题”表的关系数据
+</figcaption>
+</figure>
+</div>
+<p>“在文档数据库中建模调查问题，基本上有两个选择，”Devon 说，“使用单一聚合文档，或者把聚合拆开。”</p>
+<p>“怎么知道应该采用哪个？”Skyler 问。开发团队终于开始与数据库团队合作寻找统一方案，她对此很满意。</p>
+<p>“我有办法，”Addison 说，“两种都建模，直观看看各自权衡。”</p>
+<p>Devon 向团队展示了单一聚合方案，如图 <a href="#fig-6-36" class="quarto-xref">图&nbsp;<span>6.36</span></a> 和示例 6-3 所示。调查数据及全部相关问题数据都保存在同一个文档中，因此只需一次 <code>get</code> 操作就能从数据库取得整份客户调查，让 Skyler 和其他开发人员很容易使用这些数据。</p>
+<div id="fig-6-36" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-36-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-36.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-36-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.36: 采用单一聚合的调查模型
+</figcaption>
+</figure>
+</div>
+<p><strong>示例 6-3：把子项嵌入单一聚合设计的 JSON 文档</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"survey_id"</span><span class="fu">:</span> <span class="st">"19999"</span><span class="fu">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"created_date"</span><span class="fu">:</span> <span class="st">"Dec 28 2021"</span><span class="fu">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"description"</span><span class="fu">:</span> <span class="st">"Survey to gauge customer..."</span><span class="fu">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"questions"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"50001"</span><span class="fu">,</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"question"</span><span class="fu">:</span> <span class="st">"Rate the expert"</span><span class="fu">,</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"answer_type"</span><span class="fu">:</span> <span class="st">"Option"</span><span class="fu">,</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"answer_options"</span><span class="fu">:</span> <span class="st">"1,2,3,4,5"</span><span class="fu">,</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"order"</span><span class="fu">:</span> <span class="st">"2"</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"50000"</span><span class="fu">,</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"question"</span><span class="fu">:</span> <span class="st">"Did the expert fix the problem?"</span><span class="fu">,</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"answer_type"</span><span class="fu">:</span> <span class="st">"Boolean"</span><span class="fu">,</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"answer_options"</span><span class="fu">:</span> <span class="st">"Yes,No"</span><span class="fu">,</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"order"</span><span class="fu">:</span> <span class="st">"1"</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>“我非常喜欢这种方式，”Skyler 说，“我基本不必再担心自己在用户界面中聚合数据，只需要把取得的文档直接渲染到网页上。”</p>
+<p>“是的，”Devon 说，“但数据库一侧会增加工作量，因为每份调查文档都会复制问题。你知道，这就是复用问题。来，我给你看看另一种方式。”</p>
+<p>Skyler 解释，另一种思考聚合的方式，是拆开调查和问题模型，让问题可以独立操作，如图 <a href="#fig-6-37" class="quarto-xref">图&nbsp;<span>6.37</span></a> 和示例 6-4 所示。这样，同一个问题可以在多份调查中使用，但检索和渲染会比单一聚合更困难。</p>
+<div id="fig-6-37" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-37-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ch06/fig-6-37.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-37-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6.37: 带引用的多聚合调查模型
+</figcaption>
+</figure>
+</div>
+<p><strong>示例 6-4：拆分聚合，并由父文档引用子文档的 JSON</strong></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"survey_id"</span><span class="fu">:</span> <span class="st">"19999"</span><span class="fu">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"created_date"</span><span class="fu">:</span> <span class="st">"Dec 28"</span><span class="fu">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"description"</span><span class="fu">:</span> <span class="st">"Survey to gauge customer..."</span><span class="fu">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"questions"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"50001"</span><span class="fu">,</span> <span class="dt">"order"</span><span class="fu">:</span> <span class="st">"2"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"50000"</span><span class="fu">,</span> <span class="dt">"order"</span><span class="fu">:</span> <span class="st">"1"</span><span class="fu">}</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"50001"</span><span class="fu">,</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"question"</span><span class="fu">:</span> <span class="st">"Rate the expert"</span><span class="fu">,</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"answer_type"</span><span class="fu">:</span> <span class="st">"Option"</span><span class="fu">,</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"answer_options"</span><span class="fu">:</span> <span class="st">"1,2,3,4,5"</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"50000"</span><span class="fu">,</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"question"</span><span class="fu">:</span> <span class="st">"Did the expert fix the problem?"</span><span class="fu">,</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"answer_type"</span><span class="fu">:</span> <span class="st">"Boolean"</span><span class="fu">,</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"answer_options"</span><span class="fu">:</span> <span class="st">"Yes,No"</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>大部分复杂性与变更问题都位于用户界面，因此 Skyler 更喜欢单一聚合模型。Devon 则偏好多聚合，以避免在每份调查中复制问题数据。不过 Addison 指出，系统只有五种调查类型，每个产品类别一种，而且大多数变更只是增加或删除问题。</p>
+<p>团队讨论了权衡，一致同意用少量问题数据重复换取用户界面一侧更容易变更和渲染。由于这个决定很困难，而且数据结构会发生变化，Addison 创建了一份 ADR，记录决策理由。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="ADR：为客户调查使用文档数据库">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ADR：为客户调查使用文档数据库
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>背景</strong></p>
+<p>工作完成后，客户会收到一份调查，系统在网页上渲染调查，供客户填写和提交。根据维修或安装的电子产品类型，客户会收到五种调查之一。目前调查保存在关系型数据库中，团队希望使用 JSON 把它迁移到文档数据库。</p>
+<p><strong>决策</strong></p>
+<p>客户调查将使用文档数据库。</p>
+<p>营销部门要求客户调查变更具有更高灵活性和及时性。迁移到文档数据库不仅可以提高灵活性，也能缩短客户调查变更所需的时间。</p>
+<p>使用文档数据库可以简化客户调查用户界面，并更好地支持调查变更。</p>
+<p><strong>后果</strong></p>
+<p>由于采用单一聚合，当公共调查问题被更新、增加或删除时，需要修改多份文档。</p>
+<p>把数据从关系型数据库迁移到文档数据库期间，调查功能必须停止运行。</p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./05-component-decomposition-patterns.html" class="pagination-link" aria-label="基于组件的分解模式">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">基于组件的分解模式</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./07-service-granularity.html" class="pagination-link" aria-label="服务粒度">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">服务粒度</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
