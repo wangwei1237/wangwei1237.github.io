@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
+      <meta charset="utf-8" />
+      <meta name="description" content="2026 年 5 月，北京大学与启元科技的研究团队发布了论文 Harness-Bench: Measuring Harness Effects across Models in Realistic Agent Workflows，用于研究并评测不同 Harness 对 Agent 实际执行能力的影响。在论文中，作者提出了 Harness-Bench——一个包含 106 个沙箱化离线任务、用于在统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Harness‑Bench 论文学习">
+<meta property="og:url" content="https://wangwei1237.github.io/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="2026 年 5 月，北京大学与启元科技的研究团队发布了论文 Harness-Bench: Measuring Harness Effects across Models in Realistic Agent Workflows，用于研究并评测不同 Harness 对 Agent 实际执行能力的影响。在论文中，作者提出了 Harness-Bench——一个包含 106 个沙箱化离线任务、用于在统">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-bench-framework.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-layers.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-bench-framework.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/run-evidence.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/scoring-metrics.png">
+<meta property="article:published_time" content="2026-08-22T20:40:51.000Z">
+<meta property="article:modified_time" content="2026-08-22T13:43:09.500Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="Harness-Bench">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Agent 评估">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-bench-framework.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="@wangwei1237">
+      
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Harness‑Bench 论文学习 |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js"></script>
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Reading-of-the-Harness‑Bench-Paper"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Harness‑Bench 论文学习
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/" class="article-date">
+  <time datetime="2026-08-22T20:40:51.000Z" itemprop="datePublished">2026-08-22</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">14 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <html><head></head><body><p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-bench-framework.png" alt=""></p>
+<p>2026 年 5 月，北京大学与启元科技的研究团队发布了论文 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2605.27922">Harness-Bench: Measuring Harness Effects across Models in Realistic Agent Workflows</a>，用于研究并评测不同 Harness 对 Agent 实际执行能力的影响。在论文中，作者提出了 Harness-Bench——一个包含 106 个沙箱化离线任务、用于在统一任务环境下比较不同 Model–Harness 配置的评测基准。论文发现，Agent 表现不仅取决于 LLM，也取决于 Harness 的执行机制。</p>
+<p>恰好最近在研究 Agent 评测，于是对这篇论文进行了精度，并做了如下的摘要。</p>
+<span id="more"></span>
+<h2 id="术语">术语</h2>
+<ul>
+<li><strong>oracle-checkability（预言机可检验性 / 自动真值可验证性）</strong>：计算机科学、软件测试以及当前 AI Agent 评测与强化学习（RL）领域中最核心的概念之一。一个任务或问题，是否存在一个确定的、自动化的程序（Oracle / 预言机），能够客观、无歧义、无需人工介入地判定 Agent 的输出究竟是对还是错。</li>
+<li><strong>execution alignment（推理与执行对齐）</strong>：智能体的推理、实际观察到的环境状态、通过工具采取的行动，以及评估器最终检查的成功条件之间，是否始终保持一致。</li>
+<li><strong>fixtures（测试固件 / 预置测试环境）</strong>：预先准备好的测试资源集合，包括初始化数据、配置文件、数据库快照、沙箱状态、依赖文件、环境上下文。作用是让每个测试任务都从完全一致的初始状态开始运行，保证评测可复现。</li>
+<li><strong>agent-computer interface（ACI）</strong>：指的是专门为 AI 智能体设计的一组观察方式、操作方式和反馈格式，使智能体能够理解计算机当前状态，并对计算机采取行动。就像 GUI 帮助人类用户操作计算机一样，ACI 帮助 AI 完成与计算机的交互。<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>ACI</mtext><mo>=</mo><mtext>智能体能看到什么</mtext><mo>+</mo><mtext>智能体能做什么</mtext><mo>+</mo><mtext>计算机如何反馈</mtext></mrow><annotation encoding="application/x-tex">\text{ACI} = \text{智能体能看到什么} + \text{智能体能做什么} + \text{计算机如何反馈}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">ACI</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord text"><span class="mord cjk_fallback">智能体能看到什么</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord text"><span class="mord cjk_fallback">智能体能做什么</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">计算机如何反馈</span></span></span></span></span></li>
+</ul>
+<!--more-->
+<h2 id="abstract">Abstract</h2>
+<blockquote>
+<p>Each run records final artifacts, execution traces, usage statistics, and validator outputs, enabling analysis beyond final completion.</p>
+</blockquote>
+<blockquote>
+<p>Our analysis further identifies recurring execution-alignment failures, where plausible reasoning becomes decoupled from tool feedback, workspace state, evidence, or verifiable output contracts.</p>
+</blockquote>
+<p>Agent 的推理过程看起来合理、流畅，甚至“知道应该做什么”，但 Agent 随后执行的操作和最终的产物却没有持续忠实地反映：工具返回的信息、工作区的真实状态、证据、任务规定的验收条件。</p>
+<p>在 Agent 执行任务时，“想明白”不等于“完成任务”。Agent 必须确保每一步推理都由当前环境状态和证据支撑，工具结果会改变后续行动，而且最终意图会落实为符合验收规则、能够被独立验证的产物。</p>
+<ol>
+<li>
+<p><strong>与工具反馈脱节</strong>：Agent 调用工具后，工具返回了错误或异常结果，但 Agent 没有根据异常信息调整执行计划，依旧沿着原来的推理继续执行。</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Agent：接下来我会读取配置文件。</span><br><span class="line">工具：文件不存在。</span><br><span class="line">Agent：接下来我将修改这个配置文件。</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p><strong>与工作区状态脱节</strong>：Agent 认为某个文件已经创建、修改或保存，但实际工作区中并没有发生对应变化，或者文件内容与 Agent 所说的不一致。</p>
+</li>
+<li>
+<p><strong>与证据脱节</strong>：Agent 给出了一个结论，但没有获取实际的执行日志、实际的测试结果来支持这个结论，甚至忽略了与结论相矛盾的证据。</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Agent：测试已经通过，问题已解决。</span><br><span class="line">实际测试执行：测试用例根本就没有执行。</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p><strong>与可验证的输出契约脱节</strong>：用户规定了明确的输出格式、文件结构或验收条件，Agent 生成的结果虽然内容大致合理，但却依旧不满足这些要求。</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">任务明确要求输出格式：{"answer": "...", "confidence": 0.9}</span><br><span class="line">Agent 输出：我的答案是……我对此比较有信心。</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ol>
+<h2 id="introduction">Introduction</h2>
+<blockquote>
+<p>In such executable workflows, practical performance depends not only on the underlying model, but also on the system layer that turns model capability into executable action. We refer to this layer as a harness: the mechanism that organizes context, tools, state, permissions, constraints, and recovery to mediate between model outputs and external actions.</p>
+</blockquote>
+<p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-layers.png" alt=""><br>
+模型层是推理能力；其他层是执行能力。目前测评测集涵盖了：模型的静态推理、Agent 在可执行环境下的最终表现、以及标准工作流下的表现。但是，对于其他层（Harness）层的单独覆盖目前依然是缺失的。</p>
+<blockquote>
+<p>Harnesses are therefore central to agent system design: they shape how model capability is exposed, constrained, and realized, affecting completion, cost, safety, robustness, and auditability.</p>
+</blockquote>
+<blockquote>
+<p>However, existing efforts typically evaluate a particular agent system, standardize evaluation infrastructure, or compare heterogeneous agent stacks, rather than systematically varying harness configurations across shared task environments and model backends.</p>
+</blockquote>
+<blockquote>
+<p>Rather than forcing all systems into an identical internal implementation, Harness-Bench fixes the task environment, budget, timeout, and evaluator while preserving each harness’s native execution behavior.</p>
+</blockquote>
+<blockquote>
+<p>The resulting measurements should therefore be interpreted as configuration-level diagnostics of model–harness pairings, not as causal decompositions of individual harness mechanisms. Each run records execution evidence, enabling analysis beyond final completion scores.</p>
+</blockquote>
+<p>Harness-Bench 能告诉我们“哪一种 Model—Harness 组合整体表现更好”，但不能直接告诉我们“究竟是哪一个 Harness 机制导致了这种差异”。</p>
+<p>因此，比较的实际上是类似：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mtext>GPT-5.4</mtext><mo separator="true">,</mo><mtext>NanoBot&nbsp;配置</mtext><mo stretchy="false">)</mo><mspace width="1em"></mspace><mtext>vs.</mtext><mspace width="1em"></mspace><mo stretchy="false">(</mo><mtext>GPT-5.4</mtext><mo separator="true">,</mo><mtext>Hermes&nbsp;配置</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\text{GPT-5.4},\text{NanoBot 配置}) \quad\text{vs.}\quad (\text{GPT-5.4},\text{Hermes 配置})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord text"><span class="mord">GPT-5.4</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord text"><span class="mord">NanoBot&nbsp;</span><span class="mord cjk_fallback">配置</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:1em;"></span><span class="mord text"><span class="mord">vs.</span></span><span class="mspace" style="margin-right:1em;"></span><span class="mopen">(</span><span class="mord text"><span class="mord">GPT-5.4</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord text"><span class="mord">Hermes&nbsp;</span><span class="mord cjk_fallback">配置</span></span><span class="mclose">)</span></span></span></span></p>
+<ul>
+<li>Harness-Bench 可以评估出：在这套任务和实验条件下，GPT-5.4 + NanoBot 的整体表现优于 GPT-5.4 + Hermes。</li>
+<li>但不能进一步断言：NanoBot 更好，是因为它的状态管理机制贡献了 8 分，错误恢复机制贡献了 5 分。</li>
+</ul>
+<p>Harness-Bench 是一台“整机检测仪”，能够比较不同“模型 + harness”整机配置的表现，并根据执行轨迹诊断其失败症状；但它不是一套“因果实验”，不能仅凭这些结果确定某个提示词、工具接口或状态管理机制单独造成了多少性能变化。</p>
+<p>Harness-Bench 的整体框架如下所示：</p>
+<p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-bench-framework.png" alt=""></p>
+<p>Harness-Bench 的三大贡献：</p>
+<pre class="mermaid">flowchart LR
+    A["① Benchmark Asset<br><b>基准资源</b><br><br>106 个沙箱化离线任务<br>真实的端到端工作流<br>任务清单 · 测试材料<br>评估器 · 执行轨迹"]
+
+    B["② Evaluation Protocol<br><b>评估协议</b><br><br>固定外部任务条件<br>固定预算 · 超时 · 评估器<br>保留 Harness 原生执行行为<br>比较 Model–Harness 配置"]
+
+    C["③ Diagnostic Analysis<br><b>诊断分析</b><br><br>5,194 条执行轨迹<br>完成度 · 过程质量<br>执行效率 · 反复出现的失败症状"]
+
+    A --&gt;|"提供统一测试基础"| B
+    B --&gt;|"产生可比较的执行证据"| C
+
+    classDef asset fill:#E8F1FF,stroke:#3973C6,color:#14243A,stroke-width:2px;
+    classDef protocol fill:#E9F8F1,stroke:#2A9365,color:#142E24,stroke-width:2px;
+    classDef analysis fill:#FFF2E2,stroke:#D77B22,color:#382313,stroke-width:2px;
+
+    class A asset;
+    class B protocol;
+    class C analysis;</pre>
+<h2 id="related-work">Related Work</h2>
+<blockquote>
+<p>LLM evaluation has progressed from static language and reasoning benchmarks to executable agent benchmarks</p>
+</blockquote>
+<p><strong>executable</strong> 不仅指 LLM 可以调用工具，更为重要的是：Agent 可以改变环境中的对象、改变环境的状态、并且结果具备可验证性。</p>
+<p>LLM 评估已经从测试模型“能否用文本答对问题”，逐渐发展到测试 Agent “能否在真实或模拟环境中采取行动并完成任务”。</p>
+<table>
+<thead>
+<tr>
+<th>评估范式</th>
+<th>静态基准</th>
+<th>可执行基准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>评估对象</td>
+<td>LLM 能力</td>
+<td>Agent 能力</td>
+</tr>
+<tr>
+<td>核心问题</td>
+<td>模型能否给出正确答案？</td>
+<td>智能体能否真正完成任务？</td>
+</tr>
+<tr>
+<td>输入</td>
+<td>一段固定文本或题目</td>
+<td>任务目标与可操作环境</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>文本答案</td>
+<td>操作过程、环境变化和最终产物</td>
+</tr>
+<tr>
+<td>交互方式</td>
+<td>通常一次性作答</td>
+<td>多轮观察—行动—反馈</td>
+</tr>
+<tr>
+<td>主要依据</td>
+<td>答案是否正确</td>
+<td>环境最终状态、测试和执行证据</td>
+</tr>
+<tr>
+<td>代表基准</td>
+<td>MMLU、GSM8K、BIG-bench</td>
+<td>SWE-bench、OSWorld、Terminal-Bench</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>More recent workflow-agent benchmarks, including AgentBench, GAIA, and Claw-Eval, further emphasize multi-step execution, external state, traceability, safety, robustness, and cost-aware evaluation.</p>
+<p>ClawMark pushes this direction to long-horizon, multimodal coworker settings, coupling multi-turn and multi-day tasks with persistent tool-backed services and drifting external state.</p>
+</blockquote>
+<blockquote>
+<p>These benchmarks are essential for measuring model or end-to-end agent capability, but they do not directly evaluate the harness as the variable of interest: they either abstract away execution, evaluate a complete submitted agent stack, or hold the execution setup fixed to compare models.</p>
+</blockquote>
+<p>目前的评测要么仅评测模型能力，要么仅评测 Agent 的端到端能力，并没有对 Agent 的 harness 层进行直接评测。</p>
+<blockquote>
+<p>Harness-Bench is complementary: it controls external task conditions while varying harness configurations, enabling diagnostic comparison of completion, token cost, execution safety, robustness, and traceability.</p>
+</blockquote>
+<p>Harness-Bench 的实验结构可以表示为：</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><munder><mtext>相同任务、环境、预算、评估器</mtext><mo stretchy="true">⏟</mo></munder><mtext>受控的外部条件</mtext></munder><mo>+</mo><munder><munder><mtext>不同&nbsp;Harness&nbsp;配置、Model</mtext><mo stretchy="true">⏟</mo></munder><mtext>实验中变化的部分</mtext></munder></mrow><annotation encoding="application/x-tex">\underbrace{\text{相同任务、环境、预算、评估器}}_{\text{受控的外部条件}} + \underbrace{\text{不同 Harness 配置、Model}}_{\text{实验中变化的部分}}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0097em;vertical-align:-1.3263em;"></span><span class="minner munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6833em;"><span style="top:-1.6737em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord cjk_fallback mtight">受控的外部条件</span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="minner munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6833em;"><span class="svg-align" style="top:-2.352em;"><span class="pstrut" style="height:3em;"></span><span class="stretchy" style="height:0.548em;min-width:1.6em;"><span class="brace-left" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMinYMin slice"><path d="M0 6l6-6h17c12.688 0 19.313.3 20 1 4 4 7.313 8.3 10 13
+ 35.313 51.3 80.813 93.8 136.5 127.5 55.688 33.7 117.188 55.8 184.5 66.5.688
+ 0 2 .3 4 1 18.688 2.7 76 4.3 172 5h399450v120H429l-6-1c-124.688-8-235-61.7
+-331-161C60.687 138.7 32.312 99.3 7 54L0 41V6z"></path></svg></span><span class="brace-center" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMidYMin slice"><path d="M199572 214
+c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
+ 53.3-86.7 123.7-153 211-199 66.7-36 137.3-56.3 212-62h199568v120H200432c-178.3
+ 11.7-311.7 78.3-403 201-6 8-9.7 12-11 12-.7.7-6.7 1-18 1s-17.3-.3-18-1c-1.3 0
+-5-4-11-12-44.7-59.3-101.3-106.3-170-141s-145.3-54.3-229-60H0V214z"></path></svg></span><span class="brace-right" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMaxYMin slice"><path d="M399994 0l6 6v35l-6 11c-56 104-135.3 181.3-238 232-57.3
+ 28.7-117 45-179 50H-300V214h399897c43.3-7 81-15 113-26 100.7-33 179.7-91 237
+-174 2.7-5 6-9 10-13 .7-1 7.3-1 20-1h17z"></path></svg></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">相同任务、环境、预算、评估器</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.648em;"><span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3263em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.0208em;vertical-align:-1.3263em;"></span><span class="minner munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-1.6737em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord cjk_fallback mtight">实验中变化的部分</span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="minner munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span class="svg-align" style="top:-2.352em;"><span class="pstrut" style="height:3em;"></span><span class="stretchy" style="height:0.548em;min-width:1.6em;"><span class="brace-left" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMinYMin slice"><path d="M0 6l6-6h17c12.688 0 19.313.3 20 1 4 4 7.313 8.3 10 13
+ 35.313 51.3 80.813 93.8 136.5 127.5 55.688 33.7 117.188 55.8 184.5 66.5.688
+ 0 2 .3 4 1 18.688 2.7 76 4.3 172 5h399450v120H429l-6-1c-124.688-8-235-61.7
+-331-161C60.687 138.7 32.312 99.3 7 54L0 41V6z"></path></svg></span><span class="brace-center" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMidYMin slice"><path d="M199572 214
+c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
+ 53.3-86.7 123.7-153 211-199 66.7-36 137.3-56.3 212-62h199568v120H200432c-178.3
+ 11.7-311.7 78.3-403 201-6 8-9.7 12-11 12-.7.7-6.7 1-18 1s-17.3-.3-18-1c-1.3 0
+-5-4-11-12-44.7-59.3-101.3-106.3-170-141s-145.3-54.3-229-60H0V214z"></path></svg></span><span class="brace-right" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMaxYMin slice"><path d="M399994 0l6 6v35l-6 11c-56 104-135.3 181.3-238 232-57.3
+ 28.7-117 45-179 50H-300V214h399897c43.3-7 81-15 113-26 100.7-33 179.7-91 237
+-174 2.7-5 6-9 10-13 .7-1 7.3-1 20-1h17z"></path></svg></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">不同</span><span class="mord">&nbsp;Harness&nbsp;</span><span class="mord cjk_fallback">配置、</span><span class="mord">Model</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.648em;"><span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3263em;"><span></span></span></span></span></span></span></span></span></span></p>
+<blockquote>
+<p>Work on agent-computer interfaces, tool-use protocols such as the Model Context Protocol, stateful and multi-agent frameworks, tracing, guardrails, memory, budget control, and recovery mechanisms reflects growing attention to the infrastructure that <strong>turns model outputs into external actions</strong>.</p>
+</blockquote>
+<p>不同的 Agent 对 ACI 中的不同部分具有不同的实现策略。</p>
+<h2 id="the-harness-bench-benchmark">The Harness-Bench Benchmark</h2>
+<blockquote>
+<p>Harness-Bench is a diagnostic benchmark for studying model–harness configurations in executable agent workflows. Each evaluation consists of a task, a model backend, a harness configuration, a sandboxed environment, and an evaluator. The benchmark fixes external task conditions while varying the harness surrounding the model, and records both final artifacts and execution traces.</p>
+</blockquote>
+<blockquote>
+<p>We use <strong>harness</strong> to denote the system layer that conditions model calls and turns model outputs into actions in an external workspace. A harness may include prompt templates, action formats, context construction, tool invocation, workspace access, permissions, budget control, tracing, and recovery.</p>
+</blockquote>
+<h3 id="harness-level-evaluation-setting">Harness-Level Evaluation Setting</h3>
+<blockquote>
+<p>For each task and model backend, Harness-Bench fixes the user-facing task, initial sandbox state, budget, timeout, and evaluator, while varying the harness configuration.</p>
+<p>We do not force all systems into a common internal policy or runtime. Instead, each harness runs with its native execution behavior under the same task resources and evaluation protocol.</p>
+<p>The resulting measurements should therefore be interpreted as configuration-level diagnostics of model–harness pairings, not as causal decompositions of individual harness mechanisms.</p>
+</blockquote>
+<p>Harness-Bench 可以评测不同的“LLM + harness”配置的整体表现，并根据执行轨迹诊断其失败症状，但无法评测 Agent 整体表现的“实际归因”。Harness-Bench 无法给出究竟是 Agent 中的哪些部分导致了最终的结果。</p>
+<h3 id="task-suite-design-and-validation">Task Suite Design and Validation</h3>
+<blockquote>
+<p>Harness-Bench contains 106 local, sandboxed tasks designed to evaluate end-to-end agent workflows rather than isolated tool calls. Each task requires a deliverable and is paired with an oracle or rubric that checks completion from the final workspace state and, when needed, the execution trace.</p>
+</blockquote>
+<p>评测样本的任务清单组织结构如下：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">task_id: "006-access-bilibili"</span><br><span class="line">title: "Access A Local Bilibili-Style Mock Page"</span><br><span class="line">class: "Workspace, Tool Use &amp; Multimodal Operations"</span><br><span class="line">prompt_file: "prompt.txt"</span><br><span class="line">fixtures_dir: "fixtures"</span><br><span class="line">oracle_module: "oracle_grade.py"</span><br><span class="line">hooks_module: "hooks.py"</span><br><span class="line">timeout_sec: 900</span><br><span class="line">tags:</span><br><span class="line">  - "browser"</span><br><span class="line">  - "local-http"</span><br><span class="line">  - "web-extraction"</span><br></pre></td></tr></tbody></table></figure>
+<p>Harness-Bench 中覆盖的 8 个 Agent 场景：</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th style="text-align:right">#</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Software Engineering &amp; Codebase Maintenance</td>
+<td style="text-align:right">22</td>
+</tr>
+<tr>
+<td>Data, BI &amp; Finance Analytics</td>
+<td style="text-align:right">14</td>
+</tr>
+<tr>
+<td>Workspace, Tool Use &amp; Multimodal Operations</td>
+<td style="text-align:right">15</td>
+</tr>
+<tr>
+<td>Knowledge, Evidence &amp; Retrieval</td>
+<td style="text-align:right">13</td>
+</tr>
+<tr>
+<td>Office &amp; Business Communication</td>
+<td style="text-align:right">12</td>
+</tr>
+<tr>
+<td>Vertical Professional Workflows</td>
+<td style="text-align:right">12</td>
+</tr>
+<tr>
+<td>Long‑running Autonomy &amp; State Adaptation</td>
+<td style="text-align:right">11</td>
+</tr>
+<tr>
+<td>SRE, DevOps &amp; Release Ops</td>
+<td style="text-align:right">7</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align:right"><strong>106</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Each candidate task is manually reviewed before inclusion. We retain tasks only when they satisfy four criteria:</p>
+<p><strong>Realism</strong>, reflecting a plausible user workflow;<br>
+<strong>Solvability</strong>, meaning the task can be completed using the provided sandbox resources;<br>
+<strong>Oracle-checkability</strong>, meaning success can be verified by deterministic checks or a specified rubric;<br>
+<strong>Integrity</strong>, meaning agents cannot obtain credit by reading hidden answers, modifying protected fixtures, or bypassing constraints.</p>
+</blockquote>
+<p>每个任务都必须经过人工审核才能加入到评测集中，每个任务都必须满足 4 个条件：真实；可解决；可判别；正直诚实。</p>
+<h3 id="run-protocol-and-evidence-collection">Run Protocol and Evidence Collection</h3>
+<blockquote>
+<p>Each run produces four sources of evidence: the final workspace state, execution trace, usage statistics, and validator outputs. These support completion scoring, process diagnostics, cost analysis, permission checks, and failure analysis.</p>
+</blockquote>
+<p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/run-evidence.png" alt=""></p>
+<p>每个任务的执行都会做如下的操作：</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>R</mi><mo>=</mo><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">n</mi></mrow><mo stretchy="false">(</mo><mi>M</mi><mo separator="true">,</mo><mi>H</mi><mo separator="true">,</mo><mi>E</mi><mo separator="true">,</mo><mi>T</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="1em"></mspace><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">k</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow><mo>=</mo><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow><mo stretchy="false">(</mo><mi>R</mi><mo separator="true">;</mo><mi>J</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">R = \mathrm{Run}(M, H, E, T), \quad \mathrm{TaskScore} = \mathrm{Eval}(R; J)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathrm">Run</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.109em;">M</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0813em;">H</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathrm">TaskScore</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathrm">Eval</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0962em;">J</span><span class="mclose">)</span></span></span></span></span></p>
+<p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.109em;">M</span></span></span></span> is the model, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi></mrow><annotation encoding="application/x-tex">H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0813em;">H</span></span></span></span> is the harness configuration, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0576em;">E</span></span></span></span> is the sandboxed environment, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.1389em;">T</span></span></span></span> is the task, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span></span></span></span> is the final results, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0962em;">J</span></span></span></span> is the evaluator.</p>
+<h3 id="scoring-and-metrics">Scoring and Metrics</h3>
+<p>For task <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>, the overall score is:</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.16em" columnspacing="1em"><mtr><mtd class="mtr-glue"></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><msub><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">k</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow><mi>i</mi></msub><mo>=</mo><msub><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">y</mi></mrow><mi>i</mi></msub><mo>⋅</mo><msub><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mi>i</mi></msub><mo>⋅</mo><msub><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow><mi>i</mi></msub><mo separator="true">,</mo></mrow></mstyle></mtd><mtd class="mtr-glue"></mtd><mtd class="mml-eqn-num"></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{equation}
+\mathrm{TaskScore}_i = \mathrm{Security}_i \cdot \mathrm{Completion}_i \cdot \mathrm{Process}_i,
+\end{equation}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.85em;"><span style="top:-3.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord mathrm">TaskScore</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord"><span class="mord mathrm" style="margin-right:0.0139em;">Security</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2175em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">Completion</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2175em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">Process</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.35em;"><span></span></span></span></span></span></span></span><span class="tag"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.85em;"><span style="top:-2.85em;"><span class="pstrut" style="height:2.84em;"></span><span class="eqn-num"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.35em;"><span></span></span></span></span></span></span></span></span></p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.16em" columnspacing="1em"><mtr><mtd class="mtr-glue"></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><msub><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow><mi>i</mi></msub><mo>=</mo><mfrac><mrow><msub><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow><mi>i</mi></msub><mo>+</mo><msub><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">U</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi></mrow><mi>i</mi></msub><mo>+</mo><msub><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">y</mi></mrow><mi>i</mi></msub></mrow><mn>3</mn></mfrac></mrow></mstyle></mtd><mtd class="mtr-glue"></mtd><mtd class="mml-eqn-num"></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{equation}
+\mathrm{Process}_i = \frac{\mathrm{Robustness}_i + \mathrm{ToolUse}_i + \mathrm{Consistency}_i}{3}
+\end{equation}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0574em;vertical-align:-0.7787em;"></span><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2787em;"><span style="top:-3.2787em;"><span class="pstrut" style="height:3.3714em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord mathrm">Process</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">3</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord mathrm">Robustness</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">ToolUse</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord"><span class="mord mathrm" style="margin-right:0.0139em;">Consistency</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2175em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7787em;"><span></span></span></span></span></span></span></span><span class="tag"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2787em;"><span style="top:-3.2787em;"><span class="pstrut" style="height:3.3714em;"></span><span class="eqn-num"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7787em;"><span></span></span></span></span></span></span></span></span></p>
+<p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">y</mi></mrow><mi>i</mi></msub><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\mathrm{Security}_i \in \{0,1\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9275em;vertical-align:-0.2441em;"></span><span class="mord"><span class="mord"><span class="mord mathrm" style="margin-right:0.0139em;">Security</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2175em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">}</span></span></span></span> and all non‑binary scores are normalized to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span>.</p>
+<p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/scoring-metrics.png" alt=""></p>
+<h3 id="harness-dependence">Harness Dependence</h3>
+<blockquote>
+<p>We use <strong>harness dependence</strong> to describe how much a model backend’s performance varies across harness configurations under otherwise shared benchmark conditions.</p>
+</blockquote>
+<blockquote>
+<p>This pattern suggests that stronger models may be more tolerant of differences in prompting, tool interfaces, state management, and recovery behavior.</p>
+</blockquote>
+<p>更强大的模型，对于不同 Harness 之间的兼容性更好。</p>
+</body></html> 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent-%E8%AF%84%E4%BC%B0/" rel="tag">Agent 评估</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Harness-Bench/" rel="tag">Harness-Bench</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2026/07/18/Git-Worktree-Based-on-Multiple-Repositories-for-Coding-Agent/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">面向 Coding Agent 的多仓库 Git Worktree</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "ppRS6IT7xMHmCl54L7ynIC2Z-gzGzoHsz",
+    app_key: "qEmM49ZlU6LOwXCHjzMUECKu",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "快来评论吧~",
+    recordIP: true,
+    visitor: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2026
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
+        
+    
+ 
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
