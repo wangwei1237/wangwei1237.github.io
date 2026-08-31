@@ -97,24 +97,22 @@
 }
 </style><!-- hexo injector head_begin end -->
       <meta charset="utf-8" />
-      <meta name="description" content="1987年，在美苏中程核武器协议谈判时，美国总统里根旁敲侧击，对戈尔巴乔夫说：“我非常喜欢一句俄国谚语——Trust, but verify”。 意思就是，里根相信苏联领导人的承诺，但还必须有个有效的验证机制。 关于该谚语的详细信息，可以参考维基百科">
+      <meta name="description" content="谷歌刚发布的关于 WikiSkill: Compiling Agent Experience into Persistent Knowledge for Skill Evolution 的论文值得认真的研究一下。 很多人都会说：这里面提到的好多观点我之前就提出过了。但是更为重要的是：谷歌没有停留在观点的浅薄层面，而是从实证的角度给出了可实践的理论支撑。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="信任，但也要核查">
-<meta property="og:url" content="https://wangwei1237.github.io/2021/01/11/Trust-but-Verify/index.html">
+<meta property="og:title" content="WikiSkill 论文学习">
+<meta property="og:url" content="https://wangwei1237.github.io/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/index.html">
 <meta property="og:site_name" content="17哥">
-<meta property="og:description" content="1987年，在美苏中程核武器协议谈判时，美国总统里根旁敲侧击，对戈尔巴乔夫说：“我非常喜欢一句俄国谚语——Trust, but verify”。 意思就是，里根相信苏联领导人的承诺，但还必须有个有效的验证机制。 关于该谚语的详细信息，可以参考维基百科">
+<meta property="og:description" content="谷歌刚发布的关于 WikiSkill: Compiling Agent Experience into Persistent Knowledge for Skill Evolution 的论文值得认真的研究一下。 很多人都会说：这里面提到的好多观点我之前就提出过了。但是更为重要的是：谷歌没有停留在观点的浅薄层面，而是从实证的角度给出了可实践的理论支撑。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://wangwei1237.github.io/2021/01/11/Trust-but-Verify/1.jpg">
-<meta property="og:image" content="https://wangwei1237.github.io/2021/01/11/Trust-but-Verify/3.jpg">
-<meta property="og:image" content="https://wangwei1237.github.io/2021/01/11/Trust-but-Verify/2.png">
-<meta property="og:image" content="https://wangwei1237.github.io/2021/01/11/Trust-but-Verify/4.jpg">
-<meta property="article:published_time" content="2021-01-11T10:30:07.000Z">
-<meta property="article:modified_time" content="2026-08-31T12:31:21.316Z">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/1.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/wiki-skill-architecture.png">
+<meta property="article:published_time" content="2026-08-31T10:12:45.000Z">
+<meta property="article:modified_time" content="2026-08-31T12:31:21.175Z">
 <meta property="article:author" content="Wang Wei">
-<meta property="article:tag" content="不拘一格">
-<meta property="article:tag" content="自由与责任">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Skill Evolution">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://wangwei1237.github.io/2021/01/11/Trust-but-Verify/1.jpg">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/1.jpg">
 <meta name="twitter:creator" content="@wangwei1237">
 <meta name="twitter:site" content="@wangwei1237">
       
@@ -125,7 +123,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>信任，但也要核查 |  17哥</title>
+      <title>WikiSkill 论文学习 |  17哥</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -151,6 +149,8 @@
 
       <!-- mermaid -->
       
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js"></script>
+      
       <style>
         .swal2-styled.swal2-confirm {
           font-size: 1.6rem;
@@ -169,7 +169,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-Trust-but-Verify"
+  id="post-Reading-of-the-Google-s-WikiSkill-Paper"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -180,19 +180,24 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  信任，但也要核查
+  WikiSkill 论文学习
 </h1>
  
 
       
+    <div class="article-author"  style="text-align: center" >
+        作者： 王伟
+    </div>
+
+
     </header>
      
     <div class="article-meta">
-      <a href="/2021/01/11/Trust-but-Verify/" class="article-date">
-  <time datetime="2021-01-11T10:30:07.000Z" itemprop="datePublished">2021-01-11</time>
+      <a href="/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/" class="article-date">
+  <time datetime="2026-08-31T10:12:45.000Z" itemprop="datePublished">2026-08-31</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%96%87%E5%8C%96/">文化</a>
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
   </div>
   
 <div class="word_count">
@@ -209,7 +214,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">6 分钟</span>
         </span>
     </span>
 </div>
@@ -224,77 +229,122 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <html><head></head><body><p><img src="/2021/01/11/Trust-but-Verify/1.jpg" alt=""></p>
-<blockquote>
-<p>1987年，在美苏中程核武器协议谈判时，美国总统里根旁敲侧击，对戈尔巴乔夫说：“我非常喜欢一句俄国谚语——<strong><code>Trust, but verify</code></strong>”。</p>
-<p>意思就是，里根相信苏联领导人的承诺，但还必须有个有效的验证机制。</p>
-<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Trust,_but_verify"></a></p><div align="right"><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Trust,_but_verify">关于该谚语的详细信息，可以参考维基百科</a></div><p></p>
-</blockquote>
+  <html><head></head><body><p><img src="/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/1.jpg" alt=""></p>
+<p>谷歌刚发布的关于 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2608.27454v1">WikiSkill: Compiling Agent Experience into Persistent Knowledge for Skill Evolution</a> 的论文值得认真的研究一下。</p>
+<p>很多人都会说：这里面提到的好多观点我之前就提出过了。但是更为重要的是：谷歌没有停留在观点的浅薄层面，而是从实证的角度给出了可实践的理论支撑。</p>
 <span id="more"></span>
-<p>随着自己的成长，随着工作内容从完成上级安排的工作到自己开始规划并安排某些工作，随着工作范围从团队内部到跨团队的协作，自己对<code>Trust, but verify</code>这种思想的感触越来越深。</p>
-<p>尤其是在做大团队横向工作的规划和推动，以及组建视频小组来探索视频相关的技术，更加深了对<code>Trust, but verify</code>的理解。</p>
-<p><code>信任</code>给予我们工作的自由，而<code>核查</code>会给这份自由增加一定的限制。绝对的信任会导致信任的终结，不加限制的信任最终可能会影响团队的可持续发展。信马由缰者，终不能达到目标。</p>
-<p><code>核查</code>机制下的<code>信任</code>，才能在给予工作自由的同时，获得个人和公司的利益最大化。</p>
-<h2 id="网飞文化中的自由与责任">网飞文化中的自由与责任</h2>
-<p>作为一家传奇的公司，成立于1997年的网飞，在成功应对了娱乐领域和商业领域的四次大规模转型之后，其股价已经从1$一路攀升至500$，如今，其市值已经超过了2000亿美元。</p>
-<p><img src="/2021/01/11/Trust-but-Verify/3.jpg" alt=""></p>
-<p>根据招聘网站<a target="_blank" rel="noopener" href="https://hired.com/">Hired</a>的<a target="_blank" rel="noopener" href="https://hired.com/blog/highlights/2020-brand-health-report/">第4次《全球品牌健康报告》</a>，Netflix已经取代Google，成为人们最想去工作的顶级科技公司。</p>
-<p><img src="/2021/01/11/Trust-but-Verify/2.png" alt=""></p>
-<p>网飞的成功，离不开其企业文化。在《自由与责任——网飞文化手册》的<em>网飞文化的七个方面</em>中，就提到了<strong>自由与责任</strong>这一文化。在手册中，也提到：自由不是绝对的，和言论自由一样，工作自由也是有限度的。</p>
-<div class="douban-card-block">
-    <a class="douban-card" target="_blank" rel="noopener" href="https://book.douban.com/subject/35102294">
-        <div bg-lazy="" class="douban-card-bgimg" style="background-image: url('https://images.weserv.nl/?url=https://img1.doubanio.com/view/subject/s/public/s33784858.jpg');">
-        </div>
-        <div class="douban-card-left">
-            <div bg-lazy="" class="douban-card-img" style="background-image: url('https://images.weserv.nl/?url=https://img1.doubanio.com/view/subject/s/public/s33784858.jpg');">
-            </div>
-            <div class="douban-card-status">{{status}}</div>
-        </div>
-        <div class="douban-card-right" style="line-height: 1.7;">
-            <div class="douban-card-item"><span>书名: </span><strong>不拘一格</strong></div>
-            <div class="douban-card-item"><span>作者: </span><span>[美]里德·哈斯廷斯</span></div>
-            <div class="douban-card-item"><span>出版年份: </span><span>2021-1-1</span></div>
-            <div class="douban-card-item"><span>评分: </span><span>8.1</span></div>
-        </div>
-    </a>
-</div>
-<p>在网飞创始人里德·哈斯廷斯的《不拘一格——网飞的自由与责任工作法》一书的第三章中，也列举了2个例子来介绍其自由与责任的文化：</p>
+<p>论文中的两个分离蛮值的思考的：</p>
+<ol>
+<li>在 Skills 进化的过程中，把原始执行路径、知识库、Skills 进化分离开来；</li>
+<li>在 Skills 进化的过程中，把 Skills 发现 与 Skills 执行这两个阶段分离开来；</li>
+</ol>
+<p>同时，论文中提出的：Skills 进化与 LLM Scaling 的互补性、Skills 进化的可迁移性也是我们在 Agent 自进化过程中特别需要关注的地方。</p>
+<h2 id="术语">术语</h2>
 <ul>
-<li>取消限期休假制度</li>
-<li>取消差旅和经费审批</li>
+<li>Self-evolved skills：模型 A 从自己的轨迹中演化 Skill，模型 A 再使用这个 Skill 执行任务。</li>
+<li>Ablation studies（消融研究）：刻意去掉模型或系统中的某个组件、模块、特征、损失项，观察性能下降多少，以此证明这个组件是否有用、贡献有多大。简单来说，就是拿掉一部分，观察效果相差多少，从而验证它的价值。</li>
+<li>Procedural knowledge：操作、流程、步骤、技能和执行序列；告诉 Agent <strong>如何完成一件事</strong>，是一种可执行的知识。</li>
 </ul>
-<p>网飞没有对关于花销、娱乐、馈赠、出差、以及休假给出具体的规则和制度，而是给予员工极大的自由来自主安排，但是这种自由的前提是：公司利益至上。</p>
-<p>而公司利益至上，则意味着：</p>
-<ul>
-<li>花该花的钱，否则就别花，而且这些钱应该是为了工作而花</li>
-<li>透漏重要供应商馈赠的礼物</li>
-<li>利用公司的资源，必须是为了提高工作效率，且必须合理</li>
-<li>……</li>
-</ul>
-<p>同时，对于公司给予员工的这份自由，网飞还有一套时候核实的制度来确保，员工的自由满足了公司利益至上的原则。这种制度在网飞内部称为：<strong>事情情景设定，时候核实报销</strong>。</p>
-<h2 id="自由与责任-信任与核查">自由与责任&amp;信任与核查</h2>
-<p>当最开始没有流程和制度的时候，我们可以根据遇到的具体的问题制定相关的流程和制度，这个时候，流程和制度会是有效的。但问题是，随着时间的不断发展，随着问题的不断增加，起初的那个流程制度就被补充的会越来越多。这个时候，每个人都需要对流程和制度进行学习，然后按照这个复杂的制度来行事，在互联网公司中，这简直是一件不可想象的事情。如果员工在遇到问题的时候，还需要通过查阅流程制度文档来指引自己的行动，那文化的意义也就荡然无存了。</p>
-<p>我总是遇到很多的流程制度，比如申请某个一般的权限需要总监来审批，在某个时间点上线需要总监审批确认，……这些制度真的能解决问题吗？无非是用这些门槛来限制某些事情的发生而已。但是，当紧急事情真的出现的时候，这些制度反而成为了阻碍效率最大的问题。这些往往被称作为“大公司”通病。根本原因就是随着公司的发展，工作的核心动力不再是初心，不再是思考“这是否对公司是有利的”，而是复杂的制度和流程。</p>
-<p>在《不拘一格》中也提到：</p>
+<h2 id="abstract">Abstract</h2>
 <blockquote>
-<p>随着一个快速灵活的初创企业发展为成熟的企业，公司往往会建立一套完整的体系对员工的支出进行监管。</p>
-<p>这让管理有了一种控制感，但往往也会拖慢公司业务的进程。</p>
-<p>而网飞的<strong>事情情景设定，时候核实报销</strong>制度在保证员工不会虚假报销的情况下，给予员工极大的自由，来使的他们可以再关键时刻作出有利于公司的决断。</p>
+<p>Agent skills package <strong>specialized knowledge and workflows</strong> into reusable resources that extend AI agent capabilities. Recent work <strong>automatically discovers such skills</strong> from agent experience, which enables agents to progressively adapt through interaction. However, the <strong>insights that guide skill development</strong> typically remain scattered across optimization histories, limiting their systematic reuse across iterations.</p>
 </blockquote>
-<p>实际上，<strong>事前情景设定，事后核实报销</strong>正是一种Trust, but verify制度。</p>
-<p>我们要相信员工能秉承公司利益至上的原则，但是我们也需要对其行为进行核查。单纯的相信是不行的。</p>
-<p>在《不拘一格》中提到：</p>
-<blockquote>
-<p>据一项研究显示：被调查者一旦确认自己的行为不会为人所知，远超半数的人会利用漏洞，为自己谋取更多利益。</p>
-</blockquote>
-<p>所以，作为项目的负责人或者管理者，需要做好核查的工作：</p>
 <ul>
-<li>确保员工形成公司利益至上的理念</li>
-<li>确保员工是在按照预期完成工作</li>
-<li>确保及时发现问题，并给予及时的鼓励、指导、资源支持</li>
-<li>确保形成即重视结果，也重视过程的文化，只有过程，没有结果，是不行的，只有结果，没有过程，同样也是不行的</li>
+<li>Insights：并非泛指所有运行日志，而是从成功或失败中得到的、对未来有用的认识。原始轨迹是事实，Insight 则是从事实中抽象出的可复用规律。例如：
+<ul>
+<li>Agent 为什么失败；</li>
+<li>哪种操作顺序更可靠；</li>
+<li>哪类错误反复出现；</li>
+<li>某个 Skill 规则为什么有效；</li>
+<li>某个修改为什么被拒绝；</li>
+<li>某个方案只适用于小模型，还是具有普遍性。</li>
 </ul>
-<p><img src="/2021/01/11/Trust-but-Verify/4.jpg" alt=""></p>
+</li>
+</ul>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">表面现象：</span><br><span class="line">Agent 重复拿起、检查、放回同一个物品。</span><br><span class="line"></span><br><span class="line">Insight：</span><br><span class="line">Agent 没有记录“某个物品已经执行过哪些操作”，</span><br><span class="line">所以它会把同一状态误判成新的任务进展。</span><br><span class="line"></span><br><span class="line">可执行规则：</span><br><span class="line">每种操作对同一物品最多执行一次。</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>Scattered across optimization histories：指 Skill 经历多轮迭代优化后，有用信息可能散落在不同地方。例如：</li>
+</ul>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">第 1 轮失败轨迹：发现 Agent 会重复操作</span><br><span class="line">  → 信息位于 trace</span><br><span class="line"></span><br><span class="line">第 2 轮分析日志：怀疑缺少状态追踪</span><br><span class="line">  → 信息位于分析器输出</span><br><span class="line"></span><br><span class="line">第 3 轮 Skill 提案：加入一个抽象的“面向目标行动”规则</span><br><span class="line">  → 信息位于 Skill diff</span><br><span class="line"></span><br><span class="line">第 3 轮验证记录：该规则没有提高成绩，被拒绝</span><br><span class="line">  → 信息位于拒绝记录</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>We introduce WikiSkill, a framework that co-evolves agent skills with a persistent knowledge base (wiki). At a high level, WikiSkill <strong>separates raw execution experience, accumulated knowledge, and executable skills</strong>, while continuously consolidating experience into the wiki, which subsequent skill updates can build on.</p>
+</blockquote>
+<pre class="mermaid">flowchart LR
+    A[原始执行轨迹] --&gt;|持续沉淀整合| B[Wiki 知识库]
+    C[可执行的 Skill] --&gt;|产生执行轨迹| A
+    B --&gt;|为后续 Skill 升级提供基础| C
+
+    subgraph WikiSkill
+        A
+        B
+        C
+    end</pre>
+<blockquote>
+<p>We find that skill evolution complements model scaling: larger models generally benefit more from evolved skills, while smaller models with skills can outperform substantially larger models without them.</p>
+</blockquote>
+<p>Skill 演化与模型 Scaling 之间具有互补关系，而非替代关系：更大的模型通常能从不断进化的 Skill 中获得更多收益。同时，具有优质 Skill 的小模型，也可能超过没有对应 Skill、参数规模更大的模型。对于 LLM + Skills 范畴下的 Agent，其能力提升可以表示为：</p>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Agent_Capability</mtext><mo>=</mo><mtext>LLM_Scaling</mtext><mo>×</mo><mtext>Skills_Evolution</mtext></mrow><annotation encoding="application/x-tex">\text{Agent\_Capability} = \text{LLM\_Scaling} \times \text{Skills\_Evolution}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0044em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">Agent_Capability</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0044em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">LLM_Scaling</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0044em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">Skills_Evolution</span></span></span></span></span></span></p>
+<table>
+<thead>
+<tr>
+<th>能力来源</th>
+<th>主要提供什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLM Scaling</td>
+<td>更强的理解、推理、规划、代码生成和指令执行能力</td>
+</tr>
+<tr>
+<td>Skills Evolution</td>
+<td>特定任务的流程、经验、失败规避规则和工具使用方法</td>
+</tr>
+</tbody>
+</table>
+<p>模型越大，越能释放 Skill 的能力。经验越丰富的工程师，越能理解条件、组合步骤并处理异常。因此，面对同样的操作手册时，他们更可能取得优秀的结果。</p>
+<blockquote>
+<p>We also find that evolved skills transfer effectively across models and model families, and skills evolved by other models can outperform self-evolved skills.</p>
+</blockquote>
+<p>Skill 不是模型内部参数的一部分，而是一种可以独立保存、共享和复用的外部程序性知识。因此，Skill 演化表现出较好的跨模型迁移能力。“跨模型迁移”意味着 Skill 学到的不只是某个模型的临时行为，而是模型无关、任务相关的程序性知识。</p>
+<p>其他模型演化出的 Skill 可能更好，这意味着：对于大模型而言，“发现知识”和“执行知识”是两种不同的能力。最优秀的操作手册作者和最优秀的操作人员不一定是同一个人。</p>
+<p>因此，在实际应用中，我们更应该将“Skill 演化”和“Skill 执行”区分开：用更适合知识发现的模型实现“Skill 演化”，用具备更强理解和执行能力的模型“执行 Skill”。</p>
+<pre class="mermaid">flowchart LR
+    A["模型 A<br>发现经验"] --&gt; B["提炼 Skill"]
+    B --&gt; C["模型 B<br>执行 Skill"]
+    C --&gt; D["完成任务"]
+
+    E["不必是同一个模型"]
+    E -.-&gt; B
+    E -.-&gt; C
+
+    style B fill:#e8f3ff,stroke:#4285f4
+    style C fill:#e9f7ef,stroke:#34a853
+    style E fill:#f3e8fd,stroke:#9334e6</pre>
+<blockquote>
+<p>Finally, our ablation studies confirm that persistent knowledge accumulation in the wiki is critical for effective skill evolution.</p>
+</blockquote>
+<h2 id="introduction">Introduction</h2>
+<blockquote>
+<p>Developing effective skills, however, remains challenging. Most agent skills are <strong>manually authored</strong>, which requires anticipating the procedural knowledge and workflows that an agent will need. <strong>This challenge</strong> motivates recent work that iteratively develops agent skills by executing agents on training tasks, analyzing successful and failed trajectories, and refining skills based on the resulting experience.</p>
+</blockquote>
+<p>从人工编写 Skill 转向基于训练任务自动生成 Skill。</p>
+<blockquote>
+<p>A key design question is how to preserve and organize what an agent learns throughout skill evolution. However, these methods do not maintain what has been learned as <strong>a separate, evolving knowledge representation</strong>.</p>
+</blockquote>
+<ul>
+<li>EvoSkill</li>
+<li>Trace2Skill</li>
+<li>SkillOpt</li>
+</ul>
+<blockquote>
+<p><strong>Can agent experience be similarly compiled into persistent knowledge to support long-term skill evolution?</strong> We introduce WikiSkill, which adds a structured knowledge layer between raw experience and executable procedures. WikiSkill organizes the agent workspace into three layers: a Raw Layer that stores immutable execution traces, a Wiki Layer that maintains structured knowledge, and a Skill Layer that contains evolving <strong>procedural knowledge</strong>.</p>
+</blockquote>
+<p><img src="/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/wiki-skill-architecture.png" alt=""></p>
+<blockquote>
+<p>These results suggest that skill discovery and skill execution are distinct capabilities.</p>
+</blockquote>
 </body></html> 
       <!-- reward -->
       
@@ -365,12 +415,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2021/01/11/Trust-but-Verify/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%8D%E6%8B%98%E4%B8%80%E6%A0%BC/" rel="tag">不拘一格</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E4%B8%8E%E8%B4%A3%E4%BB%BB/" rel="tag">自由与责任</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Skill-Evolution/" rel="tag">Skill Evolution</a></li></ul>
 
     </footer>
   </div>
@@ -378,19 +428,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2021/01/19/FFMpeg-decode-process-and-lose-frame-in-that-process/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            FFmpeg解码API以及在解码过程中存在的丢帧问题
-          
-        </div>
-      </a>
     
-    
-      <a href="/2020/10/29/a-debate-about-supporting-HEVC-over-FLV/" class="article-nav-link">
+      <a href="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">一场关于FLV是否要支持HEVC的争论</div>
+        <div class="article-nav-title">Harness‑Bench 论文学习</div>
       </a>
     
   </nav>
