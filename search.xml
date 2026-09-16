@@ -1,6 +1,890 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Harness of Harness 论文学习</title>
+    <url>/2026/09/15/Reading-of-the-HoH-paper/</url>
+    <content><![CDATA[<html><head></head><body><p><img src="/2026/09/15/Reading-of-the-HoH-paper/1.jpg" alt=""></p>
+<p>在 Coding Agent 的实践过程中，我时常在想：</p>
+<ul>
+<li>有了必要的知识、workspace、skill、tool 等，Coding Agent 是否就足够了呢？</li>
+<li>人在面对同样的需求的时候，又是怎么开发的呢？</li>
+</ul>
+<p>恰好，最近发现上海人工智能实验室发表了论文 <a href="https://flesymeb.github.io/HarnessOfHarness/">Harness of Harness:Multi-Day Autonomous Software Development with Continual Improvement</a>，在论文中，研究者们利用 HoH 在无人工干预的情况下，花了 6 天时间、历经 70 多次 Loop 完成了一个 FPS 游戏。</p>
+<span id="more"></span>
+<h2 id="给-agent-一个大需求-然后呢？">给 Agent 一个大需求，然后呢？</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">当前 Harness Engineering 的现状
+</p><p>我们给 AI 一个需求：“做一个能玩的游戏”。第一版出来了，但有些功能没做完，有些地方不能用。接下来，在 Looping 中，Agent 会根据我们提供的知识、工具、测试结果来修复，然后不停的 Looping 整个循环……</p>
+<p>于是，Agent 开始陷入了无休止的局部修复循环……</p>
+<p><strong>接下来，需要人介入，并打破这个循环，并进行新的规划……</strong></p>
+</div>
+<p>在 HoH 的论文中，作者把这个现象称作：<strong>repetitive local repairs</strong>。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">提示
+</p><p>人类工程师在开发一个需求的时候，不是一蹴而就的，而是每次完成一个小的功能点，然后不停的迭代直到完成整个需求……</p>
+<p>团队在开发产品的时候，也是敏捷迭代开发。</p>
+</div>
+<p>论文中的 Harness of Harness 的核心思想其实就是借鉴了人类工程师开发过程中的小步快跑的迭代思想，并把这套思想抽象成了一层工程 Harness 层。</p>
+<p>与其说是<strong>HoH</strong>，倒不如说是：围绕现有 Coding Agent 的能力（Codex、Claude Code……），对软件开发需求组织持续的规划、开发与测试，让一轮的结果能够指导下一轮，并最终完成需求。</p>
+<h2 id="hoh-的具体应用案例">HoH 的具体应用案例</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">HoH 的概念
+</p><p><strong>we introduce Harness-of-Harness (HoH), a framework that equips coding agents with continual improvement capabilities for autonomous software development.</strong></p>
+</div>
+<ul>
+<li><strong>continual improvement capabilities</strong>：软件功能的持续增加和迭代</li>
+<li><strong>autonomous</strong>：全自主的开发过程</li>
+</ul>
+<p><img src="/2026/09/15/Reading-of-the-HoH-paper/hoh-overview.png" alt="HoH 持续改进概览"></p>
+<p>上海人工智能实验室团队用 HoH，用时 6 天，迭代了 70 多次，在无人接管的情况下完成一个可玩的 FPS 游戏。</p>
+<p><img src="https://flesymeb.github.io/HarnessOfHarness/assets/figures/fusepoint-real-gameplay-poster.jpg" alt="Fusepoint 实机展示封面"></p>
+<p><em>图：作者官网的 Fusepoint 实机展示封面。<a href="https://flesymeb.github.io/HarnessOfHarness/">打开官网视频</a>。</em></p>
+<p>整个迭代的过程如下图所示：</p>
+<p><img src="/2026/09/15/Reading-of-the-HoH-paper/fusepoint-iteration-progress.png" alt="Fusepoint 开发迭代与问题变化"></p>
+<ul>
+<li><strong>横轴</strong>是迭代次数，纵轴是尚未关闭的问题数量</li>
+<li><strong>横轴上方</strong>的蓝色、紫色标记分别表示新发现问题和已关闭问题</li>
+<li><strong>曲线与浅色点</strong>展示问题数量的趋势与记录值</li>
+<li><strong>截图与标签</strong>标示开发成果，从初始原型、地图和武器，逐步扩展到音效、界面、动画、战斗 AI 和可玩版本。</li>
+</ul>
+<p>在迭代 70 个 Loop 之后，作者发现：开发并非单调改善，验证过的行为仍可能会因为后续的修改而破坏（<strong>人类工程师也存在这个问题</strong>）。</p>
+<ul>
+<li>81 个问题中关闭了 65 个，仍有 16 个未解决</li>
+<li>有 17 个问题曾因回归测试而重新打开</li>
+</ul>
+<p>对如上的图的分析，我们可以得到如下的结论：</p>
+<p><strong>1. 问题数量上升不能直接等同于质量下降。</strong> 一个尚未运行的空项目可能“没有已知问题”，但不代表质量高。新增功能扩大了可测试范围，也会暴露更多缺口。因此，应结合功能完成情况一起解读曲线。</p>
+<p><strong>2. 问题关闭也不等于永久解决。</strong> 长期迭代需要保留验证历史，并持续检查回归。否则，下一轮可能在不知道的情况下破坏上一轮成果。</p>
+<h2 id="hoh-管的是整个开发过程">HoH 管的是整个开发过程</h2>
+<p>HoH 负责的其实是整个开发过程，也就是整个敏捷迭代过程中的非开发部分：</p>
+<ul>
+<li>拆分目标任务</li>
+<li>评估具体整体目标的差距</li>
+<li>独立验收</li>
+<li>……</li>
+</ul>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">两层 Harness，而不是对原有 Harness 的再次约束
+</p><p>HoH 部分的内容，恰恰是我们目前的 Workspace 中的知识、rules、Skills 中所缺失的内容。而 HoH 所做的就是把这一层也给工程化、Harness 化。</p>
+</div>
+<pre class="mermaid">%%{init: {"flowchart": {"nodeSpacing": 35, "rankSpacing": 25}, "themeVariables": {"fontSize": "16px"}}}%%
+flowchart TB
+    subgraph C["第一层：Codex"]
+        direction LR
+        CG["目标<br>执行当前交付的<br>具体任务"]
+        CP["执行能力<br>理解任务、读取项目、调用工具<br>编写代码、运行测试、检查结果"]
+        CO["交付结果<br>代码变更、执行结果<br>或分析报告"]
+        CG --- CP --- CO
+    end
+
+    subgraph H["第二层：HoH"]
+        direction LR
+        HG["目标<br>通过多轮迭代<br>逐步实现整体需求"]
+        HP["组织过程<br>拆分目标 → 开发 → 独立验收<br>根据证据规划下一轮"]
+        HS["持续保留<br>当前软件、验证证据<br>未解决问题"]
+        HG --- HP --- HS
+    end
+
+    C --&gt;|"返回结果，支持验收与下一轮决策"| H
+    H --&gt;|"下达本轮任务与上下文"| C
+
+    style H fill:#F2EDFC,stroke:#8064AD,stroke-width:2px
+    style C fill:#E8F4F1,stroke:#318575,stroke-width:2px</pre>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>A</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><msub><mi mathvariant="script">E</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo><mover><mo stretchy="true" minsize="3.0em">→</mo><mpadded width="+0.6em" lspace="0.3em"><mrow><mtext>loop&nbsp;</mtext><mi>t</mi><mtext>&nbsp;under&nbsp;</mtext><mi mathvariant="script">S</mi></mrow></mpadded></mover><mo stretchy="false">(</mo><msub><mi>A</mi><mi>t</mi></msub><mo separator="true">,</mo><msub><mi mathvariant="script">E</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(A_{t-1}, \mathcal{E}_{t-1}) \xrightarrow{\text{loop } t \text{ under } \mathcal{S}} (A_t, \mathcal{E}_t)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.3581em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.0894em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0894em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel x-arrow"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1081em;"><span style="top:-3.322em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight x-arrow-pad"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">loop&nbsp;</span></span><span class="mord mathnormal mtight">t</span><span class="mord text mtight"><span class="mord mtight">&nbsp;under&nbsp;</span></span><span class="mord mathcal mtight" style="margin-right:0.075em;">S</span></span></span></span><span class="svg-align" style="top:-2.689em;"><span class="pstrut" style="height:2.7em;"></span><span class="hide-tail" style="height:0.522em;min-width:1.469em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.522em" viewBox="0 0 400000 522" preserveAspectRatio="xMaxYMin slice"><path d="M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.011em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.0894em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0894em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">A_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> denote the software artifact state after loop <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">E</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\mathcal{E}_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.0894em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0894em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> denote the execution evidence state obtained by evaluating <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">A_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">S</mi></mrow><annotation encoding="application/x-tex">\mathcal{S}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal" style="margin-right:0.075em;">S</span></span></span></span> denote the software specification, PRD</li>
+</ul>
+<p>整个 HoH 的流程如下图所示：</p>
+<p><img src="https://flesymeb.github.io/HarnessOfHarness/assets/figures/hoh-method-framework.webp" alt="HoH 架构图"></p>
+<p><em>左上需求 → 上方 Planner → 右下 Developer → 左下 QA → 返回 Planner。</em></p>
+<p>可以用“执行环境”和“项目组织”来理解两层分工：</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">第二层：HoH</span><br><span class="line">决定本轮目标 → 安排开发 → 组织验收 → 根据结果重新规划</span><br><span class="line">                         │</span><br><span class="line">                         ▼</span><br><span class="line">第一层：已有 coding harness</span><br><span class="line">读文件、使用工具、修改代码、运行与检查程序</span><br></pre></td></tr></tbody></table></figure>
+<p>图中央的 harness 是执行基础，外圈负责组织其参与整个项目。三个角色可以使用同一个模型，分别承担规划、开发与验收职责。</p>
+<p>HoH 通过三个角色组织每轮迭代的开发：</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>通俗理解</th>
+<th>每轮交付</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project Planner</td>
+<td>想清楚这一轮值得做什么，基于上次迭代的产物和评估来规划</td>
+<td>开发文档</td>
+</tr>
+<tr>
+<td>Developer</td>
+<td>把这一轮目标做出来</td>
+<td>更新后的项目</td>
+</tr>
+<tr>
+<td>QA Tester</td>
+<td>实际检查做到什么程度</td>
+<td>证据包</td>
+</tr>
+</tbody>
+</table>
+<p>Project Planner 从之前的迭代证据中生成本轮计划：</p>
+<table>
+<thead>
+<tr>
+<th>发现什么</th>
+<th>计划怎么变</th>
+<th>用人话说</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unresolved Gaps</td>
+<td>Prioritized Task Scope</td>
+<td>没完成的事情，挑重要的做</td>
+</tr>
+<tr>
+<td>Verified Behaviors</td>
+<td>Preservation Constraints</td>
+<td>已经能用的东西，别改坏</td>
+</tr>
+<tr>
+<td>Task Specification</td>
+<td>Validation Requirements</td>
+<td>什么现象出现，才算做完</td>
+</tr>
+</tbody>
+</table>
+<p><strong>因此，开发计划不只是待办清单，还必须写“保留什么”和“怎么验收”。</strong></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition caution"><p class="admonition-title">为什么同时保存代码和证据
+</p><ul>
+<li>代码说明“项目目前有什么”</li>
+<li>证据说明“哪些功能实际验证过，还有哪些问题”</li>
+</ul>
+<p>只看代码，很难知道一个按钮是否真正点过，失败路径是否跑过。</p>
+</div>
+<blockquote>
+<p>Throughout this process, HoH specifies the artifacts and evidence that agents must deliver, but does not prescribe a rigid workflow for producing them.</p>
+</blockquote>
+<h2 id="实际开发中-我们是怎么迭代的？">实际开发中，我们是怎么迭代的？</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">整体需求
+</p><p><strong>做一个平台跳跃游戏，玩家能移动、跳跃、穿过障碍、到达终点，并重新开始。</strong></p>
+</div>
+<p>这个需求可以按“玩家能完成什么行为”拆成可验证的增量迭代开发。</p>
+<h3 id="第一轮：先有一个能走通的小流程">第一轮：先有一个能走通的小流程</h3>
+<p>目标可以很简单：</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">目标：玩家可以移动、跳跃，并从起点走到终点。</span><br><span class="line">范围：单个测试关卡、基础碰撞、终点检测。</span><br><span class="line">验收：从启动游戏到到达终点，实际操作跑通一次。</span><br></pre></td></tr></tbody></table></figure>
+<p>RD 做完后，QA 验收：</p>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>观察</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>左右移动</td>
+<td>输入后位置正常改变</td>
+<td>已验证</td>
+</tr>
+<tr>
+<td>跳跃</td>
+<td>能起跳并落地</td>
+<td>已验证</td>
+</tr>
+<tr>
+<td>边缘碰撞</td>
+<td>某个平台边缘会穿透</td>
+<td>有缺口</td>
+</tr>
+<tr>
+<td>到达终点</td>
+<td>位置到达，但没有完成提示</td>
+<td>有缺口</td>
+</tr>
+</tbody>
+</table>
+<p>这里最重要的变化是：下一轮接收到具体问题和已验证行为，不必只依赖一句“基本完成”。</p>
+<h3 id="第二轮：修复问题-同时补齐一段用户体验">第二轮：修复问题，同时补齐一段用户体验</h3>
+<p>根据上轮证据更新计划：</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">本轮任务：</span><br><span class="line">- 修复平台边缘穿透。</span><br><span class="line">- 到达终点后显示胜利界面。</span><br><span class="line"></span><br><span class="line">保留约束：</span><br><span class="line">- 已验证的左右移动和跳跃继续有效。</span><br><span class="line"></span><br><span class="line">验收：</span><br><span class="line">- 重放平台边缘跳跃路径。</span><br><span class="line">- 实际到达终点，确认胜利界面出现。</span><br></pre></td></tr></tbody></table></figure>
+<p>整体画面美化可以留到后续轮次，当前范围聚焦于碰撞修复和胜利反馈。</p>
+<p><strong>小增量的价值是让变化和结果能够对应。</strong> 如果一轮同时改碰撞、菜单、存档和地图，失败时就很难知道是哪一部分造成的。</p>
+<h3 id="第三轮：把-可见-补齐为-可用">第三轮：把“可见”补齐为“可用”</h3>
+<p>下一轮目标可以变成：进入胜利状态后停止角色输入，增加重新开始，并恢复初始状态。</p>
+<p>验收需要连续执行：</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">启动 → 移动与跳跃 → 到达终点 → 胜利 → 重开 → 再次移动</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="三轮之后-发生了什么？">三轮之后，发生了什么？</h3>
+<table>
+<thead>
+<tr>
+<th>轮次</th>
+<th>软件增长</th>
+<th>留给下一轮的知识</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>有基础可玩路径</td>
+<td>哪些控制正常、哪里会穿透</td>
+</tr>
+<tr>
+<td>2</td>
+<td>碰撞修复、完成提示出现</td>
+<td>胜利状态仍有交互缺口</td>
+</tr>
+<tr>
+<td>3</td>
+<td>胜利与重开形成完整流程</td>
+<td>基础闭环可作为后续关卡的保留要求</td>
+</tr>
+</tbody>
+</table>
+<p>需求仍是原来的需求，但实现顺序会随着观察结果调整。这就是“大需求逐步完成”最容易理解的过程。</p>
+<h2 id="实验：结构化循环比简单续跑好吗？">实验：结构化循环比简单续跑好吗？</h2>
+<h3 id="先看主结果">先看主结果</h3>
+<p>论文比较了三种 harness–model 配置。<a href="https://flesymeb.github.io/HarnessOfHarness/">官方结果表</a>：</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th style="text-align:right">GameCraft 游戏质量分</th>
+<th style="text-align:right">FrontierSWE Dominance</th>
+<th style="text-align:right">ProgramBench 平均测试通过率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codex + GPT-5.5</td>
+<td style="text-align:right">49.58 → <strong>71.52</strong></td>
+<td style="text-align:right">44% → <strong>71%</strong></td>
+<td style="text-align:right">60.41% → <strong>66.50%</strong></td>
+</tr>
+<tr>
+<td>OpenCode + DeepSeek-V4-Pro</td>
+<td style="text-align:right">26.90 → <strong>48.98</strong></td>
+<td style="text-align:right">25% → <strong>44%</strong></td>
+<td style="text-align:right">45.27% → <strong>57.56%</strong></td>
+</tr>
+<tr>
+<td>Pi + MiniMax-M3</td>
+<td style="text-align:right">42.16 → <strong>58.78</strong></td>
+<td style="text-align:right">35% → <strong>64%</strong></td>
+<td style="text-align:right">35.83% → <strong>52.68%</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="最关键的追问：是不是因为多花了-token？">最关键的追问：是不是因为多花了 token？</h3>
+<p>下面是论文对 Codex 的开发次数对照，均使用 GameCraft 质量分。<a href="https://arxiv.org/html/2609.01481v1#S4.SS3">论文表 2</a></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition info"><p class="admonition-title">HoH 的 Tokens 消耗量会更多，但是效果也更好。
+</p><p>HoH 的 Tokens 消耗量会更多，但是效果也更好。</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>开发迭代轮次</th>
+<th>得分</th>
+<th>Token 数量（百万）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vanilla</td>
+<td>1</td>
+<td>49.58</td>
+<td>2.59</td>
+</tr>
+<tr>
+<td>Vanilla Continuation</td>
+<td>2</td>
+<td>54.99</td>
+<td>4.56</td>
+</tr>
+<tr>
+<td>Vanilla Continuation</td>
+<td>3</td>
+<td>58.24</td>
+<td>6.33</td>
+</tr>
+<tr>
+<td>HoH</td>
+<td>1</td>
+<td>59.71</td>
+<td>2.88</td>
+</tr>
+<tr>
+<td>HoH</td>
+<td>2</td>
+<td>64.84</td>
+<td>5.67</td>
+</tr>
+<tr>
+<td>HoH</td>
+<td>3</td>
+<td>71.52</td>
+<td>8.41</td>
+</tr>
+</tbody>
+</table>
+<h2 id="我们可以借鉴什么？">我们可以借鉴什么？</h2>
+<p>从工程分类上，可以把 HoH 理解为面向软件开发的一种具体循环设计。它的启发在于：<strong>为每轮规定清楚输入、交付和证据，让后续工作有可靠依据。</strong></p>
+<ul>
+<li><strong>这一轮做什么？</strong> 从整体需求和实际缺口中选择有限、完整的目标。</li>
+<li><strong>哪些旧功能不能坏？</strong> 把已验证行为写入保留约束。</li>
+<li><strong>拿什么证明完成？</strong> 用运行结果和可复查的证据支持验收。</li>
+</ul>
+<p>代码与证据共同积累，下一轮规划时，根据上一轮的迭代信息、整体的目标信息综合规划，而不仅仅是 TO-DO List。</p>
+</body></html>]]></content>
+      <categories>
+        <category>LLM</category>
+      </categories>
+      <tags>
+        <tag>Harness Engineering</tag>
+        <tag>Agent</tag>
+        <tag>paper</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>WikiSkill 论文学习</title>
     <url>/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/</url>
     <content><![CDATA[<html><head></head><body><p><img src="/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/1.jpg" alt=""></p>
@@ -126,12 +1010,13 @@
       <tags>
         <tag>Agent</tag>
         <tag>Skill Evolution</tag>
+        <tag>paper</tag>
       </tags>
   </entry>
   <entry>
     <title>Harness‑Bench 论文学习</title>
-    <url>/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/</url>
-    <content><![CDATA[<html><head></head><body><p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-bench-framework.png" alt=""></p>
+    <url>/2026/08/22/Reading-of-the-HarnessBenchPaper/</url>
+    <content><![CDATA[<html><head></head><body><p><img src="/2026/08/22/Reading-of-the-HarnessBenchPaper/harness-bench-framework.png" alt=""></p>
 <p>2026 年 5 月，北京大学与启元科技的研究团队发布了论文 <a href="https://arxiv.org/abs/2605.27922">Harness-Bench: Measuring Harness Effects across Models in Realistic Agent Workflows</a>，用于研究并评测不同 Harness 对 Agent 实际执行能力的影响。在论文中，作者提出了 Harness-Bench——一个包含 106 个沙箱化离线任务、用于在统一任务环境下比较不同 Model–Harness 配置的评测基准。论文发现，Agent 表现不仅取决于 LLM，也取决于 Harness 的执行机制。</p>
 <p>恰好最近在研究 Agent 评测，于是对这篇论文进行了精度，并做了如下的摘要。</p>
 <span id="more"></span>
@@ -173,7 +1058,7 @@
 <blockquote>
 <p>In such executable workflows, practical performance depends not only on the underlying model, but also on the system layer that turns model capability into executable action. We refer to this layer as a harness: the mechanism that organizes context, tools, state, permissions, constraints, and recovery to mediate between model outputs and external actions.</p>
 </blockquote>
-<p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-layers.png" alt=""><br>
+<p><img src="/2026/08/22/Reading-of-the-HarnessBenchPaper/harness-layers.png" alt=""><br>
 模型层是推理能力；其他层是执行能力。目前测评测集涵盖了：模型的静态推理、Agent 在可执行环境下的最终表现、以及标准工作流下的表现。但是，对于其他层（Harness）层的单独覆盖目前依然是缺失的。</p>
 <blockquote>
 <p>Harnesses are therefore central to agent system design: they shape how model capability is exposed, constrained, and realized, affecting completion, cost, safety, robustness, and auditability.</p>
@@ -196,7 +1081,7 @@
 </ul>
 <p>Harness-Bench 是一台“整机检测仪”，能够比较不同“模型 + harness”整机配置的表现，并根据执行轨迹诊断其失败症状；但它不是一套“因果实验”，不能仅凭这些结果确定某个提示词、工具接口或状态管理机制单独造成了多少性能变化。</p>
 <p>Harness-Bench 的整体框架如下所示：</p>
-<p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/harness-bench-framework.png" alt=""></p>
+<p><img src="/2026/08/22/Reading-of-the-HarnessBenchPaper/harness-bench-framework.png" alt=""></p>
 <p>Harness-Bench 的三大贡献：</p>
 <pre class="mermaid">flowchart LR
     A["① Benchmark Asset<br><b>基准资源</b><br><br>106 个沙箱化离线任务<br>真实的端到端工作流<br>任务清单 · 测试材料<br>评估器 · 执行轨迹"]
@@ -382,7 +1267,7 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
 <blockquote>
 <p>Each run produces four sources of evidence: the final workspace state, execution trace, usage statistics, and validator outputs. These support completion scoring, process diagnostics, cost analysis, permission checks, and failure analysis.</p>
 </blockquote>
-<p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/run-evidence.png" alt=""></p>
+<p><img src="/2026/08/22/Reading-of-the-HarnessBenchPaper/run-evidence.png" alt=""></p>
 <p>每个任务的执行都会做如下的操作：</p>
 <p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>R</mi><mo>=</mo><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">n</mi></mrow><mo stretchy="false">(</mo><mi>M</mi><mo separator="true">,</mo><mi>H</mi><mo separator="true">,</mo><mi>E</mi><mo separator="true">,</mo><mi>T</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="1em"></mspace><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">k</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow><mo>=</mo><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow><mo stretchy="false">(</mo><mi>R</mi><mo separator="true">;</mo><mi>J</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">R = \mathrm{Run}(M, H, E, T), \quad \mathrm{TaskScore} = \mathrm{Eval}(R; J)
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathrm">Run</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.109em;">M</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0813em;">H</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathrm">TaskScore</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathrm">Eval</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0962em;">J</span><span class="mclose">)</span></span></span></span></span></p>
@@ -398,7 +1283,7 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
 \end{equation}
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0574em;vertical-align:-0.7787em;"></span><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2787em;"><span style="top:-3.2787em;"><span class="pstrut" style="height:3.3714em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord mathrm">Process</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">3</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord mathrm">Robustness</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">ToolUse</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord"><span class="mord mathrm" style="margin-right:0.0139em;">Consistency</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2175em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7787em;"><span></span></span></span></span></span></span></span><span class="tag"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2787em;"><span style="top:-3.2787em;"><span class="pstrut" style="height:3.3714em;"></span><span class="eqn-num"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7787em;"><span></span></span></span></span></span></span></span></span></p>
 <p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">y</mi></mrow><mi>i</mi></msub><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\mathrm{Security}_i \in \{0,1\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9275em;vertical-align:-0.2441em;"></span><span class="mord"><span class="mord"><span class="mord mathrm" style="margin-right:0.0139em;">Security</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2175em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">}</span></span></span></span> and all non‑binary scores are normalized to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span>.</p>
-<p><img src="/2026/08/22/Reading-of-the-Harness%E2%80%91Bench-Paper/scoring-metrics.png" alt=""></p>
+<p><img src="/2026/08/22/Reading-of-the-HarnessBenchPaper/scoring-metrics.png" alt=""></p>
 <h3 id="harness-dependence">Harness Dependence</h3>
 <blockquote>
 <p>We use <strong>harness dependence</strong> to describe how much a model backend’s performance varies across harness configurations under otherwise shared benchmark conditions.</p>
@@ -412,7 +1297,7 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
         <category>LLM</category>
       </categories>
       <tags>
-        <tag>Agent</tag>
+        <tag>paper</tag>
         <tag>Harness-Bench</tag>
         <tag>Agent 评估</tag>
       </tags>

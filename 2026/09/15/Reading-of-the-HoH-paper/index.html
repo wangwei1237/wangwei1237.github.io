@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
+      <meta charset="utf-8" />
+      <meta name="description" content="在 Coding Agent 的实践过程中，我时常在想：  有了必要的知识、workspace、skill、tool 等，Coding Agent 是否就足够了呢？ 人在面对同样的需求的时候，又是怎么开发的呢？  恰好，最近发现上海人工智能实验室发表了论文 Harness of Harness:Multi-Day Autonomous Software Development with Cont">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Harness of Harness 论文学习">
+<meta property="og:url" content="https://wangwei1237.github.io/2026/09/15/Reading-of-the-HoH-paper/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="在 Coding Agent 的实践过程中，我时常在想：  有了必要的知识、workspace、skill、tool 等，Coding Agent 是否就足够了呢？ 人在面对同样的需求的时候，又是怎么开发的呢？  恰好，最近发现上海人工智能实验室发表了论文 Harness of Harness:Multi-Day Autonomous Software Development with Cont">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/09/15/Reading-of-the-HoH-paper/1.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/09/15/Reading-of-the-HoH-paper/hoh-overview.png">
+<meta property="og:image" content="https://flesymeb.github.io/HarnessOfHarness/assets/figures/fusepoint-real-gameplay-poster.jpg">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/09/15/Reading-of-the-HoH-paper/fusepoint-iteration-progress.png">
+<meta property="og:image" content="https://flesymeb.github.io/HarnessOfHarness/assets/figures/hoh-method-framework.webp">
+<meta property="article:published_time" content="2026-09-15T11:04:44.000Z">
+<meta property="article:modified_time" content="2026-09-16T02:01:30.937Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="Harness Engineering">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="paper">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2026/09/15/Reading-of-the-HoH-paper/1.jpg">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="@wangwei1237">
+      
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Harness of Harness 论文学习 |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js"></script>
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Reading-of-the-HoH-paper"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Harness of Harness 论文学习
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2026/09/15/Reading-of-the-HoH-paper/" class="article-date">
+  <time datetime="2026-09-15T11:04:44.000Z" itemprop="datePublished">2026-09-15</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">20 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <html><head></head><body><p><img src="/2026/09/15/Reading-of-the-HoH-paper/1.jpg" alt=""></p>
+<p>在 Coding Agent 的实践过程中，我时常在想：</p>
+<ul>
+<li>有了必要的知识、workspace、skill、tool 等，Coding Agent 是否就足够了呢？</li>
+<li>人在面对同样的需求的时候，又是怎么开发的呢？</li>
+</ul>
+<p>恰好，最近发现上海人工智能实验室发表了论文 <a target="_blank" rel="noopener" href="https://flesymeb.github.io/HarnessOfHarness/">Harness of Harness:Multi-Day Autonomous Software Development with Continual Improvement</a>，在论文中，研究者们利用 HoH 在无人工干预的情况下，花了 6 天时间、历经 70 多次 Loop 完成了一个 FPS 游戏。</p>
+<span id="more"></span>
+<h2 id="给-agent-一个大需求-然后呢？">给 Agent 一个大需求，然后呢？</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">当前 Harness Engineering 的现状
+</p><p>我们给 AI 一个需求：“做一个能玩的游戏”。第一版出来了，但有些功能没做完，有些地方不能用。接下来，在 Looping 中，Agent 会根据我们提供的知识、工具、测试结果来修复，然后不停的 Looping 整个循环……</p>
+<p>于是，Agent 开始陷入了无休止的局部修复循环……</p>
+<p><strong>接下来，需要人介入，并打破这个循环，并进行新的规划……</strong></p>
+</div>
+<p>在 HoH 的论文中，作者把这个现象称作：<strong>repetitive local repairs</strong>。</p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">提示
+</p><p>人类工程师在开发一个需求的时候，不是一蹴而就的，而是每次完成一个小的功能点，然后不停的迭代直到完成整个需求……</p>
+<p>团队在开发产品的时候，也是敏捷迭代开发。</p>
+</div>
+<p>论文中的 Harness of Harness 的核心思想其实就是借鉴了人类工程师开发过程中的小步快跑的迭代思想，并把这套思想抽象成了一层工程 Harness 层。</p>
+<p>与其说是<strong>HoH</strong>，倒不如说是：围绕现有 Coding Agent 的能力（Codex、Claude Code……），对软件开发需求组织持续的规划、开发与测试，让一轮的结果能够指导下一轮，并最终完成需求。</p>
+<h2 id="hoh-的具体应用案例">HoH 的具体应用案例</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">HoH 的概念
+</p><p><strong>we introduce Harness-of-Harness (HoH), a framework that equips coding agents with continual improvement capabilities for autonomous software development.</strong></p>
+</div>
+<ul>
+<li><strong>continual improvement capabilities</strong>：软件功能的持续增加和迭代</li>
+<li><strong>autonomous</strong>：全自主的开发过程</li>
+</ul>
+<p><img src="/2026/09/15/Reading-of-the-HoH-paper/hoh-overview.png" alt="HoH 持续改进概览"></p>
+<p>上海人工智能实验室团队用 HoH，用时 6 天，迭代了 70 多次，在无人接管的情况下完成一个可玩的 FPS 游戏。</p>
+<p><img src="https://flesymeb.github.io/HarnessOfHarness/assets/figures/fusepoint-real-gameplay-poster.jpg" alt="Fusepoint 实机展示封面"></p>
+<p><em>图：作者官网的 Fusepoint 实机展示封面。<a target="_blank" rel="noopener" href="https://flesymeb.github.io/HarnessOfHarness/">打开官网视频</a>。</em></p>
+<p>整个迭代的过程如下图所示：</p>
+<p><img src="/2026/09/15/Reading-of-the-HoH-paper/fusepoint-iteration-progress.png" alt="Fusepoint 开发迭代与问题变化"></p>
+<ul>
+<li><strong>横轴</strong>是迭代次数，纵轴是尚未关闭的问题数量</li>
+<li><strong>横轴上方</strong>的蓝色、紫色标记分别表示新发现问题和已关闭问题</li>
+<li><strong>曲线与浅色点</strong>展示问题数量的趋势与记录值</li>
+<li><strong>截图与标签</strong>标示开发成果，从初始原型、地图和武器，逐步扩展到音效、界面、动画、战斗 AI 和可玩版本。</li>
+</ul>
+<p>在迭代 70 个 Loop 之后，作者发现：开发并非单调改善，验证过的行为仍可能会因为后续的修改而破坏（<strong>人类工程师也存在这个问题</strong>）。</p>
+<ul>
+<li>81 个问题中关闭了 65 个，仍有 16 个未解决</li>
+<li>有 17 个问题曾因回归测试而重新打开</li>
+</ul>
+<p>对如上的图的分析，我们可以得到如下的结论：</p>
+<p><strong>1. 问题数量上升不能直接等同于质量下降。</strong> 一个尚未运行的空项目可能“没有已知问题”，但不代表质量高。新增功能扩大了可测试范围，也会暴露更多缺口。因此，应结合功能完成情况一起解读曲线。</p>
+<p><strong>2. 问题关闭也不等于永久解决。</strong> 长期迭代需要保留验证历史，并持续检查回归。否则，下一轮可能在不知道的情况下破坏上一轮成果。</p>
+<h2 id="hoh-管的是整个开发过程">HoH 管的是整个开发过程</h2>
+<p>HoH 负责的其实是整个开发过程，也就是整个敏捷迭代过程中的非开发部分：</p>
+<ul>
+<li>拆分目标任务</li>
+<li>评估具体整体目标的差距</li>
+<li>独立验收</li>
+<li>……</li>
+</ul>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">两层 Harness，而不是对原有 Harness 的再次约束
+</p><p>HoH 部分的内容，恰恰是我们目前的 Workspace 中的知识、rules、Skills 中所缺失的内容。而 HoH 所做的就是把这一层也给工程化、Harness 化。</p>
+</div>
+<pre class="mermaid">%%{init: {"flowchart": {"nodeSpacing": 35, "rankSpacing": 25}, "themeVariables": {"fontSize": "16px"}}}%%
+flowchart TB
+    subgraph C["第一层：Codex"]
+        direction LR
+        CG["目标<br>执行当前交付的<br>具体任务"]
+        CP["执行能力<br>理解任务、读取项目、调用工具<br>编写代码、运行测试、检查结果"]
+        CO["交付结果<br>代码变更、执行结果<br>或分析报告"]
+        CG --- CP --- CO
+    end
+
+    subgraph H["第二层：HoH"]
+        direction LR
+        HG["目标<br>通过多轮迭代<br>逐步实现整体需求"]
+        HP["组织过程<br>拆分目标 → 开发 → 独立验收<br>根据证据规划下一轮"]
+        HS["持续保留<br>当前软件、验证证据<br>未解决问题"]
+        HG --- HP --- HS
+    end
+
+    C --&gt;|"返回结果，支持验收与下一轮决策"| H
+    H --&gt;|"下达本轮任务与上下文"| C
+
+    style H fill:#F2EDFC,stroke:#8064AD,stroke-width:2px
+    style C fill:#E8F4F1,stroke:#318575,stroke-width:2px</pre>
+<p class="katex-block has-jax"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>A</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><msub><mi mathvariant="script">E</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo><mover><mo stretchy="true" minsize="3.0em">→</mo><mpadded width="+0.6em" lspace="0.3em"><mrow><mtext>loop&nbsp;</mtext><mi>t</mi><mtext>&nbsp;under&nbsp;</mtext><mi mathvariant="script">S</mi></mrow></mpadded></mover><mo stretchy="false">(</mo><msub><mi>A</mi><mi>t</mi></msub><mo separator="true">,</mo><msub><mi mathvariant="script">E</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(A_{t-1}, \mathcal{E}_{t-1}) \xrightarrow{\text{loop } t \text{ under } \mathcal{S}} (A_t, \mathcal{E}_t)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.3581em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.0894em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0894em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel x-arrow"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1081em;"><span style="top:-3.322em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight x-arrow-pad"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">loop&nbsp;</span></span><span class="mord mathnormal mtight">t</span><span class="mord text mtight"><span class="mord mtight">&nbsp;under&nbsp;</span></span><span class="mord mathcal mtight" style="margin-right:0.075em;">S</span></span></span></span><span class="svg-align" style="top:-2.689em;"><span class="pstrut" style="height:2.7em;"></span><span class="hide-tail" style="height:0.522em;min-width:1.469em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.522em" viewBox="0 0 400000 522" preserveAspectRatio="xMaxYMin slice"><path d="M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.011em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.0894em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0894em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">A_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> denote the software artifact state after loop <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">E</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\mathcal{E}_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.0894em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0894em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> denote the execution evidence state obtained by evaluating <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">A_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">S</mi></mrow><annotation encoding="application/x-tex">\mathcal{S}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal" style="margin-right:0.075em;">S</span></span></span></span> denote the software specification, PRD</li>
+</ul>
+<p>整个 HoH 的流程如下图所示：</p>
+<p><img src="https://flesymeb.github.io/HarnessOfHarness/assets/figures/hoh-method-framework.webp" alt="HoH 架构图"></p>
+<p><em>左上需求 → 上方 Planner → 右下 Developer → 左下 QA → 返回 Planner。</em></p>
+<p>可以用“执行环境”和“项目组织”来理解两层分工：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">第二层：HoH</span><br><span class="line">决定本轮目标 → 安排开发 → 组织验收 → 根据结果重新规划</span><br><span class="line">                         │</span><br><span class="line">                         ▼</span><br><span class="line">第一层：已有 coding harness</span><br><span class="line">读文件、使用工具、修改代码、运行与检查程序</span><br></pre></td></tr></tbody></table></figure>
+<p>图中央的 harness 是执行基础，外圈负责组织其参与整个项目。三个角色可以使用同一个模型，分别承担规划、开发与验收职责。</p>
+<p>HoH 通过三个角色组织每轮迭代的开发：</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>通俗理解</th>
+<th>每轮交付</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project Planner</td>
+<td>想清楚这一轮值得做什么，基于上次迭代的产物和评估来规划</td>
+<td>开发文档</td>
+</tr>
+<tr>
+<td>Developer</td>
+<td>把这一轮目标做出来</td>
+<td>更新后的项目</td>
+</tr>
+<tr>
+<td>QA Tester</td>
+<td>实际检查做到什么程度</td>
+<td>证据包</td>
+</tr>
+</tbody>
+</table>
+<p>Project Planner 从之前的迭代证据中生成本轮计划：</p>
+<table>
+<thead>
+<tr>
+<th>发现什么</th>
+<th>计划怎么变</th>
+<th>用人话说</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unresolved Gaps</td>
+<td>Prioritized Task Scope</td>
+<td>没完成的事情，挑重要的做</td>
+</tr>
+<tr>
+<td>Verified Behaviors</td>
+<td>Preservation Constraints</td>
+<td>已经能用的东西，别改坏</td>
+</tr>
+<tr>
+<td>Task Specification</td>
+<td>Validation Requirements</td>
+<td>什么现象出现，才算做完</td>
+</tr>
+</tbody>
+</table>
+<p><strong>因此，开发计划不只是待办清单，还必须写“保留什么”和“怎么验收”。</strong></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition caution"><p class="admonition-title">为什么同时保存代码和证据
+</p><ul>
+<li>代码说明“项目目前有什么”</li>
+<li>证据说明“哪些功能实际验证过，还有哪些问题”</li>
+</ul>
+<p>只看代码，很难知道一个按钮是否真正点过，失败路径是否跑过。</p>
+</div>
+<blockquote>
+<p>Throughout this process, HoH specifies the artifacts and evidence that agents must deliver, but does not prescribe a rigid workflow for producing them.</p>
+</blockquote>
+<h2 id="实际开发中-我们是怎么迭代的？">实际开发中，我们是怎么迭代的？</h2>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">整体需求
+</p><p><strong>做一个平台跳跃游戏，玩家能移动、跳跃、穿过障碍、到达终点，并重新开始。</strong></p>
+</div>
+<p>这个需求可以按“玩家能完成什么行为”拆成可验证的增量迭代开发。</p>
+<h3 id="第一轮：先有一个能走通的小流程">第一轮：先有一个能走通的小流程</h3>
+<p>目标可以很简单：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">目标：玩家可以移动、跳跃，并从起点走到终点。</span><br><span class="line">范围：单个测试关卡、基础碰撞、终点检测。</span><br><span class="line">验收：从启动游戏到到达终点，实际操作跑通一次。</span><br></pre></td></tr></tbody></table></figure>
+<p>RD 做完后，QA 验收：</p>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>观察</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>左右移动</td>
+<td>输入后位置正常改变</td>
+<td>已验证</td>
+</tr>
+<tr>
+<td>跳跃</td>
+<td>能起跳并落地</td>
+<td>已验证</td>
+</tr>
+<tr>
+<td>边缘碰撞</td>
+<td>某个平台边缘会穿透</td>
+<td>有缺口</td>
+</tr>
+<tr>
+<td>到达终点</td>
+<td>位置到达，但没有完成提示</td>
+<td>有缺口</td>
+</tr>
+</tbody>
+</table>
+<p>这里最重要的变化是：下一轮接收到具体问题和已验证行为，不必只依赖一句“基本完成”。</p>
+<h3 id="第二轮：修复问题-同时补齐一段用户体验">第二轮：修复问题，同时补齐一段用户体验</h3>
+<p>根据上轮证据更新计划：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">本轮任务：</span><br><span class="line">- 修复平台边缘穿透。</span><br><span class="line">- 到达终点后显示胜利界面。</span><br><span class="line"></span><br><span class="line">保留约束：</span><br><span class="line">- 已验证的左右移动和跳跃继续有效。</span><br><span class="line"></span><br><span class="line">验收：</span><br><span class="line">- 重放平台边缘跳跃路径。</span><br><span class="line">- 实际到达终点，确认胜利界面出现。</span><br></pre></td></tr></tbody></table></figure>
+<p>整体画面美化可以留到后续轮次，当前范围聚焦于碰撞修复和胜利反馈。</p>
+<p><strong>小增量的价值是让变化和结果能够对应。</strong> 如果一轮同时改碰撞、菜单、存档和地图，失败时就很难知道是哪一部分造成的。</p>
+<h3 id="第三轮：把-可见-补齐为-可用">第三轮：把“可见”补齐为“可用”</h3>
+<p>下一轮目标可以变成：进入胜利状态后停止角色输入，增加重新开始，并恢复初始状态。</p>
+<p>验收需要连续执行：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">启动 → 移动与跳跃 → 到达终点 → 胜利 → 重开 → 再次移动</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="三轮之后-发生了什么？">三轮之后，发生了什么？</h3>
+<table>
+<thead>
+<tr>
+<th>轮次</th>
+<th>软件增长</th>
+<th>留给下一轮的知识</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>有基础可玩路径</td>
+<td>哪些控制正常、哪里会穿透</td>
+</tr>
+<tr>
+<td>2</td>
+<td>碰撞修复、完成提示出现</td>
+<td>胜利状态仍有交互缺口</td>
+</tr>
+<tr>
+<td>3</td>
+<td>胜利与重开形成完整流程</td>
+<td>基础闭环可作为后续关卡的保留要求</td>
+</tr>
+</tbody>
+</table>
+<p>需求仍是原来的需求，但实现顺序会随着观察结果调整。这就是“大需求逐步完成”最容易理解的过程。</p>
+<h2 id="实验：结构化循环比简单续跑好吗？">实验：结构化循环比简单续跑好吗？</h2>
+<h3 id="先看主结果">先看主结果</h3>
+<p>论文比较了三种 harness–model 配置。<a target="_blank" rel="noopener" href="https://flesymeb.github.io/HarnessOfHarness/">官方结果表</a>：</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th style="text-align:right">GameCraft 游戏质量分</th>
+<th style="text-align:right">FrontierSWE Dominance</th>
+<th style="text-align:right">ProgramBench 平均测试通过率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codex + GPT-5.5</td>
+<td style="text-align:right">49.58 → <strong>71.52</strong></td>
+<td style="text-align:right">44% → <strong>71%</strong></td>
+<td style="text-align:right">60.41% → <strong>66.50%</strong></td>
+</tr>
+<tr>
+<td>OpenCode + DeepSeek-V4-Pro</td>
+<td style="text-align:right">26.90 → <strong>48.98</strong></td>
+<td style="text-align:right">25% → <strong>44%</strong></td>
+<td style="text-align:right">45.27% → <strong>57.56%</strong></td>
+</tr>
+<tr>
+<td>Pi + MiniMax-M3</td>
+<td style="text-align:right">42.16 → <strong>58.78</strong></td>
+<td style="text-align:right">35% → <strong>64%</strong></td>
+<td style="text-align:right">35.83% → <strong>52.68%</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="最关键的追问：是不是因为多花了-token？">最关键的追问：是不是因为多花了 token？</h3>
+<p>下面是论文对 Codex 的开发次数对照，均使用 GameCraft 质量分。<a target="_blank" rel="noopener" href="https://arxiv.org/html/2609.01481v1#S4.SS3">论文表 2</a></p>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition info"><p class="admonition-title">HoH 的 Tokens 消耗量会更多，但是效果也更好。
+</p><p>HoH 的 Tokens 消耗量会更多，但是效果也更好。</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>开发迭代轮次</th>
+<th>得分</th>
+<th>Token 数量（百万）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vanilla</td>
+<td>1</td>
+<td>49.58</td>
+<td>2.59</td>
+</tr>
+<tr>
+<td>Vanilla Continuation</td>
+<td>2</td>
+<td>54.99</td>
+<td>4.56</td>
+</tr>
+<tr>
+<td>Vanilla Continuation</td>
+<td>3</td>
+<td>58.24</td>
+<td>6.33</td>
+</tr>
+<tr>
+<td>HoH</td>
+<td>1</td>
+<td>59.71</td>
+<td>2.88</td>
+</tr>
+<tr>
+<td>HoH</td>
+<td>2</td>
+<td>64.84</td>
+<td>5.67</td>
+</tr>
+<tr>
+<td>HoH</td>
+<td>3</td>
+<td>71.52</td>
+<td>8.41</td>
+</tr>
+</tbody>
+</table>
+<h2 id="我们可以借鉴什么？">我们可以借鉴什么？</h2>
+<p>从工程分类上，可以把 HoH 理解为面向软件开发的一种具体循环设计。它的启发在于：<strong>为每轮规定清楚输入、交付和证据，让后续工作有可靠依据。</strong></p>
+<ul>
+<li><strong>这一轮做什么？</strong> 从整体需求和实际缺口中选择有限、完整的目标。</li>
+<li><strong>哪些旧功能不能坏？</strong> 把已验证行为写入保留约束。</li>
+<li><strong>拿什么证明完成？</strong> 用运行结果和可复查的证据支持验收。</li>
+</ul>
+<p>代码与证据共同积累，下一轮规划时，根据上一轮的迭代信息、整体的目标信息综合规划，而不仅仅是 TO-DO List。</p>
+</body></html> 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2026/09/15/Reading-of-the-HoH-paper/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Harness-Engineering/" rel="tag">Harness Engineering</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/paper/" rel="tag">paper</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2026/08/31/Reading-of-the-Google-s-WikiSkill-Paper/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">WikiSkill 论文学习</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "ppRS6IT7xMHmCl54L7ynIC2Z-gzGzoHsz",
+    app_key: "qEmM49ZlU6LOwXCHjzMUECKu",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "快来评论吧~",
+    recordIP: true,
+    visitor: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2026
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
+        
+    
+ 
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
