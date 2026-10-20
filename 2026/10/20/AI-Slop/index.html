@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
+      <meta charset="utf-8" />
+      <meta name="description" content="一段 AI 生成的代码，命名规范、测试通过，连 Pull Request（PR）的描述也写得条理清晰。我们很容易认为：这段代码已经可以合并了。 但三个月后，当需求发生变化，我们才发现：同一段逻辑散落在多个模块中，相似的功能采用了不同的实现方式，而那些一直通过的测试，恰恰没有覆盖真正需要保护的业务行为。 代码能运行，并不意味着它能长期维护。 这也是我想讨论 AI Slop 的原因。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI Slop，能运行的代码为维护的噩梦">
+<meta property="og:url" content="https://wangwei1237.github.io/2026/10/20/AI-Slop/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="一段 AI 生成的代码，命名规范、测试通过，连 Pull Request（PR）的描述也写得条理清晰。我们很容易认为：这段代码已经可以合并了。 但三个月后，当需求发生变化，我们才发现：同一段逻辑散落在多个模块中，相似的功能采用了不同的实现方式，而那些一直通过的测试，恰恰没有覆盖真正需要保护的业务行为。 代码能运行，并不意味着它能长期维护。 这也是我想讨论 AI Slop 的原因。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/10/20/AI-Slop/1.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/10/20/AI-Slop/maintainability-gap.png">
+<meta property="article:published_time" content="2026-10-20T17:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-20T09:38:52.024Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="AI Coding">
+<meta property="article:tag" content="AI Slop">
+<meta property="article:tag" content="技术债务">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2026/10/20/AI-Slop/1.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="@wangwei1237">
+      
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>AI Slop，能运行的代码为维护的噩梦 |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link rel="alternate" href="/feed.xml" title="17哥" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-AI-Slop"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  AI Slop，能运行的代码为维护的噩梦
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2026/10/20/AI-Slop/" class="article-date">
+  <time datetime="2026-10-20T17:00:00.000Z" itemprop="datePublished">2026-10-20</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.1k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">7 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <html><head></head><body><p><img src="/2026/10/20/AI-Slop/1.png" alt="AI Slop 与工程判断"></p>
+<p>一段 AI 生成的代码，命名规范、测试通过，连 Pull Request（PR）的描述也写得条理清晰。我们很容易认为：这段代码已经可以合并了。</p>
+<p>但三个月后，当需求发生变化，我们才发现：同一段逻辑散落在多个模块中，相似的功能采用了不同的实现方式，而那些一直通过的测试，恰恰没有覆盖真正需要保护的业务行为。</p>
+<p><strong>代码能运行，并不意味着它能长期维护。</strong> 这也是我想讨论 AI Slop 的原因。</p>
+<span id="more"></span>
+<h2 id="什么是-ai-slop">什么是 AI Slop</h2>
+<p>AI Slop 代码是指今天能运行、明天就腐烂的 AI 生成代码，这些代码在结构上正确，但在架构上欠缺考虑。这些 AI Slop 代码能够成功编译、通过测试，但却在代码库内部悄然腐烂。AI Slop 代码表面看起来十分光鲜——命名规范、测试通过、PR 清爽——却在暗中蚕食着架构的一致性，他们的危害性比传统的技术债务更大，他们也比传统的技术债务更难捕捉。</p>
+<p>AI Slop 代码不是那些会导致崩溃的代码，崩溃的代码反而很容易被发现。AI Slop 代码是周二还能正常工作、但三个月后就会演变成维护噩梦的代码。这些代码在结构上是正确的，但在架构上毫无章法——本该抽象的地方却充斥着大量的复制粘贴，本该由五个可组合的模块来实现的地方却堆砌着 500 行的长函数。对于 AI Slop 而言，测试能通过仅仅是因为测试用例只是在重复具体的实现，测试在验证“代码是不是这么写的”，而不是验证“业务功能是不是满足需求”。</p>
+<p>这就好比魏晋南北朝一直到隋唐，骈文（四六文）垄断文坛，而这些骈文重形式、轻内容，为了华丽的句式牺牲表意，一味堆砌典故辞藻而又空洞无物。也就是在这个时候，以韩愈、柳宗元为为首的唐宋八大家开始登上历史舞台，发起了古文运动，开始文学文体革新，整顿浮华文风。</p>
+<p>如果我们还认为，Slop 仅仅还只是杞人忧天，那么数据会证明一切。GitClear 在报告 <a target="_blank" rel="noopener" href="https://www.gitclear.com/the_ai_code_quality_maintainability_gap">The Maintainability Gap: AI Code Quality in 2026</a> 中对 2023–2026 年间的 6.23 亿处代码变更进行了分析：</p>
+<ul>
+<li>跨文件函数调用（代表代码复用程度）下降 35%</li>
+<li>重构带来的代码行迁移量下降 70%</li>
+<li>长期遗留代码维护工作量相比 2022 年下降 74%</li>
+<li>单次提交内复制粘贴代码 (+41%)</li>
+<li>代码块重复冗余 (+81%)</li>
+<li>掩盖错误的代码写法 (+47%)</li>
+<li>两周周期内代码返工率 churn (+15%)</li>
+</ul>
+<p><img src="/2026/10/20/AI-Slop/maintainability-gap.png" alt=""></p>
+<h2 id="为什么-ai-slop-比传统技术债务更难发现">为什么 AI Slop 比传统技术债务更难发现</h2>
+<p>传统的劣质代码是有迹可循的。匆忙写就的代码一眼就能看出来——命名不一致、缺少测试、TODO 注释随处可见。资深工程师浏览一眼 Pull Request（PR），几秒钟内就能识别出来。</p>
+<p>AI 垃圾代码完全没有这些破绽。它看起来无可挑剔：变量命名高度规范（模型从成千上万个优质代码库中学习过），配套测试一应俱全（模型随实现一同生成了测试），文档齐全，PR 描述也写得条理清晰。表面上的一切都显得极其专业。</p>
+<p>更深层的问题在于：</p>
+<p><strong>缺乏架构思考的模式模仿。</strong> AI 是通过在其训练数据中进行模式匹配来生成代码的。如果你的代码库中有三种不同的数据库访问模式，AI 会随意采用它在上下文中最近看到的那一种——或者干脆再自创第四种。几个月下来，代码库中各个模块虽能单独运行，却无法有机地结合在一起。原本能让系统保持可维护性的架构一致性，就这样在一个个 AI 生成的 PR 中被逐渐侵蚀。</p>
+<p><strong>测试与实现紧密耦合。</strong> AI 生成的测试往往只是在镜像复刻实现的逻辑，而不是测试实际的行为。它们能通过测试，且会一直通过，却根本无法捕捉关键的回归问题，因为它们断言的是代码<strong>如何</strong>运行，而不是代码<strong>应该</strong>达成什么效果。你的代码覆盖率数据看起来极其漂亮，但实际的安全防护网却千疮百孔。</p>
+<p><strong>复杂度膨胀。</strong> 经验丰富的工程师在解决问题时，会思考能够满足需求的最简方案。而 AI 则倾向于从训练数据中提取最<strong>常见</strong>的方案，而这往往比实际所需的更复杂。面对一个只需 40 行就能搞定的问题，AI 给出的 200 行方案并没有错——它只是平白引入了 160 行没人需要的未来维护负担。</p>
+<p><strong>悄无声息的架构偏离。</strong> 这是代价最高昂的一点。每一个由 AI 生成的 PR 都会使代码库稍微偏离既定架构。单看任何一个 PR 都不是大问题，但在 AI 辅助开发持续六个月后，“系统最初是如何设计的”与“系统目前实际上是如何运转的”之间的差距已演变成一道鸿沟。事后通过重构弥合差距的难度，远大于前期防止架构偏离的难度。</p>
+<p>以前纯手写代码很慢，而这种缓慢迫使人思考。你必须先理解问题，才能敲下解决方案。现在，你只需一句话描述问题，在还没来得及思考 200 行代码是否合适之前，这 200 行能跑通的代码就已经生成好了。</p>
+<h2 id="如何避免-ai-slop-代码">如何避免 AI Slop 代码</h2>
+<p><strong>构建自动化的度量感知信号。</strong> 仅凭人工代码审查是无法拦截 AI 垃圾代码的。代码产出量过于庞大，且在表面上显得太过精致。你需要的是在代码仓库层级而非单个 PR 层级运行的自动化信号。我们可以通过 GitClear 报告中的类似指标作为信号来更快的感知 AI Slop 的存在，也可以采用 Larridin AI Slop Index 来评估 AI 生成代码的长期可维护性风险。</p>
+<p><strong>针对 AI 时代重塑代码审查机制。</strong> 前 AI 时代的代码审查聚焦于逻辑正确性和编码风格。AI 时代的代码审查则必须增加架构契合度的考量：这段代码属于这个代码库吗？它遵循了现有模式还是自作主张引入了新模式？这是最精简的方案还是最常见的通用方案？回答这些问题需要花费更多时间，这意味着随着 AI 产出量的增加，团队的审查投入应该扩大，而不是缩减。</p>
+<p><strong>开展针对性的重构冲刺（Refactoring Sprints）。</strong> AI 只会生成新代码，不会主动去整合现存代码。团队应定期安排专门针对 AI 生成重复代码的重构周期——将重复模式收敛为共享抽象，对齐发散的实现逻辑，并剔除那些原本就不该合并的代码。可以将其视为等同于对初稿进行润色编辑的代码库维护工作。</p>
+<p>鸟窝在 <a target="_blank" rel="noopener" href="https://colobu.com/2026/08/27/no-code-review-ai-generated-garbage-code/">都不 code review 了， AI coding Agent 生成的垃圾代码怎么办？</a> 这篇文章中，也介绍了自己的方式：</p>
+<blockquote>
+<p>对于生成的 Go项目来说，我会关注几个方面：程序的布局、使用<code>/smell</code>嗅探架构和设计中的坏味道、使用<code>/refactor</code>重构项目、使用不同的大模型交叉review、提供端到端的测试等……</p>
+</blockquote>
+<p>在被 AI Slop 裹挟的当下，我们还是要保持一颗好奇心，不断探索，向阳而生。</p>
+</body></html> 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2026/10/20/AI-Slop/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI-Coding/" rel="tag">AI Coding</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI-Slop/" rel="tag">AI Slop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%80%BA%E5%8A%A1/" rel="tag">技术债务</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2026/09/15/Reading-of-the-HoH-paper/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Harness of Harness 论文学习</div>
+      </a>
+    
+  </nav>
+
+   
+ 
+   
+    
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@2.0.12/dist/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: "blog-d3gu9b4oo05897e3f"
+        })
+    </script>
+
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2026
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/feed.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+ 
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
