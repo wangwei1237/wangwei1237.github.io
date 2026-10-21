@@ -105,14 +105,14 @@
 <meta property="og:description" content="多年以来，人们设计出许多不同的算法来压缩视频。视频压缩虽然听起来是一个很现代的词，但其实它从模拟视频开始，已经有很长的历史了。在本篇文章中，我会向大家一一介绍视频压缩史上的里程碑事件，正是这些事件的发生才有了今天的视频压缩。从过去到现在，各类视频压缩方法由最初的概念最终演化成现今的标准。很多压缩标准今天还在使用，人们也一直在继续开发和完善新的标准。[1] 本文仅仅是对文献[1:1]的进一步整理，用">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-07-27T19:33:59.000Z">
-<meta property="article:modified_time" content="2026-10-20T09:38:52.609Z">
+<meta property="article:modified_time" content="2026-10-21T03:36:49.568Z">
 <meta property="article:author" content="Wang Wei">
 <meta property="article:tag" content="编解码器">
 <meta property="article:tag" content="压缩标准">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@wangwei1237">
 <meta name="twitter:site" content="@wangwei1237">
-      
+
        
       <meta name="keywords" content="17哥,17g,17G,17" />
        
@@ -144,7 +144,10 @@
       />
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
 
-      <!-- mermaid -->
+      <!-- mermaid / pele -->
+      
+      
+      
       
       <style>
         .swal2-styled.swal2-confirm {
@@ -1115,6 +1118,82 @@
     mermaid.initialize({ theme: "base" });
   }
 </script>
+<!-- Pele -->
+ <!-- pele: https://pele.run/ -->
+<script>
+  (function () {
+    if (!window.pele || typeof window.pele.mount !== "function") return;
+
+    var options = {"zoom":"auto"};
+    var fallback = true;
+    var mermaidCdn = "https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js";
+    var mermaidTheme = "base";
+    var mermaidLoading = null;
+
+    // 按需加载 mermaid，仅在 pele 渲染失败时使用
+    function loadMermaid() {
+      if (window.mermaid) return Promise.resolve(window.mermaid);
+      if (mermaidLoading) return mermaidLoading;
+      mermaidLoading = new Promise(function (resolve, reject) {
+        var s = document.createElement("script");
+        s.src = mermaidCdn;
+        s.onload = function () {
+          window.mermaid.initialize({ startOnLoad: false, theme: mermaidTheme });
+          resolve(window.mermaid);
+        };
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return mermaidLoading;
+    }
+
+    function fallbackToMermaid(container, source, diagram) {
+      if (diagram && typeof diagram.destroy === "function") diagram.destroy();
+      var pre = document.createElement("pre");
+      pre.className = "mermaid";
+      pre.textContent = source;
+      container.replaceWith(pre);
+      loadMermaid()
+        .then(function (mermaid) {
+          return mermaid.run({ nodes: [pre] });
+        })
+        .catch(function (e) {
+          console.error("[pele] mermaid fallback failed:", e);
+        });
+    }
+
+    // hexo-filter-mermaid-diagrams 会把 ```mermaid 代码块转换为 <pre class="mermaid">
+    document.querySelectorAll("pre.mermaid").forEach(function (el) {
+      var source = el.textContent;
+      var container = document.createElement("div");
+      container.className = "pele-diagram";
+      el.replaceWith(container);
+
+      var diagram = null;
+      var failed = false;
+      var handleError = function (error) {
+        console.warn("[pele] render failed:", error);
+        if (!fallback || !mermaidCdn || failed) return;
+        failed = true;
+        // onError 可能在 mount() 返回之前同步触发，延迟执行以拿到 diagram
+        setTimeout(function () {
+          fallbackToMermaid(container, source, diagram);
+        }, 0);
+      };
+
+      try {
+        diagram = window.pele.mount(
+          container,
+          source,
+          Object.assign({}, options, { onError: handleError })
+        );
+      } catch (e) {
+        handleError(e);
+      }
+    });
+  })();
+</script>
+ 
 
 
     

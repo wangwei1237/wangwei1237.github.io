@@ -107,7 +107,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@wangwei1237">
 <meta name="twitter:site" content="@wangwei1237">
-      
+
        
       <meta name="keywords" content="17哥,17g,17G,17" />
        
@@ -139,7 +139,10 @@
       />
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
 
-      <!-- mermaid -->
+      <!-- mermaid / pele -->
+      
+      
+      
       
       <style>
         .swal2-styled.swal2-confirm {
@@ -678,6 +681,82 @@
     mermaid.initialize({ theme: "base" });
   }
 </script>
+<!-- Pele -->
+ <!-- pele: https://pele.run/ -->
+<script>
+  (function () {
+    if (!window.pele || typeof window.pele.mount !== "function") return;
+
+    var options = {"zoom":"auto"};
+    var fallback = true;
+    var mermaidCdn = "https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js";
+    var mermaidTheme = "base";
+    var mermaidLoading = null;
+
+    // 按需加载 mermaid，仅在 pele 渲染失败时使用
+    function loadMermaid() {
+      if (window.mermaid) return Promise.resolve(window.mermaid);
+      if (mermaidLoading) return mermaidLoading;
+      mermaidLoading = new Promise(function (resolve, reject) {
+        var s = document.createElement("script");
+        s.src = mermaidCdn;
+        s.onload = function () {
+          window.mermaid.initialize({ startOnLoad: false, theme: mermaidTheme });
+          resolve(window.mermaid);
+        };
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return mermaidLoading;
+    }
+
+    function fallbackToMermaid(container, source, diagram) {
+      if (diagram && typeof diagram.destroy === "function") diagram.destroy();
+      var pre = document.createElement("pre");
+      pre.className = "mermaid";
+      pre.textContent = source;
+      container.replaceWith(pre);
+      loadMermaid()
+        .then(function (mermaid) {
+          return mermaid.run({ nodes: [pre] });
+        })
+        .catch(function (e) {
+          console.error("[pele] mermaid fallback failed:", e);
+        });
+    }
+
+    // hexo-filter-mermaid-diagrams 会把 ```mermaid 代码块转换为 <pre class="mermaid">
+    document.querySelectorAll("pre.mermaid").forEach(function (el) {
+      var source = el.textContent;
+      var container = document.createElement("div");
+      container.className = "pele-diagram";
+      el.replaceWith(container);
+
+      var diagram = null;
+      var failed = false;
+      var handleError = function (error) {
+        console.warn("[pele] render failed:", error);
+        if (!fallback || !mermaidCdn || failed) return;
+        failed = true;
+        // onError 可能在 mount() 返回之前同步触发，延迟执行以拿到 diagram
+        setTimeout(function () {
+          fallbackToMermaid(container, source, diagram);
+        }, 0);
+      };
+
+      try {
+        diagram = window.pele.mount(
+          container,
+          source,
+          Object.assign({}, options, { onError: handleError })
+        );
+      } catch (e) {
+        handleError(e);
+      }
+    });
+  })();
+</script>
+ 
 
 
     
