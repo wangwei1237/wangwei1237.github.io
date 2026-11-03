@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
+      <meta charset="utf-8" />
+      <meta name="description" content="OpenMausBot 是一款针对 Grok Bot 的免费开源替代品，与 Grok Bot 不同的是：OpenMausBot 可以直接运行在我们本地的 Claude、Codex 或 Gemini 订阅上，无需额外的订阅。和 Grok Bot 一样，仅通过简单的聊天对话，我们就能在 IM 聊天界面中获得一整支 AI Bots 团队，每个 Bot 都有自己的模型、记忆和连接的应用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenMausBot 实践">
+<meta property="og:url" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="OpenMausBot 是一款针对 Grok Bot 的免费开源替代品，与 Grok Bot 不同的是：OpenMausBot 可以直接运行在我们本地的 Claude、Codex 或 Gemini 订阅上，无需额外的订阅。和 Grok Bot 一样，仅通过简单的聊天对话，我们就能在 IM 聊天界面中获得一整支 AI Bots 团队，每个 Bot 都有自己的模型、记忆和连接的应用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/1.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/2.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/3.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/4.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/5.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/6.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/7.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/8.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/9.png">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/10.png">
+<meta property="article:published_time" content="2026-11-03T19:39:35.000Z">
+<meta property="article:modified_time" content="2026-11-03T11:50:41.904Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="Grok Bots">
+<meta property="article:tag" content="OpenMausBot">
+<meta property="article:tag" content="Agent Team">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/1.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="@wangwei1237">
+
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>OpenMausBot 实践 |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid / pele -->
+      
+      
+      
+      
+      <script src="https://cdn.jsdelivr.net/npm/pele@1.8.0/dist/pele.global.js"></script>
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link rel="alternate" href="/feed.xml" title="17哥" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-OpenMausBot-in-Action"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  OpenMausBot 实践
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2026/11/03/OpenMausBot-in-Action/" class="article-date">
+  <time datetime="2026-11-03T19:39:35.000Z" itemprop="datePublished">2026-11-03</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.9k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">7 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <html><head></head><body><p><img src="/2026/11/03/OpenMausBot-in-Action/1.png" alt=""></p>
+<p>OpenMausBot 是一款针对 Grok Bot 的免费开源替代品，与 Grok Bot 不同的是：OpenMausBot 可以直接运行在我们本地的 Claude、Codex 或 Gemini 订阅上，无需额外的订阅。和 Grok Bot 一样，仅通过简单的聊天对话，我们就能在 IM 聊天界面中获得一整支 AI Bots 团队，每个 Bot 都有自己的模型、记忆和连接的应用。</p>
+<span id="more"></span>
+<h2 id="什么是-openmausbot？">什么是 OpenMausBot？</h2>
+<p>2026 年 8 月，Milind Soni 在 GitHub 上发布了 Grok Bot 的开源实现 OpenMausBot，并以非常快的迭代速度进行发布。OpenMausBot 的 UI 看起来很像 Telegram、WhatsApp：侧边栏是联系人列表，只不过这里的每一个联系人都是一个 AI Agent。我们可以为每一个 Bot 赋予独特的个性、任务分工和运行模型。当我们发送一条消息时，AI Bot 便会执行任务，AI Bots 之间会以 IM 消息的方式来转发任务并进行 Handoff。</p>
+<p>OpenMausBot 的 <a target="_blank" rel="noopener" href="https://github.com/milind-soni/OpenMausBot">Github 项目主页</a> 是这样描述自己的：</p>
+<blockquote>
+<p>Every bot in the sidebar is a real agent — Claude or Codex running locally under the hood — with its own personality, its own model, its own cloud computer, and its own connected apps. Talk to them like contacts. Watch them work.</p>
+</blockquote>
+<p><img src="/2026/11/03/OpenMausBot-in-Action/2.png" alt=""></p>
+<p>正如上图所示，OpenMausBot 并不要求我们输入 API 密钥，而是直接调用机器上已经登录的 AI Agent。这非常方便！！！</p>
+<p>想想我们在使用 OpenClaw、Hermes 之类的工具时，我们还需要额外配置 API 鉴权，虽然不复杂，但确实也麻烦。在 OpenMausBot 中，我们现有的订阅账号就是它的大脑，OpenMausBot 只是搭建了一套团队协作外壳，仅此而已。</p>
+<h2 id="为每个-bot-配置独立的模型">为每个 Bot 配置独立的模型</h2>
+<p>在 Grok Bot 中，我们无法更换模型——xAI 给什么我们就只能用什么。而在 OpenMausBot 中，每个 Bot 都有独立的模型选择器。一个 Bot 可以运行 Claude，另一个 Bot 运行 Codex……每个聊天窗口右上角都有一个下拉菜单，供我们在不同的模型之间自由切换。</p>
+<blockquote>
+<p>Free software is free as in freedom, not free as in beer.</p>
+</blockquote>
+<p>自由切换不同的模型非常重要，不同的工作需要不同的大脑。我的日常工作会涵盖不同的场景，整理文档、调研、编码……</p>
+<ul>
+<li>对于文档整理而言，我会选择更擅长写作的模型，比如 Gemini 4 Argon</li>
+<li>对于编码而言，我则会选择 Opus 5.5 这种 Coding 能力更强的模型</li>
+<li>对于代码 Review 而言，我则会选择与 Claude 非同族的其他模型，例如 GPT-6</li>
+<li>……</li>
+</ul>
+<p><img src="/2026/11/03/OpenMausBot-in-Action/3.png" alt=""></p>
+<h2 id="每个-bot-都拥有专属的计算机环境">每个 Bot 都拥有专属的计算机环境</h2>
+<p>OpenMausBot 内部配备了一个电脑面板，每个 Bot 都会获得一个云端桌面（云端桌面是需要购买订阅的）——即一台运行在远程服务器上、由 Bot 自主控制的真实 Linux 电脑，并在机器人工作时提供实时的屏幕预览。我们可以观察 AI Bot 的点击操作、打开应用程序并完成任务，我们也可以在浏览器中打开该桌面接管控制。</p>
+<p>实际上，我们可以将 AI Bot 直接指向自己的 Mac 电脑，以允许 OpenMausBot 在我们的真实物理机上展开工作。</p>
+<p><img src="/2026/11/03/OpenMausBot-in-Action/4.png" alt=""></p>
+<h2 id="本地优先架构">本地优先架构</h2>
+<p>OpenMausBot 采用本地优先架构：一个运行在本地 Mac 电脑上的服务来管理 Agent 进程，所有 AI Bots 的对话记录、事件日志也都保存在电脑的本地文件夹中。需要明确的是，我们所调用的模型——Claude、Codex、Gemini 依然会将数据传输至云端处理。因此，OpenMausBot 是在云端托管大脑之外包裹了一层本地优先的基础设施。对我而言，这种轻巧的架构正式我所需要的。</p>
+<h2 id="使用-openmausbot-完成编码任务">使用 OpenMausBot 完成编码任务</h2>
+<p>SpaceXSI 的工程师 Lauren Tan 在 X 上发布了自己如何使用 Grok Bot 实现每月提交 2500 个 PR 的推文：<em>how i shipped 2,500 PRs last month to production</em>。</p>
+<div class="twitter-wrapper"><blockquote class="twitter-tweet"><a target="_blank" rel="noopener" href="https://twitter.com/poteto/status/2102050467505430555"></a></blockquote></div><script async="" defer="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>我把大模型评估平台的开发任务也迁移到了 OpenMausBot。我先让 OpenMausBot 把之前的 workspace 迁移过来，并对应的创建了 3 个 AI Bot。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在 /Users/wangwei17/Documents/Project/versus 目录下，有一个 Cluade 的 workspace，是我们大模型评估平台的的项目目录。请帮我生成 3 个 Bot，一个是以 Cluade CLI 为基础（VersusRD），主要是开发、实现versus的需求并完成相关自测；一个是以 Codex CLI 为基础(VersusQA)，主要是对需求修改的代码进行代码的 Code Review 以及代码文档的一致性进行check；一个以 Claude CLI 为基础(VersusOP)，主要是在本地以非登录模型部署versus，同时VersusOP还负责对部署问题，日志等的排查和修复工作。</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2026/11/03/OpenMausBot-in-Action/5.png" alt=""></p>
+<p>OpenMausBot 不但按照要求创建了 3 个 Bot，还自动为这三个 Bot 创建了部门，这一点确实体验非常好。对于不同的项目，我可以创建不同的部门，然后不同部门下由不同的 Bot 来完成对应的开发任务。</p>
+<pre class="mermaid">flowchart TB
+
+    H["人<br>确定目标 · 指挥决策"] --&gt; A["悟空 <br>统筹任务 · 拆解目标"]
+
+    A --&gt; M1["Versus"]
+
+    A --&gt; M2["Task2<br>"]
+
+    A --&gt; M3["Task3<br>"]
+
+    M1 --&gt; E1["VersusRD"]
+    M1 --&gt; E2["VersusQA"]
+    M1 --&gt; E3["VersusOP"]
+
+    M2 --&gt; E4["执行 Agent"]
+    M2 --&gt; E5["执行 Agent"]
+    
+    M3 --&gt; E7["执行 Agent"]
+    M3 --&gt; E8["执行 Agent"]</pre>
+<p>用 OpenMausBot 完成 <a href="/2026/10/27/OpenTelemetry-in-Agent-Optimization/">使用 OpenTelemetry 观测并优化 Agent</a> 这篇文章中介绍的功能点：</p>
+<blockquote>
+<p><strong>需求指令</strong>：<code>/teamwork-preview</code> 把 /leaderboard 页面的title 从“模型排行榜”改为“模型榜单”。</p>
+</blockquote>
+<p>悟空开始处理任务，并通知 VersusRD 完成编码任务。<br>
+<img src="/2026/11/03/OpenMausBot-in-Action/6.png" alt=""></p>
+<p>versusRD 收到悟空的消息，并按照原 Claude Workspace 的规范启动编码任务。<br>
+<img src="/2026/11/03/OpenMausBot-in-Action/7.png" alt=""></p>
+<p>VersusOP 部署代码、启动服务，并在本地的浏览器中打开首页 URL。<br>
+<img src="/2026/11/03/OpenMausBot-in-Action/8.png" alt=""></p>
+<p>悟空最后把最终的结论回复给我。<br>
+<img src="/2026/11/03/OpenMausBot-in-Action/9.png" alt=""></p>
+<h2 id="展望">展望</h2>
+<p>随着 Grok Bot 的出圈，<em>Message Bots like teammates</em> 的设计思路慢慢成为一种趋势，我们给 Bots 一个任务，然后看着他们自主的沟通、协同、一步一步的完成我们给定的任务……这种体验，比在 Codex、Claude 等 Agent 中输入任务，然后盯着那不断滚动的屏幕更有控制感。</p>
+<p>Grok Bot、ChatGPT Dots、Claude Duet、OpenMausBot、Klex Bots、Rerun……类似的产品会越来越多……在 <a target="_blank" rel="noopener" href="https://my-tierroom.party/explore">Radar Scout</a> Agent 榜单，OpenMausBot 也受到更多用户的关注，暂列榜一。<br>
+<img src="/2026/11/03/OpenMausBot-in-Action/10.png" alt=""></p>
+<p>在我的体验中，其实 OpenMausBot 也并没有非常完美，依然有很多可以改进的地方：</p>
+<ul>
+<li>在 Versus Bots 完成开发任务时，各 Bots 完成任务后总是首先向 “悟空” 汇报，然后由 “悟空” 再调度其他 Bots，各 Bots 之间并没有进行必要的沟通。实际上，各 Bots 之间是可以通信的。也有可能是我调教的方式还不够完美，可能随着我的使用，OpenMausBot 会进化并学会这个技巧。</li>
+<li>Bot 在接受到 Message 任务后，点击对应 Bot 进入聊天窗口之后，并不会刷新并显示最新的任务消息，每次还需要点击一下“会话”才会显示最新的消息。</li>
+<li>在 Claude Code 中，我配置了 OpenTelemetry 来上报 Traces 信息，但是 OpenMausBot 触发的 Claude Code Bots 在执行过程中，并没有将相关 Trace 信息上报。</li>
+</ul>
+<p>好在 OpenMausBot 的迭代频率非常快，随着 OpenMausBot 的不断成长，这些问题应该也会不断得到解决。</p>
+</body></html> 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2026/11/03/OpenMausBot-in-Action/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent-Team/" rel="tag">Agent Team</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Grok-Bots/" rel="tag">Grok Bots</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenMausBot/" rel="tag">OpenMausBot</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2026/10/27/OpenTelemetry-in-Agent-Optimization/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">使用 OpenTelemetry 观测并优化 Agent</div>
+      </a>
+    
+  </nav>
+
+   
+ 
+   
+    
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@2.0.12/dist/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: "blog-d3gu9b4oo05897e3f"
+        })
+    </script>
+
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2026
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/feed.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+ 
+<!-- busuanzi  -->
+ <script defer src="https://events.vercount.one/js"></script> 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+<!-- Pele -->
+ <!-- pele: https://pele.run/ -->
+<script>
+  (function () {
+    if (!window.pele || typeof window.pele.mount !== "function") return;
+
+    var options = {"zoom":"auto"};
+    var fallback = true;
+    var mermaidCdn = "https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js";
+    var mermaidTheme = "base";
+    var mermaidLoading = null;
+
+    // 按需加载 mermaid，仅在 pele 渲染失败时使用
+    function loadMermaid() {
+      if (window.mermaid) return Promise.resolve(window.mermaid);
+      if (mermaidLoading) return mermaidLoading;
+      mermaidLoading = new Promise(function (resolve, reject) {
+        var s = document.createElement("script");
+        s.src = mermaidCdn;
+        s.onload = function () {
+          window.mermaid.initialize({ startOnLoad: false, theme: mermaidTheme });
+          resolve(window.mermaid);
+        };
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return mermaidLoading;
+    }
+
+    function fallbackToMermaid(container, source, diagram) {
+      if (diagram && typeof diagram.destroy === "function") diagram.destroy();
+      var pre = document.createElement("pre");
+      pre.className = "mermaid";
+      pre.textContent = source;
+      container.replaceWith(pre);
+      loadMermaid()
+        .then(function (mermaid) {
+          return mermaid.run({ nodes: [pre] });
+        })
+        .catch(function (e) {
+          console.error("[pele] mermaid fallback failed:", e);
+        });
+    }
+
+    // hexo-filter-mermaid-diagrams 会把 ```mermaid 代码块转换为 <pre class="mermaid">
+    document.querySelectorAll("pre.mermaid").forEach(function (el) {
+      var source = el.textContent;
+      var container = document.createElement("div");
+      container.className = "pele-diagram";
+      el.replaceWith(container);
+
+      var diagram = null;
+      var failed = false;
+      var handleError = function (error) {
+        console.warn("[pele] render failed:", error);
+        if (!fallback || !mermaidCdn || failed) return;
+        failed = true;
+        // onError 可能在 mount() 返回之前同步触发，延迟执行以拿到 diagram
+        setTimeout(function () {
+          fallbackToMermaid(container, source, diagram);
+        }, 0);
+      };
+
+      try {
+        diagram = window.pele.mount(
+          container,
+          source,
+          Object.assign({}, options, { onError: handleError })
+        );
+      } catch (e) {
+        handleError(e);
+      }
+    });
+  })();
+</script>
+ 
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
