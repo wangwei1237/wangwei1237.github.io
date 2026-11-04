@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head><!-- hexo injector head_begin start --><style type="text/css">.douban-card-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px;
+}
+
+.douban-card {
+    display: flex;
+    margin: 30px 10px;
+    padding: 15px;
+    border-radius: 15px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: antiquewhite;
+    text-decoration: none;
+}
+
+.douban-card:hover {
+    text-decoration: none;
+}
+
+.douban-card-bgimg {
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    filter: blur(15px) brightness(0.6);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-img {
+    position: relative;
+    height: 130px;
+    width: 80px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.douban-card-left:hover .douban-card-img {
+    filter: blur(5px) brightness(0.6);
+    transform: perspective(800px) rotateX(180deg);
+}
+
+.douban-card-left .douban-card-img {
+    transition: all 500ms ease;
+}
+
+.douban-card-left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.douban-card-left .douban-card-status {
+    height: 130px;
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: rotateX(180deg);
+    backface-visibility: hidden;
+    transition: all 500ms ease;
+}
+
+.douban-card-left:hover .douban-card-status {
+    transform: perspective(800px) rotateX(0deg);
+}
+
+.douban-card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.3;
+    color: antiquewhite;
+}
+
+.douban-card-item {
+    margin-top: 4px;
+}
+</style><!-- hexo injector head_begin end -->
+      <meta charset="utf-8" />
+      <meta name="description" content="在 OpenMausBot 实践 中的最后我提到：  在 Claude Code 中，我配置了 OpenTelemetry 来上报 Traces 信息，但是 OpenMausBot 触发的 Claude Code Bots 在执行过程中，并没有将相关 Trace 信息上报。  开会之余，我在 Gemini 的帮助下对这个问题进行了排查与分析，整个过程也确实增强了自己对 Claude 的理解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么 OpenMausBot 中的 OTel 会失效？">
+<meta property="og:url" content="https://wangwei1237.github.io/2026/11/04/Why-OpenTelemetry-fails-in-OpenMausBot/index.html">
+<meta property="og:site_name" content="17哥">
+<meta property="og:description" content="在 OpenMausBot 实践 中的最后我提到：  在 Claude Code 中，我配置了 OpenTelemetry 来上报 Traces 信息，但是 OpenMausBot 触发的 Claude Code Bots 在执行过程中，并没有将相关 Trace 信息上报。  开会之余，我在 Gemini 的帮助下对这个问题进行了排查与分析，整个过程也确实增强了自己对 Claude 的理解。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wangwei1237.github.io/2026/11/04/Why-OpenTelemetry-fails-in-OpenMausBot/1.png">
+<meta property="article:published_time" content="2026-11-04T19:45:38.000Z">
+<meta property="article:modified_time" content="2026-11-04T12:00:04.522Z">
+<meta property="article:author" content="Wang Wei">
+<meta property="article:tag" content="OpenMausBot">
+<meta property="article:tag" content="OpenTelemetry">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wangwei1237.github.io/2026/11/04/Why-OpenTelemetry-fails-in-OpenMausBot/1.png">
+<meta name="twitter:creator" content="@wangwei1237">
+<meta name="twitter:site" content="@wangwei1237">
+
+       
+      <meta name="keywords" content="17哥,17g,17G,17" />
+       
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>为什么 OpenMausBot 中的 OTel 会失效？ |  17哥</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid / pele -->
+      
+      
+      
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+      <script src="https://use.fontawesome.com/39301eb177.js"></script>
+    <link rel="alternate" href="/feed.xml" title="17哥" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Why-OpenTelemetry-fails-in-OpenMausBot"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  为什么 OpenMausBot 中的 OTel 会失效？
+</h1>
+ 
+
+      
+    <div class="article-author"  style="text-align: center" >
+        作者：
+            王伟 ,
+         Gemini 4 Argon
+    </div>
+
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2026/11/04/Why-OpenTelemetry-fails-in-OpenMausBot/" class="article-date">
+  <time datetime="2026-11-04T19:45:38.000Z" itemprop="datePublished">2026-11-04</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">993</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">4 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <html><head></head><body><p>在 <a href="/2026/11/03/OpenMausBot-in-Action/">OpenMausBot 实践</a> 中的最后我提到：</p>
+<blockquote>
+<p>在 Claude Code 中，我配置了 OpenTelemetry 来上报 Traces 信息，但是 OpenMausBot 触发的 Claude Code Bots 在执行过程中，并没有将相关 Trace 信息上报。</p>
+</blockquote>
+<p>开会之余，我在 Gemini 的帮助下对这个问题进行了排查与分析，整个过程也确实增强了自己对 Claude 的理解。</p>
+<span id="more"></span>
+<p>确实，我有点懒，懒得自己去看代码、分析为什么会这样。另一方面，在模型能力如此强的今天，我的确认为没有必要向之前那样一点点的死扣代码、自己去分析。</p>
+<p>于是，我把问题直接抛给了 Antigravity：</p>
+<blockquote>
+<p>我在 claude 中配置了 OpenTelemetry，在 claude 中是可以检测到 trace 信息的，为什么在 OpenMausBots 的 VersusRD 中调用 claude 时，却没有检测到上报的 trace 信息呢？</p>
+</blockquote>
+<p>Antigravity 的分析如下：</p>
+<ul>
+<li>
+<p>您的 OpenTelemetry 配置在用户级 <code>~/.claude/settings.json</code> 中。您本机的 <code>~/.claude/settings.json</code> 在 <code>"env"</code> 下配置了完整的遥测参数。在终端直接运行 claude 时，默认会加载 user/project/local 全部三层配置，因此能正常上报。</p>
+</li>
+<li>
+<p>OpenMausBot 默认强制传入了 <code>--setting-sources project</code>（屏蔽了 user 和 local 层）。在 OpenMausBot 的 <code>server/drivers/claude.ts</code>（第 1072-1081 行）中，为了防止宿主机的全局 MCP、Hooks 和个人指令污染每个 Bot，默认开启了隔离模式（<code>isolated = true</code>），启动命令会被强制加上 <code>--setting-sources project</code>，claude 不再读取用户级的 <code>~/.claude/settings.json</code>，而只会读取 VersusRD 工作目录下的项目级配置 <code>settings.json</code>。同时，OpenMausBot 在源码（<code>server/drivers/claude.ts:145</code>）中预留了一个环境变量开关 <code>OMB_CLAUDE_INHERIT_USER_CONFIG=1</code>，以关闭 isolated 模式，从而避免 <code>--setting-sources project</code> 的配置。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude -p --output-format stream-json ... --setting-sources project --settings /tmp/omb-mcp-xxx/auth-settings.json</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>OpenMausBot 提取 <code>~/.claude/settings.json</code> 时只保留了 12 个认证白名单变量，虽然 OpenMausBot 会通过 <code>readClaudeAuthSettings()</code>（<code>server/drivers/claude.ts</code> 第 164-185 行）从 <code>~/.claude/settings.json</code> 的 <code>"env"</code> 中提取认证信息写入临时 <code>auth-settings.json</code>，但它使用了严格的白名单 <code>CLAUDE_ACCOUNT_ENV_KEYS</code>，因此 <code>CLAUDE_CODE_ENABLE_TELEMETRY</code> 和所有 <code>OTEL_*</code> 变量全部被丢弃了。</p>
+</li>
+</ul>
+<p>按照 Antigravity 的分析，我下载了 OpenMausBot 的源码，原因也确实如 Antigravity 所说。<code>server/drivers/claude.ts</code> 对 <code>--setting-sources</code> 的配置代码如下：</p>
+<figure class="highlight ts"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (isolated) {</span><br><span class="line">	<span class="comment">// Without these every turn gets this machine's MCP servers, connectors, skills, hooks and CLAUDE.md</span></span><br><span class="line">	<span class="comment">// (one desktop: 407 tools, ~10k tokens).</span></span><br><span class="line">    <span class="keyword">if</span> (!turn.<span class="property">mcpFromUserConfig</span> &amp;&amp; <span class="title function_">claudeCliSupports</span>(cliVersion, <span class="string">"--strict-mcp-config"</span>)) args.<span class="title function_">push</span>(<span class="string">"--strict-mcp-config"</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">claudeCliSupports</span>(cliVersion, <span class="string">"--setting-sources"</span>)) args.<span class="title function_">push</span>(<span class="string">"--setting-sources"</span>, <span class="string">"project"</span>);</span><br><span class="line">    <span class="keyword">if</span> (turn.<span class="property">userSkillsDir</span>) args.<span class="title function_">push</span>(<span class="string">"--add-dir"</span>, turn.<span class="property">userSkillsDir</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>但是，<code>OMB_CLAUDE_INHERIT_USER_CONFIG</code> 的方案并不推荐，因为这种方案和 OpenMausBot 的设计理念也有一定的冲突。从代码中我们也能看出增加该环境变量之后，也会打印一条错误日志。</p>
+<figure class="highlight ts"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="title function_">inheritsUserConfig</span>(catalogEnv)) {</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">`claude (<span class="subst">${instanceId}</span>): OMB_CLAUDE_INHERIT_USER_CONFIG=1 — bots inherit this machine's Claude Code MCP servers, skills, hooks and CLAUDE.md on every turn; remove it unless a bot needs a user-scope server`</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>实践之后，我发现：在项目级 <code>.claude/settings.json</code> 中的 <code>"env"</code> 字段增加 OpenTelemetry 相关配置的方式也不会生效。</p>
+<p>claude 中存在如下规则：项目中的 <code>.claude/settings.json</code> 只能用来“关停”遥测，绝不允许用来“开启”遥测或指定 <code>OTEL_EXPORTER_OTLP_ENDPOINT</code>。因此，即便把相关配置补充到项目级的 <code>settings.json</code>，claude 也会直接把这些配置当成不安全配置并忽略。</p>
+<blockquote>
+<p>Claude Code ignores these telemetry variables in [project settings]… A project’s settings files can only turn telemetry off: set OTEL_METRICS_EXPORTER, or OTEL_TRACES_EXPORTER to none, or a content variable such as OTEL_LOG_USER_PROMPTS to 0… If you set them or purpose, set them in your shell, your user settings (~/.claude/settings.json), or managed settings instead.</p>
+</blockquote>
+<p>因此，根据如上的分析，为了在 OpenMausBot 中开启 OpenTelemetry，我们可以采用把配置写入 <code>managed-settings.json</code> 的方案。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p <span class="string">"/Library/Application Support/ClaudeCode"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">tee</span> <span class="string">"/Library/Application Support/ClaudeCode/managed-settings.json"</span> &lt;&lt; <span class="string">'EOF'</span></span><br><span class="line">{</span><br><span class="line"></span><br><span class="line">	<span class="string">"env"</span>: {</span><br><span class="line">		<span class="string">"CLAUDE_CODE_ENABLE_TELEMETRY"</span>: <span class="string">"1"</span>,</span><br><span class="line">		<span class="string">"CLAUDE_CODE_ENHANCED_TELEMETRY_BETA"</span>: <span class="string">"1"</span>,</span><br><span class="line">		<span class="string">"OTEL_TRACES_EXPORTER"</span>: <span class="string">"otlp"</span>,</span><br><span class="line">		<span class="string">"OTEL_METRICS_EXPORTER"</span>: <span class="string">"otlp"</span>,</span><br><span class="line">		<span class="string">"OTEL_LOGS_EXPORTER"</span>: <span class="string">"otlp"</span>,</span><br><span class="line">		<span class="string">"OTEL_EXPORTER_OTLP_PROTOCOL"</span>: <span class="string">"grpc"</span>,</span><br><span class="line">		<span class="string">"OTEL_EXPORTER_OTLP_ENDPOINT"</span>: <span class="string">"http://localhost:4317"</span>,</span><br><span class="line">		<span class="string">"OTEL_SERVICE_NAME"</span>: <span class="string">"claude"</span>,</span><br><span class="line">		<span class="string">"OTEL_LOG_USER_PROMPTS"</span>: <span class="string">"1"</span>,</span><br><span class="line">		<span class="string">"OTEL_LOG_ASSISTANT_RESPONSES"</span>: <span class="string">"1"</span>,</span><br><span class="line">		<span class="string">"OTEL_LOG_TOOL_DETAILS"</span>: <span class="string">"1"</span>,</span><br><span class="line">		<span class="string">"OTEL_LOG_TOOL_CONTENT"</span>: <span class="string">"1"</span>,</span><br><span class="line">		<span class="string">"OTEL_LOG_RAW_API_BODIES"</span>: <span class="string">"1"</span></span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line">EOF</span><br></pre></td></tr></tbody></table></figure>
+<p>在 VersusRD Bot 中输入“hello”，现在已经可以在 otel-desktop-viewer 中看到 trace 信息了。</p>
+<p><img src="/2026/11/04/Why-OpenTelemetry-fails-in-OpenMausBot/1.png" alt="VersusRD Bot 的 Trace 信息已显示在 otel-desktop-viewer 中"></p>
+</body></html> 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wangwei1237.github.io/2026/11/04/Why-OpenTelemetry-fails-in-OpenMausBot/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Claude-Code/" rel="tag">Claude Code</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenMausBot/" rel="tag">OpenMausBot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTelemetry/" rel="tag">OpenTelemetry</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2026/11/03/OpenMausBot-in-Action/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">OpenMausBot 实践</div>
+      </a>
+    
+  </nav>
+
+   
+ 
+   
+    
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@2.0.12/dist/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: "blog-d3gu9b4oo05897e3f"
+        })
+    </script>
+
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2026
+        <i class="ri-heart-fill heart_icon"></i> Wang Wei
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <!--<span id="busuanzi_container_page_pv">本文阅读量<span id="busuanzi_value_page_pv_"></span>次</span>
+  <span class="division">|</span>
+  -->
+  <span id="busuanzi_container_site_uv"><i class="ri-user-3-fill"></i>本站访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span id="busuanzi_container_site_pv"><i class="ri-eye-fill"></i>本站浏览次数:<span id="busuanzi_value_site_pv"></span></span>
+</span>
+<script>
+  
+</script>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="17哥"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/books">图书</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/shares">分享</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/aboutme">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/feed.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/weixin.png">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+ 
+    
+ 
+<!-- busuanzi  -->
+ <script defer src="https://events.vercount.one/js"></script> 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "base" });
+  }
+</script>
+<!-- Pele -->
+ <!-- pele: https://pele.run/ -->
+<script>
+  (function () {
+    if (!window.pele || typeof window.pele.mount !== "function") return;
+
+    var options = {"zoom":"auto"};
+    var fallback = true;
+    var mermaidCdn = "https://cdn.jsdelivr.net/npm/mermaid@11.13.0/dist/mermaid.min.js";
+    var mermaidTheme = "base";
+    var mermaidLoading = null;
+
+    // 按需加载 mermaid，仅在 pele 渲染失败时使用
+    function loadMermaid() {
+      if (window.mermaid) return Promise.resolve(window.mermaid);
+      if (mermaidLoading) return mermaidLoading;
+      mermaidLoading = new Promise(function (resolve, reject) {
+        var s = document.createElement("script");
+        s.src = mermaidCdn;
+        s.onload = function () {
+          window.mermaid.initialize({ startOnLoad: false, theme: mermaidTheme });
+          resolve(window.mermaid);
+        };
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return mermaidLoading;
+    }
+
+    function fallbackToMermaid(container, source, diagram) {
+      if (diagram && typeof diagram.destroy === "function") diagram.destroy();
+      var pre = document.createElement("pre");
+      pre.className = "mermaid";
+      pre.textContent = source;
+      container.replaceWith(pre);
+      loadMermaid()
+        .then(function (mermaid) {
+          return mermaid.run({ nodes: [pre] });
+        })
+        .catch(function (e) {
+          console.error("[pele] mermaid fallback failed:", e);
+        });
+    }
+
+    // hexo-filter-mermaid-diagrams 会把 ```mermaid 代码块转换为 <pre class="mermaid">
+    document.querySelectorAll("pre.mermaid").forEach(function (el) {
+      var source = el.textContent;
+      var container = document.createElement("div");
+      container.className = "pele-diagram";
+      el.replaceWith(container);
+
+      var diagram = null;
+      var failed = false;
+      var handleError = function (error) {
+        console.warn("[pele] render failed:", error);
+        if (!fallback || !mermaidCdn || failed) return;
+        failed = true;
+        // onError 可能在 mount() 返回之前同步触发，延迟执行以拿到 diagram
+        setTimeout(function () {
+          fallbackToMermaid(container, source, diagram);
+        }, 0);
+      };
+
+      try {
+        diagram = window.pele.mount(
+          container,
+          source,
+          Object.assign({}, options, { onError: handleError })
+        );
+      } catch (e) {
+        handleError(e);
+      }
+    });
+  })();
+</script>
+ 
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
