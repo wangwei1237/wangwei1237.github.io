@@ -243,6 +243,7 @@
 <li>在 <code>benchmark-checklist</code> 中，是这样描述的：<em>Answer each question with evidence from a run, not a guess about the code.</em></li>
 <li>在 <code>blast-radius</code> 中，pstack 要求：<em>Find the one or two facts the whole thing depends on and prove them by running code.</em></li>
 <li>在 <code>interrogate</code> 中，对于可能的风险，要求：<em>Adversaries try to break a change or a design. A finding survives only when a run proves it.</em></li>
+<li>在 <code>poteto-mode</code> 中，为了避免模型幻觉，明确要求：<em>Cite only principles whose leaf <a href="http://SKILL.md">SKILL.md</a> you read this session.</em></li>
 <li>……</li>
 </ul>
 <h2 id="pstack-coding-哲学">pstack coding 哲学</h2>
@@ -513,10 +514,85 @@
 <li>Generators（生成器）：开发者用代码描述合法输入的 “形状” 和分布（数据结构、领域对象、操作序列等），框架据此自动探索输入空间。</li>
 <li>Shrinking（收缩）：一旦某个随机输入撞出了 bug，框架会自动剥离无关部分，将其化简为最小可复现反例，直接帮我们干掉一半的调试工作。</li>
 </ol>
-<blockquote>
-<p><strong>不同 PBT 工具的差异</strong><br>
-传统 PBT 工具（例如，QuickCheck、Hypothesis 以及 Antithesis 开源的 Hegel/Bombadil）主要测试函数、库或 UI，而 Antithesis 平台把 PBT 扩展到整个分布式系统——在确定性仿真环境里把网络分区、宕机、并发调度等都作为随机输入空间，检验系统级的 Always/Sometimes 性质并支持确定性回放。</p>
-</blockquote>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">不同 PBT 工具的差异
+</p><p>传统 PBT 工具（例如，QuickCheck、Hypothesis 以及 Antithesis 开源的 Hegel/Bombadil）主要测试函数、库或 UI，而 Antithesis 平台把 PBT 扩展到整个分布式系统——在确定性仿真环境里把网络分区、宕机、并发调度等都作为随机输入空间，检验系统级的 Always/Sometimes 性质并支持确定性回放。</p>
+</div>
 <p>PBT 与 Fuzzing 测试的差异：</p>
 <table>
 <thead>
@@ -549,10 +625,85 @@
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>趋势观察</strong><br>
-目前，PBT 与 Fuzzing 测试的边界正越来越模糊，Fuzzing 测试也引入了结构感知和业务断言，PBT 也吸收了覆盖率引导。像 Antithesis 这样的全系统确定性仿真测试，本质上就是把 Fuzzing 测试的探索与故障注入能力和 PBT 的高阶属性断言融合成了一套体系。</p>
-</blockquote>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">趋势观察
+</p><p>目前，PBT 与 Fuzzing 测试的边界正越来越模糊，Fuzzing 测试也引入了结构感知和业务断言，PBT 也吸收了覆盖率引导。像 Antithesis 这样的全系统确定性仿真测试，本质上就是把 Fuzzing 测试的探索与故障注入能力和 PBT 的高阶属性断言融合成了一套体系。</p>
+</div>
 <h3 id="tla"><code>TLA+</code></h3>
 <p><code>TLA+</code>（Temporal Logic of Actions，动作时序逻辑）是由图灵奖得主 Leslie Lamport（LaTeX、Paxos、Mutex 等作者）设计的一套重点面向并发与分布式系统的形式化规格语言体系，配合模型检验工具，在编码前把系统逻辑“跑一遍数学上的所有可能”，从而在设计阶段就能够发现隐蔽的正确性缺陷。</p>
 <p><code>TLA+</code> 不是编程语言，而是一套“数学规格说明书”语言：先把系统应该怎么做、状态怎么流转写成严密模型，再用工具穷举所有可能的执行路径，并验证会不会出现死锁、丢消息、重复执行、状态不一致等问题。<code>TLA+</code> 描述“应该是什么”，不负责“怎么高效写”。</p>
@@ -678,10 +829,85 @@
 <li>用上层的静态分析、运行时/形式化验证，把更多的错误挡在人类接手之前，用更低的边界成本获得最大的 ROI</li>
 <li>把信任建立在 <em>可执行、可证伪的现实反馈</em>，而不是模型的口头承诺，实践是检验真理的唯一标准，用运行时执行作为反馈信号</li>
 </ol>
-<blockquote>
-<p><strong>思考</strong><br>
-pstack 的 Verify 体系，本质上是把 Verify 方式从廉价易忘的 Prompt 和昂贵的人工 Review，系统性地迁移到了版本依赖、强静态分析、运行时验证、形式化验证等持续向上固化的 looping 反馈闭环之上。</p>
-</blockquote>
+<style>.admonition {
+    margin: 1.5625em 0;
+    padding: .6rem;
+    overflow: hidden;
+    font-size: 1.6rem;
+    page-break-inside: avoid;
+    border-left: .6rem solid #42b983;
+    border-radius: .6rem;
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,.5), 0 0 0.05rem rgba(0,0,0,.1);
+    background-color: #fafafa;
+  }
+  
+  p.admonition-title {
+    position: relative;
+    margin: -.6rem -.6rem .8em -.6rem !important;
+    padding: .4rem .6rem .4rem .4rem;
+    font-weight: 700;
+    background-color:rgba(66, 185, 131, .1);
+  }
+  
+  /*
+  .admonition-title::before {
+    position: absolute;
+    top: .9rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background-color: #42b983;
+    border-radius: 50%;
+    content: ' ';
+  }
+  */
+  
+  .info>.admonition-title, .todo>.admonition-title {
+    background-color: rgba(0,184,212,.1);
+  }
+  
+  .warning>.admonition-title, .attention>.admonition-title, .caution>.admonition-title {
+    background-color: rgba(255,145,0,.1);
+  }
+  
+  .failure>.admonition-title, .missing>.admonition-title, .fail>.admonition-title, .error>.admonition-title {
+    background-color: rgba(255,82,82,.1);
+  }
+  
+  .admonition.info, .admonition.todo {
+    border-color: #00b8d4;
+  }
+  
+  .admonition.warning, .admonition.attention, .admonition.caution {
+    border-color: #ff9100;
+  }
+  
+  .admonition.failure, .admonition.missing, .admonition.fail, .admonition.error {
+    border-color: #ff5252;
+  }
+  
+  .info>.admonition-title::before, .todo>.admonition-title::before {
+    background-color: #00b8d4;
+    border-radius: 50%;
+  }
+  
+  .warning>.admonition-title::before, .attention>.admonition-title::before, .caution>.admonition-title::before {
+    background-color: #ff9100;
+    border-radius: 50%;
+  }
+  
+  .failure>.admonition-title::before,.missing>.admonition-title::before,.fail>.admonition-title::before,.error>.admonition-title::before{
+    background-color: #ff5252;;
+    border-radius: 50%;
+  }
+  
+  .admonition>:last-child {
+    margin-bottom: 0 !important;
+  }
+  </style>
+<div class="admonition note"><p class="admonition-title">思考
+</p><p>pstack 的 Verify 体系，本质上是把 Verify 方式从廉价易忘的 Prompt 和昂贵的人工 Review，系统性地迁移到了版本依赖、强静态分析、运行时验证、形式化验证等持续向上固化的 looping 反馈闭环之上。</p>
+</div>
 <p><img src="/2026/11/26/Verification-System/20261126102744.png" alt=""></p>
 <h2 id="pstack-实践">pstack 实践</h2>
 <p>AI Coding Agent 常见的问题就是：虚假汇报，改完代码、跑通编译和单元测试就宣布任务完成。但编译通过、单测全绿并不等同于用户视角功能正常。<code>create-verification-skill</code> 是一个 Meta Skill，强制为项目沉淀一套脚本化、可重复、面向 Agent 的真实应用驱动与取证方案，把 <em>Prove It Works</em> 沉淀为仓库、组织资产。</p>
